@@ -1,70 +1,47 @@
 import React, { useMemo } from 'react';
 
+import { IQueryEngine } from 'const/queryEngine';
+import {
+    IQueryError,
+    IQueryExecution,
+    IStatementExecution,
+} from 'const/queryExecution';
+import { getQueryErrorSuggestion } from 'lib/query-result/error-suggestion';
 import { Markdown } from 'ui/Markdown/Markdown';
 import { Message } from 'ui/Message/Message';
 
-const queryErrorsByLanguage: Record<
-    string,
-    Record<
-        string,
-        {
-            regex: string;
-            message: string;
-        }
-    >
-> = require('config/query_error.yaml');
-
-const errorSuggestionInfoByLanguage = Object.entries(
-    queryErrorsByLanguage
-).reduce((hash, [language, queryErrors]) => {
-    hash[language] = Object.entries(queryErrors).reduce(
-        (innerHash, [errorName, error]) => {
-            innerHash[errorName] = {
-                ...error,
-                regex: new RegExp(error.regex, 'i'),
-            };
-            return innerHash;
-        },
-        {}
-    );
-    return hash;
-}, {});
 interface IProps {
-    errorMsg: string;
-    language: string;
+    queryError: IQueryError;
+    queryExecution: IQueryExecution;
+    statementExecutions: IStatementExecution[];
+    queryEngine: IQueryEngine;
 }
 
 export const ErrorSuggestion: React.FunctionComponent<IProps> = ({
-    errorMsg,
-    language,
+    queryError,
+    queryExecution,
+    statementExecutions,
+    queryEngine,
 }) => {
-    const errorSuggestionInfo = useMemo(
-        () => ({
-            ...errorSuggestionInfoByLanguage[language],
-            ...errorSuggestionInfoByLanguage['common'],
-        }),
-        [language]
+    const suggestion = useMemo(
+        () =>
+            getQueryErrorSuggestion(
+                queryError,
+                queryExecution,
+                statementExecutions,
+                queryEngine
+            ),
+        [queryError, queryExecution, statementExecutions, queryEngine]
     );
 
-    let matchedError;
-    for (const errorName in errorSuggestionInfo) {
-        if (errorSuggestionInfo.hasOwnProperty(errorName)) {
-            const error = errorSuggestionInfo[errorName];
-            if (error.regex.test(errorMsg)) {
-                matchedError = error;
-                break;
-            }
-        }
-    }
-
-    return matchedError ? (
+    return suggestion ? (
         <Message
             className="ErrorSuggestion"
             icon="Zap"
             iconSize={20}
             type="tip"
         >
-            <Markdown>{matchedError.message}</Markdown>
+            <Markdown>{suggestion}</Markdown>
         </Message>
     ) : null;
 };

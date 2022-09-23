@@ -1,3 +1,9 @@
+import { IQueryEngine } from 'const/queryEngine';
+import {
+    IQueryError,
+    IQueryExecution,
+    IStatementExecution,
+} from 'const/queryExecution';
 import type {
     IColumnDetector,
     IColumnStatsAnalyzer,
@@ -36,6 +42,13 @@ declare global {
             Record<string, { key?: string; name?: string }>
         >;
         CUSTOM_ENGINE_UDFS?: IUDFEngineConfig[];
+
+        GET_QUERY_ERROR_SUGGESTION?: (
+            queryError: IQueryError,
+            queryExecution: IQueryExecution,
+            statementExecutions: IStatementExecution[],
+            queryEngine: IQueryEngine
+        ) => string;
 
         /**
          * Possible values for automatic query limits.

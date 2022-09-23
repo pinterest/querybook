@@ -121,15 +121,16 @@ export const SyntaxQueryError: React.FunctionComponent<{
 };
 
 export const QueryError: React.FunctionComponent<IProps> = ({
-    queryError: {
-        error_message: errorMessage,
-        error_message_extracted: errorMessageExtracted,
-        error_type: errorType,
-    },
+    queryError,
     queryExecution,
     statementExecutions,
     queryEngine,
 }) => {
+    const {
+        error_message: errorMessage,
+        error_message_extracted: errorMessageExtracted,
+        error_type: errorType,
+    } = queryError;
     const [showRaw, setShowRaw] = React.useState(false);
     const canShowShowRawTabs =
         errorMessage &&
@@ -174,8 +175,10 @@ export const QueryError: React.FunctionComponent<IProps> = ({
     return (
         <div className="QueryError mt4">
             <ErrorSuggestion
-                errorMsg={errorMsg}
-                language={queryEngine.language}
+                queryError={queryError}
+                queryExecution={queryExecution}
+                statementExecutions={statementExecutions}
+                queryEngine={queryEngine}
             />
             <Message
                 type="error"
