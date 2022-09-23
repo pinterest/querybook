@@ -80,15 +80,9 @@ export function getQueryErrorSuggestion(
     statementExecutions: IStatementExecution[],
     queryEngine: IQueryEngine
 ): string {
-    if (window.GET_QUERY_ERROR_SUGGESTION) {
-        return window.GET_QUERY_ERROR_SUGGESTION(
-            queryError,
-            queryExecution,
-            statementExecutions,
-            queryEngine
-        );
-    }
-    return getDefaultQueryErrorSuggestion(
+    const getSuggestions =
+        window.GET_QUERY_ERROR_SUGGESTION ?? getDefaultQueryErrorSuggestion;
+    return getSuggestions(
         queryError,
         queryExecution,
         statementExecutions,
