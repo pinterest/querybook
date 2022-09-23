@@ -44,7 +44,10 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
         [userInfo, name]
     );
 
-    const deletedText = userInfo.deleted ? DELETED_USER_MSG : '';
+    const fullname = useMemo(() => {
+        const deletedText = userInfo?.deleted ? ` ${DELETED_USER_MSG}` : '';
+        return `${userInfo?.fullname ?? userName}${deletedText}`;
+    }, [userInfo, userName]);
 
     if (mini) {
         return (
@@ -57,7 +60,7 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
             >
                 <figure>{avatarDOM}</figure>
                 <AccentText className="username" weight="bold">
-                    {userInfo?.fullname ?? userName} {deletedText}
+                    {fullname}
                 </AccentText>
             </span>
         );
