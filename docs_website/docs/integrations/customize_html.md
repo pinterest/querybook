@@ -191,3 +191,28 @@ window.DEFAULT_ROW_LIMIT = 4096;
 // this removes the option for user to pick limit: none
 window.ALLOW_UNLIMITED_QUERY = false;
 ```
+
+### (Experimental) Custom error tooltip
+
+Whenever there is a query error, you can provide a custom suggestion message by providing this function:
+
+```js
+window.GET_QUERY_ERROR_SUGGESTION?: (
+    queryError: IQueryError,
+    queryExecution: IQueryExecution,
+    statementExecutions: IStatementExecution[],
+    queryEngine: IQueryEngine
+) => string;
+```
+
+You would have the full knowledge of the query error message, the query engine, and the query text. Note
+that it is always the last statement execution that caused the error.
+
+The return value is string and the message would get converted into rich text via the Markdown renderer. So you can
+also insert urls, images, or formatted text based on Markdown syntax.
+
+Here are example suggestions you can add:
+
+-   Add a specific config based on the error message
+-   Redirect user to read the internal query guide
+-   Tell users to ask about the error in the support Slack channel
