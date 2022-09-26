@@ -18,14 +18,12 @@ const columnDetectors: IColumnDetector[] = [
         priority: 0.1,
         checker: (colName: string, values: any[]) =>
             detectTypeForValues(values, (value) => {
-                // JSON.parse() can parse boolean and numeric with no issue
-                // but we don't want it to be flagged as a JSON
-                if (isBoolean(value) || isNumeric(value)) {
-                    return false;
-                }
                 try {
-                    JSON.parse(value);
-                    return true;
+                    const parsed = JSON.parse(value);
+                    return (
+                        parsed && // to prevent null
+                        typeof parsed === 'object'
+                    );
                 } catch (e) {
                     return false;
                 }

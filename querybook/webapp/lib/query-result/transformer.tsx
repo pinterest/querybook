@@ -1,7 +1,7 @@
+import JSONBig from 'json-bigint';
 import React from 'react';
 import ReactJson, { ThemeObject } from 'react-json-view';
 
-import { isBoolean } from 'lib/utils/boolean';
 import {
     formatNumber,
     getHumanReadableNumber,
@@ -11,6 +11,8 @@ import {
 import { Link } from 'ui/Link/Link';
 
 import { IColumnTransformer } from './types';
+
+const JSONBigString = JSONBig({ storeAsString: true });
 
 const ReactJsonTheme: ThemeObject = {
     base00: 'transparent', // background
@@ -97,9 +99,9 @@ const queryResultTransformers: IColumnTransformer[] = [
         auto: true,
         transform: (v: string): React.ReactNode => {
             try {
-                const json = JSON.parse(v);
+                const json = JSONBigString.parse(v);
                 // Cannot pass following into <ReactJson />, returning original value in order to protect ReactJson from failing
-                if (!json || isNumeric(json) || isBoolean(json)) {
+                if (!json || typeof json !== 'object') {
                     return v;
                 }
                 return (
