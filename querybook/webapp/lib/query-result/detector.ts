@@ -1,4 +1,4 @@
-import { isString, sampleSize } from 'lodash';
+import { sampleSize } from 'lodash';
 
 import { isValidUrl } from 'lib/utils';
 import { isBoolean } from 'lib/utils/boolean';
@@ -21,12 +21,8 @@ const columnDetectors: IColumnDetector[] = [
                 try {
                     const parsed = JSON.parse(value);
                     return (
-                        parsed &&
-                        !(
-                            isBoolean(parsed) ||
-                            isNumeric(parsed) ||
-                            isString(parsed)
-                        )
+                        parsed && // to prevent null
+                        typeof parsed === 'object'
                     );
                 } catch (e) {
                     return false;
