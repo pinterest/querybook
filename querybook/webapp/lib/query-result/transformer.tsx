@@ -97,7 +97,15 @@ const queryResultTransformers: IColumnTransformer[] = [
         auto: true,
         transform: (v: string): React.ReactNode => {
             try {
-                const json = JSON.parse(v);
+                // replace big nubmer as string before the Json parse
+                const json = JSON.parse(
+                    v.replaceAll(/:\s*(\d+)/g, (match, p1) => {
+                        if (Number.isSafeInteger(+p1)) {
+                            return `: ${p1}`;
+                        }
+                        return `: "${p1}"`;
+                    })
+                );
                 // Cannot pass following into <ReactJson />, returning original value in order to protect ReactJson from failing
                 if (!json || isNumeric(json) || isBoolean(json)) {
                     return v;
