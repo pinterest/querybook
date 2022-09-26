@@ -60,7 +60,7 @@
         "immer": "8.0.1",
         "immutable": "3.7.4",
         "jsdiff": "^1.1.1",
-        "json-bigint": "^1.0.0",
+        "json-bigint": "^0.4.0",
         "localforage": "^1.7.3",
         "lodash": "4.17.21",
         "lodash-decorators": "6.0.1",

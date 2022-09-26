@@ -1,4 +1,4 @@
-import { sampleSize } from 'lodash';
+import { isString, sampleSize } from 'lodash';
 
 import { isValidUrl } from 'lib/utils';
 import { isBoolean } from 'lib/utils/boolean';
@@ -20,12 +20,14 @@ const columnDetectors: IColumnDetector[] = [
             detectTypeForValues(values, (value) => {
                 // JSON.parse() can parse boolean and numeric with no issue
                 // but we don't want it to be flagged as a JSON
-                if (isBoolean(value) || isNumeric(value)) {
-                    return false;
-                }
+
                 try {
-                    JSON.parse(value);
-                    return true;
+                    const parsed = JSON.parse(value);
+                    return !(
+                        isBoolean(parsed) ||
+                        isNumeric(parsed) ||
+                        isString(parsed)
+                    );
                 } catch (e) {
                     return false;
                 }
