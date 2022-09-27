@@ -30,7 +30,6 @@ class PrestoCursorMixin(Generic[CursorT, CursorReturnT], ABC):
 
     @property
     def presto_types(self) -> List[PrestoType]:
-        print(self._cursor.description)
         return [PrestoType.from_string(i[1]) for i in self._cursor.description]
 
     @property
