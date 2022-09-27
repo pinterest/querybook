@@ -115,10 +115,7 @@ class MapType(PrestoType):
     def format_data(self, data: Optional[Dict]) -> Optional[Dict]:
         if data is None:
             return data
-        return {
-            self.key_type.format_data(k): self.value_type.format_data(v)
-            for k, v in data.items()
-        }
+        return {k: self.value_type.format_data(v) for k, v in data.items()}
 
 
 @dataclass

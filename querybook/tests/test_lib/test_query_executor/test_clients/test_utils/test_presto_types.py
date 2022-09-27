@@ -156,6 +156,27 @@ from lib.query_executor.clients.utils.presto_types import (
             ),
         ),
         (
+            # select MAP(ARRAY[ARRAY['foo'], ARRAY['bar']], ARRAY[CAST(ROW(1, 2.0) AS ROW(x BIGINT, y DOUBLE)), CAST(ROW(3, 4.0) AS ROW(x BIGINT, y DOUBLE))])
+            "map(array(string), row(x bigint, y double))",
+            MapType(
+                key_type=ArrayType(element_type=AtomicType(type_="string")),
+                value_type=RowType(
+                    fields=OrderedDict(
+                        [
+                            (
+                                "x",
+                                AtomicType(type_="bigint"),
+                            ),
+                            (
+                                "y",
+                                AtomicType(type_="double"),
+                            ),
+                        ]
+                    )
+                ),
+            ),
+        ),
+        (
             "map(string, row(map map(string, string)))",
             MapType(
                 key_type=AtomicType(type_="string"),
@@ -264,6 +285,28 @@ def test_parse_from_string(string_definition: str, exp_type: PrestoType) -> None
             ),
             ({"a": 111, "b": 222},),
             {"map": {"a": 111, "b": 222}},
+        ),
+        (
+            # select MAP(ARRAY[ARRAY['foo' ], ARRAY['bar']], ARRAY[CAST(ROW(1, 2.0) AS ROW(x BIGINT, y DOUBLE)), CAST(ROW(3, 4.0) AS ROW(x BIGINT, y DOUBLE))])
+            MapType(
+                key_type=ArrayType(element_type=AtomicType(type_="string")),
+                value_type=RowType(
+                    fields=OrderedDict(
+                        [
+                            (
+                                "x",
+                                AtomicType(type_="bigint"),
+                            ),
+                            (
+                                "y",
+                                AtomicType(type_="double"),
+                            ),
+                        ]
+                    )
+                ),
+            ),
+            {"[foo]": [1, 2.0], "[bar]": [3, 4.0]},
+            {"[foo]": {"x": 1, "y": 2.0}, "[bar]": {"x": 3, "y": 4.0}},
         ),
     ],
 )
