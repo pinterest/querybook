@@ -90,9 +90,11 @@ function searchDataTable(): ThunkResult<Promise<ITableSearchResult[]>> {
             if (state.searchRequest) {
                 state.searchRequest.cancel();
             }
-            const searchRequest = SearchTableResource.searchConcise(
-                mapStateToSearch(state)
-            );
+            const searchRequest = SearchTableResource.searchConcise({
+                ...mapStateToSearch(state),
+                sort_key: ['schema', 'name'],
+                sort_order: ['asc', 'asc'],
+            });
             dispatch(resetSearchResult());
             dispatch({
                 type: '@@dataTableSearch/DATA_TABLE_SEARCH_STARTED',
