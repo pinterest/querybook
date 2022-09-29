@@ -4,7 +4,7 @@ from .base_query_validator import BaseQueryValidator
 ALL_DEFAULT_QUERY_VALIDATORS = import_modules(
     [
         (
-            "lib.query_analysis..validators.presto_explain_validator",
+            "lib.query_analysis.validation.validators.presto_explain_validator",
             "PrestoExplainValidator",
         ),
     ]
