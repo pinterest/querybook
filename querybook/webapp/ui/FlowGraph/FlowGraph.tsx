@@ -19,7 +19,11 @@ import ReactFlow, {
 } from 'react-flow-renderer';
 
 import { GraphControls } from './GraphControls';
-import { getLayoutedElements, LayoutDirection } from './helpers';
+import {
+    getLayoutedElements,
+    LayoutDirection,
+    MAX_ZOOM_LEVEL,
+} from './helpers';
 
 import './FlowGraph.scss';
 
@@ -179,7 +183,7 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
                 edgeTypes={edgeTypes}
                 onInit={setGraphInstance}
                 fitView
-                maxZoom={1.2}
+                maxZoom={MAX_ZOOM_LEVEL}
             >
                 <ReactFlowPlugins
                     plugins={

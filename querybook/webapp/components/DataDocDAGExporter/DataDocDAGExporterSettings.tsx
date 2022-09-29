@@ -73,16 +73,23 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
                             aria-label="Save progress"
                             data-balloon-pos="up"
                             onClick={() => {
-                                onSave(
+                                toast.promise(
+                                    onSave(
+                                        {
+                                            ...savedMeta.exporter_meta,
+                                            [selectedExporter]: settingValues,
+                                        },
+                                        useTemplatedVariables
+                                    ),
                                     {
-                                        ...savedMeta.exporter_meta,
-                                        [selectedExporter]: settingValues,
+                                        loading: 'Saving progress ...',
+                                        success: 'Progress saved successfully',
+                                        error: 'Failed to save progress',
                                     },
-                                    useTemplatedVariables
+                                    {
+                                        position: 'bottom-center',
+                                    }
                                 );
-                                toast.success('Progress saved successfully', {
-                                    position: 'bottom-center',
-                                });
                             }}
                         />
                         <AsyncButton

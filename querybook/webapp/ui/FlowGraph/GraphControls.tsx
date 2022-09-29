@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
     Controls,
     ReactFlowState,
@@ -9,9 +9,11 @@ import {
 
 import { IconButton } from 'ui/Button/IconButton';
 
-import { getLayoutedElements, LayoutDirection } from './helpers';
-
-import './GraphControls.scss';
+import {
+    getLayoutedElements,
+    LayoutDirection,
+    MAX_ZOOM_LEVEL,
+} from './helpers';
 
 const isInteractiveSelector = (s: ReactFlowState) =>
     s.nodesDraggable && s.nodesConnectable && s.elementsSelectable;
@@ -23,7 +25,7 @@ export const GraphControls = () => {
 
     const reactFlowInstance = useReactFlow();
 
-    const onLayout = React.useCallback((direction: LayoutDirection = 'LR') => {
+    const onLayout = useCallback((direction: LayoutDirection = 'LR') => {
         const layoutedDAG = getLayoutedElements(
             reactFlowInstance.getNodes(),
             reactFlowInstance.getEdges(),
@@ -37,15 +39,15 @@ export const GraphControls = () => {
 
     const onZoomOut = () => zoomOut();
 
-    const onFitView = () => fitView({ maxZoom: 1.2 });
+    const onFitView = () => fitView({ maxZoom: MAX_ZOOM_LEVEL });
 
-    const onToggleInteractivity = () => {
+    const onToggleInteractivity = useCallback(() => {
         store.setState({
             nodesDraggable: !isInteractive,
             nodesConnectable: !isInteractive,
             elementsSelectable: !isInteractive,
         });
-    };
+    }, [store, isInteractive]);
 
     return (
         <Controls
@@ -59,40 +61,40 @@ export const GraphControls = () => {
                 size={18}
                 onClick={() => onLayout('TB')}
                 tooltip={'Layout Vertical'}
-                tooltipPos={'left'}
+                tooltipPos={'right'}
             />
             <IconButton
                 icon="AlignCenterHorizontal"
                 size={18}
                 onClick={() => onLayout('LR')}
                 tooltip={'Layout Horizontal'}
-                tooltipPos={'left'}
+                tooltipPos={'right'}
             />
             <IconButton
                 icon="Plus"
                 size={18}
                 onClick={onZoomIn}
                 tooltip={'Zoom In'}
-                tooltipPos={'left'}
+                tooltipPos={'right'}
             />
             <IconButton
                 icon="Minus"
                 size={18}
                 onClick={onZoomOut}
                 tooltip={'Zoom Out'}
-                tooltipPos={'left'}
+                tooltipPos={'right'}
             />
             <IconButton
                 icon="Maximize"
                 onClick={onFitView}
                 tooltip={'Fit View'}
-                tooltipPos={'left'}
+                tooltipPos={'right'}
             />
             <IconButton
                 icon={isInteractive ? 'Unlock' : 'Lock'}
                 onClick={onToggleInteractivity}
-                tooltip={'Fit View'}
-                tooltipPos={'left'}
+                tooltip={'Toggle Interactivity'}
+                tooltipPos={'right'}
             />
         </Controls>
     );

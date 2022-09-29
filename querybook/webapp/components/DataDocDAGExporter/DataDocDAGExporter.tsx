@@ -31,7 +31,6 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
     onClose,
 }) => {
     const graphRef = React.useRef();
-    const [isExporting, setIsExporting] = React.useState(false);
     const [exportData, setExportData] = React.useState<string>();
     const [exportType, setExportType] = React.useState<string>();
 

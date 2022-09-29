@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Handle, Position, useReactFlow } from 'react-flow-renderer';
 
 import { IconButton } from 'ui/Button/IconButton';
@@ -36,9 +36,9 @@ export const QueryCellNode = React.memo<IProps>(
             selected,
         });
 
-        const deleteNodeById = () => {
+        const deleteNode = useCallback(() => {
             setNodes((nds) => nds.filter((node) => node.id !== id));
-        };
+        }, [id]);
 
         return (
             <div
@@ -65,7 +65,7 @@ export const QueryCellNode = React.memo<IProps>(
                             tooltip="Remove the node"
                             size={10}
                             className="QueryCellNode-toolbar-button"
-                            onClick={deleteNodeById}
+                            onClick={deleteNode}
                         />
                     </div>
                 )}
