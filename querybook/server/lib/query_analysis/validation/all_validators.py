@@ -1,12 +1,14 @@
-from lib.utils.import_helper import import_module_with_default
+from lib.utils.import_helper import import_module_with_default, import_modules
 from .base_query_validator import BaseQueryValidator
-from .validators.presto_explain_validator import (
-    PrestoExplainValidator,
-)
 
-ALL_DEFAULT_QUERY_VALIDATORS = [
-    PrestoExplainValidator,
-]
+ALL_DEFAULT_QUERY_VALIDATORS = import_modules(
+    [
+        (
+            "lib.query_analysis..validators.presto_explain_validator",
+            "PrestoExplainValidator",
+        ),
+    ]
+)
 
 ALL_PLUGIN_QUERY_VALIDATORS_BY_NAME = import_module_with_default(
     "query_validation_plugin", "ALL_PLUGIN_QUERY_VALIDATORS_BY_NAME", default={}
