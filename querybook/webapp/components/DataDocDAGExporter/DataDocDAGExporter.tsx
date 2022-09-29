@@ -8,26 +8,29 @@ import {
 import { useSavedDAG } from 'hooks/dag/useSavedDAG';
 import { DataDocResource } from 'resource/dataDoc';
 import { Button } from 'ui/Button/Button';
+import { IconButton } from 'ui/Button/IconButton';
 import { CopyPasteModal } from 'ui/CopyPasteModal/CopyPasteModal';
 import { Modal } from 'ui/Modal/Modal';
+import { AccentText } from 'ui/StyledText/StyledText';
 
-import { DataDocDAGExporterForm } from './DataDocDAGExporterForm';
 import { DataDocDAGExporterGraph } from './DataDocDAGExporterGraph';
 import { DataDocDagExporterList } from './DataDocDAGExporterList';
+import { DataDocDAGExporterSettings } from './DataDocDAGExporterSettings';
 
 import './DataDocDAGExporter.scss';
 
 interface IProps {
     docId: number;
+    onClose: () => void;
 }
 
 export const queryCellDraggableType = 'QueryCell-';
 
 export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
     docId,
+    onClose,
 }) => {
     const graphRef = React.useRef();
-    const [isExporting, setIsExporting] = React.useState(false);
     const [exportData, setExportData] = React.useState<string>();
     const [exportType, setExportType] = React.useState<string>();
 
@@ -40,7 +43,7 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
 
     const handleExport = React.useCallback(
         async (exporterName: string, exporterSettings: Record<string, any>) => {
-            const meta = { ...savedMeta, [exporterName]: exporterSettings };
+            const meta = { [exporterName]: exporterSettings };
             await onSave(nodes, edges, meta);
 
             const { data: exportData } = await DataDocResource.exportDAG(
@@ -55,69 +58,62 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
 
     return (
         <div className="DataDocDAGExporter">
-            {isExporting ? (
-                <DataDocDAGExporterForm
-                    handleExport={handleExport}
-                    savedMeta={savedMeta}
+            <div className="DataDocDAGExporter-header">
+                <AccentText size="large" weight="bold" color="dark">
+                    DAG Exporter
+                </AccentText>
+                <IconButton
+                    aria-label="close"
+                    icon="X"
+                    onClick={onClose}
+                    noPadding
+                />
+            </div>
+            <div className="DataDocDAGExporter-body">
+                <DataDocDagExporterList queryCells={unusedQueryCells} />
+                <DataDocDAGExporterGraph
+                    dropRef={dropRef}
+                    graphRef={graphRef}
+                    setGraphInstance={setGraphInstance}
                     nodes={nodes}
                     edges={edges}
-                    onSave={onSave}
-                    onReturn={() => setIsExporting(false)}
+                    setNodes={setNodes}
+                    setEdges={setEdges}
                 />
-            ) : (
-                <>
-                    <DataDocDagExporterList queryCells={unusedQueryCells} />
-                    <DataDocDAGExporterGraph
-                        dropRef={dropRef}
-                        graphRef={graphRef}
-                        setGraphInstance={setGraphInstance}
-                        nodes={nodes}
-                        edges={edges}
-                        setNodes={setNodes}
-                        setEdges={setEdges}
-                        onSave={onSave}
-                        onNext={() => setIsExporting(true)}
-                    />
-                </>
-            )}
-            {exportData &&
-                (exportType === 'url' ? (
-                    <Modal
-                        onHide={() => setExportData(undefined)}
-                        title="Export Data"
-                    >
-                        <div className="flex-center mv24">
-                            <Button
-                                icon="ChevronRight"
-                                title="Go To Export"
-                                onClick={() => window.open(exportData)}
-                            />
-                        </div>
-                    </Modal>
-                ) : (
-                    <CopyPasteModal
-                        text={exportData}
-                        title="Export Data"
-                        onHide={() => setExportData(undefined)}
-                    />
-                ))}
+                <DataDocDAGExporterSettings
+                    onExport={handleExport}
+                    savedMeta={savedMeta}
+                    onSave={(exporterMeta, useTemplatedVariables) =>
+                        onSave(
+                            nodes,
+                            edges,
+                            exporterMeta,
+                            useTemplatedVariables
+                        )
+                    }
+                />
+                {exportData &&
+                    (exportType === 'url' ? (
+                        <Modal
+                            onHide={() => setExportData(undefined)}
+                            title="Export Data"
+                        >
+                            <div className="flex-center mv24">
+                                <Button
+                                    icon="ChevronRight"
+                                    title="Go To Export"
+                                    onClick={() => window.open(exportData)}
+                                />
+                            </div>
+                        </Modal>
+                    ) : (
+                        <CopyPasteModal
+                            text={exportData}
+                            title="Export Data"
+                            onHide={() => setExportData(undefined)}
+                        />
+                    ))}
+            </div>
         </div>
     );
 };
-
-export const DataDocDAGExporterSave: React.FunctionComponent<{
-    onSave: () => Promise<any>;
-    onNext: () => void;
-}> = ({ onSave, onNext }) => (
-    <div className="DataDocDAGExporter-bottom flex-row right-align">
-        <Button icon="Save" title="Save Progress" onClick={onSave} />
-        <Button
-            icon="ChevronRight"
-            title="Configure Exporter"
-            onClick={async () => {
-                await onSave();
-                onNext();
-            }}
-        />
-    </div>
-);

@@ -24,12 +24,11 @@ export const DataDocDAGExporterButton: React.FunctionComponent<IProps> = ({
                 title="Exporter"
             />
             {showModal ? (
-                <Modal
-                    onHide={() => setShowModal(false)}
-                    title="DAG Exporter"
-                    type="fullscreen"
-                >
-                    <DataDocDAGExporter docId={docId} />
+                <Modal onHide={() => setShowModal(false)} type="fullscreen">
+                    <DataDocDAGExporter
+                        docId={docId}
+                        onClose={() => setShowModal(false)}
+                    />
                 </Modal>
             ) : null}
         </>

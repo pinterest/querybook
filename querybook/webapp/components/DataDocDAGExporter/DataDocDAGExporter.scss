@@ -3,46 +3,55 @@
     width: 100%;
     overflow: hidden;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 
-    > div {
+    .DataDocDAGExporter-header {
+        display: flex;
+        justify-content: space-between;
         padding: var(--padding);
     }
 
-    .DataDocDAGExporterList {
-        width: 320px;
-        height: 100%;
-        overflow-y: auto;
-        .DataDocDAGExporterListItem {
-            background-color: var(--bg-lightest);
-            border-radius: var(--border-radius-sm);
-            cursor: grab;
+    .DataDocDAGExporter-body {
+        flex: 1;
+        display: flex;
 
-            &:hover {
-                background-color: var(--bg-hover);
+        .DataDocDAGExporterList {
+            width: 320px;
+            overflow-y: auto;
+            padding: 0 var(--padding);
+
+            .DataDocDAGExporterListItem {
+                background-color: var(--bg-lightest);
+                border-radius: var(--border-radius-sm);
+                cursor: grab;
+
+                &:hover {
+                    background-color: var(--bg-hover);
+                }
             }
         }
-    }
 
-    .DataDocDAGExporter-graph-wrapper {
-        width: 100%;
-        height: 100%;
-        .DataDocDAGExporterGraph {
-            width: 100%;
-            height: 100%;
+        .DataDocDAGExporter-graph-wrapper {
+            flex: 1;
+            position: relative;
+
+            .DataDocDAGExporterGraph {
+                width: 100%;
+                height: 100%;
+            }
         }
-    }
-
-    .DataDocDAGExporter-main {
-        flex-grow: 1;
 
         .DataDocDAGExporterSettings {
-            width: 100%;
+            width: 320px;
             height: 100%;
-            .DataDocDAGExporterSettings-form {
-                height: calc(100% - 48px);
-                margin-right: 12px;
+            margin-left: var(--padding);
+            padding: var(--padding);
+            background: var(--bg-lightest);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
 
+            .DataDocDAGExporterSettings-form {
                 > .FormField:first-child {
                     width: 100%;
                     .FormFieldLabelSection {
@@ -50,22 +59,11 @@
                     }
                 }
             }
+
+            .DataDocDAGExporter-bottom {
+                display: flex;
+                justify-content: space-between;
+            }
         }
-    }
-
-    .DataDocDAGExporter-graph-wrapper {
-        height: calc(100% - 48px);
-    }
-
-    .DataDocDAGExporter-graph {
-        width: 50%;
-        min-width: 360px;
-    }
-
-    .DataDocDAGExporter-bottom {
-        width: 100%;
-        height: 48px;
-        padding-right: 12px;
-        padding-left: 12px;
     }
 }
