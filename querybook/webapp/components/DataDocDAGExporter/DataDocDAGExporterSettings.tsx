@@ -1,4 +1,5 @@
 import * as React from 'react';
+import toast from 'react-hot-toast';
 
 import { IDataDocDAGExportMeta } from 'const/datadoc';
 import { useExporterSettings } from 'hooks/dag/useExporterSettings';
@@ -63,29 +64,37 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
                     />
                 )}
             </div>
-            <div className="DataDocDAGExporter-bottom flex-row right-align">
+            <div className="DataDocDAGExporter-bottom">
                 {selectedExporter && (
                     <>
                         <Button
                             icon="Save"
-                            title="Save Progress"
-                            onClick={() =>
+                            title="Save"
+                            aria-label="Save progress"
+                            data-balloon-pos="up"
+                            onClick={() => {
                                 onSave(
                                     {
                                         ...savedMeta.exporter_meta,
                                         [selectedExporter]: settingValues,
                                     },
                                     useTemplatedVariables
-                                )
-                            }
+                                );
+                                toast.success('Progress saved successfully', {
+                                    position: 'bottom-center',
+                                });
+                            }}
                         />
                         <AsyncButton
                             icon="FileOutput"
-                            title={`Export to ${titleize(
+                            title="Export"
+                            aria-label={`Export to ${titleize(
                                 selectedExporter,
                                 '_',
                                 ' '
                             )}`}
+                            data-balloon-pos="up"
+                            color="accent"
                             onClick={handleExport}
                         />
                     </>

@@ -7,7 +7,9 @@
     }
 
     .react-flow__handle {
-        border: 3px solid var(--bg-dark);
+        border: 4px solid var(--bg-dark);
+        width: 8px;
+        height: 8px;
     }
 
     .react-flow__minimap {
