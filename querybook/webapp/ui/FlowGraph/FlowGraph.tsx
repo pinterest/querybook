@@ -7,9 +7,9 @@ import ReactFlow, {
     Background,
     Connection,
     ConnectionLineType,
-    Controls,
     Edge,
     EdgeChange,
+    MarkerType,
     MiniMap,
     Node,
     NodeChange,
@@ -18,12 +18,12 @@ import ReactFlow, {
     useReactFlow,
 } from 'react-flow-renderer';
 
-import { Button } from 'ui/Button/Button';
-import { Icon } from 'ui/Icon/Icon';
-import { KeyboardKey } from 'ui/KeyboardKey/KeyboardKey';
-import { AccentText } from 'ui/StyledText/StyledText';
-
-import { getLayoutedElements, LayoutDirection } from './helpers';
+import { GraphControls } from './GraphControls';
+import {
+    getLayoutedElements,
+    LayoutDirection,
+    MAX_ZOOM_LEVEL,
+} from './helpers';
 
 import './FlowGraph.scss';
 
@@ -135,7 +135,12 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
 }) => {
     const onConnect = useCallback(
         (params: Connection) => {
-            setEdges((eds) => addEdge(params, eds));
+            setEdges((eds) =>
+                addEdge(
+                    { ...params, markerEnd: { type: MarkerType.ArrowClosed } },
+                    eds
+                )
+            );
         },
         [setEdges]
     );
@@ -178,6 +183,7 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
                 edgeTypes={edgeTypes}
                 onInit={setGraphInstance}
                 fitView
+                maxZoom={MAX_ZOOM_LEVEL}
             >
                 <ReactFlowPlugins
                     plugins={
@@ -188,44 +194,6 @@ const InteractiveFlowGraph: React.FunctionComponent<IGraphProps> = ({
                         }
                     }
                 />
-                <div className="flex-column layout-buttons m12">
-                    <div>
-                        <Button
-                            title="Vertical Layout"
-                            icon="AlignCenterVertical"
-                            onClick={() => onLayout('TB')}
-                        />
-                        <Button
-                            title="Horizontal Layout"
-                            icon="AlignCenterHorizontal"
-                            onClick={() => onLayout('LR')}
-                        />
-                    </div>
-                    <div className="FlowGraph-hint flex-row mt12">
-                        <div className="flex-column">
-                            <div>
-                                <KeyboardKey value="backspace" />
-                            </div>
-                            <Icon name="Maximize" size={16} />
-                        </div>
-                        <div className="flex-column">
-                            <AccentText
-                                size="xxsmall"
-                                className="mh8"
-                                color="light"
-                            >
-                                to remove node
-                            </AccentText>
-                            <AccentText
-                                size="xxsmall"
-                                className="mh8"
-                                color="light"
-                            >
-                                to fit all nodes
-                            </AccentText>
-                        </div>
-                    </div>
-                </div>
             </ReactFlow>
         </>
     );
@@ -241,7 +209,7 @@ const ReactFlowPlugins: React.FC<IPluginProps> = ({ plugins }) => {
         <>
             {plugins.miniMap && <MiniMap />}
             {plugins.background && <Background />}
-            {plugins.controls && <Controls />}
+            {plugins.controls && <GraphControls />}
         </>
     );
 };
