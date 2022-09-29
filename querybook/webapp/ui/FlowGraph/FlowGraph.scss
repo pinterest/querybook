@@ -7,7 +7,9 @@
     }
 
     .react-flow__handle {
-        border: 3px solid var(--bg-dark);
+        border: 4px solid var(--bg-dark);
+        width: 8px;
+        height: 8px;
     }
 
     .react-flow__minimap {
@@ -19,13 +21,8 @@
     }
 
     .react-flow__controls {
+        background-color: var(--bg-light);
         border-radius: var(--border-radius-sm);
-        overflow: hidden;
-
-        .react-flow__controls-button {
-            background: var(--bg-light);
-            border-bottom: none;
-        }
     }
 
     .react-flow__attribution {

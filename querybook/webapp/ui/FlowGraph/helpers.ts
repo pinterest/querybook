@@ -7,6 +7,8 @@ dagreGraph.setDefaultEdgeLabel(() => ({}));
 const nodeWidth = 240;
 const nodeHeight = 60;
 
+export const MAX_ZOOM_LEVEL = 1.2;
+
 export type LayoutDirection = 'LR' | 'TB';
 export const getLayoutedElements = (
     nodes: Node[],
