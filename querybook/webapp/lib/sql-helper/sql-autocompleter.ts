@@ -2,7 +2,6 @@ import { getLanguageSetting } from './sql-setting';
 
 import CodeMirror from 'lib/codemirror';
 import { ICodeAnalysis, TableToken } from 'lib/sql-helper/sql-lexer';
-import { fetchDataTableByNameIfNeeded } from 'redux/dataSources/action';
 import { reduxStore } from 'redux/store';
 import { SearchTableResource } from 'resource/search';
 
