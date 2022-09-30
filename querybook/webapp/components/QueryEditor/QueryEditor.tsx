@@ -31,6 +31,8 @@ import { isQueryUsingTemplating } from 'lib/templated-query/validation';
 import { Nullable } from 'lib/typescript';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { analyzeCode } from 'lib/web-worker';
+import { fetchDataTableByNameIfNeeded } from 'redux/dataSources/action';
+import { reduxStore } from 'redux/store';
 import { Button } from 'ui/Button/Button';
 
 import {
@@ -149,6 +151,7 @@ export class QueryEditor extends React.PureComponent<
     private codeAnalysis: ICodeAnalysis = null;
     private editor: CodeMirror.Editor = null;
     private autocomplete: SqlAutoCompleter = null;
+    private fetchedTables = new Set<string>();
 
     public constructor(props) {
         super(props);
@@ -368,11 +371,39 @@ export class QueryEditor extends React.PureComponent<
         });
     }
 
+    // If a table never gets fetched, the column auto completion hint will not work.
+    // Here we'll prefetch all the tables parsed from the qurey editor
+    @bind
+    public prefetchDataTables(codeAnalysis: ICodeAnalysis) {
+        const { metastoreId } = this.props;
+        if (!metastoreId) {
+            return;
+        }
+
+        const tableReferences: TableToken[] = [].concat.apply(
+            [],
+            Object.values(codeAnalysis.lineage.references)
+        );
+
+        for (const { schema, name } of tableReferences) {
+            const fullTableName = `${schema}.${name}`;
+            if (this.fetchedTables.has(fullTableName)) {
+                continue;
+            }
+            reduxStore.dispatch(
+                fetchDataTableByNameIfNeeded(schema, name, metastoreId) as any
+            );
+            this.fetchedTables.add(fullTableName);
+        }
+    }
+
     @throttle(500)
     public makeCodeAnalysis(value: string) {
         analyzeCode(value, 'autocomplete', this.props.language).then(
             (codeAnalysis) => {
                 this.codeAnalysis = codeAnalysis;
+                this.prefetchDataTables(codeAnalysis);
+
                 if (this.autocomplete) {
                     this.autocomplete.updateCodeAnalysis(this.codeAnalysis);
                 }

@@ -411,24 +411,6 @@ export class SqlAutoCompleter {
         }[type];
     }
 
-    // Event handler when a hint is selected
-    private onHintSelected(selectedHint: ICompletionRow) {
-        // If a table never gets fetched, the column auto completion hint will not work.
-        // Here we'll fetch it when user picks a table from the table auto completion hint.
-        if (this.metastoreId && selectedHint.tooltip === 'table') {
-            const [schema, table] = selectedHint.label.split('.');
-            if (schema && table) {
-                reduxStore.dispatch(
-                    fetchDataTableByNameIfNeeded(
-                        schema,
-                        table,
-                        this.metastoreId
-                    ) as any
-                );
-            }
-        }
-    }
-
     private getSqlHint(
         editor: CodeMirror.Editor,
         options: {
@@ -519,19 +501,11 @@ export class SqlAutoCompleter {
                 .sort((a, b) => b.score - a.score)
                 .slice(0, RESULT_MAX_LENGTH);
 
-            const completionObj = {
+            resolve({
                 list: processedList,
                 from: this.Pos(cursor.line, start),
                 to: this.Pos(cursor.line, end),
-            };
-
-            CodeMirror.on(
-                completionObj,
-                'pick',
-                this.onHintSelected.bind(this)
-            );
-
-            resolve(completionObj);
+            });
         });
     }
 }
