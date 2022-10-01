@@ -244,6 +244,31 @@ def recover_query_engine(
     logic.recover_query_engine_by_id(id)
 
 
+@register("/admin/query_engine/<int:id>/users/", methods=["GET"])
+@admin_only
+def get_users_in_query_engine(
+    id,
+    limit,
+    offset,
+):
+    with DBSession() as session:
+        return logic.get_users_in_query_engine(id, offset, limit, session=session)
+
+
+@register("/admin/query_engine/<int:id>/user/<int:uid>/", methods=["POST", "PUT"])
+@admin_only
+@with_admin_audit_log(AdminItemType.QueryEngine, AdminOperation.UPDATE)
+def add_user_to_query_engine(id, uid):
+    logic.add_user_to_query_engine(uid, id)
+
+
+@register("/admin/query_engine/<int:id>/user/<int:uid>/", methods=["DELETE"])
+@admin_only
+@with_admin_audit_log(AdminItemType.QueryEngine, AdminOperation.UPDATE)
+def remove_user_from_query_engine(id, uid):
+    logic.remove_user_to_query_engine(uid, id)
+
+
 @register(
     "/admin/query_metastore_loader/",
     methods=["GET"],

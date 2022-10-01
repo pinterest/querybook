@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux';
 
 import { QuerySnippetComposer } from 'components/QuerySnippetComposer/QuerySnippetComposer';
 import { titleize } from 'lib/utils';
-import { queryEngineSelector } from 'redux/queryEngine/selector';
+import { availableQueryEngineSelector } from 'redux/queryEngine/selector';
 import * as querySnippetsActions from 'redux/querySnippets/action';
 import {
     IQuerySnippet,
@@ -315,7 +315,7 @@ function mapStateToProps(state: IStoreState) {
     return {
         querySnippetById: state.querySnippets.querySnippetById,
         querySnippetIds: state.querySnippets.querySnippetIds,
-        queryEngines: queryEngineSelector(state),
+        queryEngines: availableQueryEngineSelector(state),
     };
 }
 

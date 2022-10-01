@@ -9,8 +9,8 @@ import { getTemplatedQueryVariables } from 'lib/templated-query';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import {
+    availableQueryEngineSelector,
     queryEngineByIdEnvSelector,
-    queryEngineSelector,
 } from 'redux/queryEngine/selector';
 import * as querySnippetsActions from 'redux/querySnippets/action';
 import { IQueryForm, IQuerySnippet } from 'redux/querySnippets/types';
@@ -526,7 +526,7 @@ class QuerySnippetComposerComponent extends React.PureComponent<
 }
 
 const mapStateToProps = (state: IStoreState) => ({
-    queryEngines: queryEngineSelector(state),
+    queryEngines: availableQueryEngineSelector(state),
     queryEngineById: queryEngineByIdEnvSelector(state),
     user: state.user.myUserInfo,
 });

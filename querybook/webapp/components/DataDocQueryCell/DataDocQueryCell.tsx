@@ -38,8 +38,8 @@ import { doesLanguageSupportUDF } from 'lib/utils/udf';
 import * as dataSourcesActions from 'redux/dataSources/action';
 import { setSidebarTableId } from 'redux/querybookUI/action';
 import {
+    availableQueryEngineSelector,
     queryEngineByIdEnvSelector,
-    queryEngineSelector,
 } from 'redux/queryEngine/selector';
 import { createQueryExecution } from 'redux/queryExecutions/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
@@ -913,7 +913,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 }
 
 function mapStateToProps(state: IStoreState) {
-    const queryEngines = queryEngineSelector(state);
+    const queryEngines = availableQueryEngineSelector(state);
 
     return {
         queryTranspilers: state.queryEngine.queryTranspilers,

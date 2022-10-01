@@ -1,6 +1,8 @@
 import { IAdminQueryEngine, IQueryEngineTemplate } from 'const/admin';
 import type { IEngineStatusData, IQueryValidator } from 'const/queryEngine';
+import { IUserInfo } from 'const/user';
 import ds from 'lib/datasource';
+import { IPaginatedResource } from 'resource/types';
 
 export const AdminQueryEngineResource = {
     getAll: () => ds.fetch<IAdminQueryEngine[]>('/admin/query_engine/'),
@@ -50,4 +52,18 @@ export const AdminQueryEngineResource = {
             executor_params: queryEngine.executor_params,
             feature_params: queryEngine.feature_params,
         }),
+
+    getPaginatedUsers:
+        (queryEngineId: number): IPaginatedResource<IUserInfo> =>
+        (limit, offset) =>
+            ds.fetch(`/admin/query_engine/${queryEngineId}/users/`, {
+                limit,
+                offset,
+            }),
+
+    addUser: (queryEngineId: number, uid: number) =>
+        ds.save<null>(`/admin/query_engine/${queryEngineId}/user/${uid}/`),
+
+    removeUser: (queryEngineId: number, uid: number) =>
+        ds.delete(`/admin/query_engine/${queryEngineId}/user/${uid}/`),
 };

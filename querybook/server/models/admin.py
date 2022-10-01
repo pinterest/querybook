@@ -105,6 +105,12 @@ class QueryEngine(CRUDMixin, Base):
         ),
     )
 
+    users = relationship(
+        "User",
+        secondary="user_query_engine",
+        backref=backref("query_engines"),
+    )
+
     def to_dict(self):
         # IMPORTANT: do not expose executor params unless it is for admin
         return {
@@ -139,6 +145,21 @@ class QueryEngine(CRUDMixin, Base):
 
     def get_feature_params(self):
         return self.feature_params or {}
+
+
+class UserQueryEngine(CRUDMixin, Base):
+    __tablename__ = "user_query_engine"
+
+    id = sql.Column(sql.Integer, primary_key=True, autoincrement=True)
+    query_engine_id = sql.Column(
+        sql.Integer,
+        sql.ForeignKey("query_engine.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    user_id = sql.Column(
+        sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"), nullable=False
+    )
+    created_at = sql.Column(sql.DateTime, default=now)
 
 
 class QueryMetastore(CRUDMixin, Base):

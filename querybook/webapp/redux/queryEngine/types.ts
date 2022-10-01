@@ -39,11 +39,19 @@ export interface IQueryTranspilerReceiveAction extends Action {
     };
 }
 
+export interface IReceiveUserQueryEnginesAction extends Action {
+    type: '@@queryEngine/RECEIVE_USER_QUERY_ENGINE_IDS';
+    payload: {
+        userQueryEngineIds: number[];
+    };
+}
+
 export type QueryEngineAction =
     | IQueryEngineReceiveAction
     | IQueryEngineStatusLoadingAction
     | IQueryEngineStatusReceiveAction
-    | IQueryTranspilerReceiveAction;
+    | IQueryTranspilerReceiveAction
+    | IReceiveUserQueryEnginesAction;
 
 export type ThunkResult<R> = ThunkAction<
     R,
@@ -63,4 +71,5 @@ export interface IQueryEngineState {
     queryEngineById: Record<number, IQueryEngine>;
     queryEngineStatusById: Record<number, IQueryEngineStatus>;
     queryTranspilers: IQueryTranspiler[];
+    userQueryEngineIds: Set<number>;
 }

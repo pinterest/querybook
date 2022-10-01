@@ -6,6 +6,7 @@ from sqlalchemy import or_
 from datetime import date
 
 from app.db import with_session
+from logic.user import get_user_by_id
 
 from models.admin import (
     QueryEngine,
@@ -13,12 +14,14 @@ from models.admin import (
     QueryMetastore,
     APIAccessToken,
     Announcement,
+    UserQueryEngine,
 )
 from logic.schedule import (
     create_task_schedule,
     delete_task_schedule,
     get_task_schedule_by_name,
 )
+from models.user import User
 
 
 """
@@ -51,6 +54,28 @@ def get_query_engines_by_environment(environment_id, ordered=False, session=None
         query = query.order_by(QueryEngineEnvironment.engine_order)
 
     return query.all()
+
+
+@with_session
+def get_all_accessible_query_engine_ids_by_uid(uid, session=None):
+    return list(
+        map(
+            lambda r: r[0],
+            (
+                session.query(QueryEngine.id)
+                .outerjoin(UserQueryEngine)
+                .filter(QueryEngine.deleted_at.is_(None))
+                .filter(
+                    or_(
+                        UserQueryEngine.user_id == uid,
+                        # If no user is assigned, then the engine is public
+                        UserQueryEngine.user_id.is_(None),
+                    )
+                )
+                .all()
+            ),
+        )
+    )
 
 
 @with_session
@@ -160,6 +185,55 @@ def recover_query_engine_by_id(id, commit=True, session=None):
         query_engine.deleted_at = None
         if commit:
             session.commit()
+
+
+@with_session
+def get_users_in_query_engine(query_engine_id, offset=0, limit=100, session=None):
+    return (
+        session.query(User)
+        .join(UserQueryEngine)
+        .filter(UserQueryEngine.query_engine_id == query_engine_id)
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
+
+
+@with_session
+def add_user_to_query_engine(uid, query_engine_id, commit=True, session=None):
+    user = get_user_by_id(uid, session=session)
+    query_engine = get_query_engine_by_id(query_engine_id, session=session)
+
+    if user and query_engine:
+        query_engine.users.append(user)
+
+        if commit:
+            session.commit()
+        else:
+            session.flush()
+
+
+@with_session
+def remove_user_to_query_engine(uid, query_engine_id, commit=True, session=None):
+    user = get_user_by_id(uid, session=session)
+    query_engine = get_query_engine_by_id(query_engine_id, session=session)
+
+    if user and query_engine:
+        session.query(UserQueryEngine).filter_by(
+            query_engine_id=query_engine_id, user_id=uid
+        ).delete()
+
+        if commit:
+            session.commit()
+        else:
+            session.flush()
+
+
+"""
+    ---------------------------------------------------------------------------------------------------------
+    ANNOUNCEMENTS
+    ---------------------------------------------------------------------------------------------------------
+"""
 
 
 @with_session
