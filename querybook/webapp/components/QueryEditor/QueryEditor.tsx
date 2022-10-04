@@ -151,7 +151,6 @@ export class QueryEditor extends React.PureComponent<
     private codeAnalysis: ICodeAnalysis = null;
     private editor: CodeMirror.Editor = null;
     private autocomplete: SqlAutoCompleter = null;
-    private fetchedTables = new Set<string>();
 
     public constructor(props) {
         super(props);
@@ -375,8 +374,8 @@ export class QueryEditor extends React.PureComponent<
     // Here we'll prefetch all the tables parsed from the qurey editor
     @bind
     public prefetchDataTables(codeAnalysis: ICodeAnalysis) {
-        const { metastoreId } = this.props;
-        if (!metastoreId) {
+        const { getTableByName } = this.props;
+        if (!getTableByName) {
             return;
         }
 
@@ -386,14 +385,7 @@ export class QueryEditor extends React.PureComponent<
         );
 
         for (const { schema, name } of tableReferences) {
-            const fullTableName = `${schema}.${name}`;
-            if (this.fetchedTables.has(fullTableName)) {
-                continue;
-            }
-            reduxStore.dispatch(
-                fetchDataTableByNameIfNeeded(schema, name, metastoreId) as any
-            );
-            this.fetchedTables.add(fullTableName);
+            getTableByName(schema, name);
         }
     }
 
