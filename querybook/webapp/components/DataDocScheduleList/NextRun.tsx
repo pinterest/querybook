@@ -1,4 +1,4 @@
-import { getFutureMatches } from '@datasert/cronjs-matcher';
+import { parseExpression } from 'cron-parser';
 import moment from 'moment';
 import React, { useMemo } from 'react';
 
@@ -11,7 +11,7 @@ export const NextRun: React.FunctionComponent<{ cron?: string }> = ({
         if (!cron) {
             return null;
         }
-        const [nextDate] = getFutureMatches(cron);
+        const nextDate = parseExpression(cron).next().toDate();
         return generateFormattedDate(moment(nextDate).unix());
     }, [cron]);
 

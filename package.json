@@ -1,6 +1,6 @@
 {
     "name": "querybook",
-    "version": "3.11.2",
+    "version": "3.11.3",
     "description": "A Big Data Webapp",
     "private": true,
     "scripts": {
@@ -36,7 +36,6 @@
         "@babel/preset-env": "^7.16.0",
         "@babel/preset-react": "^7.16.0",
         "@babel/preset-typescript": "^7.16.0",
-        "@datasert/cronjs-matcher": "^1.2.0",
         "@types/diff": "^5.0.2",
         "@welldone-software/why-did-you-render": "^6.1.1",
         "axios": "0.21.1",
@@ -49,6 +48,7 @@
         "codemirror": "^5.64.0",
         "core-decorators": "0.20.0",
         "core-js": "^3.19.1",
+        "cron-parser": "4.6.0",
         "dagre": "^0.8.5",
         "draft-js": "0.11.7",
         "draft-js-export-html": "^1.4.1",
