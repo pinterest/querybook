@@ -116,7 +116,7 @@ def update_datadoc_schedule_owner(
     if not task_schedule:
         return
 
-    task_schedule.kwargs |= {"user_id": owner_id}
+    task_schedule.kwargs = {**task_schedule.kwargs, "user_id": owner_id}
 
     if commit:
         session.commit()
