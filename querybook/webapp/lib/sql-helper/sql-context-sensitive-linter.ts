@@ -1,50 +1,17 @@
-import { ILineage, ILinterWarning, TableToken } from './sql-lexer';
+import { ILinterWarning, TableToken } from './sql-lexer';
 
 import { DataTableWarningSeverity } from 'const/metastore';
-import { fetchDataTableByNameIfNeeded } from 'redux/dataSources/action';
 import { reduxStore } from 'redux/store';
 
-const tableDoesNotExistCache = new Set();
-
-export async function getContextSensitiveWarnings(
+export function getContextSensitiveWarnings(
     metastoreId: number,
-    lineage: ILineage
+    tableReferences: TableToken[]
 ) {
     const contextSensitiveWarnings: ILinterWarning[] = [];
-    const statements = Object.values(lineage.references || {});
-
-    let allTables: TableToken[] = [];
-    for (const statement of statements) {
-        allTables = allTables.concat(statement);
-    }
-
-    const tablesGettingLoaded = new Set();
-    const tableLoadPromises: Array<Promise<any>> = [];
-    for (const table of allTables) {
-        const fullName = `${table.schema}.${table.name}`;
-        if (
-            !(
-                tablesGettingLoaded.has(fullName) ||
-                tableDoesNotExistCache.has(fullName)
-            )
-        ) {
-            tableLoadPromises.push(
-                reduxStore.dispatch(
-                    fetchDataTableByNameIfNeeded(
-                        table.schema,
-                        table.name,
-                        metastoreId
-                    ) as any
-                )
-            );
-            tablesGettingLoaded.add(fullName);
-        }
-    }
-    await Promise.all(tableLoadPromises);
 
     const { dataTableNameToId, dataTablesById, dataTableWarningById } =
         reduxStore.getState().dataSources;
-    for (const table of allTables) {
+    for (const table of tableReferences) {
         const implicitSchema = table.end - table.start === table.name.length;
         const fullName = `${table.schema}.${table.name}`;
         const tableExists = fullName in (dataTableNameToId[metastoreId] || {});
@@ -64,7 +31,6 @@ export async function getContextSensitiveWarnings(
                     ch: table.end,
                 },
             });
-            tableDoesNotExistCache.add(fullName);
         } else {
             const tableId = dataTableNameToId[metastoreId][fullName];
             const dataTable = dataTablesById[tableId];

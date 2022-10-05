@@ -19,6 +19,7 @@ import {
     ExcludedTriggerKeys,
     SqlAutoCompleter,
 } from 'lib/sql-helper/sql-autocompleter';
+import { getContextSensitiveWarnings } from 'lib/sql-helper/sql-context-sensitive-linter';
 import { format } from 'lib/sql-helper/sql-formatter';
 import {
     ICodeAnalysis,
@@ -31,8 +32,6 @@ import { isQueryUsingTemplating } from 'lib/templated-query/validation';
 import { Nullable } from 'lib/typescript';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { analyzeCode } from 'lib/web-worker';
-import { fetchDataTableByNameIfNeeded } from 'redux/dataSources/action';
-import { reduxStore } from 'redux/store';
 import { Button } from 'ui/Button/Button';
 
 import {
@@ -196,17 +195,16 @@ export class QueryEditor extends React.PureComponent<
         >,
         keyMap: CodeMirrorKeyMap
     ) {
-        const lintingOptions =
-            getLintErrors && !readOnly
-                ? {
-                      lint: {
-                          // Lint only when you can edit
-                          getAnnotations: this.getLintAnnotations,
-                          async: true,
-                          lintOnChange: false,
-                      },
-                  }
-                : {};
+        const lintingOptions = !readOnly
+            ? {
+                  lint: {
+                      // Lint only when you can edit
+                      getAnnotations: this.getLintAnnotations,
+                      async: true,
+                      lintOnChange: false,
+                  },
+              }
+            : {};
 
         const options = {
             // lineNumbers: true,
@@ -370,23 +368,25 @@ export class QueryEditor extends React.PureComponent<
         });
     }
 
-    // If a table never gets fetched, the column auto completion hint will not work.
-    // Here we'll prefetch all the tables parsed from the qurey editor
     @bind
-    public prefetchDataTables(codeAnalysis: ICodeAnalysis) {
+    public async prefetchDataTables(tableReferences: TableToken[]) {
         const { getTableByName } = this.props;
         if (!getTableByName) {
             return;
         }
 
-        const tableReferences: TableToken[] = [].concat.apply(
-            [],
-            Object.values(codeAnalysis.lineage.references)
-        );
+        const tablesGettingLoaded = new Set();
 
+        const tableLoadPromises = [];
         for (const { schema, name } of tableReferences) {
-            getTableByName(schema, name);
+            const fullName = `${schema}.${name}`;
+            if (!tablesGettingLoaded.has(fullName)) {
+                tableLoadPromises.push(getTableByName(schema, name));
+                tablesGettingLoaded.add(fullName);
+            }
         }
+
+        return await Promise.all(tableLoadPromises);
     }
 
     @throttle(500)
@@ -394,7 +394,6 @@ export class QueryEditor extends React.PureComponent<
         analyzeCode(value, 'autocomplete', this.props.language).then(
             (codeAnalysis) => {
                 this.codeAnalysis = codeAnalysis;
-                this.prefetchDataTables(codeAnalysis);
 
                 if (this.autocomplete) {
                     this.autocomplete.updateCodeAnalysis(this.codeAnalysis);
@@ -416,7 +415,24 @@ export class QueryEditor extends React.PureComponent<
         _options: any,
         editor: CodeMirror.Editor
     ) {
-        const { getLintErrors, onLintCompletion } = this.props;
+        const { metastoreId, getLintErrors, onLintCompletion } = this.props;
+
+        const annotations = [];
+
+        // preftech tables and get table warning annotations
+        if (metastoreId && this.codeAnalysis) {
+            const tableReferences = [].concat.apply(
+                [],
+                Object.values(this.codeAnalysis.lineage.references)
+            );
+            await this.prefetchDataTables(tableReferences);
+
+            const contextSensitiveWarnings = getContextSensitiveWarnings(
+                metastoreId,
+                tableReferences
+            );
+            annotations.push(...contextSensitiveWarnings);
+        }
 
         // if query is empty skip check
         // if it is using templating, also skip check since
@@ -430,7 +446,7 @@ export class QueryEditor extends React.PureComponent<
             if (onLintCompletion) {
                 onLintCompletion(false);
             }
-            onComplete([]);
+            onComplete(annotations);
             return;
         }
 
@@ -438,7 +454,9 @@ export class QueryEditor extends React.PureComponent<
         if (onLintCompletion) {
             onLintCompletion(warnings.length > 0);
         }
-        onComplete(warnings);
+
+        annotations.push(...warnings);
+        onComplete(annotations);
     }
 
     @bind
