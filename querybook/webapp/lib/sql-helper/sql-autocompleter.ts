@@ -184,6 +184,14 @@ export class SqlAutoCompleter {
             }
         }
 
+        // If user already has typed the full keyword, dont show the hint
+        if (
+            result.length === 1 &&
+            searchStr.toUpperCase() === result[0].text.toUpperCase()
+        ) {
+            return [];
+        }
+
         return result;
     }
 
