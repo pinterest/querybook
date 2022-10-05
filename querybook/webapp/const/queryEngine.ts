@@ -1,3 +1,5 @@
+import { Nullable } from 'lib/typescript';
+
 export interface IQueryEngine {
     id: number;
 
@@ -46,4 +48,9 @@ export interface IQueryTranspiler {
     name: string;
     from_languages: string[];
     to_languages: string[];
+}
+
+export interface ITranspiledQuery {
+    transpiled_query: string;
+    original_query?: Nullable<string>;
 }

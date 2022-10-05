@@ -22,6 +22,10 @@ QUERYBOOK_TO_SQLGLOT_LANGUAGE_MAPPING = {
 }
 
 
+def statements_to_query(statements: List[str]):
+    return "\n".join(statement + ";" for statement in statements)
+
+
 class SQLGlotTranspiler(BaseQueryTranspiler):
     def name(self) -> str:
         return "SQLGlotTranspiler"
@@ -33,10 +37,24 @@ class SQLGlotTranspiler(BaseQueryTranspiler):
         return list(QUERYBOOK_TO_SQLGLOT_LANGUAGE_MAPPING.keys())
 
     def transpile(self, query: str, from_language: str, to_language: str):
+        sqlglot_from_language = QUERYBOOK_TO_SQLGLOT_LANGUAGE_MAPPING[from_language]
+        sqlglot_to_language = QUERYBOOK_TO_SQLGLOT_LANGUAGE_MAPPING[to_language]
+
         transpiled_statements = sqlglot.transpile(
             query,
-            read=QUERYBOOK_TO_SQLGLOT_LANGUAGE_MAPPING[from_language],
-            write=QUERYBOOK_TO_SQLGLOT_LANGUAGE_MAPPING[to_language],
+            read=sqlglot_from_language,
+            write=sqlglot_to_language,
             pretty=True,
         )
-        return "\n".join(statement + ";" for statement in transpiled_statements)
+
+        original_formatted_statements = sqlglot.transpile(
+            query,
+            read=sqlglot_from_language,
+            write=sqlglot_from_language,
+            pretty=True,
+        )
+
+        return {
+            "transpiled_query": statements_to_query(transpiled_statements),
+            "original_query": statements_to_query(original_formatted_statements),
+        }
