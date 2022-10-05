@@ -150,6 +150,7 @@ export class QueryEditor extends React.PureComponent<
     private codeAnalysis: ICodeAnalysis = null;
     private editor: CodeMirror.Editor = null;
     private autocomplete: SqlAutoCompleter = null;
+    private tablesGettingLoaded = new Set<string>();
 
     public constructor(props) {
         super(props);
@@ -375,14 +376,12 @@ export class QueryEditor extends React.PureComponent<
             return;
         }
 
-        const tablesGettingLoaded = new Set();
-
         const tableLoadPromises = [];
         for (const { schema, name } of tableReferences) {
             const fullName = `${schema}.${name}`;
-            if (!tablesGettingLoaded.has(fullName)) {
+            if (!this.tablesGettingLoaded.has(fullName)) {
                 tableLoadPromises.push(getTableByName(schema, name));
-                tablesGettingLoaded.add(fullName);
+                this.tablesGettingLoaded.add(fullName);
             }
         }
 
@@ -419,7 +418,7 @@ export class QueryEditor extends React.PureComponent<
 
         const annotations = [];
 
-        // preftech tables and get table warning annotations
+        // prefetch tables and get table warning annotations
         if (metastoreId && this.codeAnalysis) {
             const tableReferences = [].concat.apply(
                 [],
@@ -429,7 +428,8 @@ export class QueryEditor extends React.PureComponent<
 
             const contextSensitiveWarnings = getContextSensitiveWarnings(
                 metastoreId,
-                tableReferences
+                tableReferences,
+                !!getLintErrors
             );
             annotations.push(...contextSensitiveWarnings);
         }
@@ -437,25 +437,18 @@ export class QueryEditor extends React.PureComponent<
         // if query is empty skip check
         // if it is using templating, also skip check since
         // there is no reliable way to map it back
-        if (
-            code.length === 0 ||
-            isQueryUsingTemplating(code) ||
-            !getLintErrors
-        ) {
-            // purge previous lint errors
-            if (onLintCompletion) {
-                onLintCompletion(false);
-            }
-            onComplete(annotations);
-            return;
+        if (code.length > 0 && !isQueryUsingTemplating(code) && getLintErrors) {
+            const warnings = await getLintErrors(code, editor);
+            annotations.push(...warnings);
         }
 
-        const warnings = await getLintErrors(code, editor);
         if (onLintCompletion) {
-            onLintCompletion(warnings.length > 0);
+            onLintCompletion(
+                annotations.filter((warning) => warning.severity === 'error')
+                    .length > 0
+            );
         }
 
-        annotations.push(...warnings);
         onComplete(annotations);
     }
 

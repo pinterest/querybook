@@ -5,7 +5,8 @@ import { reduxStore } from 'redux/store';
 
 export function getContextSensitiveWarnings(
     metastoreId: number,
-    tableReferences: TableToken[]
+    tableReferences: TableToken[],
+    ignoreTableNotExistWarnings: boolean
 ) {
     const contextSensitiveWarnings: ILinterWarning[] = [];
 
@@ -17,20 +18,22 @@ export function getContextSensitiveWarnings(
         const tableExists = fullName in (dataTableNameToId[metastoreId] || {});
 
         if (!tableExists) {
-            contextSensitiveWarnings.push({
-                message: `Table ${table.name} is newly created or does not exist`,
-                severity: 'warning',
-                from: {
-                    line: table.line,
-                    ch: implicitSchema
-                        ? table.start
-                        : table.start + table.schema.length + 1,
-                },
-                to: {
-                    line: table.line,
-                    ch: table.end,
-                },
-            });
+            if (!ignoreTableNotExistWarnings) {
+                contextSensitiveWarnings.push({
+                    message: `Table ${table.name} is newly created or does not exist`,
+                    severity: 'warning',
+                    from: {
+                        line: table.line,
+                        ch: implicitSchema
+                            ? table.start
+                            : table.start + table.schema.length + 1,
+                    },
+                    to: {
+                        line: table.line,
+                        ch: table.end,
+                    },
+                });
+            }
         } else {
             const tableId = dataTableNameToId[metastoreId][fullName];
             const dataTable = dataTablesById[tableId];
