@@ -386,7 +386,7 @@ export class QueryEditor extends React.PureComponent<
             }
         }
 
-        return await Promise.all(tableLoadPromises);
+        return Promise.all(tableLoadPromises);
     }
 
     @throttle(500)
