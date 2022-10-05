@@ -19,6 +19,7 @@ import {
     ExcludedTriggerKeys,
     SqlAutoCompleter,
 } from 'lib/sql-helper/sql-autocompleter';
+import { getContextSensitiveWarnings } from 'lib/sql-helper/sql-context-sensitive-linter';
 import { format } from 'lib/sql-helper/sql-formatter';
 import {
     ICodeAnalysis,
@@ -149,6 +150,7 @@ export class QueryEditor extends React.PureComponent<
     private codeAnalysis: ICodeAnalysis = null;
     private editor: CodeMirror.Editor = null;
     private autocomplete: SqlAutoCompleter = null;
+    private tablesGettingLoaded = new Set<string>();
 
     public constructor(props) {
         super(props);
@@ -194,17 +196,16 @@ export class QueryEditor extends React.PureComponent<
         >,
         keyMap: CodeMirrorKeyMap
     ) {
-        const lintingOptions =
-            getLintErrors && !readOnly
-                ? {
-                      lint: {
-                          // Lint only when you can edit
-                          getAnnotations: this.getLintAnnotations,
-                          async: true,
-                          lintOnChange: false,
-                      },
-                  }
-                : {};
+        const lintingOptions = !readOnly
+            ? {
+                  lint: {
+                      // Lint only when you can edit
+                      getAnnotations: this.getLintAnnotations,
+                      async: true,
+                      lintOnChange: false,
+                  },
+              }
+            : {};
 
         const options = {
             // lineNumbers: true,
@@ -368,11 +369,31 @@ export class QueryEditor extends React.PureComponent<
         });
     }
 
+    @bind
+    public async prefetchDataTables(tableReferences: TableToken[]) {
+        const { getTableByName } = this.props;
+        if (!getTableByName) {
+            return;
+        }
+
+        const tableLoadPromises = [];
+        for (const { schema, name } of tableReferences) {
+            const fullName = `${schema}.${name}`;
+            if (!this.tablesGettingLoaded.has(fullName)) {
+                tableLoadPromises.push(getTableByName(schema, name));
+                this.tablesGettingLoaded.add(fullName);
+            }
+        }
+
+        await Promise.all(tableLoadPromises);
+    }
+
     @throttle(500)
     public makeCodeAnalysis(value: string) {
         analyzeCode(value, 'autocomplete', this.props.language).then(
             (codeAnalysis) => {
                 this.codeAnalysis = codeAnalysis;
+
                 if (this.autocomplete) {
                     this.autocomplete.updateCodeAnalysis(this.codeAnalysis);
                 }
@@ -393,29 +414,42 @@ export class QueryEditor extends React.PureComponent<
         _options: any,
         editor: CodeMirror.Editor
     ) {
-        const { getLintErrors, onLintCompletion } = this.props;
+        const { metastoreId, getLintErrors, onLintCompletion } = this.props;
+
+        const annotations = [];
+
+        // prefetch tables and get table warning annotations
+        if (metastoreId && this.codeAnalysis) {
+            const tableReferences = [].concat.apply(
+                [],
+                Object.values(this.codeAnalysis.lineage.references)
+            );
+            await this.prefetchDataTables(tableReferences);
+
+            const contextSensitiveWarnings = getContextSensitiveWarnings(
+                metastoreId,
+                tableReferences,
+                !!getLintErrors
+            );
+            annotations.push(...contextSensitiveWarnings);
+        }
 
         // if query is empty skip check
         // if it is using templating, also skip check since
         // there is no reliable way to map it back
-        if (
-            code.length === 0 ||
-            isQueryUsingTemplating(code) ||
-            !getLintErrors
-        ) {
-            // purge previous lint errors
-            if (onLintCompletion) {
-                onLintCompletion(false);
-            }
-            onComplete([]);
-            return;
+        if (code.length > 0 && !isQueryUsingTemplating(code) && getLintErrors) {
+            const warnings = await getLintErrors(code, editor);
+            annotations.push(...warnings);
         }
 
-        const warnings = await getLintErrors(code, editor);
         if (onLintCompletion) {
-            onLintCompletion(warnings.length > 0);
+            onLintCompletion(
+                annotations.filter((warning) => warning.severity === 'error')
+                    .length > 0
+            );
         }
-        onComplete(warnings);
+
+        onComplete(annotations);
     }
 
     @bind
