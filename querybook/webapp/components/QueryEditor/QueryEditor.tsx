@@ -75,7 +75,10 @@ export interface IQueryEditorProps extends IStyledQueryEditorProps {
 
 export interface IQueryEditorHandles {
     getEditor: () => CodeMirror.Editor;
-    formatQuery: (options?: {}) => void;
+    formatQuery: (options?: {
+        case?: 'lower' | 'upper';
+        indent?: string;
+    }) => void;
     getEditorSelection: (editor?: CodeMirror.Editor) => IRange;
 }
 
