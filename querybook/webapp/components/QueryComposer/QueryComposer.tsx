@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { DataDocTemplateInfoButton } from 'components/DataDocTemplateButton/DataDocTemplateInfoButton';
 import { DataDocTemplateVarForm } from 'components/DataDocTemplateButton/DataDocTemplateVarForm';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
-import { QueryEditor } from 'components/QueryEditor/QueryEditor';
+import { IQueryEditorHandles } from 'components/QueryEditor/QueryEditor';
 import {
     IQueryRunButtonHandles,
     QueryRunButton,
@@ -219,7 +219,7 @@ const useQueryComposerSearchAndReplace = (
 };
 
 function useQueryEditorHelpers() {
-    const queryEditorRef = useRef<QueryEditor>(null);
+    const queryEditorRef = useRef<IQueryEditorHandles>(null);
     const handleFormatQuery = useCallback(() => {
         if (queryEditorRef.current) {
             queryEditorRef.current.formatQuery();

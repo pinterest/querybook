@@ -12,10 +12,14 @@ import {
 } from 'redux/dataSources/action';
 import { IStoreState } from 'redux/store/types';
 
-import { IQueryEditorProps, QueryEditor } from './QueryEditor';
+import {
+    IQueryEditorHandles,
+    IQueryEditorProps,
+    QueryEditor,
+} from './QueryEditor';
 
 export const BoundQueryEditor = React.forwardRef<
-    QueryEditor,
+    IQueryEditorHandles,
     Omit<
         IQueryEditorProps,
         | 'theme'
@@ -42,7 +46,7 @@ export const BoundQueryEditor = React.forwardRef<
     ) => {
         const dispatch = useDispatch();
         const searchContext = useContext(SearchAndReplaceContext);
-        const editorRef = useForwardedRef(ref);
+        const editorRef = useForwardedRef<IQueryEditorHandles>(ref);
 
         // Code Editor related Props
         const { codeEditorTheme, keyMap, options, fontSize, autoCompleteType } =
