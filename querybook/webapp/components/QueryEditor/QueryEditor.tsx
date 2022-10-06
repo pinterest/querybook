@@ -151,11 +151,11 @@ export const QueryEditor: React.FC<
             []
         );
 
-        const openTableModal = (tableId: number) => {
+        const openTableModal = useCallback((tableId: number) => {
             navigateWithinEnv(`/table/${tableId}/`, {
                 isModal: true,
             });
-        };
+        }, []);
 
         // Checks if token is in table, returns the table if found, false otherwise
         const isTokenInTable = useCallback(
@@ -230,7 +230,7 @@ export const QueryEditor: React.FC<
                     }
                 });
             },
-            [isTokenInTable]
+            [isTokenInTable, openTableModal]
         );
 
         const prefetchDataTables = useCallback(
