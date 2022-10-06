@@ -28,7 +28,8 @@ export const ExecutedQueryCell: React.FunctionComponent<IProps> = ({
     const queryEngineById = useSelector(queryEngineByIdEnvSelector);
     const highlightRanges = useMemo(
         () => (highlightRange ? [highlightRange] : []),
-        [highlightRange]
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [highlightRange.from, highlightRange.to, highlightRange.className]
     );
 
     if (!queryExecution) {
