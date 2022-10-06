@@ -113,7 +113,7 @@ export const QueryEditor: React.FC<
             getLintErrors,
             onLintCompletion,
 
-            //props from IStyledQueryEditorProps
+            // props from IStyledQueryEditorProps
             height = 'auto',
             fontSize,
         },
@@ -127,35 +127,28 @@ export const QueryEditor: React.FC<
 
         const [fullScreen, setFullScreen] = useState(false);
 
-        useEffect(() => {
-            makeCodeAnalysis(value);
-            performLint();
-        }, []);
+        const makeCodeAnalysis = useMemo(
+            () =>
+                throttle((value: string) => {
+                    analyzeCode(value, 'autocomplete', language).then(
+                        (codeAnalysis) => {
+                            codeAnalysisRef.current = codeAnalysis;
 
-        // Make auto completer
-        useEffect(() => {
-            if (language != null) {
-                autocompleteRef.current = new SqlAutoCompleter(
-                    CodeMirror,
-                    language,
-                    metastoreId,
-                    autoCompleteType
-                );
-            }
-        }, [language, metastoreId, autoCompleteType]);
+                            autocompleteRef.current?.updateCodeAnalysis(
+                                codeAnalysis
+                            );
+                        }
+                    );
+                }, 500),
+            [language]
+        );
 
-        useEffect(() => {
-            editorRef.current?.refresh();
-        }, [fullScreen]);
-
-        useImperativeHandle(
-            ref,
-            () => ({
-                getEditor: () => editorRef.current,
-                formatQuery,
-                getEditorSelection,
-            }),
-            [editorRef.current]
+        const performLint = useMemo(
+            () =>
+                debounce(() => {
+                    editorRef.current.performLint();
+                }, 2000),
+            []
         );
 
         const openTableModal = (tableId: number) => {
@@ -165,136 +158,176 @@ export const QueryEditor: React.FC<
         };
 
         // Checks if token is in table, returns the table if found, false otherwise
-        const isTokenInTable = async (
-            pos: CodeMirror.Position,
-            token: CodeMirror.Token
-        ) => {
-            if (codeAnalysisRef.current && token) {
-                const selectionLine = pos.line;
-                const selectionPos = {
-                    from: token.start,
-                    to: token.end,
-                };
+        const isTokenInTable = useCallback(
+            async (pos: CodeMirror.Position, token: CodeMirror.Token) => {
+                if (codeAnalysisRef.current && token) {
+                    const selectionLine = pos.line;
+                    const selectionPos = {
+                        from: token.start,
+                        to: token.end,
+                    };
 
-                const tableReferences: TableToken[] = [].concat.apply(
-                    [],
-                    Object.values(codeAnalysisRef.current.lineage.references)
-                );
+                    const tableReferences: TableToken[] = [].concat.apply(
+                        [],
+                        Object.values(
+                            codeAnalysisRef.current.lineage.references
+                        )
+                    );
 
-                let tablePosFound = null;
-                const table = find(tableReferences, (tableInfo) => {
-                    if (tableInfo.line === selectionLine) {
-                        const isSchemaExplicit =
-                            tableInfo.end - tableInfo.start >
-                            tableInfo.name.length;
-                        const tablePos = {
-                            from:
-                                tableInfo.start +
-                                (isSchemaExplicit
-                                    ? tableInfo.schema.length
-                                    : 0),
-                            to: tableInfo.end,
+                    let tablePosFound = null;
+                    const table = find(tableReferences, (tableInfo) => {
+                        if (tableInfo.line === selectionLine) {
+                            const isSchemaExplicit =
+                                tableInfo.end - tableInfo.start >
+                                tableInfo.name.length;
+                            const tablePos = {
+                                from:
+                                    tableInfo.start +
+                                    (isSchemaExplicit
+                                        ? tableInfo.schema.length
+                                        : 0),
+                                to: tableInfo.end,
+                            };
+
+                            if (
+                                tablePos.from <= selectionPos.from &&
+                                tablePos.to >= selectionPos.to
+                            ) {
+                                tablePosFound = tablePos;
+                                return true;
+                            }
+                        }
+                    });
+
+                    if (table) {
+                        const tableInfo = await getTableByName(
+                            table.schema,
+                            table.name
+                        );
+                        return {
+                            tableInfo,
+                            tablePosFound,
                         };
+                    }
+                }
 
-                        if (
-                            tablePos.from <= selectionPos.from &&
-                            tablePos.to >= selectionPos.to
-                        ) {
-                            tablePosFound = tablePos;
-                            return true;
+                return false;
+            },
+            [getTableByName]
+        );
+
+        const onOpenTableModal = useCallback(
+            (editor: CodeMirror.Editor) => {
+                const pos = editor.getDoc().getCursor();
+                const token = editor.getTokenAt(pos);
+
+                isTokenInTable(pos, token).then((tokenInsideTable) => {
+                    if (tokenInsideTable) {
+                        const { tableInfo } = tokenInsideTable;
+                        if (tableInfo) {
+                            openTableModal(tableInfo.id);
                         }
                     }
                 });
+            },
+            [isTokenInTable]
+        );
 
-                if (table) {
-                    const tableInfo = await getTableByName(
-                        table.schema,
-                        table.name
-                    );
-                    return {
-                        tableInfo,
-                        tablePosFound,
-                    };
+        const prefetchDataTables = useCallback(
+            async (tableReferences: TableToken[]) => {
+                if (!getTableByName) {
+                    return;
                 }
-            }
 
-            return false;
-        };
-
-        const onOpenTableModal = (editor: CodeMirror.Editor) => {
-            const pos = editor.getDoc().getCursor();
-            const token = editor.getTokenAt(pos);
-
-            isTokenInTable(pos, token).then((tokenInsideTable) => {
-                if (tokenInsideTable) {
-                    const { tableInfo } = tokenInsideTable;
-                    if (tableInfo) {
-                        openTableModal(tableInfo.id);
+                const tableLoadPromises = [];
+                for (const { schema, name } of tableReferences) {
+                    const fullName = `${schema}.${name}`;
+                    if (!tablesGettingLoadedRef.current.has(fullName)) {
+                        tableLoadPromises.push(getTableByName(schema, name));
+                        tablesGettingLoadedRef.current.add(fullName);
                     }
                 }
-            });
-        };
 
-        const getLintAnnotations = async (
-            code: string,
-            onComplete: (warnings: ILinterWarning[]) => void,
-            _options: any,
-            editor: CodeMirror.Editor
-        ) => {
-            const annotations = [];
+                await Promise.all(tableLoadPromises);
+            },
+            [getTableByName]
+        );
 
-            // prefetch tables and get table warning annotations
-            if (metastoreId && codeAnalysisRef.current) {
-                const tableReferences = [].concat.apply(
-                    [],
-                    Object.values(codeAnalysisRef.current.lineage.references)
-                );
-                await prefetchDataTables(tableReferences);
+        const getLintAnnotations = useCallback(
+            async (
+                code: string,
+                onComplete: (warnings: ILinterWarning[]) => void,
+                _options: any,
+                editor: CodeMirror.Editor
+            ) => {
+                const annotations = [];
 
-                const contextSensitiveWarnings = getContextSensitiveWarnings(
-                    metastoreId,
-                    tableReferences,
-                    !!getLintErrors
-                );
-                annotations.push(...contextSensitiveWarnings);
-            }
+                // prefetch tables and get table warning annotations
+                if (metastoreId && codeAnalysisRef.current) {
+                    const tableReferences = [].concat.apply(
+                        [],
+                        Object.values(
+                            codeAnalysisRef.current.lineage.references
+                        )
+                    );
+                    await prefetchDataTables(tableReferences);
 
-            // if query is empty skip check
-            // if it is using templating, also skip check since
-            // there is no reliable way to map it back
-            if (
-                code.length > 0 &&
-                !isQueryUsingTemplating(code) &&
-                getLintErrors
-            ) {
-                const warnings = await getLintErrors(code, editor);
-                annotations.push(...warnings);
-            }
+                    const contextSensitiveWarnings =
+                        getContextSensitiveWarnings(
+                            metastoreId,
+                            tableReferences,
+                            !!getLintErrors
+                        );
+                    annotations.push(...contextSensitiveWarnings);
+                }
 
-            if (onLintCompletion) {
-                onLintCompletion(
-                    annotations.filter(
-                        (warning) => warning.severity === 'error'
-                    ).length > 0
-                );
-            }
+                // if query is empty skip check
+                // if it is using templating, also skip check since
+                // there is no reliable way to map it back
+                if (
+                    code.length > 0 &&
+                    !isQueryUsingTemplating(code) &&
+                    getLintErrors
+                ) {
+                    const warnings = await getLintErrors(code, editor);
+                    annotations.push(...warnings);
+                }
 
-            onComplete(annotations);
-        };
+                if (onLintCompletion) {
+                    onLintCompletion(
+                        annotations.filter(
+                            (warning) => warning.severity === 'error'
+                        ).length > 0
+                    );
+                }
 
-        const formatQuery = (options = {}) => {
-            if (editorRef.current) {
-                const indentWithTabs =
-                    editorRef.current.getOption('indentWithTabs');
-                const indentUnit = editorRef.current.getOption('indentUnit');
-                options['indent'] = indentWithTabs
-                    ? '\t'
-                    : ' '.repeat(indentUnit);
-            }
+                onComplete(annotations);
+            },
+            [metastoreId, getLintErrors, onLintCompletion, prefetchDataTables]
+        );
 
-            const formattedQuery = format(value, language, options);
-            editorRef.current?.setValue(formattedQuery);
-        };
+        const formatQuery = useCallback(
+            (
+                options: {
+                    case?: 'lower' | 'upper';
+                    indent?: string;
+                } = {}
+            ) => {
+                if (editorRef.current) {
+                    const indentWithTabs =
+                        editorRef.current.getOption('indentWithTabs');
+                    const indentUnit =
+                        editorRef.current.getOption('indentUnit');
+                    options['indent'] = indentWithTabs
+                        ? '\t'
+                        : ' '.repeat(indentUnit);
+                }
+
+                const formattedQuery = format(value, language, options);
+                editorRef.current?.setValue(formattedQuery);
+            },
+            [language, value]
+        );
 
         const markTextAndShowTooltip = (
             editor: CodeMirror.Editor,
@@ -344,113 +377,90 @@ export const QueryEditor: React.FC<
             }
         };
 
-        const matchFunctionWithDefinition = (functionName: string) => {
-            if (language && language in functionDocumentationByNameByLanguage) {
-                const functionDefs =
-                    functionDocumentationByNameByLanguage[language];
-                const functionNameLower = (functionName || '').toLowerCase();
-
-                if (functionNameLower in functionDefs) {
-                    return functionDefs[functionNameLower];
-                }
-            }
-
-            return null;
-        };
-
-        const onTextHover = useCallback(
-            debounce(async (editor: CodeMirror.Editor, node, e, pos, token) => {
+        const matchFunctionWithDefinition = useCallback(
+            (functionName: string) => {
                 if (
-                    markerRef.current == null &&
-                    (token.type === 'variable-2' || token.type == null)
+                    language &&
+                    language in functionDocumentationByNameByLanguage
                 ) {
-                    // Check if token is inside a table
-                    const tokenInsideTable = await isTokenInTable(pos, token);
+                    const functionDefs =
+                        functionDocumentationByNameByLanguage[language];
+                    const functionNameLower = (
+                        functionName || ''
+                    ).toLowerCase();
 
-                    if (tokenInsideTable) {
-                        const { tableInfo } = tokenInsideTable;
-                        if (tableInfo) {
-                            markTextAndShowTooltip(editor, pos, token, {
-                                tableId: tableInfo.id,
-                                openTableModal: () =>
-                                    openTableModal(tableInfo.id),
-                            });
-                        } else {
-                            markTextAndShowTooltip(editor, pos, token, {
-                                error: 'Table does not exist!',
-                            });
-                        }
-                    }
-
-                    const nextChar = editor.getDoc().getLine(pos.line)[
-                        token.end
-                    ];
-                    if (nextChar === '(') {
-                        // if it seems like a function call
-                        const functionDef = matchFunctionWithDefinition(
-                            token.string
-                        );
-                        if (functionDef) {
-                            markTextAndShowTooltip(editor, pos, token, {
-                                functionDocumentations: functionDef,
-                            });
-                        }
+                    if (functionNameLower in functionDefs) {
+                        return functionDefs[functionNameLower];
                     }
                 }
-            }, 600),
-            [markerRef.current]
+
+                return null;
+            },
+            [language, functionDocumentationByNameByLanguage]
         );
 
-        const prefetchDataTables = async (tableReferences: TableToken[]) => {
-            if (!getTableByName) {
-                return;
-            }
+        const onTextHover = useMemo(
+            () =>
+                debounce(
+                    async (editor: CodeMirror.Editor, node, e, pos, token) => {
+                        if (
+                            markerRef.current == null &&
+                            (token.type === 'variable-2' || token.type == null)
+                        ) {
+                            // Check if token is inside a table
+                            const tokenInsideTable = await isTokenInTable(
+                                pos,
+                                token
+                            );
 
-            const tableLoadPromises = [];
-            for (const { schema, name } of tableReferences) {
-                const fullName = `${schema}.${name}`;
-                if (!tablesGettingLoadedRef.current.has(fullName)) {
-                    tableLoadPromises.push(getTableByName(schema, name));
-                    tablesGettingLoadedRef.current.add(fullName);
-                }
-            }
+                            if (tokenInsideTable) {
+                                const { tableInfo } = tokenInsideTable;
+                                if (tableInfo) {
+                                    markTextAndShowTooltip(editor, pos, token, {
+                                        tableId: tableInfo.id,
+                                        openTableModal: () =>
+                                            openTableModal(tableInfo.id),
+                                    });
+                                } else {
+                                    markTextAndShowTooltip(editor, pos, token, {
+                                        error: 'Table does not exist!',
+                                    });
+                                }
+                            }
 
-            await Promise.all(tableLoadPromises);
-        };
-
-        const makeCodeAnalysis = useCallback(
-            throttle((value: string) => {
-                analyzeCode(value, 'autocomplete', language).then(
-                    (codeAnalysis) => {
-                        codeAnalysisRef.current = codeAnalysis;
-
-                        autocompleteRef.current?.updateCodeAnalysis(
-                            codeAnalysis
-                        );
-                    }
-                );
-            }, 500),
-            [language, autocompleteRef.current]
+                            const nextChar = editor.getDoc().getLine(pos.line)[
+                                token.end
+                            ];
+                            if (nextChar === '(') {
+                                // if it seems like a function call
+                                const functionDef = matchFunctionWithDefinition(
+                                    token.string
+                                );
+                                if (functionDef) {
+                                    markTextAndShowTooltip(editor, pos, token, {
+                                        functionDocumentations: functionDef,
+                                    });
+                                }
+                            }
+                        }
+                    },
+                    600
+                ),
+            [isTokenInTable, matchFunctionWithDefinition]
         );
 
-        const performLint = useCallback(
-            debounce(() => {
-                editorRef.current.performLint();
-            }, 2000),
-            [editorRef.current]
-        );
-
-        const showAutoCompletion = useCallback(
-            debounce((editor: CodeMirror.Editor) => {
-                (CodeMirror as any).commands.autocomplete(editor, null, {
-                    completeSingle: false,
-                    passive: true,
-                });
-            }, 500),
+        const showAutoCompletion = useMemo(
+            () =>
+                debounce((editor: CodeMirror.Editor) => {
+                    (CodeMirror as any).commands.autocomplete(editor, null, {
+                        completeSingle: false,
+                        passive: true,
+                    });
+                }, 500),
             []
         );
 
-        const getEditorSelection = (editor?: CodeMirror.Editor) => {
+        const getEditorSelection = useCallback((editor?: CodeMirror.Editor) => {
             editor = editor || editorRef.current;
             const selectionRange = editor
                 ? {
@@ -467,13 +477,44 @@ export const QueryEditor: React.FC<
             }
 
             return selectionRange;
-        };
+        }, []);
+
+        useEffect(() => {
+            makeCodeAnalysis(value);
+            performLint();
+        }, [value, makeCodeAnalysis, performLint]);
+
+        // Make auto completer
+        useEffect(() => {
+            if (language != null) {
+                autocompleteRef.current = new SqlAutoCompleter(
+                    CodeMirror,
+                    language,
+                    metastoreId,
+                    autoCompleteType
+                );
+            }
+        }, [language, metastoreId, autoCompleteType]);
+
+        useEffect(() => {
+            editorRef.current?.refresh();
+        }, [fullScreen]);
+
+        useImperativeHandle(
+            ref,
+            () => ({
+                getEditor: () => editorRef.current,
+                formatQuery,
+                getEditorSelection,
+            }),
+            [formatQuery, getEditorSelection]
+        );
 
         const toggleFullScreen = () => {
             setFullScreen(!fullScreen);
         };
 
-        /*---- start of <ReactCodeMirror /> properties ----*/
+        /* ---- start of <ReactCodeMirror /> properties ---- */
 
         const editorOptions: Record<string, unknown> = useMemo(() => {
             const lintingOptions = !readOnly
@@ -527,7 +568,17 @@ export const QueryEditor: React.FC<
             };
 
             return editorOptions;
-        }, [options, lineWrapping, readOnly, theme, keyMap]);
+        }, [
+            options,
+            lineWrapping,
+            readOnly,
+            theme,
+            keyMap,
+            formatQuery,
+            getLintAnnotations,
+            onOpenTableModal,
+            onTextHover,
+        ]);
 
         const editorDidMount = useCallback((editor: CodeMirror.Editor) => {
             editorRef.current = editor;
@@ -542,20 +593,23 @@ export const QueryEditor: React.FC<
                 makeCodeAnalysis(value);
                 performLint();
             },
-            []
+            [makeCodeAnalysis, onChange, performLint]
         );
 
-        const handleOnCursorActivity = useCallback(
-            throttle((editor: CodeMirror.Editor) => {
-                if (onSelection) {
-                    const selectionRange = getEditorSelection(editor);
-                    onSelection(
-                        selectionRange ? editor.getDoc().getSelection() : '',
-                        selectionRange
-                    );
-                }
-            }, 1000),
-            []
+        const handleOnCursorActivity = useMemo(
+            () =>
+                throttle((editor: CodeMirror.Editor) => {
+                    if (onSelection) {
+                        const selectionRange = getEditorSelection(editor);
+                        onSelection(
+                            selectionRange
+                                ? editor.getDoc().getSelection()
+                                : '',
+                            selectionRange
+                        );
+                    }
+                }, 1000),
+            [getEditorSelection, onSelection]
         );
 
         const handleOnDrop = useCallback(
@@ -587,7 +641,7 @@ export const QueryEditor: React.FC<
                     onFocus(editor, event);
                 }
             },
-            [autocompleteRef.current]
+            [onFocus]
         );
 
         const handleOnKeyUp = useCallback(
@@ -604,10 +658,10 @@ export const QueryEditor: React.FC<
                     showAutoCompletion(editor);
                 }
             },
-            []
+            [showAutoCompletion]
         );
 
-        /*---- end of <ReactCodeMirror /> properties ----*/
+        /* ---- end of <ReactCodeMirror /> properties ---- */
 
         const editorClassName = clsx({
             fullScreen,
