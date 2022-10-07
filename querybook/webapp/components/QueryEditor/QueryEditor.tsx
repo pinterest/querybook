@@ -253,56 +253,60 @@ export const QueryEditor: React.FC<
             [getTableByName]
         );
 
-        const getLintAnnotations = useCallback(
-            async (
-                code: string,
-                onComplete: (warnings: ILinterWarning[]) => void,
-                _options: any,
-                editor: CodeMirror.Editor
-            ) => {
-                const annotations = [];
+        const getLintAnnotations = useMemo(
+            () =>
+                debounce(
+                    async (
+                        code: string,
+                        onComplete: (warnings: ILinterWarning[]) => void,
+                        _options: any,
+                        editor: CodeMirror.Editor
+                    ) => {
+                        const annotations = [];
 
-                // prefetch tables and get table warning annotations
-                if (metastoreId && codeAnalysisRef.current) {
-                    const tableReferences = [].concat.apply(
-                        [],
-                        Object.values(
-                            codeAnalysisRef.current.lineage.references
-                        )
-                    );
-                    await prefetchDataTables(tableReferences);
+                        // prefetch tables and get table warning annotations
+                        if (metastoreId && codeAnalysisRef.current) {
+                            const tableReferences = [].concat.apply(
+                                [],
+                                Object.values(
+                                    codeAnalysisRef.current.lineage.references
+                                )
+                            );
+                            await prefetchDataTables(tableReferences);
 
-                    const contextSensitiveWarnings =
-                        getContextSensitiveWarnings(
-                            metastoreId,
-                            tableReferences,
-                            !!getLintErrors
-                        );
-                    annotations.push(...contextSensitiveWarnings);
-                }
+                            const contextSensitiveWarnings =
+                                getContextSensitiveWarnings(
+                                    metastoreId,
+                                    tableReferences,
+                                    !!getLintErrors
+                                );
+                            annotations.push(...contextSensitiveWarnings);
+                        }
 
-                // if query is empty skip check
-                // if it is using templating, also skip check since
-                // there is no reliable way to map it back
-                if (
-                    code.length > 0 &&
-                    !isQueryUsingTemplating(code) &&
-                    getLintErrors
-                ) {
-                    const warnings = await getLintErrors(code, editor);
-                    annotations.push(...warnings);
-                }
+                        // if query is empty skip check
+                        // if it is using templating, also skip check since
+                        // there is no reliable way to map it back
+                        if (
+                            code.length > 0 &&
+                            !isQueryUsingTemplating(code) &&
+                            getLintErrors
+                        ) {
+                            const warnings = await getLintErrors(code, editor);
+                            annotations.push(...warnings);
+                        }
 
-                if (onLintCompletion) {
-                    onLintCompletion(
-                        annotations.filter(
-                            (warning) => warning.severity === 'error'
-                        ).length > 0
-                    );
-                }
+                        if (onLintCompletion) {
+                            onLintCompletion(
+                                annotations.filter(
+                                    (warning) => warning.severity === 'error'
+                                ).length > 0
+                            );
+                        }
 
-                onComplete(annotations);
-            },
+                        onComplete(annotations);
+                    },
+                    2000
+                ),
             [metastoreId, getLintErrors, onLintCompletion, prefetchDataTables]
         );
 
@@ -446,7 +450,7 @@ export const QueryEditor: React.FC<
                     },
                     600
                 ),
-            [isTokenInTable, matchFunctionWithDefinition]
+            [isTokenInTable, matchFunctionWithDefinition, openTableModal]
         );
 
         const showAutoCompletion = useMemo(
@@ -596,6 +600,13 @@ export const QueryEditor: React.FC<
             [makeCodeAnalysis, onChange, performLint]
         );
 
+        const handleOnBlur = useCallback(
+            (editor: CodeMirror.Editor, event) => {
+                onBlur?.(editor, event);
+            },
+            [onBlur]
+        );
+
         const handleOnCursorActivity = useMemo(
             () =>
                 throttle((editor: CodeMirror.Editor) => {
@@ -661,6 +672,12 @@ export const QueryEditor: React.FC<
             [showAutoCompletion]
         );
 
+        const handleOnKeyDown = useCallback(
+            (editor: CodeMirror.Editor, event) => {
+                onKeyDown?.(editor, event);
+            },
+            [onKeyDown]
+        );
         /* ---- end of <ReactCodeMirror /> properties ---- */
 
         const editorClassName = clsx({
@@ -691,12 +708,12 @@ export const QueryEditor: React.FC<
                     options={editorOptions}
                     editorDidMount={editorDidMount}
                     onBeforeChange={onBeforeChange}
-                    onBlur={onBlur}
+                    onBlur={handleOnBlur}
                     onCursorActivity={handleOnCursorActivity}
                     onDrop={handleOnDrop}
                     onFocus={handleOnFocus}
                     onKeyUp={handleOnKeyUp}
-                    onKeyDown={onKeyDown}
+                    onKeyDown={handleOnKeyDown}
                 />
             </StyledQueryEditor>
         );
