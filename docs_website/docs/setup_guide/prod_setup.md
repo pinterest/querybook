@@ -34,7 +34,7 @@ Last but not least, please make sure to only have 1 instance of scheduler runnin
 
 See the [Infra Config](../configurations/infra_config.md) section for this.
 
-#### Step 6: Start each service
+#### Step 5: Start each service
 
 You can start each service by the following commands:
 
