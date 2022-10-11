@@ -1,11 +1,16 @@
 import { FieldArray, Form, Formik, useFormikContext } from 'formik';
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import * as Yup from 'yup';
+import styled from 'styled-components';
 
 import { UserName } from 'components/UserBadge/UserName';
 import type { IQueryResultExporter } from 'const/queryExecution';
-import { IDataDocScheduleKwargs, NotifyOn } from 'const/schedule';
+import {
+    IDataDocScheduleKwargs,
+    NotifyOn,
+    IDataDocScheduleNotification,
+} from 'const/schedule';
 import { getExporterAuthentication } from 'lib/result-export';
 import { getEnumEntries } from 'lib/typescript';
 import {
@@ -32,6 +37,8 @@ import {
     SmartForm,
     updateValue,
 } from 'ui/SmartForm/SmartForm';
+import { INotifier } from 'redux/notificationService/types';
+import { IOptions } from 'lib/utils/react-select';
 
 interface IDataDocScheduleFormProps {
     isEditable: boolean;
@@ -59,11 +66,15 @@ const scheduleFormSchema = Yup.object().shape({
     }),
     enabled: Yup.boolean().notRequired(),
     kwargs: Yup.object().shape({
-        notify_with: Yup.string().nullable(),
-        notify_on: Yup.mixed().when('notify_with', {
-            is: (val) => val != null,
-            then: Yup.mixed().required(),
-        }),
+        notifications: Yup.array().of(
+            Yup.object().shape({
+                with: Yup.string().nullable(),
+                on: Yup.string().required(),
+                config: Yup.object().shape({
+                    to: Yup.array().of(Yup.string()).required(),
+                }),
+            })
+        ),
         exports: Yup.array().of(
             Yup.object().shape({
                 exporter_cell_id: Yup.number().required(),
@@ -93,11 +104,14 @@ interface IScheduleFormValues {
     recurrence: IRecurrence;
     enabled?: boolean;
     kwargs: {
-        notify_with: string | null;
-        notify_on: NotifyOn;
+        notifications: IDataDocScheduleNotification[];
         exports: IDataDocScheduleKwargs['exports'];
     };
 }
+
+const WrappedFormField = styled(SimpleField)`
+    min-width: 40%;
+`;
 
 export const DataDocScheduleForm: React.FunctionComponent<
     IDataDocScheduleFormProps
@@ -127,18 +141,16 @@ export const DataDocScheduleForm: React.FunctionComponent<
         ? {
               recurrence,
               kwargs: {
-                  notify_with: null,
-                  notify_on: NotifyOn.ALL,
                   exports: [],
+                  notifications: kwargs.notifications,
               },
           }
         : {
               recurrence,
               enabled,
               kwargs: {
-                  notify_with: kwargs.notify_with,
-                  notify_on: kwargs.notify_on,
                   exports: kwargs.exports,
+                  notifications: kwargs.notifications,
               },
           };
 
@@ -181,36 +193,10 @@ export const DataDocScheduleForm: React.FunctionComponent<
                     <>
                         <FormSectionHeader>Notification</FormSectionHeader>
                         <div>
-                            Notifications will be sent to the user who created
-                            or updated the schedule{' '}
-                            <b>
-                                @
-                                <UserName
-                                    uid={isCreateForm ? userId : kwargs.user_id}
-                                />
-                            </b>
-                            , and scheduled queries will also run by them.
+                            Notifications will be sent to the user who listed in
+                            the list(s) separated by comma.
                         </div>
-                        <SimpleField
-                            label="Notify With"
-                            name="kwargs.notify_with"
-                            type="react-select"
-                            options={notifiers.map((notifier) => notifier.name)}
-                            withDeselect
-                        />
-                        {values.kwargs.notify_with && (
-                            <SimpleField
-                                label="Notify On"
-                                name="kwargs.notify_on"
-                                type="react-select"
-                                options={getEnumEntries(NotifyOn).map(
-                                    ([key, value]) => ({
-                                        value,
-                                        label: key,
-                                    })
-                                )}
-                            />
-                        )}
+                        <ScheduleNotifactionsForm notifiers={notifiers} />
                     </>
                 );
 
@@ -281,6 +267,148 @@ export const DataDocScheduleForm: React.FunctionComponent<
                 );
             }}
         </Formik>
+    );
+};
+
+function getHelpInfo(selectedWith) {
+    const helpers = {
+        slack: `You can type slack channels here and you can use comma to separate multiple channels`,
+        email: `You can type emails here and you can use comma to separate multiple emails`,
+        teams: `You can type team logins here and you can use comma to separate multiple logins`,
+    };
+
+    return helpers[selectedWith] ?? `You can type here notification recepients`;
+}
+
+const NotifactionFormRow: React.FC<{
+    name: string;
+    index: number;
+    removeRow: (index: number) => void;
+    notificationRow: IDataDocScheduleNotification;
+    notifierOptions: string[];
+    notifyOnOptions: IOptions;
+}> = ({
+    name,
+    index,
+    notificationRow,
+    removeRow,
+    notifierOptions,
+    notifyOnOptions,
+}) => {
+    const { setFieldValue } = useFormikContext<IScheduleFormValues>();
+    const notificationFormName = `${name}[${index}]`;
+    const handleNotifyTo = useCallback((value) => {
+        setFieldValue(
+            `${notificationFormName}.config.to`,
+            value.split(',').map((v) => v.trim())
+        );
+    }, []);
+    const handleRemoveNotifier = useCallback(
+        (index) => removeRow(index),
+        [removeRow]
+    );
+
+    return (
+        <div className="cell-export-field mb24 flex-row">
+            <div className="flex1 mr16">
+                <div className="horizontal-space-between">
+                    <WrappedFormField
+                        label="Notify With"
+                        name={`${notificationFormName}.with`}
+                        type="react-select"
+                        options={notifierOptions}
+                        withDeselect
+                    />
+
+                    <WrappedFormField
+                        label="Notify On"
+                        name={`${notificationFormName}.on`}
+                        type="react-select"
+                        isDisabled={!notificationRow.with}
+                        options={notifyOnOptions}
+                    />
+                </div>
+
+                <SimpleField
+                    label="Notify To"
+                    name={`${notificationFormName}.config.to`}
+                    type="input"
+                    help={getHelpInfo(notificationRow.with)}
+                    onChange={handleNotifyTo}
+                    value={notificationRow.config.to.join(',')}
+                />
+            </div>
+            <div>
+                <IconButton icon="X" onClick={handleRemoveNotifier} />
+            </div>
+        </div>
+    );
+};
+
+const ScheduleNotifactionsForm: React.FC<{
+    notifiers: INotifier[];
+}> = ({ notifiers }) => {
+    const name = 'kwargs.notifications';
+    const { values } = useFormikContext<IScheduleFormValues>();
+
+    const notificationValues = values.kwargs.notifications ?? [];
+
+    const notifierOptions = useMemo(
+        () => notifiers.map((notifier) => notifier.name),
+        [notifiers]
+    );
+
+    const notifyOnOptions = useMemo(
+        () =>
+            getEnumEntries(NotifyOn).map(([key, value]) => ({
+                value,
+                label: key,
+            })),
+        []
+    );
+
+    return (
+        <FieldArray
+            name={name}
+            render={(arrayHelpers) => {
+                const notificationFields = notificationValues.map(
+                    (_, index) => {
+                        return (
+                            <NotifactionFormRow
+                                key={index}
+                                name={name}
+                                index={index}
+                                removeRow={arrayHelpers.remove}
+                                notificationRow={notificationValues[index]}
+                                notifierOptions={notifierOptions}
+                                notifyOnOptions={notifyOnOptions}
+                            />
+                        );
+                    }
+                );
+
+                return (
+                    <>
+                        {notificationFields}
+                        <div className="center-align mt8">
+                            <SoftButton
+                                icon="Plus"
+                                title="New Notification"
+                                onClick={() =>
+                                    arrayHelpers.push({
+                                        with: null,
+                                        on: null,
+                                        config: {
+                                            to: [],
+                                        },
+                                    })
+                                }
+                            />
+                        </div>
+                    </>
+                );
+            }}
+        />
     );
 };
 

@@ -18,7 +18,8 @@ class SlackNotifier(BaseNotifier):
         return "plaintext"
 
     def notify(self, user, message):
-        to = f"@{user.username}"
+        is_old_format = user.username.startswith("@") or user.username.startswith("#")
+        to = f"{user.username}" if is_old_format else f"@{user.username}"
         url = "https://slack.com/api/chat.postMessage"
         headers = {"Authorization": "Bearer {}".format(self.token)}
         text = self._convert_markdown(message)

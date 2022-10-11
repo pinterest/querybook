@@ -5,28 +5,30 @@ from const.schedule import NotifyOn
 from env import QuerybookSettings
 from lib.notify.utils import notify_user
 from logic.datadoc import get_data_doc_by_id
-from models.user import User
 
 
 def notifiy_on_datadoc_complete(
     doc_id: int,
-    user_id: int,
     is_success: bool,
-    notify_with: str,
-    notify_on: int,  # NotifyOn.value
+    notifications: List[Dict],
     error_msg: str,
     export_urls: List[str],
 ):
-    if _should_notify(notify_with, notify_on, is_success):
-        with DBSession() as session:
-            _send_datadoc_notification(
-                user_id,
-                notify_with,
-                _get_datadoc_notification_params(
-                    doc_id, is_success, error_msg, export_urls, session=session
-                ),
-                session=session,
-            )
+    for notification in notifications:
+        notify_with = notification.get("with")
+        notify_on = notification.get("on")
+        notify_to = notification.get("config", {}).get("to", [])
+
+        if _should_notify(notify_with, notify_on, is_success):
+            with DBSession() as session:
+                _send_datadoc_notification(
+                    notify_to,
+                    notify_with,
+                    _get_datadoc_notification_params(
+                        doc_id, is_success, error_msg, export_urls, session=session
+                    ),
+                    session=session,
+                )
 
 
 def _should_notify(notify_with: str, notify_on: NotifyOn, is_success: bool):
@@ -58,18 +60,35 @@ def _get_datadoc_notification_params(
     )
 
 
+class User:
+    def __init__(self):
+        self.email = None
+        self.username = None
+
+
+def generate_user(with_str, value):
+    new_user = User()
+    if with_str == "email":
+        new_user.email = value
+    elif with_str == "slack":
+        new_user.username = value
+
+    return new_user
+
+
 @with_session
 def _send_datadoc_notification(
-    user_id: int,
+    notify_to: List[Dict],
     notify_with: str,
     notification_params: Dict,
     session=None,
 ):
-    user = User.get(id=user_id, session=session)
-    notify_user(
-        user=user,
-        template_name="datadoc_completion_notification",
-        template_params=notification_params,
-        notifier_name=notify_with,
-        session=session,
-    )
+    for recepient in notify_to:
+        user = generate_user(notify_with, recepient)
+        notify_user(
+            user=user,
+            template_name="datadoc_completion_notification",
+            template_params=notification_params,
+            notifier_name=notify_with,
+            session=session,
+        )

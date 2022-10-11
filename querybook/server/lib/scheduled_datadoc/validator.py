@@ -7,7 +7,7 @@ class InvalidScheduleException(Exception):
     pass
 
 
-valid_schedule_config_keys = ["notify_with", "notify_on", "exports"]
+valid_schedule_config_keys = ["exports", "notifications"]
 valid_export_config_keys = ["exporter_cell_id", "exporter_name", "exporter_params"]
 
 

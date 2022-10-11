@@ -4,7 +4,7 @@ from app.db import DBSession
 from app.flask_app import celery
 
 from const.query_execution import QueryExecutionStatus, QueryExecutionType
-from const.schedule import NotifyOn, TaskRunStatus
+from const.schedule import TaskRunStatus
 
 from lib.logger import get_logger
 from lib.query_analysis.templating import render_templated_query
@@ -36,11 +36,9 @@ def run_datadoc(self, *args, **kwargs):
 def run_datadoc_with_config(
     self,
     doc_id,
+    notifications,
     user_id=None,
     execution_type=QueryExecutionType.SCHEDULED.value,
-    # Notification related settings
-    notify_with=None,
-    notify_on=NotifyOn.ALL.value,
     # Exporting related settings
     exports=[],
     *args,
@@ -87,8 +85,7 @@ def run_datadoc_with_config(
         "doc_id": doc_id,
         "user_id": user_id,
         "record_id": record_id,
-        "notify_with": notify_with,
-        "notify_on": notify_on,
+        "notifications": notifications,
         "exports": exports,
     }
 
@@ -142,6 +139,7 @@ def on_datadoc_run_failure(
     completion_params,
     **kwargs,
 ):
+
     error_msg = "DataDoc failed to run. Task {0!r} raised error: {1!r}".format(
         request.id, exc
     )
@@ -154,11 +152,9 @@ def on_datadoc_completion(
     doc_id,
     user_id,
     record_id,
-    # Notification settings
-    notify_with,
-    notify_on,
     # Export settings
     exports,
+    notifications,
     # Success/Failure handling
     is_success,
     error_msg=None,
@@ -169,8 +165,13 @@ def on_datadoc_completion(
             export_urls = export_datadoc(doc_id, user_id, exports)
 
         notifiy_on_datadoc_complete(
-            doc_id, user_id, is_success, notify_with, notify_on, error_msg, export_urls
+            doc_id,
+            is_success,
+            notifications,
+            error_msg,
+            export_urls,
         )
+
     except Exception as e:
         is_success = False
         error_msg = str(e)
