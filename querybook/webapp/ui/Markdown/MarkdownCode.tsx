@@ -47,7 +47,7 @@ export const MarkdownCode: React.FC<{
 
     return (
         <StyledMarkdownCode>
-            <ThemedCodeHighlight value={children} language={language} />{' '}
+            <ThemedCodeHighlight value={children} language={language} />
             <CopyButton copyText={children} theme="text" />
         </StyledMarkdownCode>
     );
