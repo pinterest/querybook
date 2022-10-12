@@ -21,13 +21,13 @@ will throw template render errors.
 To use a variable inside a query, simply wrap the variable name with `{{ variable }}`. As an example, let's continue with the
 setup above. In a query if you put the following:
 
-```
+```sql
 SELECT * FROM table where value = '{{ foo }}'
 ```
 
 Then it gets rendered into
 
-```
+```sql
 SELECT * FROM table WHERE value = 'hello'
 ```
 
@@ -37,7 +37,7 @@ Note that the quotes are required since `{{ foo }}` maps to `hello` instead of `
 
 To define loops or if statements, use `{% %}`. For example, this is a if statement that checks the value of foo:
 
-```
+```sql
 SELECT * FROM table WHERE
 {% if foo == 'hello' %}
     value = '{{ bar }}'
