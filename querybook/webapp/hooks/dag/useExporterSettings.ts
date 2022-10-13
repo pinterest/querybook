@@ -23,7 +23,7 @@ function useExporterDataByName() {
         if (exporterNames.length === 0) {
             dispatch(fetchDAGExporters());
         }
-    }, [dispatch]);
+    }, [dispatch, exporterNames.length]);
 
     return { exporterDataByName, exporterNames };
 }
