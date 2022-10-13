@@ -585,6 +585,13 @@ export const QueryEditor: React.FC<
 
         const editorDidMount = useCallback((editor: CodeMirror.Editor) => {
             editorRef.current = editor;
+
+            // There is a strange bug where codemirror would start with the wrong height (on Execs tab)
+            // which can only be solved by clicking on it
+            // The current work around is to add refresh on mount
+            setTimeout(() => {
+                editor.refresh();
+            }, 50);
         }, []);
 
         const onBeforeChange = useCallback(
