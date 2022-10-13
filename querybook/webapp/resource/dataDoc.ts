@@ -57,7 +57,7 @@ export const DataDocResource = {
     ) =>
         ds.save<IRawDataDoc>('/datadoc/from_execution/', {
             title: '',
-            meta: meta,
+            meta,
             environment_id: environmentId,
             execution_id: queryExecutionId,
             engine_id: engineId,
@@ -114,12 +114,9 @@ export const DataDocResource = {
         }),
     getDAGExporters: () => ds.fetch<IDataDocDAGExporter[]>(`/dag_exporter/`),
     exportDAG: (docId: number, exporterName: string) =>
-        ds.save<{ type: string; export: string }>(
-            `/datadoc/${docId}/dag_export/export/`,
-            {
-                exporter_name: exporterName,
-            }
-        ),
+        ds.save<string>(`/datadoc/${docId}/dag_export/export/`, {
+            exporter_name: exporterName,
+        }),
 };
 
 export const DataDocEditorResource = {
