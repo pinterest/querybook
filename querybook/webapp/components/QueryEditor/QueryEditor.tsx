@@ -18,6 +18,7 @@ import {
     tableNameDataTransferName,
 } from 'const/metastore';
 import CodeMirror, { CodeMirrorKeyMap } from 'lib/codemirror';
+import { SQL_JINJA_MODE } from 'lib/codemirror/codemirror-mode';
 import {
     AutoCompleteType,
     ExcludedTriggerKeys,
@@ -533,9 +534,7 @@ export const QueryEditor: React.FC<
                 : {};
 
             const editorOptions = {
-                // lineNumbers: true,
-                // mode: 'python',
-                mode: 'text/x-hive', // Temporarily hardcoded
+                mode: SQL_JINJA_MODE,
                 indentWithTabs: true,
                 lineWrapping,
                 lineNumbers: true,
