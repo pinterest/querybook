@@ -18,6 +18,7 @@ import {
     tableNameDataTransferName,
 } from 'const/metastore';
 import CodeMirror, { CodeMirrorKeyMap } from 'lib/codemirror';
+import { SQL_JINJA_MODE } from 'lib/codemirror/codemirror-mode';
 import {
     AutoCompleteType,
     ExcludedTriggerKeys,
