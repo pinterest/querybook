@@ -8,14 +8,6 @@ class BaseDAGExporter(metaclass=ABCMeta):
         """Name of the dag exporter that will be shown on the frontend"""
         raise NotImplementedError()
 
-    @property
-    @abstractmethod
-    def dag_exporter_type(self) -> str:
-        # Can be one of 'url' | 'text'
-        # Url exports returns a url for user to open
-        # Text exports opens up a copy paste modal for user to copy
-        raise NotImplementedError()
-
     # TODO: update documentation
     @property
     @abstractmethod
@@ -40,8 +32,7 @@ class BaseDAGExporter(metaclass=ABCMeta):
             cell_by_id: Dict of query cell data by cell id
 
         Returns Dict {
-            type: dag_exporter_type
-            export: string
+            data: (string) Markdown string
         }
         """
         raise NotImplementedError()
@@ -50,5 +41,4 @@ class BaseDAGExporter(metaclass=ABCMeta):
         return {
             "name": self.dag_exporter_name,
             "meta": self.dag_exporter_meta,
-            "type": self.dag_exporter_type,
         }
