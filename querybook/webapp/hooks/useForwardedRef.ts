@@ -3,6 +3,8 @@ import React, { useEffect, useRef } from 'react';
 
 export function useForwardedRef<T>(ref: React.Ref<T>) {
     const targetRef = useRef<T>(null);
+
+    // note: this runs once per render
     useEffect(() => {
         if (!ref) {
             return;
@@ -12,7 +14,7 @@ export function useForwardedRef<T>(ref: React.Ref<T>) {
         } else {
             (ref as React.MutableRefObject<T>).current = targetRef.current;
         }
-    }, [ref]);
+    });
 
     return targetRef;
 }

@@ -50,8 +50,6 @@ const MarkdownCode: React.FC<{
         );
     }, [className]);
 
-    console.log({ language });
-
     return (
         <StyledMarkdownCode>
             <ThemedCodeHighlight value={children} language={language} />

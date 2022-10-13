@@ -234,7 +234,7 @@ function useQueryEditorHelpers() {
 
     useEffect(() => {
         handleFocusEditor();
-    }, []);
+    }, [handleFocusEditor]);
 
     return {
         queryEditorRef,
