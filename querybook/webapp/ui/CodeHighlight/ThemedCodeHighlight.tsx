@@ -13,9 +13,9 @@ export const ThemedCodeHighlight: React.FC<ICodeHighlightProps> = (props) => {
 
     return (
         <CodeHighlight
-            {...props}
             theme={editorTheme}
             language={'text/x-hive'}
+            {...props}
         />
     );
 };

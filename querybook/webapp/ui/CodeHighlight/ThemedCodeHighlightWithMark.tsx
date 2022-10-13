@@ -15,9 +15,9 @@ export const ThemedCodeHighlightWithMark: React.FC<
 
     return (
         <CodeHighlightWithMark
-            {...props}
             theme={editorTheme}
             language={'text/x-hive'}
+            {...props}
         />
     );
 };
