@@ -19,6 +19,9 @@ def export_dag(data_doc_id, dag_exporter_name, session=None):
     return dag_exporter.export(
         nodes=dag["nodes"],
         edges=dag["edges"],
-        meta=dag_export["meta"]["exporter_meta"][dag_exporter_name],
+        meta={
+            **dag_export["meta"]["exporter_meta"][dag_exporter_name],
+            "variables": doc.meta,
+        },
         cell_by_id=cell_by_id,
     )

@@ -104,6 +104,5 @@ export interface IDataDocDAGExport {
 
 export interface IDataDocDAGExporter {
     name: string;
-    type: 'url' | 'text';
     meta: IFormField | IStructFormField | IExpandableFormField;
 }

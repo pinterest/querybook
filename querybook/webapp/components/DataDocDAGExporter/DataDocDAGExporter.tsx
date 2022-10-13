@@ -9,7 +9,7 @@ import { useSavedDAG } from 'hooks/dag/useSavedDAG';
 import { DataDocResource } from 'resource/dataDoc';
 import { Button } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
-import { CopyPasteModal } from 'ui/CopyPasteModal/CopyPasteModal';
+import { Markdown } from 'ui/Markdown/Markdown';
 import { Modal } from 'ui/Modal/Modal';
 import { AccentText } from 'ui/StyledText/StyledText';
 
@@ -31,8 +31,8 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
     onClose,
 }) => {
     const graphRef = React.useRef();
+
     const [exportData, setExportData] = React.useState<string>();
-    const [exportType, setExportType] = React.useState<string>();
 
     const { onSave, savedNodes, savedEdges, savedMeta } = useSavedDAG(docId);
     const queryCells = useQueryCells(docId);
@@ -50,10 +50,9 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
                 docId,
                 exporterName
             );
-            setExportData(exportData?.export);
-            setExportType(exportData?.type);
+            setExportData(exportData);
         },
-        [docId, nodes, edges, onSave, savedMeta]
+        [docId, nodes, edges, onSave]
     );
 
     return (
@@ -92,27 +91,23 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
                         )
                     }
                 />
-                {exportData &&
-                    (exportType === 'url' ? (
-                        <Modal
-                            onHide={() => setExportData(undefined)}
-                            title="Export Data"
-                        >
-                            <div className="flex-center mv24">
+                {exportData && (
+                    <Modal
+                        onHide={() => {
+                            // Prevent modal from being closed unless explicitly click the "Close" button
+                        }}
+                        bottomDOM={
+                            <div className="flex-right mb16">
                                 <Button
-                                    icon="ChevronRight"
-                                    title="Go To Export"
-                                    onClick={() => window.open(exportData)}
+                                    title="Close"
+                                    onClick={() => setExportData(undefined)}
                                 />
                             </div>
-                        </Modal>
-                    ) : (
-                        <CopyPasteModal
-                            text={exportData}
-                            title="Export Data"
-                            onHide={() => setExportData(undefined)}
-                        />
-                    ))}
+                        }
+                    >
+                        <Markdown>{exportData}</Markdown>
+                    </Modal>
+                )}
             </div>
         </div>
     );
