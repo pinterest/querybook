@@ -21,6 +21,7 @@ import 'codemirror/lib/codemirror.css';
 // From codemirror non-react package:
 import 'codemirror/mode/sql/sql';
 import 'codemirror/mode/jinja2/jinja2';
+
 import 'codemirror/theme/duotone-light.css';
 import 'codemirror/theme/material-palenight.css';
 import 'codemirror/theme/monokai.css';
