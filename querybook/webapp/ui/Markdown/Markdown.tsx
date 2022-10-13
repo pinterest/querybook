@@ -5,7 +5,7 @@ import { Content } from 'ui/Content/Content';
 import { Link } from 'ui/Link/Link';
 import { Message } from 'ui/Message/Message';
 
-import { MarkdownCode } from './MarkdownCode';
+const MarkdownCode = React.lazy(() => import('./MarkdownCode'));
 
 const MarkdownLink: React.FC<{ title: string; href: string }> = ({
     title,

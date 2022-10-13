@@ -1,6 +1,9 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
+import 'codemirror/mode/javascript/javascript';
+import 'codemirror/mode/python/python';
+import 'codemirror/mode/shell/shell';
 import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
 import { CopyButton } from 'ui/CopyButton/CopyButton';
 
@@ -8,6 +11,8 @@ const languageToCodemirrorLanguage = {
     sql: 'text/x-hive',
     py: 'text/x-python',
     js: 'text/javascript',
+    sh: 'text/x-sh',
+    jinja2: 'text/jinja2',
     text: 'text/plain',
 };
 
@@ -30,7 +35,7 @@ const StyledMarkdownCode = styled.div.attrs({ className: 'MarkdownCode' })`
     }
 `;
 
-export const MarkdownCode: React.FC<{
+const MarkdownCode: React.FC<{
     className: string;
     children: string;
 }> = ({ className, children }) => {
@@ -45,6 +50,8 @@ export const MarkdownCode: React.FC<{
         );
     }, [className]);
 
+    console.log({ language });
+
     return (
         <StyledMarkdownCode>
             <ThemedCodeHighlight value={children} language={language} />
@@ -52,3 +59,5 @@ export const MarkdownCode: React.FC<{
         </StyledMarkdownCode>
     );
 };
+
+export default MarkdownCode;

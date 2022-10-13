@@ -7,7 +7,7 @@ Note that the currently supported variable type are string, number, and boolean.
 
 You can also reference another variable in the variable definition. For example, suppose you have defined
 
-```
+```py
 foo = 'hello'
 bar = '{{ foo }} world'
 ```
@@ -49,7 +49,7 @@ This would get rendered into `SELECT * FROM table WHERE value = 'hello world'`.
 A more advanced use case is to combine for loops and if conditions. For example, suppose that instead of checking `year in (2012, 2013, 2014)`, I want to check using `year = 2012 OR year = 2013 OR year = 2014`.
 It can be done using for loops like so:
 
-```
+```jinja2
 {% for year in [2012, 2013, 2014] %}
   {% if loop.index0 != 0 %}
     OR
@@ -63,13 +63,13 @@ It can be done using for loops like so:
 Last but not least, you can call functions using the same syntax that references variables. For example, if you want to call the function `latest_partition` with table name equal to the value
 of foo and the partition key as `'dt'` then simply put:
 
-```
+```jinja2
 {{ latest_partition(foo, 'dt') }}
 ```
 
 which is equivalent to
 
-```
+```jinja2
 {{ latest_partition('hello', 'dt') }}
 ```
 
