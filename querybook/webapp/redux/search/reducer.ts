@@ -109,7 +109,6 @@ export default function search(
             case '@@search/SEARCH_TYPE_UPDATE': {
                 // Save the current state into past state
                 draft.pastSearchStateByType[draft.searchType] = {
-                    searchString: draft.searchString,
                     searchFields: draft.searchFields,
                     searchFilters: draft.searchFilters,
                 };
