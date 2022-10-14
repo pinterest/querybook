@@ -166,7 +166,6 @@ export interface ISearchState extends ISearchPaginationState {
         Record<
             SearchType,
             {
-                searchString: string;
                 searchFilters: Record<string, any>;
                 searchFields: TSearchField;
             }
