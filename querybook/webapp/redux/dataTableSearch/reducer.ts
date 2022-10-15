@@ -25,6 +25,7 @@ const initialState: IDataTableSearchState = {
     searchString: '',
     searchRequest: null,
     metastoreId: null,
+    sortTablesBy: defaultSortSchemaTableBy,
     ...initialResultState,
 };
 
@@ -74,6 +75,18 @@ export default function dataTableSearch(
             }
             case '@@dataTableSearch/DATA_TABLE_SEARCH_STRING_UPDATE': {
                 draft.searchString = action.payload.searchString;
+                return;
+            }
+            case '@@dataTableSearch/DATA_TABLE_SEARCH_SORT_UPDATE': {
+                const { sortKey, sortAsc } = action.payload.sortTablesBy;
+
+                if (sortKey != null) {
+                    draft.sortTablesBy.key = sortKey;
+                }
+                if (sortAsc != null) {
+                    draft.sortTablesBy.asc = sortAsc;
+                }
+
                 return;
             }
             case '@@dataTableSearch/DATA_TABLE_SEARCH_FILTER_UPDATE': {

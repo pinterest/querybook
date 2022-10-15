@@ -66,6 +66,16 @@ export interface IDataTableSearchStringUpdateAction extends Action {
     };
 }
 
+export interface IDataTableSearchSortUpdateAction extends Action {
+    type: '@@dataTableSearch/DATA_TABLE_SEARCH_SORT_UPDATE';
+    payload: {
+        sortTablesBy: {
+            sortKey?: SchemaTableSortKey | undefined;
+            sortAsc?: boolean | undefined;
+        };
+    };
+}
+
 export interface IDataTableSearchSelectMetastoreAction extends Action {
     type: '@@dataTableSearch/DATA_TABLE_SEARCH_SELECT_METASTORE';
     payload: {
@@ -156,6 +166,7 @@ export type DataTableSearchAction =
     | IDataTableSearchDoneAction
     | IDataTableSearchFailedAction
     | IDataTableSearchStringUpdateAction
+    | IDataTableSearchSortUpdateAction
     | IDataTableSearchFilterUpdateAction
     | IDataTableSearchResetFilterAction
     | IDataTableSearchMoreAction
@@ -196,6 +207,10 @@ export interface IDataTableSearchState extends IDataTableSearchPaginationState {
     searchString: string;
     searchRequest?: ICancelablePromise<any>;
     metastoreId?: number;
+    sortTablesBy: {
+        asc: boolean;
+        key: SchemaTableSortKey;
+    };
 }
 
 export type ThunkResult<R> = ThunkAction<

@@ -90,11 +90,14 @@ function searchDataTable(): ThunkResult<Promise<ITableSearchResult[]>> {
             if (state.searchRequest) {
                 state.searchRequest.cancel();
             }
-            const searchRequest = SearchTableResource.searchConcise({
-                ...mapStateToSearch(state),
-                sort_key: ['schema', 'name'],
-                sort_order: ['asc', 'asc'],
-            });
+            const tableSort = state.sortTablesBy;
+            const search = { ...mapStateToSearch(state) };
+            if (tableSort.key === 'name') {
+                const tableSortAsc = tableSort.asc ? 'asc' : 'desc';
+                search['sort_key'] = ['schema', 'name'];
+                search['sort_order'] = [tableSortAsc, tableSortAsc];
+            }
+            const searchRequest = SearchTableResource.searchConcise(search);
             dispatch(resetSearchResult());
             dispatch({
                 type: '@@dataTableSearch/DATA_TABLE_SEARCH_STARTED',
@@ -284,6 +287,24 @@ export function updateSearchString(searchString: string): ThunkResult<void> {
             type: '@@dataTableSearch/DATA_TABLE_SEARCH_STRING_UPDATE',
             payload: {
                 searchString,
+            },
+        });
+        dispatch(searchDataTable());
+    };
+}
+
+export function updateTableSort(
+    sortKey?: SchemaTableSortKey | undefined | null,
+    sortAsc?: boolean | undefined | null
+): ThunkResult<void> {
+    return (dispatch) => {
+        dispatch({
+            type: '@@dataTableSearch/DATA_TABLE_SEARCH_SORT_UPDATE',
+            payload: {
+                sortTablesBy: {
+                    sortKey,
+                    sortAsc,
+                },
             },
         });
         dispatch(searchDataTable());
