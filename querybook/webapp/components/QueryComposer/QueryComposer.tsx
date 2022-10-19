@@ -685,7 +685,7 @@ const QueryComposer: React.FC = () => {
                     menuIcon="MoreVertical"
                     className="query-cell-additional-dropdown"
                 >
-                    <ListMenu items={additionalButtons} />
+                    <ListMenu items={additionalButtons} isNestedRight={true} />
                 </Dropdown>
                 {templatedModalDOM}
                 {templatedQueryViewModalDOM}
