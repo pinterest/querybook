@@ -1,9 +1,11 @@
 import * as React from 'react';
 import toast from 'react-hot-toast';
+import { useSelector } from 'react-redux';
 
 import { IDataDocDAGExportMeta } from 'const/datadoc';
 import { useExporterSettings } from 'hooks/dag/useExporterSettings';
 import { titleize } from 'lib/utils';
+import { IStoreState } from 'redux/store/types';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Button } from 'ui/Button/Button';
 import { FormField, FormSectionHeader } from 'ui/Form/FormField';
@@ -12,12 +14,14 @@ import { SmartForm } from 'ui/SmartForm/SmartForm';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
 interface IProps {
+    docId: number;
     onExport: (name: string, settings: any) => Promise<any>;
     savedMeta: IDataDocDAGExportMeta;
     onSave: (meta: any, useTemplatedVariables?: boolean) => Promise<any>;
 }
 
 export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
+    docId,
     onExport,
     savedMeta,
     onSave,
@@ -27,14 +31,27 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
         selectedExporter,
         setSelectedExporter,
         settingValues,
+        exporterEngines,
         exporterMeta,
         handleSettingValuesChange,
         useTemplatedVariables,
-    } = useExporterSettings({ savedMeta });
+    } = useExporterSettings({ docId, savedMeta });
+
+    const queryEngineById = useSelector(
+        (state: IStoreState) => state.queryEngine.queryEngineById
+    );
 
     const handleExport = React.useCallback(
         () => onExport(selectedExporter, settingValues),
         [onExport, selectedExporter, settingValues]
+    );
+
+    const enginesDOM = exporterEngines && (
+        <ul className="DataDocDAGExporterSettings-engines">
+            {exporterEngines.map((engineId) => (
+                <li key={engineId}>{queryEngineById[engineId].name}</li>
+            ))}
+        </ul>
     );
 
     return (
@@ -55,6 +72,8 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
                     value={selectedExporter}
                     onChange={setSelectedExporter}
                 />
+                <FormSectionHeader>Query Engines Supported</FormSectionHeader>
+                {enginesDOM}
                 <FormSectionHeader>Settings</FormSectionHeader>
                 {exporterMeta && settingValues && (
                     <SmartForm

@@ -58,6 +58,11 @@
                         margin-top: 0px;
                     }
                 }
+
+                .DataDocDAGExporterSettings-engines {
+                    list-style: '- ';
+                    margin-left: var(--margin-sm);
+                }
             }
 
             .DataDocDAGExporter-bottom {

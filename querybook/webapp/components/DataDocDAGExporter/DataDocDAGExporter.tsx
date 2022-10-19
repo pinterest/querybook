@@ -1,10 +1,12 @@
-import * as React from 'react';
+import React, { useMemo } from 'react';
 
+import { DataDocDAGExporterContext } from 'context/DataDocDAGExporter';
 import {
     useExporterDAG,
     useQueryCells,
     useUnusedQueryCells,
 } from 'hooks/dag/useExporterDAG';
+import { useCurrentExporter } from 'hooks/dag/useExporterSettings';
 import { useSavedDAG } from 'hooks/dag/useSavedDAG';
 import { DataDocResource } from 'resource/dataDoc';
 import { Button } from 'ui/Button/Button';
@@ -34,6 +36,7 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
 
     const [exportData, setExportData] = React.useState<string>();
 
+    const currentExporter = useCurrentExporter(docId);
     const { onSave, savedNodes, savedEdges, savedMeta } = useSavedDAG(docId);
     const queryCells = useQueryCells(docId);
     const [nodes, edges, setNodes, setEdges, dropRef, setGraphInstance] =
@@ -55,60 +58,73 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
         [docId, nodes, edges, onSave]
     );
 
+    const DAGExporterContextState = useMemo(() => {
+        const isEngineSupported = (engineId: number) =>
+            currentExporter?.engines.includes(engineId) ?? true;
+        return {
+            docId,
+            currentExporter,
+            isEngineSupported,
+        };
+    }, [docId, currentExporter]);
+
     return (
-        <div className="DataDocDAGExporter">
-            <div className="DataDocDAGExporter-header">
-                <AccentText size="large" weight="bold" color="dark">
-                    DAG Exporter
-                </AccentText>
-                <IconButton
-                    aria-label="close"
-                    icon="X"
-                    onClick={onClose}
-                    noPadding
-                />
-            </div>
-            <div className="DataDocDAGExporter-body">
-                <DataDocDagExporterList queryCells={unusedQueryCells} />
-                <DataDocDAGExporterGraph
-                    dropRef={dropRef}
-                    graphRef={graphRef}
-                    setGraphInstance={setGraphInstance}
-                    nodes={nodes}
-                    edges={edges}
-                    setNodes={setNodes}
-                    setEdges={setEdges}
-                />
-                <DataDocDAGExporterSettings
-                    onExport={handleExport}
-                    savedMeta={savedMeta}
-                    onSave={(exporterMeta, useTemplatedVariables) =>
-                        onSave(
-                            nodes,
-                            edges,
-                            exporterMeta,
-                            useTemplatedVariables
-                        )
-                    }
-                />
-                {exportData && (
-                    <Modal
-                        onHide={() => {
-                            // Prevent modal from being closed unless explicitly click the "Close" button
-                        }}
-                        bottomDOM={
-                            <div className="flex-right mb16">
-                                <Button
-                                    title="Close"
-                                    onClick={() => setExportData(undefined)}
-                                />
-                            </div>
+        <DataDocDAGExporterContext.Provider value={DAGExporterContextState}>
+            <div className="DataDocDAGExporter">
+                <div className="DataDocDAGExporter-header">
+                    <AccentText size="large" weight="bold" color="dark">
+                        DAG Exporter
+                    </AccentText>
+                    <IconButton
+                        aria-label="close"
+                        icon="X"
+                        onClick={onClose}
+                        noPadding
+                    />
+                </div>
+                <div className="DataDocDAGExporter-body">
+                    <DataDocDagExporterList queryCells={unusedQueryCells} />
+                    <DataDocDAGExporterGraph
+                        dropRef={dropRef}
+                        graphRef={graphRef}
+                        setGraphInstance={setGraphInstance}
+                        nodes={nodes}
+                        edges={edges}
+                        setNodes={setNodes}
+                        setEdges={setEdges}
+                    />
+                    <DataDocDAGExporterSettings
+                        docId={docId}
+                        onExport={handleExport}
+                        savedMeta={savedMeta}
+                        onSave={(exporterMeta, useTemplatedVariables) =>
+                            onSave(
+                                nodes,
+                                edges,
+                                exporterMeta,
+                                useTemplatedVariables
+                            )
                         }
-                    >
-                        <Markdown>{exportData}</Markdown>
-                    </Modal>
-                )}
+                    />
+                    {exportData && (
+                        <Modal
+                            onHide={() => {
+                                // Prevent modal from being closed unless explicitly click the "Close" button
+                            }}
+                            bottomDOM={
+                                <div className="flex-right mb16">
+                                    <Button
+                                        title="Close"
+                                        onClick={() => setExportData(undefined)}
+                                    />
+                                </div>
+                            }
+                        >
+                            <Markdown>{exportData}</Markdown>
+                        </Modal>
+                    )}
+                </div>
             </div>
-        </div>
+        </DataDocDAGExporterContext.Provider>
     );
 };

@@ -19,9 +19,7 @@ Due to the many ways a workflow app may be configured, it is unlikely that a dag
 Here are some fields of exporter that you must configure in the setup process:
 
 -   DAG_EXPORTER_NAME: This will get displayed on the Querybook website.
--   DAG_EXPORTER_TYPE: There are 2 types of exporters:
-    -   `url`: This is useful when the created workflow can be accessed by a url.
-    -   `text`: This is useful when you want to generate a file for users to create a workflow
+-   DAG_EXPORTER_ENGINES: This is the engine ids that the exporter supports.
 -   DAG_EXPORTER_META: This will be displayed as form for users to set the settings for creating the workflow. Must use one of AllFormField that lives in <project_root>/querybook/server/lib/form/\_\_init\_\_.py.
 -   export(cls, nodes, edges, meta, cell_by_id): This is the actual export function.
 

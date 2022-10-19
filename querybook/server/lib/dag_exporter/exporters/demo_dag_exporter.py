@@ -1,6 +1,8 @@
+from app.db import with_session
 from lib.dag_exporter.base_dag_exporter import BaseDAGExporter
 from lib.logger import get_logger
 from lib.form import StructFormField, FormField
+from logic.admin import get_query_engine_by_id
 
 import re
 
@@ -28,7 +30,6 @@ AIRFLOW_SUCCESS_MSG = """
 AIRFLOW_ERROR_MSG = """
 # Failed to export DAG to {exporter_name}
 
-**Error**
 ```
 {error_msg}
 ```
@@ -56,13 +57,21 @@ class DemoDAGExporter(BaseDAGExporter):
         return "demo"
 
     @property
+    def dag_exporter_engines(self) -> str:
+        """Demo exporter supports below query engines
+        1: sqlite
+        """
+        return [1]
+
+    @property
     def dag_exporter_meta(self):
         return StructFormField(
             name=FormField(description="dag name"),
             description=FormField(description="dag description"),
         )
 
-    def export(self, nodes, edges, meta, cell_by_id):
+    @with_session
+    def export(self, nodes, edges, meta, cell_by_id, session=None):
         name = meta.get("name", "")
         description = meta.get("description", "")
 
@@ -82,6 +91,16 @@ class DemoDAGExporter(BaseDAGExporter):
             task_ids.add(node_id)
 
             query_cell = cell_by_id[node_id]
+            query_engine_id = query_cell.meta.get("engine")
+
+            if query_engine_id not in self.dag_exporter_engines:
+                error_msg = f"This DAG exporter only supports query engines: {', '.join(self.dag_exporter_engine_names)}"
+                return {
+                    "data": AIRFLOW_ERROR_MSG.format(
+                        exporter_name=self.dag_exporter_name, error_msg=error_msg
+                    ),
+                }
+
             title = re.sub(
                 r"\s+",
                 "_",

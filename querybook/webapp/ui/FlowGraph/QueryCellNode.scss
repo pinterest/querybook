@@ -27,6 +27,12 @@
         }
     }
 
+    .QueryCellNode-tag {
+        padding: 0;
+        margin-right: 4px;
+        font-size: var(--xxxsmall-text-size);
+    }
+
     .QueryCellNode-label {
         cursor: grab;
     }
