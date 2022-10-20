@@ -51,6 +51,18 @@ export const DataDocTemplateVarForm: React.FunctionComponent<
         }),
         [defaultTemplatedVariables, templatedVariables]
     );
+
+    const getValueByType = (value, valueType) => {
+        if (value !== null) {
+            if (valueType === 'number') {
+                value = Number(value);
+            } else if (valueType === 'string') {
+                value = value.toString();
+            }
+        }
+        return value;
+    };
+
     return (
         <Formik
             enableReinitialize
@@ -58,8 +70,8 @@ export const DataDocTemplateVarForm: React.FunctionComponent<
             initialValues={initialValue}
             onSubmit={({ variables }) =>
                 onSave(
-                    variables.reduce((hash, [name, _, value]) => {
-                        hash[name] = value;
+                    variables.reduce((hash, [name, valueType, value]) => {
+                        hash[name] = getValueByType(value, valueType);
                         return hash;
                     }, {})
                 )
