@@ -11,6 +11,7 @@ import { Button } from 'ui/Button/Button';
 import { FormField, FormSectionHeader } from 'ui/Form/FormField';
 import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 import { SmartForm } from 'ui/SmartForm/SmartForm';
+import { Tag } from 'ui/Tag/Tag';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
 interface IProps {
@@ -47,11 +48,13 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
     );
 
     const enginesDOM = exporterEngines && (
-        <ul className="DataDocDAGExporterSettings-engines">
+        <div>
             {exporterEngines.map((engineId) => (
-                <li key={engineId}>{queryEngineById[engineId].name}</li>
+                <Tag key={engineId} mini>
+                    {queryEngineById[engineId].name}
+                </Tag>
             ))}
-        </ul>
+        </div>
     );
 
     return (

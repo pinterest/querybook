@@ -101,7 +101,7 @@ export const DataDocDAGExporterListItem =
                                                     className="mr4"
                                                 />
                                                 <AccentText
-                                                    color="accent"
+                                                    color="text"
                                                     size="small"
                                                 >
                                                     Selected exporter doesn't
