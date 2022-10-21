@@ -1,6 +1,5 @@
 .QueryCellNode {
     background-color: var(--bg-lightest);
-    border: 1px solid var(--bg-select);
     border-radius: var(--border-radius-sm);
     padding: var(--padding) var(--padding);
     color: var(--text);
@@ -11,7 +10,16 @@
     }
 
     &.selected {
-        background-color: var(--color-accent-lightest);
+        background-color: var(--color-accent-lightest-0);
+        .react-flow__handle {
+            border-color: var(--color-accent-light);
+        }
+        .QueryCellNode-label {
+            color: var(--color-accent-dark);
+        }
+        .Tag {
+            color: var(--color-accent);
+        }
     }
 
     .QueryCellNode-toolbar {
@@ -21,9 +29,8 @@
         background: var(--bg-lightest);
         border-radius: 4px;
 
-        .QueryCellNode-toolbar-button {
+        .IconButon {
             padding: 8px;
-            color: var(--icon-active);
         }
     }
 

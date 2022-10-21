@@ -27,6 +27,7 @@ const StyledMarkdownCode = styled.div.attrs({ className: 'MarkdownCode' })`
     }
 
     &:hover .CopyButton {
+        margin: 16px 8px;
         visibility: visible;
     }
 
@@ -53,7 +54,11 @@ const MarkdownCode: React.FC<{
     return (
         <StyledMarkdownCode>
             <ThemedCodeHighlight value={children} language={language} />
-            <CopyButton copyText={children} theme="text" />
+            <CopyButton
+                copyText={children}
+                theme="text"
+                tooltipDirection="left"
+            />
         </StyledMarkdownCode>
     );
 };
