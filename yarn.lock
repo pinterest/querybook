@@ -3189,19 +3189,6 @@
   resolved "https://registry.yarnpkg.com/@csstools/convert-colors/-/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"
   integrity sha512-5a6wqoJV/xEdbRNKVo6I4hO3VjyDq//8q2f9I6PBAvMesJHFauXDorcNCsr9RzvsZnaWi5NYCcfyqP1QeFHFbw==
 
-"@datasert/cronjs-matcher@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@datasert/cronjs-matcher/-/cronjs-matcher-1.2.0.tgz#c7468c8c984c562ceec553e6a698a131e1659e4a"
-  integrity sha512-ht6Vwwa3qssMn/9bphypjG/U8w0DV3GtTS2C6kbAy39rerQFTRzmml9xZNlot1K13gm9K/EEq3DLPEOsH++ICw==
-  dependencies:
-    "@datasert/cronjs-parser" "^1.2.0"
-    luxon "^2.1.1"
-
-"@datasert/cronjs-parser@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@datasert/cronjs-parser/-/cronjs-parser-1.2.0.tgz#1a399e1a015db5d09a533d7a23fe8abfa03631ea"
-  integrity sha512-7kzYh7F5V3ElX+k3W9w6SKS6WdjqJQ2gIY1y0evldnjAwZxnFzR/Yu9Mv9OeDaCQX+mGAq2MvEnJbwu9oj3CXQ==
-
 "@discoveryjs/json-ext@^0.5.0":
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/@discoveryjs/json-ext/-/json-ext-0.5.2.tgz#8f03a22a04de437254e8ce8cc84ba39689288752"
@@ -8528,6 +8515,13 @@ create-react-context@0.3.0:
     gud "^1.0.0"
     warning "^4.0.3"
 
+cron-parser@4.6.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/cron-parser/-/cron-parser-4.6.0.tgz#404c3fdbff10ae80eef6b709555d577ef2fd2e0d"
+  integrity sha512-guZNLMGUgg6z4+eGhmHGw7ft+v6OQeuHzd1gcLxCo9Yg/qoxmG3nindp2/uwGCLizEisf2H0ptqeVXeoCpP6FA==
+  dependencies:
+    luxon "^3.0.1"
+
 cross-fetch@^3.0.4:
   version "3.1.4"
   resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.1.4.tgz#9723f3a3a247bf8b89039f3a380a9244e8fa2f39"
@@ -13323,10 +13317,10 @@ lucide-react@^0.17.13:
   resolved "https://registry.yarnpkg.com/lucide-react/-/lucide-react-0.17.13.tgz#8019893e241efe7418e9bb88d05116d40235236b"
   integrity sha512-fOPHMncOqQYqjZX/OCrqdYQGUYBZ8VMPcw8PAjWjEZXSyfLue2Tbc/W3DAiTZh1ryx7ryQ00nn1KtTG+jHbdmA==
 
-luxon@^2.1.1:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/luxon/-/luxon-2.3.0.tgz#bf16a7e642513c2a20a6230a6a41b0ab446d0045"
-  integrity sha512-gv6jZCV+gGIrVKhO90yrsn8qXPKD8HYZJtrUDSfEbow8Tkw84T9OnCyJhWvnJIaIF/tBuiAjZuQHUt1LddX2mg==
+luxon@^3.0.1:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/luxon/-/luxon-3.0.4.tgz#d179e4e9f05e092241e7044f64aaa54796b03929"
+  integrity sha512-aV48rGUwP/Vydn8HT+5cdr26YYQiUZ42NM6ToMoaGKwYfWbfLeRkEu1wXWMHBZT6+KyLfcbbtVcoQFCbbPjKlw==
 
 make-dir@^2.0.0, make-dir@^2.1.0:
   version "2.1.0"

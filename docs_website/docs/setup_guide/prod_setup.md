@@ -46,13 +46,20 @@ If you add `prod_` in front of the service name (for example `make prod_web`), i
 
 ## Post Setup Configuration
 
-1. By default the first user of Querybook is given the admin permission. Navigate to `/admin/` which contains the admin tools.
-2. Select the "environment" tab and create an environment. All query engines and datadocs in Querybook need to belong to an environment.
-3. If you use hive metastore, go to metastore page and configure a metastore. A daily job is auto created to ensure it gets updated daily at utc 0. You can adjust the frequency or manually kickoff a run.
+1. Initialize your database and elasticsearch by running the following script inside the Querybook docker container:
+
+```sh
+docker run -it querybook bash  # or if it is already running: docker exec -it querybook_web bash
+/opt/querybook/scripts/init_db
+```
+
+2. By default the first user of Querybook is given the admin permission. Navigate to `/admin/` which contains the admin tools.
+3. Select the "environment" tab and create an environment. All query engines and datadocs in Querybook need to belong to an environment.
+4. If you use hive metastore, go to metastore page and configure a metastore. A daily job is auto created to ensure it gets updated daily at utc 0. You can adjust the frequency or manually kickoff a run.
 
     Note that hivemetastore is not required for a query engine to function.
 
-4. Create a query engine and now Querybook should be ready to use.
+5. Create a query engine and now Querybook should be ready to use.
 
 Check out the [general configuration guide](../configurations/general_config.md) for more detailed info about querybook configuration.
 

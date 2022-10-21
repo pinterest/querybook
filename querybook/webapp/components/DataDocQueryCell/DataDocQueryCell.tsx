@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import { DataDocQueryExecutions } from 'components/DataDocQueryExecutions/DataDocQueryExecutions';
 import { runQuery, transformQuery } from 'components/QueryComposer/RunQuery';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
-import { QueryEditor } from 'components/QueryEditor/QueryEditor';
+import { IQueryEditorHandles } from 'components/QueryEditor/QueryEditor';
 import {
     IQueryRunButtonHandles,
     QueryEngineSelector,
@@ -112,7 +112,7 @@ interface IState {
 }
 
 class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
-    private queryEditorRef = React.createRef<QueryEditor>();
+    private queryEditorRef = React.createRef<IQueryEditorHandles>();
     private runButtonRef = React.createRef<IQueryRunButtonHandles>();
 
     public constructor(props) {

@@ -109,16 +109,14 @@ export default function search(
             case '@@search/SEARCH_TYPE_UPDATE': {
                 // Save the current state into past state
                 draft.pastSearchStateByType[draft.searchType] = {
-                    searchString: draft.searchString,
                     searchFields: draft.searchFields,
                     searchFilters: draft.searchFilters,
                 };
 
-                // rehydrate from past state
+                // rehydrate from past state, except for the search string
                 const searchStateForNewType = draft.pastSearchStateByType[
                     action.payload.searchType
                 ] ?? {
-                    searchString: '',
                     searchFilters: {},
                     searchFields:
                         draft.searchType === SearchType.Table
@@ -131,7 +129,6 @@ export default function search(
                 };
 
                 draft.searchType = action.payload.searchType;
-                draft.searchString = searchStateForNewType.searchString;
                 draft.searchFilters = searchStateForNewType.searchFilters;
                 draft.searchFields = searchStateForNewType.searchFields;
                 return;

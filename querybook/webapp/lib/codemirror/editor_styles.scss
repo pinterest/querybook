@@ -22,4 +22,10 @@
     .cm-searching {
         background-color: var(--text-highlight);
     }
+
+    // For some reason, monokai assign same color for
+    // tag and keyword, this is to differentiate the two
+    &.cm-s-monokai span.cm-tag {
+        color: #a6e22e;
+    }
 }

@@ -1,5 +1,5 @@
 import type { IAccessRequest } from 'const/accessRequest';
-import { IQueryTranspiler } from 'const/queryEngine';
+import { IQueryTranspiler, ITranspiledQuery } from 'const/queryEngine';
 import {
     IQueryError,
     IQueryExecution,
@@ -177,7 +177,7 @@ export const TemplatedQueryResource = {
         fromLanguage: string,
         toLanguage: string
     ) =>
-        ds.save<string>(`/query/transpile/${transpiler}/`, {
+        ds.save<ITranspiledQuery>(`/query/transpile/${transpiler}/`, {
             query,
             from_language: fromLanguage,
             to_language: toLanguage,

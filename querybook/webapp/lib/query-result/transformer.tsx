@@ -96,7 +96,7 @@ const queryResultTransformers: IColumnTransformer[] = [
         name: 'Parse JSON',
         appliesToType: ['json'],
         priority: 0,
-        auto: true,
+        auto: false,
         transform: (v: string): React.ReactNode => {
             try {
                 const json = JSONBigString.parse(v);
