@@ -11,7 +11,7 @@
     }
 
     &.selected {
-        border: 1px solid var(--color-accent-light);
+        background-color: var(--color-accent-lightest);
     }
 
     .QueryCellNode-toolbar {
@@ -25,6 +25,13 @@
             padding: 8px;
             color: var(--icon-active);
         }
+    }
+
+    .QueryCellNode-tag {
+        padding: 0;
+        margin-right: 4px;
+        font-size: var(--xxxsmall-text-size);
+        background-color: transparent;
     }
 
     .QueryCellNode-label {
