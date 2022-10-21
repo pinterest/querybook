@@ -1,14 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional, Tuple, TypedDict
-
-
-class TranspiledQuery(TypedDict):
-    transpiled_query: str
-
-    # The original query that's getting transformed
-    # Provide this value if the transpiled query is
-    # getting formatted for better user comparison experience
-    original_query: Optional[str]
+from typing import List
 
 
 class BaseQueryTranspiler(ABC):
@@ -25,9 +16,7 @@ class BaseQueryTranspiler(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def transpile(
-        self, query: str, from_language: str, to_language: str
-    ) -> Tuple[str, str]:
+    def transpile(self, query: str, from_language: str, to_language: str):
         raise NotImplementedError()
 
     def to_dict(self):
