@@ -2,11 +2,9 @@ import React, { useCallback } from 'react';
 
 import { IQueryEngine } from 'const/queryEngine';
 import { useResource } from 'hooks/useResource';
-import { formatError } from 'lib/utils/error';
 import { TemplatedQueryResource } from 'resource/queryExecution';
 import { Button } from 'ui/Button/Button';
 import { Loading } from 'ui/Loading/Loading';
-import { ErrorMessage } from 'ui/Message/ErrorMessage';
 import { Modal } from 'ui/Modal/Modal';
 
 import { QueryComparison } from './QueryComparison';
@@ -29,11 +27,7 @@ export const TranspileQueryModal: React.FC<IProps> = ({
     onHide,
     onTranspileConfirm,
 }) => {
-    const {
-        data: transpiledQuery,
-        isLoading,
-        error,
-    } = useResource(
+    const { data: transpiledQuery, isLoading } = useResource(
         useCallback(
             () =>
                 TemplatedQueryResource.transpileQuery(
@@ -48,23 +42,13 @@ export const TranspileQueryModal: React.FC<IProps> = ({
 
     let contentDOM = null;
     let bottomDOM = null;
-
     if (isLoading) {
         contentDOM = <Loading />;
-    } else if (error) {
-        contentDOM = (
-            <ErrorMessage title={'Failed to transpile query.'}>
-                {formatError(error)}
-            </ErrorMessage>
-        );
     } else {
-        const fromQuery = transpiledQuery.original_query ?? query;
-        const toQuery = transpiledQuery.transpiled_query;
-
         contentDOM = (
             <QueryComparison
-                fromQuery={fromQuery}
-                toQuery={toQuery}
+                fromQuery={query}
+                toQuery={transpiledQuery}
                 fromEngine={fromEngine}
                 toEngine={toEngine}
             />
@@ -76,7 +60,9 @@ export const TranspileQueryModal: React.FC<IProps> = ({
                 <Button
                     title="Confirm"
                     color="confirm"
-                    onClick={() => onTranspileConfirm(toQuery, toEngine)}
+                    onClick={() =>
+                        onTranspileConfirm(transpiledQuery, toEngine)
+                    }
                 />
             </div>
         );

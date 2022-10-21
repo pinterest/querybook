@@ -606,7 +606,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                     {getAuthorFiltersDOM('owner_uid')}
                 </div>
                 <div className="search-filter">
-                    <span className="filter-title">Created At</span>
+                    <span className="filter-title">Date</span>
                     {dateFilterDOM}
                 </div>
             </>
@@ -634,7 +634,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                     </div>
                 </div>
                 <div className="search-filter">
-                    <span className="filter-title">Created At</span>
+                    <span className="filter-title">Date</span>
                     {dateFilterDOM}
                 </div>
                 <div className="search-filter">
