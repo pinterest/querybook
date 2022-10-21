@@ -10,9 +10,9 @@ import {
     IDataCell,
     IDataCellMeta,
     IDataDoc,
-    IDataDocDAGExport,
     IDataDocDAGExporter,
     IDataDocEditor,
+    IDataDocSavedDAGExport,
     IDataTextCell,
     IRawDataDoc,
 } from 'const/datadoc';
@@ -37,6 +37,7 @@ import {
     IReceiveDataDocAction,
     IReceiveDataDocDAGExportAction,
     IReceiveDataDocDAGExportersAction,
+    IReceiveDataDocDAGExporterSelectionAction,
     IReceiveDataDocsAction,
     ISaveDataDocEndAction,
     ISaveDataDocStartAction,
@@ -672,9 +673,22 @@ export function saveDAGExport(
     };
 }
 
+export function selectDAGExporter(
+    docId: number,
+    exporterName: string
+): IReceiveDataDocDAGExporterSelectionAction {
+    return {
+        type: '@@dataDoc/RECEIVE_DATA_DOC_DAG_EXPORTER_SELECTION',
+        payload: {
+            docId,
+            exporterName,
+        },
+    };
+}
+
 export function receiveDAGExport(
     docId: number,
-    DAGExport: IDataDocDAGExport
+    DAGExport: IDataDocSavedDAGExport
 ): IReceiveDataDocDAGExportAction {
     return {
         type: '@@dataDoc/RECEIVE_DATA_DOC_DAG_EXPORT',
@@ -685,9 +699,11 @@ export function receiveDAGExport(
     };
 }
 
-export function fetchDAGExporters(): ThunkResult<Promise<void>> {
+export function fetchDAGExporters(envId: number): ThunkResult<Promise<void>> {
     return async (dispatch) => {
-        const { data: exporters } = await DataDocResource.getDAGExporters();
+        const { data: exporters } = await DataDocResource.getDAGExporters(
+            envId
+        );
 
         dispatch(receiveDAGExporters(exporters));
     };

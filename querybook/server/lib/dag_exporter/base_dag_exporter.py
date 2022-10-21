@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from logic.admin import get_query_engines_by_ids
 
 
 class BaseDAGExporter(metaclass=ABCMeta):
@@ -7,6 +8,18 @@ class BaseDAGExporter(metaclass=ABCMeta):
     def dag_exporter_name(self) -> str:
         """Name of the dag exporter that will be shown on the frontend"""
         raise NotImplementedError()
+
+    @property
+    @abstractmethod
+    def dag_exporter_engines(self) -> list[int]:
+        """Supprted engine ids of the dag exporter"""
+        raise NotImplementedError()
+
+    @property
+    def dag_exporter_engine_names(self) -> list[str]:
+        """Get the supported engine names"""
+        query_engines = get_query_engines_by_ids(self.dag_exporter_engines)
+        return [engine.name for engine in query_engines]
 
     # TODO: update documentation
     @property
@@ -40,5 +53,6 @@ class BaseDAGExporter(metaclass=ABCMeta):
     def to_dict(self):
         return {
             "name": self.dag_exporter_name,
+            "engines": self.dag_exporter_engines,
             "meta": self.dag_exporter_meta,
         }

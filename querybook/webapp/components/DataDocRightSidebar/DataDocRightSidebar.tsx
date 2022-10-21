@@ -142,6 +142,9 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
 
 function useExporterExists() {
     const dispatch = useDispatch();
+    const currentEnvironmentId = useSelector(
+        (state: IStoreState) => state.environment.currentEnvironmentId
+    );
     const exporterDataByName = useSelector(
         (state: IStoreState) => state.dataDoc.dagExporterDataByName
     );
@@ -151,11 +154,8 @@ function useExporterExists() {
     );
 
     React.useEffect(() => {
-        if (exporterNames.length === 0) {
-            dispatch(fetchDAGExporters());
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        dispatch(fetchDAGExporters(currentEnvironmentId));
+    }, [dispatch, currentEnvironmentId]);
 
     const exporterExists = exporterNames.length > 0;
 

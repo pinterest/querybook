@@ -73,11 +73,10 @@ export function useExporterDAG(
             id: cell.id.toString(),
             type: queryCellNode,
             data: {
-                label: cell.meta?.title,
+                queryCell: cell,
                 updated:
                     savedNode?.data?.queryHash &&
                     isQueryUpdated(savedNode?.data?.queryHash, cell.context),
-                query: cell.context,
             },
             position: savedNode?.position ?? initialNodePosition,
             sourcePosition: savedNode.sourcePosition ?? sourcePosition,

@@ -10,7 +10,8 @@ export function useSavedDAG(docId: number) {
     const dispatch: Dispatch = useDispatch();
 
     const savedDAGExport = useSelector(
-        (state: IStoreState) => state.dataDoc.dagExportByDocId[docId]
+        (state: IStoreState) =>
+            state.dataDoc.dagExportByDocId[docId]?.savedDAGExport
     );
 
     React.useEffect(() => {
@@ -41,7 +42,7 @@ export function useSavedDAG(docId: number) {
                 id: node.id,
                 position: node.position,
                 data: {
-                    queryHash: hashString(node.data.query),
+                    queryHash: hashString(node.data.queryCell.context),
                 },
                 sourcePosition: node.sourcePosition,
                 targetPosition: node.targetPosition,
