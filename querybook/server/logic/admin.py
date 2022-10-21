@@ -34,6 +34,11 @@ def get_query_engine_by_id(id, session=None):
 
 
 @with_session
+def get_query_engines_by_ids(ids, session=None):
+    return session.query(QueryEngine).filter(QueryEngine.id.in_(ids)).all()
+
+
+@with_session
 def get_all_query_engines(session=None):
     return session.query(QueryEngine).all()
 

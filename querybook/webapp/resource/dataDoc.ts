@@ -4,9 +4,9 @@ import { IAccessRequest } from 'const/accessRequest';
 import type {
     IDataCell,
     IDataCellMeta,
-    IDataDocDAGExport,
     IDataDocDAGExporter,
     IDataDocEditor,
+    IDataDocSavedDAGExport,
     IRawDataDoc,
 } from 'const/datadoc';
 import type {
@@ -102,17 +102,20 @@ export const DataDocResource = {
     unfavorite: (docId: number) => ds.delete(`/favorite_data_doc/${docId}/`),
 
     getDAGExport: (docId: number) =>
-        ds.fetch<IDataDocDAGExport>(`/datadoc/${docId}/dag_export/`),
+        ds.fetch<IDataDocSavedDAGExport>(`/datadoc/${docId}/dag_export/`),
     saveDAGExport: (
         docId: number,
         dag: Record<string, Node[] | Edge[]>,
         meta: Record<string, any>
     ) =>
-        ds.update<IDataDocDAGExport>(`/datadoc/${docId}/dag_export/`, {
+        ds.update<IDataDocSavedDAGExport>(`/datadoc/${docId}/dag_export/`, {
             dag,
             meta,
         }),
-    getDAGExporters: () => ds.fetch<IDataDocDAGExporter[]>(`/dag_exporter/`),
+    getDAGExporters: (envId: number) =>
+        ds.fetch<IDataDocDAGExporter[]>(`/dag_exporter/`, {
+            environment_id: envId,
+        }),
     exportDAG: (docId: number, exporterName: string) =>
         ds.save<string>(`/datadoc/${docId}/dag_export/export/`, {
             exporter_name: exporterName,

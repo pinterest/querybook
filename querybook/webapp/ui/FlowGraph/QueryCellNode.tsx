@@ -1,11 +1,17 @@
 import clsx from 'clsx';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { Handle, Position, useReactFlow } from 'react-flow-renderer';
+import { useSelector } from 'react-redux';
 
+import { IDataQueryCell } from 'const/datadoc';
+import { DataDocDAGExporterContext } from 'context/DataDocDAGExporter';
+import { IStoreState } from 'redux/store/types';
 import { IconButton } from 'ui/Button/IconButton';
 import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
+import { Icon } from 'ui/Icon/Icon';
 import { Modal } from 'ui/Modal/Modal';
 import { AccentText, StyledText } from 'ui/StyledText/StyledText';
+import { Tag } from 'ui/Tag/Tag';
 
 import './QueryCellNode.scss';
 
@@ -18,17 +24,28 @@ interface IProps {
 }
 
 export interface IQueryCellNodeProps {
-    label: string;
-    query: string;
+    queryCell: IDataQueryCell;
     updated: boolean;
 }
 
 // TODO: make edge deletable
 export const QueryCellNode = React.memo<IProps>(
     ({ data, sourcePosition, targetPosition, id, selected }) => {
+        const { isEngineSupported } = useContext(DataDocDAGExporterContext);
+
         const { setNodes } = useReactFlow();
         const [showQuery, setShowQuery] = useState(false);
-        const { label, query, updated } = data;
+
+        const { queryCell, updated } = data;
+        const {
+            meta: { engine: engineId, title: label },
+            context: query,
+        } = queryCell;
+
+        const queryEngine = useSelector(
+            (state: IStoreState) => state.queryEngine.queryEngineById[engineId]
+        );
+        const engineSupported = isEngineSupported(engineId);
 
         const QueryCellNodeClassName = clsx({
             QueryCellNode: true,
@@ -38,7 +55,7 @@ export const QueryCellNode = React.memo<IProps>(
 
         const deleteNode = useCallback(() => {
             setNodes((nds) => nds.filter((node) => node.id !== id));
-        }, [id]);
+        }, [id, setNodes]);
 
         return (
             <div
@@ -70,12 +87,33 @@ export const QueryCellNode = React.memo<IProps>(
                     </div>
                 )}
                 <Handle type="target" position={targetPosition} />
-                <div className="QueryCellNode-label">
-                    {label ? (
-                        <AccentText size="small">{label}</AccentText>
-                    ) : (
-                        <StyledText untitled>Untitled Cell {id}</StyledText>
-                    )}
+                <div>
+                    <div className="flex-left">
+                        <Tag mini light className="QueryCellNode-tag">
+                            {queryEngine.name}
+                        </Tag>
+                        {!engineSupported && (
+                            <div
+                                className="flex-center"
+                                aria-label="Selected exporter doesn't support this query engine"
+                                data-balloon-pos="up"
+                            >
+                                <Icon
+                                    name="AlertCircle"
+                                    size={10}
+                                    color="false"
+                                />
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="QueryCellNode-label">
+                        {label ? (
+                            <AccentText size="small">{label}</AccentText>
+                        ) : (
+                            <StyledText untitled>Untitled Cell {id}</StyledText>
+                        )}
+                    </div>
                 </div>
                 <Handle type="source" position={sourcePosition} />
                 {showQuery && (

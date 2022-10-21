@@ -1,6 +1,6 @@
 from app.auth.permission import verify_data_doc_permission
 from app.datasource import register
-
+from logic.admin import get_query_engines_by_environment
 
 from logic import (
     datadoc as logic,
@@ -25,8 +25,17 @@ def create_or_update_dag_export(id, dag, meta):
 
 
 @register("/dag_exporter/", methods=["GET"])
-def get_dag_exporters():
-    return ALL_DAG_EXPORTERS
+def get_dag_exporters(environment_id: int):
+    """Return dag exporters which supports the given environment"""
+    engines = get_query_engines_by_environment(environment_id)
+    engine_ids = [engine.id for engine in engines]
+
+    exporters = []
+    for dag_exporter in ALL_DAG_EXPORTERS:
+        if not set(engine_ids).isdisjoint(dag_exporter.dag_exporter_engines):
+            exporters.append(dag_exporter)
+
+    return exporters
 
 
 @register("/datadoc/<int:id>/dag_export/export/", methods=["POST"])

@@ -6,7 +6,7 @@ ALL_PLUGIN_DAG_EXPORTERS = import_module_with_default(
     default=[],
 )
 
-ALL_DAG_EXPORTERS = []
+ALL_DAG_EXPORTERS = [] + ALL_PLUGIN_DAG_EXPORTERS
 
 
 def get_dag_exporter_class(name: str):
