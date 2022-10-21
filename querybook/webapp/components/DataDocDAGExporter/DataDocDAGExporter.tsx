@@ -116,6 +116,7 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
                                     icon="X"
                                     onClick={() => setExportData(undefined)}
                                 />
+
                             }
                         >
                             <Markdown>{exportData}</Markdown>
