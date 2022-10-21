@@ -8,7 +8,6 @@ import { IconButton } from 'ui/Button/IconButton';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 
 import {
-    getVariableValueByType,
     detectVariableType,
     SUPPORTED_TYPES,
     TTemplateVariableDict,
@@ -25,22 +24,7 @@ export interface IDataDocTemplateVarFormProps {
 
 const templatedVarSchema = Yup.object().shape({
     variables: Yup.array().of(
-        Yup.object({
-            name: Yup.string().required('Variable name must not be empty'),
-            valueType: Yup.string(),
-            value: Yup.mixed()
-                .required('Must not be empty')
-                .when('valueType', {
-                    is: 'number',
-                    then: Yup.number()
-                        .typeError('Must be a number')
-                        .required('Must not be empty')
-                        .max(
-                            Number.MAX_SAFE_INTEGER,
-                            'The number exceeds limit(2^53 - 1), please use string type instead'
-                        ),
-                }),
-        })
+        Yup.array().of(Yup.mixed().required('Must not be empty')).length(3)
     ),
 });
 
@@ -62,16 +46,11 @@ export const DataDocTemplateVarForm: React.FunctionComponent<
                     : templatedVariables
             ).map(
                 ([key, value]) =>
-                    ({
-                        name: key,
-                        valueType: detectVariableType(value),
-                        value,
-                    } as const)
+                    [key, detectVariableType(value), value] as const
             ),
         }),
         [defaultTemplatedVariables, templatedVariables]
     );
-
     return (
         <Formik
             enableReinitialize
@@ -79,8 +58,8 @@ export const DataDocTemplateVarForm: React.FunctionComponent<
             initialValues={initialValue}
             onSubmit={({ variables }) =>
                 onSave(
-                    variables.reduce((hash, { name, valueType, value }) => {
-                        hash[name] = getVariableValueByType(value, valueType);
+                    variables.reduce((hash, [name, _, value]) => {
+                        hash[name] = value;
                         return hash;
                     }, {})
                 )
@@ -93,7 +72,7 @@ export const DataDocTemplateVarForm: React.FunctionComponent<
                         render={(arrayHelpers) => {
                             const fields = values.variables.length
                                 ? values.variables.map(
-                                      ({ valueType }, index) => (
+                                      ([_, valueType, __], index) => (
                                           <div
                                               key={index}
                                               className="flex-row template-key-value-row"
@@ -102,7 +81,7 @@ export const DataDocTemplateVarForm: React.FunctionComponent<
                                                   <SimpleField
                                                       label={() => null}
                                                       type="input"
-                                                      name={`variables.${index}.name`}
+                                                      name={`variables.${index}[0]`}
                                                       inputProps={{
                                                           placeholder:
                                                               'variable name',
@@ -111,7 +90,7 @@ export const DataDocTemplateVarForm: React.FunctionComponent<
                                                   <SimpleField
                                                       label={() => null}
                                                       type="react-select"
-                                                      name={`variables.${index}.valueType`}
+                                                      name={`variables.${index}[1]`}
                                                       options={
                                                           SUPPORTED_TYPES as any as string[]
                                                       }
@@ -121,7 +100,7 @@ export const DataDocTemplateVarForm: React.FunctionComponent<
                                                       <SimpleField
                                                           label={() => null}
                                                           type="react-select"
-                                                          name={`variables.${index}.value`}
+                                                          name={`variables.${index}[2]`}
                                                           options={[
                                                               {
                                                                   label: 'True',
@@ -133,11 +112,18 @@ export const DataDocTemplateVarForm: React.FunctionComponent<
                                                               },
                                                           ]}
                                                       />
+                                                  ) : valueType === 'number' ? (
+                                                      <SimpleField
+                                                          label={() => null}
+                                                          type={'number'}
+                                                          name={`variables.${index}[2]`}
+                                                          placeholder="variable value"
+                                                      />
                                                   ) : (
                                                       <SimpleField
                                                           label={() => null}
                                                           type={'input'}
-                                                          name={`variables.${index}.value`}
+                                                          name={`variables.${index}[2]`}
                                                           inputProps={{
                                                               placeholder:
                                                                   'variable value',
@@ -167,11 +153,11 @@ export const DataDocTemplateVarForm: React.FunctionComponent<
                                         icon="Plus"
                                         title="New Variable"
                                         onClick={() =>
-                                            arrayHelpers.push({
-                                                name: '',
-                                                valueType: 'string',
-                                                value: '',
-                                            })
+                                            arrayHelpers.push([
+                                                '',
+                                                'string',
+                                                '',
+                                            ])
                                         }
                                     />
                                     {dirty && (

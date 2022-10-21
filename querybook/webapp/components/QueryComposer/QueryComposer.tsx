@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { DataDocTemplateInfoButton } from 'components/DataDocTemplateButton/DataDocTemplateInfoButton';
 import { DataDocTemplateVarForm } from 'components/DataDocTemplateButton/DataDocTemplateVarForm';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
-import { IQueryEditorHandles } from 'components/QueryEditor/QueryEditor';
+import { QueryEditor } from 'components/QueryEditor/QueryEditor';
 import {
     IQueryRunButtonHandles,
     QueryRunButton,
@@ -219,7 +219,7 @@ const useQueryComposerSearchAndReplace = (
 };
 
 function useQueryEditorHelpers() {
-    const queryEditorRef = useRef<IQueryEditorHandles>(null);
+    const queryEditorRef = useRef<QueryEditor>(null);
     const handleFormatQuery = useCallback(() => {
         if (queryEditorRef.current) {
             queryEditorRef.current.formatQuery();
@@ -234,7 +234,7 @@ function useQueryEditorHelpers() {
 
     useEffect(() => {
         handleFocusEditor();
-    }, [handleFocusEditor]);
+    }, []);
 
     return {
         queryEditorRef,
@@ -685,7 +685,7 @@ const QueryComposer: React.FC = () => {
                     menuIcon="MoreVertical"
                     className="query-cell-additional-dropdown"
                 >
-                    <ListMenu items={additionalButtons} isNestedRight={true} />
+                    <ListMenu items={additionalButtons} />
                 </Dropdown>
                 {templatedModalDOM}
                 {templatedQueryViewModalDOM}
