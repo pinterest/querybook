@@ -22,12 +22,10 @@ import { SQL_JINJA_MODE } from 'lib/codemirror/codemirror-mode';
 import {
     AutoCompleteType,
     ExcludedTriggerKeys,
-    SqlAutoCompleter,
 } from 'lib/sql-helper/sql-autocompleter';
 import { getContextSensitiveWarnings } from 'lib/sql-helper/sql-context-sensitive-linter';
 import { format } from 'lib/sql-helper/sql-formatter';
 import {
-    ICodeAnalysis,
     ILinterWarning,
     IRange,
     IToken,
@@ -35,9 +33,9 @@ import {
 } from 'lib/sql-helper/sql-lexer';
 import { isQueryUsingTemplating } from 'lib/templated-query/validation';
 import { navigateWithinEnv } from 'lib/utils/query-string';
-import { analyzeCode } from 'lib/web-worker';
 import { Button } from 'ui/Button/Button';
 
+import { useAutoComplete } from './hooks/useAutoComplete';
 import {
     IStyledQueryEditorProps,
     StyledQueryEditor,
@@ -121,28 +119,17 @@ export const QueryEditor: React.FC<
         ref
     ) => {
         const markerRef = useRef(null);
-        const codeAnalysisRef = useRef<ICodeAnalysis>(null);
         const editorRef = useRef<CodeMirror.Editor>(null);
-        const autocompleteRef = useRef<SqlAutoCompleter>(null);
         const tablesGettingLoadedRef = useRef<Set<string>>(new Set());
 
-        const [fullScreen, setFullScreen] = useState(false);
-
-        const makeCodeAnalysis = useMemo(
-            () =>
-                throttle((value: string) => {
-                    analyzeCode(value, 'autocomplete', language).then(
-                        (codeAnalysis) => {
-                            codeAnalysisRef.current = codeAnalysis;
-
-                            autocompleteRef.current?.updateCodeAnalysis(
-                                codeAnalysis
-                            );
-                        }
-                    );
-                }, 500),
-            [language]
+        const { autoCompleter, codeAnalysis } = useAutoComplete(
+            metastoreId,
+            autoCompleteType,
+            language,
+            value
         );
+
+        const [fullScreen, setFullScreen] = useState(false);
 
         const performLint = useMemo(
             () =>
@@ -161,7 +148,7 @@ export const QueryEditor: React.FC<
         // Checks if token is in table, returns the table if found, false otherwise
         const isTokenInTable = useCallback(
             async (pos: CodeMirror.Position, token: CodeMirror.Token) => {
-                if (codeAnalysisRef.current && token) {
+                if (codeAnalysis && token) {
                     const selectionLine = pos.line;
                     const selectionPos = {
                         from: token.start,
@@ -170,9 +157,7 @@ export const QueryEditor: React.FC<
 
                     const tableReferences: TableToken[] = [].concat.apply(
                         [],
-                        Object.values(
-                            codeAnalysisRef.current.lineage.references
-                        )
+                        Object.values(codeAnalysis.lineage.references)
                     );
 
                     let tablePosFound = null;
@@ -214,7 +199,7 @@ export const QueryEditor: React.FC<
 
                 return false;
             },
-            [getTableByName]
+            [getTableByName, codeAnalysis]
         );
 
         const onOpenTableModal = useCallback(
@@ -266,12 +251,10 @@ export const QueryEditor: React.FC<
                         const annotations = [];
 
                         // prefetch tables and get table warning annotations
-                        if (metastoreId && codeAnalysisRef.current) {
+                        if (metastoreId && codeAnalysis) {
                             const tableReferences = [].concat.apply(
                                 [],
-                                Object.values(
-                                    codeAnalysisRef.current.lineage.references
-                                )
+                                Object.values(codeAnalysis.lineage.references)
                             );
                             await prefetchDataTables(tableReferences);
 
@@ -308,7 +291,13 @@ export const QueryEditor: React.FC<
                     },
                     2000
                 ),
-            [metastoreId, getLintErrors, onLintCompletion, prefetchDataTables]
+            [
+                metastoreId,
+                getLintErrors,
+                onLintCompletion,
+                prefetchDataTables,
+                codeAnalysis,
+            ]
         );
 
         const formatQuery = useCallback(
@@ -485,21 +474,8 @@ export const QueryEditor: React.FC<
         }, []);
 
         useEffect(() => {
-            makeCodeAnalysis(value);
             performLint();
-        }, [value, makeCodeAnalysis, performLint]);
-
-        // Make auto completer
-        useEffect(() => {
-            if (language != null) {
-                autocompleteRef.current = new SqlAutoCompleter(
-                    CodeMirror,
-                    language,
-                    metastoreId,
-                    autoCompleteType
-                );
-            }
-        }, [language, metastoreId, autoCompleteType]);
+        }, [value, performLint]);
 
         useEffect(() => {
             editorRef.current?.refresh();
@@ -600,10 +576,9 @@ export const QueryEditor: React.FC<
                     onChange(value);
                 }
 
-                makeCodeAnalysis(value);
                 performLint();
             },
-            [makeCodeAnalysis, onChange, performLint]
+            [onChange, performLint]
         );
 
         const handleOnBlur = useCallback(
@@ -652,13 +627,13 @@ export const QueryEditor: React.FC<
 
         const handleOnFocus = useCallback(
             (editor: CodeMirror.Editor, event) => {
-                autocompleteRef.current?.registerHelper();
+                autoCompleter.registerHelper();
 
                 if (onFocus) {
                     onFocus(editor, event);
                 }
             },
-            [onFocus]
+            [onFocus, autoCompleter]
         );
 
         const handleOnKeyUp = useCallback(
