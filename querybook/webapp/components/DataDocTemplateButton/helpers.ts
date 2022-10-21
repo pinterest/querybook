@@ -15,3 +15,17 @@ export function detectVariableType(value: any): TSupportedTypes {
     }
     return 'string';
 }
+
+export function getVariableValueByType(
+    value: any,
+    valueType: TSupportedTypes
+): any {
+    if (value !== null) {
+        if (valueType === 'number') {
+            value = Number(value);
+        } else if (valueType === 'string') {
+            value = value.toString();
+        }
+    }
+    return value;
+}

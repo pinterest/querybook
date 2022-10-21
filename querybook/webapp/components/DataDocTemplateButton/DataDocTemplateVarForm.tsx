@@ -8,6 +8,7 @@ import { IconButton } from 'ui/Button/IconButton';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 
 import {
+    getVariableValueByType,
     detectVariableType,
     SUPPORTED_TYPES,
     TTemplateVariableDict,
@@ -71,17 +72,6 @@ export const DataDocTemplateVarForm: React.FunctionComponent<
         [defaultTemplatedVariables, templatedVariables]
     );
 
-    const getValueByType = (value, valueType) => {
-        if (value !== null) {
-            if (valueType === 'number') {
-                value = Number(value);
-            } else if (valueType === 'string') {
-                value = value.toString();
-            }
-        }
-        return value;
-    };
-
     return (
         <Formik
             enableReinitialize
@@ -90,7 +80,7 @@ export const DataDocTemplateVarForm: React.FunctionComponent<
             onSubmit={({ variables }) =>
                 onSave(
                     variables.reduce((hash, { name, valueType, value }) => {
-                        hash[name] = getValueByType(value, valueType);
+                        hash[name] = getVariableValueByType(value, valueType);
                         return hash;
                     }, {})
                 )
