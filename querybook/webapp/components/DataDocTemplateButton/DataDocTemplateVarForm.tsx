@@ -96,15 +96,7 @@ export const DataDocTemplateVarForm: React.FunctionComponent<
                 )
             }
         >
-            {({
-                handleSubmit,
-                isSubmitting,
-                isValid,
-                values,
-                dirty,
-                errors,
-                touched,
-            }) => {
+            {({ handleSubmit, isSubmitting, isValid, values, dirty }) => {
                 const variablesField = (
                     <FieldArray
                         name="variables"
