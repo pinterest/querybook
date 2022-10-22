@@ -33,6 +33,10 @@ class BaseDAGExporter(metaclass=ABCMeta):
         """
         raise NotImplementedError()
 
+    def is_engine_supported(self, query_cell):
+        engine_id = query_cell.meta.get("engine")
+        return engine_id in self.dag_exporter_engines
+
     @abstractmethod
     def export(self, nodes, edges, meta, cell_by_id):
         """

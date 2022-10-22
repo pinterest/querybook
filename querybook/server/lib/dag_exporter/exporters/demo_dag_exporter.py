@@ -5,6 +5,8 @@ from lib.form import StructFormField, FormField
 
 import re
 
+from logic.admin import get_all_query_engines
+
 
 LOG = get_logger(__file__)
 
@@ -60,7 +62,12 @@ class DemoDAGExporter(BaseDAGExporter):
         """Demo exporter supports below query engines
         1: sqlite
         """
-        return [1]
+        # you can return the query engine ids directly
+        # return [1]
+
+        # or get the query id based on the language like
+        engines = get_all_query_engines()
+        return [engine.id for engine in engines if engine.language == "sqlite"]
 
     @property
     def dag_exporter_meta(self):
@@ -90,9 +97,8 @@ class DemoDAGExporter(BaseDAGExporter):
             task_ids.add(node_id)
 
             query_cell = cell_by_id[node_id]
-            query_engine_id = query_cell.meta.get("engine")
 
-            if query_engine_id not in self.dag_exporter_engines:
+            if not self.is_engine_supported(query_cell):
                 error_msg = f"This DAG exporter only supports query engines: {', '.join(self.dag_exporter_engine_names)}"
                 return {
                     "data": AIRFLOW_ERROR_MSG.format(
