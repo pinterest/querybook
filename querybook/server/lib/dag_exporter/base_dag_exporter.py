@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from logic.admin import get_query_engines_by_ids
+from models.datadoc import DataCell
 
 
 class BaseDAGExporter(metaclass=ABCMeta):
@@ -33,7 +34,8 @@ class BaseDAGExporter(metaclass=ABCMeta):
         """
         raise NotImplementedError()
 
-    def is_engine_supported(self, query_cell):
+    def is_engine_supported(self, query_cell: DataCell) -> bool:
+        """Helper function to validate if a query cell's engine is supported"""
         engine_id = query_cell.meta.get("engine")
         return engine_id in self.dag_exporter_engines
 
