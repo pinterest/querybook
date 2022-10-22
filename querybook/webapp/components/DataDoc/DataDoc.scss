@@ -147,7 +147,7 @@
                 .QueryRunButton,
                 .additional-dropdown-button,
                 .add-snippet-wrapper,
-                .fullscreen-button-wrapper,
+                .query-editor-float-buttons-wrapper,
                 .chart-cell-controls {
                     opacity: 0;
                     transition: opacity 0.2s ease-out;
@@ -168,7 +168,7 @@
                     .QueryRunButton,
                     .additional-dropdown-button,
                     .add-snippet-wrapper,
-                    .fullscreen-button-wrapper,
+                    .query-editor-float-buttons-wrapper,
                     .chart-cell-controls {
                         opacity: 1;
                     }

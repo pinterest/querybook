@@ -1,7 +1,7 @@
 import { useDebounce } from 'hooks/useDebounce';
 import { ICodeAnalysis } from 'lib/sql-helper/sql-lexer';
 import CodeMirror from 'lib/codemirror';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import {
     AutoCompleteType,
     SqlAutoCompleter,
@@ -14,7 +14,7 @@ export function useAutoComplete(
     language: string,
     query: string
 ) {
-    const [codeAnalysis, setCodeAnalysis] = useState<ICodeAnalysis>(null);
+    const codeAnalysisRef = useRef<ICodeAnalysis>(null);
     const autoCompleter = useMemo(
         () =>
             new SqlAutoCompleter(
@@ -31,14 +31,14 @@ export function useAutoComplete(
     useEffect(() => {
         analyzeCode(debouncedQuery, 'autocomplete', language).then(
             (codeAnalysis) => {
-                setCodeAnalysis(codeAnalysis);
+                codeAnalysisRef.current = codeAnalysis;
                 autoCompleter.updateCodeAnalysis(codeAnalysis);
             }
         );
     }, [debouncedQuery, language, autoCompleter]);
 
     return {
-        codeAnalysis,
+        codeAnalysisRef,
         autoCompleter,
     };
 }

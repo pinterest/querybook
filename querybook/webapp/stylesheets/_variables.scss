@@ -131,7 +131,8 @@ body {
     --color-warning-lightest-0: var(--color-yellow-lightest-0);
     --color-warning-transp-lightest: var(--color-yellow-transp-lightest);
     --color-warning-transp-lightest-0: var(--color-yellow-transp-lightest-0);
-    --color-warning: var(--color-yellow);
+    // for some reason, --color-warning can't be used as css variable
+    --color-warn: var(--color-yellow);
     --color-warning-dark: var(--color-yellow-dark);
     --color-warning-darkest: var(--color-yellow-darkest);
 
