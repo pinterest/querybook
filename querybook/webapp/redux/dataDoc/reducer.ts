@@ -448,7 +448,7 @@ function dagExportByDocIdReducer(
 ) {
     return produce(state, (draft) => {
         switch (action.type) {
-            case '@@dataDoc/RECEIVE_DATA_DOC_DAG_EXPORTER_SELECTION': {
+            case '@@dataDoc/SET_DATA_DOC_DAG_EXPORTER_SELECTION': {
                 if (!(action.payload.docId in draft)) {
                     draft[action.payload.docId] = {};
                 }

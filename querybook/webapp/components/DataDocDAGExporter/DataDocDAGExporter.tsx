@@ -59,6 +59,8 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
     );
 
     const DAGExporterContextState = useMemo(() => {
+        // for the "?? true" below, we assume all the query cells
+        // are supported before current exporter is loaded
         const isEngineSupported = (engineId: number) =>
             currentExporter?.engines.includes(engineId) ?? true;
         return {
