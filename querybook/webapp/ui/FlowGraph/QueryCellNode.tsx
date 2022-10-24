@@ -72,7 +72,7 @@ export const QueryCellNode = React.memo<IProps>(
                         <IconButton
                             icon="Code"
                             tooltip="View the query"
-                            size={10}
+                            size={12}
                             onClick={() => {
                                 setShowQuery(true);
                             }}
@@ -80,7 +80,7 @@ export const QueryCellNode = React.memo<IProps>(
                         <IconButton
                             icon="X"
                             tooltip="Remove the node"
-                            size={10}
+                            size={12}
                             className="QueryCellNode-toolbar-button"
                             onClick={deleteNode}
                         />

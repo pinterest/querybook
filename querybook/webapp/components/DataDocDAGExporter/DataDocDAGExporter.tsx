@@ -9,7 +9,6 @@ import {
 import { useCurrentExporter } from 'hooks/dag/useExporterSettings';
 import { useSavedDAG } from 'hooks/dag/useSavedDAG';
 import { DataDocResource } from 'resource/dataDoc';
-import { Button } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 import { Markdown } from 'ui/Markdown/Markdown';
 import { Modal } from 'ui/Modal/Modal';
@@ -113,13 +112,12 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
                             onHide={() => {
                                 // Prevent modal from being closed unless explicitly click the "Close" button
                             }}
-                            bottomDOM={
-                                <div className="flex-right mb16">
-                                    <Button
-                                        title="Close"
-                                        onClick={() => setExportData(undefined)}
-                                    />
-                                </div>
+                            title="DAG Export"
+                            topDOM={
+                                <IconButton
+                                    icon="X"
+                                    onClick={() => setExportData(undefined)}
+                                />
                             }
                         >
                             <Markdown>{exportData}</Markdown>
