@@ -58,6 +58,7 @@
             .Modal-content {
                 max-height: inherit;
                 height: auto;
+                overflow-x: hidden;
                 overflow-y: auto;
                 margin-top: var(--margin);
                 padding: var(--padding-xl);
