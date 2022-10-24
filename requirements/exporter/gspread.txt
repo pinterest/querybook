@@ -1,2 +1,2 @@
 -r ../platform/gcp.txt
-gspread==5.2.0
+gspread==5.6.2
