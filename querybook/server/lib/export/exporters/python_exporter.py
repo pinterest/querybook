@@ -14,7 +14,6 @@ class PythonExporter(BaseExporter):
         download_url = self._get_statement_execution_download_url(
             statement_execution_id
         )
-        # dummy
         return """
 url = "{}"
 
