@@ -6,7 +6,7 @@ import { fetchDAGExporters, selectDAGExporter } from 'redux/dataDoc/action';
 import { IStoreState } from 'redux/store/types';
 import { updateValue } from 'ui/SmartForm/formFunctions';
 
-interface IProps {
+interface IUseExporterSettingsProps {
     docId: number;
     savedMeta: IDataDocDAGExportMeta;
 }
@@ -41,7 +41,10 @@ export function useCurrentExporter(docId: number) {
     return exporterDataByName[selectedExporter];
 }
 
-export function useExporterSettings({ docId, savedMeta }: IProps) {
+export function useExporterSettings({
+    docId,
+    savedMeta,
+}: IUseExporterSettingsProps) {
     const dispatch = useDispatch();
     const { exporterDataByName, exporterNames } = useExporterDataByName();
 
@@ -51,7 +54,7 @@ export function useExporterSettings({ docId, savedMeta }: IProps) {
     );
 
     const setSelectedExporter = useCallback(
-        (name) => dispatch(selectDAGExporter(docId, name)),
+        (name: string) => dispatch(selectDAGExporter(docId, name)),
         [dispatch, docId]
     );
 

@@ -37,10 +37,10 @@ import {
     IReceiveDataDocAction,
     IReceiveDataDocDAGExportAction,
     IReceiveDataDocDAGExportersAction,
-    IReceiveDataDocDAGExporterSelectionAction,
     IReceiveDataDocsAction,
     ISaveDataDocEndAction,
     ISaveDataDocStartAction,
+    ISetDataDocDAGExporterSelectionAction,
     IUpdateDataDocPollingAction,
     ThunkResult,
 } from './types';
@@ -676,9 +676,9 @@ export function saveDAGExport(
 export function selectDAGExporter(
     docId: number,
     exporterName: string
-): IReceiveDataDocDAGExporterSelectionAction {
+): ISetDataDocDAGExporterSelectionAction {
     return {
-        type: '@@dataDoc/RECEIVE_DATA_DOC_DAG_EXPORTER_SELECTION',
+        type: '@@dataDoc/SET_DATA_DOC_DAG_EXPORTER_SELECTION',
         payload: {
             docId,
             exporterName,
