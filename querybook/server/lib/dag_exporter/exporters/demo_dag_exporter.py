@@ -11,7 +11,7 @@ from logic.admin import get_all_query_engines
 LOG = get_logger(__file__)
 
 AIRFLOW_SUCCESS_MSG = """
-### DAG exported to {exporter_name} successfully
+# DAG exported to {exporter_name} successfully
 
 **Instructions**
 
@@ -29,7 +29,7 @@ AIRFLOW_SUCCESS_MSG = """
 """
 
 AIRFLOW_ERROR_MSG = """
-### Failed to export DAG to {exporter_name}
+# Failed to export DAG to {exporter_name}
 
 ```
 {error_msg}

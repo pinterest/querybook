@@ -86,14 +86,12 @@ export const GraphControls = () => {
             />
             <IconButton
                 icon="Maximize"
-                size={18}
                 onClick={onFitView}
                 tooltip={'Fit View'}
                 tooltipPos={'right'}
             />
             <IconButton
                 icon={isInteractive ? 'Unlock' : 'Lock'}
-                size={18}
                 onClick={onToggleInteractivity}
                 tooltip={'Toggle Interactivity'}
                 tooltipPos={'right'}
