@@ -249,8 +249,8 @@ export interface IMoveDataDocCursor extends Action {
     };
 }
 
-export interface IReceiveDataDocDAGExporterSelectionAction extends Action {
-    type: '@@dataDoc/RECEIVE_DATA_DOC_DAG_EXPORTER_SELECTION';
+export interface ISetDataDocDAGExporterSelectionAction extends Action {
+    type: '@@dataDoc/SET_DATA_DOC_DAG_EXPORTER_SELECTION';
     payload: {
         docId: number;
         exporterName: string;
@@ -299,7 +299,7 @@ export type DataDocAction =
     | IReceiveDataDocAccessRequestAction
     | IRemoveDataDocAccessRequestAction
     | IMoveDataDocCursor
-    | IReceiveDataDocDAGExporterSelectionAction
+    | ISetDataDocDAGExporterSelectionAction
     | IReceiveDataDocDAGExportAction
     | IReceiveDataDocDAGExportersAction;
 
