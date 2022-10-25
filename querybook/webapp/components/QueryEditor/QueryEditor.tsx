@@ -17,6 +17,9 @@ import {
     FunctionDocumentationCollection,
     tableNameDataTransferName,
 } from 'const/metastore';
+import { useAutoComplete } from 'hooks/queryEditor/useAutoComplete';
+import { useCodeAnalysis } from 'hooks/queryEditor/useCodeAnalysis';
+import { useLint } from 'hooks/queryEditor/useLint';
 import CodeMirror, { CodeMirrorKeyMap } from 'lib/codemirror';
 import { SQL_JINJA_MODE } from 'lib/codemirror/codemirror-mode';
 import {
@@ -35,8 +38,6 @@ import { navigateWithinEnv } from 'lib/utils/query-string';
 import { IconButton } from 'ui/Button/IconButton';
 import { Icon } from 'ui/Icon/Icon';
 
-import { useAutoComplete } from './hooks/useAutoComplete';
-import { useLint } from './hooks/useLint';
 import {
     IStyledQueryEditorProps,
     StyledQueryEditor,
@@ -125,9 +126,13 @@ export const QueryEditor: React.FC<
         const markerRef = useRef(null);
         const editorRef = useRef<CodeMirror.Editor>(null);
 
-        const { autoCompleter, codeAnalysisRef } = useAutoComplete(
+        const autoCompleter = useAutoComplete(
             metastoreId,
             autoCompleteType,
+            language
+        );
+        const codeAnalysisRef = useCodeAnalysis(
+            autoCompleter.updateCodeAnalysis,
             language,
             value
         );
@@ -419,7 +424,7 @@ export const QueryEditor: React.FC<
 
         const toggleFullScreen = useCallback(() => {
             setFullScreen((fullScreen) => {
-                onFullScreen?.(!onFullScreen);
+                onFullScreen?.(!fullScreen);
                 return !fullScreen;
             });
         }, [onFullScreen]);
@@ -628,6 +633,13 @@ export const QueryEditor: React.FC<
                             </span>
                         )}
                     </div>
+                );
+            } else if (getLintErrors) {
+                return (
+                    <span className="flex-row mr8 lint-passed">
+                        <Icon name="CheckCircle" className="mr4" size={16} />
+                        Lint Passed
+                    </span>
                 );
             }
         };

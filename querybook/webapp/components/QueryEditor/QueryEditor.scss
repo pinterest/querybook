@@ -34,6 +34,10 @@
         .lint-num-warnings {
             color: var(--color-warn);
         }
+
+        .lint-passed {
+            color: var(--color-true);
+        }
     }
 
     &.fullScreen {

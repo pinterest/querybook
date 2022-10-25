@@ -583,11 +583,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
-    public toggleFullScreen(_ignore: boolean) {
-        this.props.toggleFullScreen();
-    }
-
-    @bind
     public fetchDataTableByNameIfNeeded(schema: string, table: string) {
         return this.props.fetchDataTableByNameIfNeeded(
             schema,
@@ -724,7 +719,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                     engine={queryEngine}
                     cellId={cellId}
                     height={isFullScreen ? 'full' : 'auto'}
-                    onFullScreen={this.toggleFullScreen}
+                    onFullScreen={this.props.toggleFullScreen}
                     getLintErrors={
                         this.hasQueryValidators ? this.getLintAnnotations : null
                     }
