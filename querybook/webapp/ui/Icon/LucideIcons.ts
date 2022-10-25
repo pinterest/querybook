@@ -7,8 +7,8 @@
  */
 import {
     Activity,
-    AlertCircle,
     AlertOctagon,
+    AlertTriangle,
     AlignCenterHorizontal,
     AlignCenterVertical,
     AlignLeft,
@@ -106,13 +106,14 @@ import {
     Watch,
     X,
     XCircle,
+    XOctagon,
     Zap,
 } from 'lucide-react';
 
 const AllLucideIcons = {
     Activity,
-    AlertCircle,
     AlertOctagon,
+    AlertTriangle,
     AlignCenterVertical,
     AlignCenterHorizontal,
     AlignLeft,
@@ -211,6 +212,7 @@ const AllLucideIcons = {
     Watch,
     X,
     XCircle,
+    XOctagon,
     Zap,
 };
 

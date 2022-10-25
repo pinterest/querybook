@@ -30,7 +30,6 @@ interface IQueryRunButtonProps extends IQueryEngineSelectorProps {
     disabled?: boolean;
     hasSelection?: boolean;
     runButtonTooltipPos?: TooltipDirection;
-    hasLintError: boolean;
 
     rowLimit?: number;
     onRunClick: () => any;
@@ -57,7 +56,6 @@ export const QueryRunButton = React.forwardRef<
             onEngineIdSelect,
             rowLimit,
             onRowLimitChange,
-            hasLintError,
         },
         ref
     ) => {
@@ -82,24 +80,12 @@ export const QueryRunButton = React.forwardRef<
                 className={clsx({
                     'run-selection': !!hasSelection,
                 })}
-                title={
-                    hasLintError ? null : hasSelection ? 'Run Selection' : null
-                }
-                icon={
-                    hasLintError ? (
-                        <Icon name="AlertCircle" />
-                    ) : hasSelection ? null : (
-                        <Icon name="Play" fill />
-                    )
-                }
-                aria-label={
-                    hasLintError
-                        ? 'Validation failed, click to run anyway'
-                        : `Run (${EXECUTE_QUERY_SHORTCUT})`
-                }
+                title={hasSelection ? 'Run Selection' : null}
+                icon={hasSelection ? null : <Icon name="Play" fill />}
+                aria-label={`Run (${EXECUTE_QUERY_SHORTCUT})`}
                 data-balloon-length="fit"
                 data-balloon-pos={runButtonTooltipPos}
-                color={hasLintError ? 'cancel' : 'accent'}
+                color={'accent'}
             />
         );
 

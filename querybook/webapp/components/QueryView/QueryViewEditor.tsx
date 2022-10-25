@@ -90,7 +90,6 @@ export const QueryViewEditor: React.FunctionComponent<{
                 readOnly={true}
                 height={'fixed'}
                 engine={queryEngine}
-                allowFullScreen
             />
         </div>
     );

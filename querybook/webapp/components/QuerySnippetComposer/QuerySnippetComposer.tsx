@@ -347,7 +347,6 @@ class QuerySnippetComposerComponent extends React.PureComponent<
                     lineWrapping={true}
                     onChange={this.onQueryChange}
                     engine={queryEngine}
-                    allowFullScreen
                 />
                 {templatedQueriesDOM}
             </FormField>

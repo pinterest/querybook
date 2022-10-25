@@ -160,7 +160,7 @@ const TableUploaderConfirmWarnings: React.FC<{
                 type="error"
                 title={
                     <span className="flex-row">
-                        <Icon name="AlertCircle" size={20} className="mr8" />
+                        <Icon name="AlertOctagon" size={20} className="mr8" />
                         Failed to find schema {schemaName} in metastore
                     </span>
                 }
@@ -178,7 +178,7 @@ const TableUploaderConfirmWarnings: React.FC<{
                     title={
                         <span className="flex-row">
                             <Icon
-                                name="AlertCircle"
+                                name="AlertOctagon"
                                 size={20}
                                 className="mr8"
                             />

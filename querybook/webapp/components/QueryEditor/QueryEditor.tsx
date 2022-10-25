@@ -17,26 +17,26 @@ import {
     FunctionDocumentationCollection,
     tableNameDataTransferName,
 } from 'const/metastore';
+import { useAutoComplete } from 'hooks/queryEditor/useAutoComplete';
+import { useCodeAnalysis } from 'hooks/queryEditor/useCodeAnalysis';
+import { useLint } from 'hooks/queryEditor/useLint';
 import CodeMirror, { CodeMirrorKeyMap } from 'lib/codemirror';
 import { SQL_JINJA_MODE } from 'lib/codemirror/codemirror-mode';
 import {
     AutoCompleteType,
     ExcludedTriggerKeys,
-    SqlAutoCompleter,
 } from 'lib/sql-helper/sql-autocompleter';
-import { getContextSensitiveWarnings } from 'lib/sql-helper/sql-context-sensitive-linter';
 import { format } from 'lib/sql-helper/sql-formatter';
 import {
-    ICodeAnalysis,
     ILinterWarning,
     IRange,
     IToken,
     TableToken,
 } from 'lib/sql-helper/sql-lexer';
-import { isQueryUsingTemplating } from 'lib/templated-query/validation';
+import { formatNumber } from 'lib/utils/number';
 import { navigateWithinEnv } from 'lib/utils/query-string';
-import { analyzeCode } from 'lib/web-worker';
-import { Button } from 'ui/Button/Button';
+import { IconButton } from 'ui/Button/IconButton';
+import { Icon } from 'ui/Icon/Icon';
 
 import {
     IStyledQueryEditorProps,
@@ -58,7 +58,11 @@ export interface IQueryEditorProps extends IStyledQueryEditorProps {
     keyMap?: CodeMirrorKeyMap;
     className?: string;
     autoCompleteType?: AutoCompleteType;
-    allowFullScreen?: boolean;
+
+    /**
+     * If provided, then the container component will handle the fullscreen logic
+     */
+    onFullScreen?: (fullScreen: boolean) => void;
 
     onChange?: (value: string) => any;
     onKeyDown?: (editor: CodeMirror.Editor, event: KeyboardEvent) => any;
@@ -102,7 +106,7 @@ export const QueryEditor: React.FC<
             keyMap = {},
             className,
             autoCompleteType = 'all',
-            allowFullScreen = false,
+            onFullScreen,
 
             onChange,
             onKeyDown,
@@ -113,7 +117,6 @@ export const QueryEditor: React.FC<
 
             getLintErrors,
             onLintCompletion,
-
             // props from IStyledQueryEditorProps
             height = 'auto',
             fontSize,
@@ -121,36 +124,30 @@ export const QueryEditor: React.FC<
         ref
     ) => {
         const markerRef = useRef(null);
-        const codeAnalysisRef = useRef<ICodeAnalysis>(null);
         const editorRef = useRef<CodeMirror.Editor>(null);
-        const autocompleteRef = useRef<SqlAutoCompleter>(null);
-        const tablesGettingLoadedRef = useRef<Set<string>>(new Set());
+
+        const autoCompleter = useAutoComplete(
+            metastoreId,
+            autoCompleteType,
+            language
+        );
+        const codeAnalysisRef = useCodeAnalysis({
+            onAnalyzed: autoCompleter.updateCodeAnalysis,
+            language,
+            query: value,
+        });
 
         const [fullScreen, setFullScreen] = useState(false);
 
-        const makeCodeAnalysis = useMemo(
-            () =>
-                throttle((value: string) => {
-                    analyzeCode(value, 'autocomplete', language).then(
-                        (codeAnalysis) => {
-                            codeAnalysisRef.current = codeAnalysis;
-
-                            autocompleteRef.current?.updateCodeAnalysis(
-                                codeAnalysis
-                            );
-                        }
-                    );
-                }, 500),
-            [language]
-        );
-
-        const performLint = useMemo(
-            () =>
-                debounce(() => {
-                    editorRef.current.performLint();
-                }, 2000),
-            []
-        );
+        const { getLintAnnotations, lintSummary, isLinting } = useLint({
+            query: value,
+            editorRef,
+            metastoreId,
+            codeAnalysisRef,
+            getTableByName,
+            getLintErrors,
+            onLintCompletion,
+        });
 
         const openTableModal = useCallback((tableId: number) => {
             navigateWithinEnv(`/table/${tableId}/`, {
@@ -214,7 +211,7 @@ export const QueryEditor: React.FC<
 
                 return false;
             },
-            [getTableByName]
+            [getTableByName, codeAnalysisRef]
         );
 
         const onOpenTableModal = useCallback(
@@ -234,83 +231,6 @@ export const QueryEditor: React.FC<
             [isTokenInTable, openTableModal]
         );
 
-        const prefetchDataTables = useCallback(
-            async (tableReferences: TableToken[]) => {
-                if (!getTableByName) {
-                    return;
-                }
-
-                const tableLoadPromises = [];
-                for (const { schema, name } of tableReferences) {
-                    const fullName = `${schema}.${name}`;
-                    if (!tablesGettingLoadedRef.current.has(fullName)) {
-                        tableLoadPromises.push(getTableByName(schema, name));
-                        tablesGettingLoadedRef.current.add(fullName);
-                    }
-                }
-
-                await Promise.all(tableLoadPromises);
-            },
-            [getTableByName]
-        );
-
-        const getLintAnnotations = useMemo(
-            () =>
-                debounce(
-                    async (
-                        code: string,
-                        onComplete: (warnings: ILinterWarning[]) => void,
-                        _options: any,
-                        editor: CodeMirror.Editor
-                    ) => {
-                        const annotations = [];
-
-                        // prefetch tables and get table warning annotations
-                        if (metastoreId && codeAnalysisRef.current) {
-                            const tableReferences = [].concat.apply(
-                                [],
-                                Object.values(
-                                    codeAnalysisRef.current.lineage.references
-                                )
-                            );
-                            await prefetchDataTables(tableReferences);
-
-                            const contextSensitiveWarnings =
-                                getContextSensitiveWarnings(
-                                    metastoreId,
-                                    tableReferences,
-                                    !!getLintErrors
-                                );
-                            annotations.push(...contextSensitiveWarnings);
-                        }
-
-                        // if query is empty skip check
-                        // if it is using templating, also skip check since
-                        // there is no reliable way to map it back
-                        if (
-                            code.length > 0 &&
-                            !isQueryUsingTemplating(code) &&
-                            getLintErrors
-                        ) {
-                            const warnings = await getLintErrors(code, editor);
-                            annotations.push(...warnings);
-                        }
-
-                        if (onLintCompletion) {
-                            onLintCompletion(
-                                annotations.filter(
-                                    (warning) => warning.severity === 'error'
-                                ).length > 0
-                            );
-                        }
-
-                        onComplete(annotations);
-                    },
-                    2000
-                ),
-            [metastoreId, getLintErrors, onLintCompletion, prefetchDataTables]
-        );
-
         const formatQuery = useCallback(
             (
                 options: {
@@ -328,10 +248,14 @@ export const QueryEditor: React.FC<
                         : ' '.repeat(indentUnit);
                 }
 
-                const formattedQuery = format(value, language, options);
+                const formattedQuery = format(
+                    editorRef.current.getValue(),
+                    language,
+                    options
+                );
                 editorRef.current?.setValue(formattedQuery);
             },
-            [language, value]
+            [language]
         );
 
         const markTextAndShowTooltip = (
@@ -485,23 +409,6 @@ export const QueryEditor: React.FC<
         }, []);
 
         useEffect(() => {
-            makeCodeAnalysis(value);
-            performLint();
-        }, [value, makeCodeAnalysis, performLint]);
-
-        // Make auto completer
-        useEffect(() => {
-            if (language != null) {
-                autocompleteRef.current = new SqlAutoCompleter(
-                    CodeMirror,
-                    language,
-                    metastoreId,
-                    autoCompleteType
-                );
-            }
-        }, [language, metastoreId, autoCompleteType]);
-
-        useEffect(() => {
             editorRef.current?.refresh();
         }, [fullScreen]);
 
@@ -515,9 +422,12 @@ export const QueryEditor: React.FC<
             [formatQuery, getEditorSelection]
         );
 
-        const toggleFullScreen = () => {
-            setFullScreen(!fullScreen);
-        };
+        const toggleFullScreen = useCallback(() => {
+            setFullScreen((fullScreen) => {
+                onFullScreen?.(!fullScreen);
+                return !fullScreen;
+            });
+        }, [onFullScreen]);
 
         /* ---- start of <ReactCodeMirror /> properties ---- */
 
@@ -599,11 +509,8 @@ export const QueryEditor: React.FC<
                 if (onChange) {
                     onChange(value);
                 }
-
-                makeCodeAnalysis(value);
-                performLint();
             },
-            [makeCodeAnalysis, onChange, performLint]
+            [onChange]
         );
 
         const handleOnBlur = useCallback(
@@ -652,13 +559,13 @@ export const QueryEditor: React.FC<
 
         const handleOnFocus = useCallback(
             (editor: CodeMirror.Editor, event) => {
-                autocompleteRef.current?.registerHelper();
+                autoCompleter.registerHelper();
 
                 if (onFocus) {
                     onFocus(editor, event);
                 }
             },
-            [onFocus]
+            [onFocus, autoCompleter]
         );
 
         const handleOnKeyUp = useCallback(
@@ -686,21 +593,75 @@ export const QueryEditor: React.FC<
         );
         /* ---- end of <ReactCodeMirror /> properties ---- */
 
-        const editorClassName = clsx({
-            fullScreen,
-            [className]: !!className,
-        });
+        const renderLintButtons = () => {
+            if (isLinting) {
+                return (
+                    <span className="flex-row mr8">
+                        <Icon name="Loading" className="mr4" size={16} />
+                        Linting
+                    </span>
+                );
+            }
 
-        const fullScreenButton = allowFullScreen && (
-            <div className="fullscreen-button-wrapper mt4">
-                <Button
+            if (lintSummary.numErrors + lintSummary.numWarnings > 0) {
+                return (
+                    <div
+                        className="flex-row mr4"
+                        title={`${formatNumber(
+                            lintSummary.numErrors,
+                            'error'
+                        )}, ${formatNumber(lintSummary.numWarnings, 'waring')}`}
+                    >
+                        {lintSummary.numErrors > 0 && (
+                            <span className="lint-num-errors flex-row mr4">
+                                <Icon
+                                    name="XOctagon"
+                                    className="mr4"
+                                    size={16}
+                                />
+                                {lintSummary.numErrors}
+                            </span>
+                        )}
+                        {lintSummary.numWarnings > 0 && (
+                            <span className="lint-num-warnings flex-row mr8">
+                                <Icon
+                                    name="AlertTriangle"
+                                    className="mr4"
+                                    size={16}
+                                />
+                                {lintSummary.numWarnings}
+                            </span>
+                        )}
+                    </div>
+                );
+            } else if (getLintErrors) {
+                return (
+                    <span className="flex-row mr8 lint-passed">
+                        <Icon name="CheckCircle" className="mr4" size={16} />
+                        Lint Passed
+                    </span>
+                );
+            }
+        };
+
+        const floatButtons = (
+            <div className="query-editor-float-buttons-wrapper flex-row mt8 mr8">
+                {renderLintButtons()}
+
+                <IconButton
                     icon={fullScreen ? 'Minimize2' : 'Maximize2'}
                     onClick={toggleFullScreen}
-                    theme="text"
-                    pushable
+                    className="full-screen-button"
+                    size={16}
+                    noPadding
                 />
             </div>
         );
+
+        const editorClassName = clsx({
+            fullScreen: !onFullScreen && fullScreen,
+            [className]: !!className,
+        });
 
         return (
             <StyledQueryEditor
@@ -708,7 +669,7 @@ export const QueryEditor: React.FC<
                 height={height}
                 fontSize={fontSize}
             >
-                {fullScreenButton}
+                {floatButtons}
                 <ReactCodeMirror
                     value={value}
                     options={editorOptions}

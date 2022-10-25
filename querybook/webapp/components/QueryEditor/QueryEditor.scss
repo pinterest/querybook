@@ -17,14 +17,26 @@
         background-color: var(--bg-text-select);
     }
 
-    .fullscreen-button-wrapper {
+    .query-editor-float-buttons-wrapper {
         position: absolute;
         top: 0;
         z-index: 9;
         right: 0;
 
-        .Button {
-            background-color: transparent;
+        .full-screen-button {
+            padding: 3px 0px;
+        }
+
+        .lint-num-errors {
+            color: var(--color-false);
+        }
+
+        .lint-num-warnings {
+            color: var(--color-warn);
+        }
+
+        .lint-passed {
+            color: var(--color-true);
         }
     }
 

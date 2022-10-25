@@ -43,7 +43,7 @@ import {
 } from 'redux/queryEngine/selector';
 import { createQueryExecution } from 'redux/queryExecutions/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
-import { Button, TextButton } from 'ui/Button/Button';
+import { TextButton } from 'ui/Button/Button';
 import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Icon } from 'ui/Icon/Icon';
@@ -103,7 +103,6 @@ interface IState {
     showQuerySnippetModal: boolean;
     showRenderedTemplateModal: boolean;
     showUDFModal: boolean;
-    hasLintError: boolean;
 
     transpilerConfig?: {
         toEngine: IQueryEngine;
@@ -127,7 +126,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             showQuerySnippetModal: false,
             showRenderedTemplateModal: false,
             showUDFModal: false,
-            hasLintError: false,
         };
     }
 
@@ -267,13 +265,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     @bind
     public getLintAnnotations(query: string, cm: CodeMirror.Editor) {
         return createSQLLinter(this.engineId)(query, cm);
-    }
-
-    @bind
-    public onLint(hasError: boolean) {
-        this.setState({
-            hasLintError: hasError,
-        });
     }
 
     @bind
@@ -639,7 +630,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
             isEditable,
         } = this.props;
-        const { meta, selectedRange, hasLintError } = this.state;
+        const { meta, selectedRange } = this.state;
 
         const queryTitleDOM = isEditable ? (
             <ResizableTextArea
@@ -671,7 +662,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                             this,
                             'engine'
                         )}
-                        hasLintError={hasLintError}
                         rowLimit={this.rowLimit}
                         onRowLimitChange={
                             this.hasRowLimit
@@ -691,7 +681,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             cellId,
             isEditable,
             isFullScreen,
-            toggleFullScreen,
             templatedVariables,
         } = this.props;
         const {
@@ -704,16 +693,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         const queryEngine = queryEngineById[this.engineId];
         const queryCollapsed = this.queryCollapsed;
 
-        const fullScreenButton = (
-            <div className="fullscreen-button-wrapper mt4">
-                <Button
-                    icon={isFullScreen ? 'Minimize2' : 'Maximize2'}
-                    onClick={toggleFullScreen}
-                    theme="text"
-                    pushable
-                />
-            </div>
-        );
         const openSnippetDOM =
             query.trim().length === 0 && isEditable ? (
                 <div className="add-snippet-wrapper">
@@ -726,7 +705,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
         const editorDOM = !queryCollapsed && (
             <div className="editor">
-                {fullScreenButton}
                 <BoundQueryEditor
                     value={query}
                     lineWrapping={true}
@@ -741,8 +719,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                     engine={queryEngine}
                     cellId={cellId}
                     height={isFullScreen ? 'full' : 'auto'}
-                    allowFullScreen={false}
-                    onLintCompletion={this.onLint}
+                    onFullScreen={this.props.toggleFullScreen}
                     getLintErrors={
                         this.hasQueryValidators ? this.getLintAnnotations : null
                     }
