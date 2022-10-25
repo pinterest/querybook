@@ -7,6 +7,10 @@ slug: /changelog
 
 Here are the list of breaking changes that you should be aware of when updating Querybook:
 
+## v3.12.0
+
+Added a new abstract method `notify_recipients` for `BaseNotifier`, which will allow a notifier to send messages to a list of recipients. Follow the example of `SlackNotifier` and `EmailNotifier` to implement it for your own notifier.
+
 ## v3.6.0
 
 Added a new search index for list search (or boards search internally). Follow the instructions at [Re-Initialize ElasticSearch](../developer_guide/reinitialize_es.md) to recreate ElasticSearch indices.

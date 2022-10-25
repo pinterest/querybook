@@ -4,6 +4,12 @@ from logic import user as user_logic
 from app.db import with_session
 
 
+def notify_recipients(recipients, template_name, template_params, notifier_name=None):
+    notifier = get_notifier_class(notifier_name)
+    markdown_message = render_message(template_name, template_params)
+    notifier.notify_recipients(recipients=recipients, message=markdown_message)
+
+
 @with_session
 def notify_user(user, template_name, template_params, notifier_name=None, session=None):
     if notifier_name is None:

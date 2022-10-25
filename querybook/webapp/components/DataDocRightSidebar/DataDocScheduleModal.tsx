@@ -31,8 +31,9 @@ export const DataDocScheduleModal: React.FunctionComponent<IProps> = ({
                 onSelect={setCurrentTab}
             />
             <InfoButton layout={['left']}>
-                Schedule your doc to be ran on a certain interval. Query cells
-                will be executed one by one.
+                Schedule your doc to be run on a certain interval. The scheduled
+                doc will be run by the doc owner. Query cells will be executed
+                one by one.
             </InfoButton>
         </div>
     );

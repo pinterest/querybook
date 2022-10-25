@@ -65,11 +65,18 @@ export enum NotifyOn {
     ON_SUCCESS = 2,
 }
 
+export interface IDataDocScheduleNotification {
+    with?: string;
+    on?: NotifyOn;
+    config?: {
+        to: string[];
+    };
+}
+
 export interface IDataDocScheduleKwargs {
     doc_id?: number;
     user_id?: number;
-    notify_with?: string;
-    notify_on?: NotifyOn;
+    notifications?: IDataDocScheduleNotification[];
     exports?: Array<{
         exporter_cell_id?: number;
         exporter_name?: string;

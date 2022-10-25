@@ -14,16 +14,29 @@ class SlackNotifier(BaseNotifier):
         return "slack"
 
     @property
+    def notifier_help(self) -> str:
+        return "Comma(,) separated list of Slack user(starts with @) or channel (starts with #) names"
+
+    @property
     def notifier_format(self):
         return "plaintext"
 
-    def notify(self, user, message):
-        to = f"@{user.username}"
+    def notify_recipients(self, recipients, message):
+        """Send message to a list of slack users or channels.
+
+        Args:
+            recipients (list[str]): list of Slack user(starts with @) or channel(starts with #) names
+            message (str): messge to be sent
+        """
         url = "https://slack.com/api/chat.postMessage"
         headers = {"Authorization": "Bearer {}".format(self.token)}
-        text = self._convert_markdown(message)
-        data = {
-            "text": text,
-            "channel": to,
-        }
-        requests.post(url, json=data, headers=headers, timeout=30)
+        for recipient in recipients:
+            text = self._convert_markdown(message)
+            data = {
+                "text": text,
+                "channel": recipient,
+            }
+            requests.post(url, json=data, headers=headers, timeout=30)
+
+    def notify(self, user, message):
+        self.notify_recipients(recipients=[f"@{user.username}"], message=message)

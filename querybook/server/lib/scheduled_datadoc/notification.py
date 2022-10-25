@@ -3,30 +3,32 @@ from typing import Dict, List
 from app.db import DBSession, with_session
 from const.schedule import NotifyOn
 from env import QuerybookSettings
-from lib.notify.utils import notify_user
+from lib.notify.utils import notify_recipients
 from logic.datadoc import get_data_doc_by_id
-from models.user import User
 
 
 def notifiy_on_datadoc_complete(
     doc_id: int,
-    user_id: int,
     is_success: bool,
-    notify_with: str,
-    notify_on: int,  # NotifyOn.value
+    notifications: List[Dict],
     error_msg: str,
     export_urls: List[str],
 ):
-    if _should_notify(notify_with, notify_on, is_success):
-        with DBSession() as session:
-            _send_datadoc_notification(
-                user_id,
-                notify_with,
-                _get_datadoc_notification_params(
-                    doc_id, is_success, error_msg, export_urls, session=session
-                ),
-                session=session,
-            )
+    for notification in notifications:
+        notify_with = notification.get("with")
+        notify_on = notification.get("on")
+        notify_to = notification.get("config", {}).get("to", [])
+
+        if _should_notify(notify_with, notify_on, is_success):
+            with DBSession() as session:
+                notify_recipients(
+                    recipients=notify_to,
+                    template_name="datadoc_completion_notification",
+                    template_params=_get_datadoc_notification_params(
+                        doc_id, is_success, error_msg, export_urls, session=session
+                    ),
+                    notify_name=notify_with,
+                )
 
 
 def _should_notify(notify_with: str, notify_on: NotifyOn, is_success: bool):
@@ -55,21 +57,4 @@ def _get_datadoc_notification_params(
         doc_id=doc_id,
         export_urls=export_urls,
         error_msg=error_msg,
-    )
-
-
-@with_session
-def _send_datadoc_notification(
-    user_id: int,
-    notify_with: str,
-    notification_params: Dict,
-    session=None,
-):
-    user = User.get(id=user_id, session=session)
-    notify_user(
-        user=user,
-        template_name="datadoc_completion_notification",
-        template_params=notification_params,
-        notifier_name=notify_with,
-        session=session,
     )
