@@ -13,6 +13,7 @@ import {
     IDataDocDAGExport,
     IDataDocDAGExporter,
     IDataDocEditor,
+    IDataDocSavedDAGExport,
     IRawDataDoc,
 } from 'const/datadoc';
 
@@ -248,11 +249,19 @@ export interface IMoveDataDocCursor extends Action {
     };
 }
 
+export interface ISetDataDocDAGExporterSelectionAction extends Action {
+    type: '@@dataDoc/SET_DATA_DOC_DAG_EXPORTER_SELECTION';
+    payload: {
+        docId: number;
+        exporterName: string;
+    };
+}
+
 export interface IReceiveDataDocDAGExportAction extends Action {
     type: '@@dataDoc/RECEIVE_DATA_DOC_DAG_EXPORT';
     payload: {
         docId: number;
-        DAGExport: IDataDocDAGExport;
+        DAGExport: IDataDocSavedDAGExport;
     };
 }
 export interface IReceiveDataDocDAGExportersAction extends Action {
@@ -290,6 +299,7 @@ export type DataDocAction =
     | IReceiveDataDocAccessRequestAction
     | IRemoveDataDocAccessRequestAction
     | IMoveDataDocCursor
+    | ISetDataDocDAGExporterSelectionAction
     | IReceiveDataDocDAGExportAction
     | IReceiveDataDocDAGExportersAction;
 

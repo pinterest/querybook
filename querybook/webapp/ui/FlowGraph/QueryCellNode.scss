@@ -1,11 +1,37 @@
 .QueryCellNode {
     background-color: var(--bg-lightest);
+    border: 1px solid var(--bg-select);
     border-radius: var(--border-radius-sm);
-    padding: var(--padding-sm) var(--padding);
+    padding: var(--padding) var(--padding);
     color: var(--text);
+    position: relative;
 
     &.updated {
         background-color: var(--color-true-light);
+    }
+
+    &.selected {
+        background-color: var(--color-accent-lightest);
+    }
+
+    .QueryCellNode-toolbar {
+        position: absolute;
+        left: 0;
+        top: -36px;
+        background: var(--bg-lightest);
+        border-radius: 4px;
+
+        .QueryCellNode-toolbar-button {
+            padding: 8px;
+            color: var(--icon-active);
+        }
+    }
+
+    .QueryCellNode-tag {
+        padding: 0;
+        margin-right: 4px;
+        font-size: var(--xxxsmall-text-size);
+        background-color: transparent;
     }
 
     .QueryCellNode-label {

@@ -91,7 +91,13 @@ export interface IDataDocDAGExportMeta {
     };
     useTemplatedVariables?: boolean;
 }
+
 export interface IDataDocDAGExport {
+    selectedExporter?: string;
+    savedDAGExport?: IDataDocSavedDAGExport;
+}
+
+export interface IDataDocSavedDAGExport {
     id: number;
     data_doc_id: number;
 
@@ -104,6 +110,6 @@ export interface IDataDocDAGExport {
 
 export interface IDataDocDAGExporter {
     name: string;
-    type: 'url' | 'text';
+    engines: number[];
     meta: IFormField | IStructFormField | IExpandableFormField;
 }

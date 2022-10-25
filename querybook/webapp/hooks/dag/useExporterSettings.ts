@@ -1,17 +1,21 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IDataDocDAGExportMeta } from 'const/datadoc';
-import { fetchDAGExporters } from 'redux/dataDoc/action';
+import { fetchDAGExporters, selectDAGExporter } from 'redux/dataDoc/action';
 import { IStoreState } from 'redux/store/types';
 import { updateValue } from 'ui/SmartForm/formFunctions';
 
-interface IProps {
+interface IUseExporterSettingsProps {
+    docId: number;
     savedMeta: IDataDocDAGExportMeta;
 }
 
 function useExporterDataByName() {
     const dispatch = useDispatch();
+    const currentEnvironmentId = useSelector(
+        (state: IStoreState) => state.environment.currentEnvironmentId
+    );
     const exporterDataByName = useSelector(
         (state: IStoreState) => state.dataDoc.dagExporterDataByName
     );
@@ -21,21 +25,44 @@ function useExporterDataByName() {
     );
     React.useEffect(() => {
         if (exporterNames.length === 0) {
-            dispatch(fetchDAGExporters());
+            dispatch(fetchDAGExporters(currentEnvironmentId));
         }
-    }, [dispatch]);
+    }, [currentEnvironmentId, dispatch, exporterNames.length]);
 
     return { exporterDataByName, exporterNames };
 }
 
-export function useExporterSettings({ savedMeta }: IProps) {
+export function useCurrentExporter(docId: number) {
+    const { exporterDataByName } = useExporterDataByName();
+    const selectedExporter = useSelector(
+        (state: IStoreState) =>
+            state.dataDoc.dagExportByDocId[docId]?.selectedExporter
+    );
+    return exporterDataByName[selectedExporter];
+}
+
+export function useExporterSettings({
+    docId,
+    savedMeta,
+}: IUseExporterSettingsProps) {
+    const dispatch = useDispatch();
     const { exporterDataByName, exporterNames } = useExporterDataByName();
 
-    const [selectedExporter, setSelectedExporter] = React.useState<string>();
+    const selectedExporter = useSelector(
+        (state: IStoreState) =>
+            state.dataDoc.dagExportByDocId[docId]?.selectedExporter
+    );
+
+    const setSelectedExporter = useCallback(
+        (name: string) => dispatch(selectDAGExporter(docId, name)),
+        [dispatch, docId]
+    );
+
     const [settingValues, setSettingValues] = React.useState<
         Record<string, any>
     >({});
 
+    const exporterEngines = exporterDataByName[selectedExporter]?.engines;
     const exporterMeta = exporterDataByName[selectedExporter]?.meta;
 
     const useTemplatedVariables = Boolean(savedMeta.useTemplatedVariables);
@@ -53,7 +80,7 @@ export function useExporterSettings({ savedMeta }: IProps) {
         } else if (exporterNames.length) {
             setSelectedExporter(exporterNames[0]);
         }
-    }, [exporterNames, selectedExporter, savedMeta]);
+    }, [exporterNames, selectedExporter, savedMeta, setSelectedExporter]);
 
     React.useEffect(() => {
         if (savedMeta.exporter_meta?.[selectedExporter]) {
@@ -66,6 +93,7 @@ export function useExporterSettings({ savedMeta }: IProps) {
         selectedExporter,
         setSelectedExporter,
         settingValues,
+        exporterEngines,
         exporterMeta,
         handleSettingValuesChange,
         useTemplatedVariables,

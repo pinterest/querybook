@@ -448,8 +448,21 @@ function dagExportByDocIdReducer(
 ) {
     return produce(state, (draft) => {
         switch (action.type) {
+            case '@@dataDoc/SET_DATA_DOC_DAG_EXPORTER_SELECTION': {
+                if (!(action.payload.docId in draft)) {
+                    draft[action.payload.docId] = {};
+                }
+                draft[action.payload.docId].selectedExporter =
+                    action.payload.exporterName;
+                return;
+            }
+
             case '@@dataDoc/RECEIVE_DATA_DOC_DAG_EXPORT': {
-                draft[action.payload.docId] = action.payload.DAGExport;
+                if (!(action.payload.docId in draft)) {
+                    draft[action.payload.docId] = {};
+                }
+                draft[action.payload.docId].savedDAGExport =
+                    action.payload.DAGExport;
                 return;
             }
         }
@@ -457,16 +470,17 @@ function dagExportByDocIdReducer(
 }
 
 function dagExporterDataByNameReducer(
-    state = initialState.dagExportByDocId,
+    state = initialState.dagExporterDataByName,
     action: DataDocAction
 ) {
     return produce(state, (draft) => {
         switch (action.type) {
             case '@@dataDoc/RECEIVE_DATA_DOC_EXPORTERS': {
+                draft = {};
                 action.payload.exporters.forEach((exporter) => {
                     draft[exporter.name] = exporter;
                 });
-                return;
+                return draft;
             }
         }
     });

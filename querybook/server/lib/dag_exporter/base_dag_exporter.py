@@ -1,4 +1,6 @@
 from abc import ABCMeta, abstractmethod
+from logic.admin import get_query_engines_by_ids
+from models.datadoc import DataCell
 
 
 class BaseDAGExporter(metaclass=ABCMeta):
@@ -10,11 +12,15 @@ class BaseDAGExporter(metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def dag_exporter_type(self) -> str:
-        # Can be one of 'url' | 'text'
-        # Url exports returns a url for user to open
-        # Text exports opens up a copy paste modal for user to copy
+    def dag_exporter_engines(self) -> list[int]:
+        """Supprted engine ids of the dag exporter"""
         raise NotImplementedError()
+
+    @property
+    def dag_exporter_engine_names(self) -> list[str]:
+        """Get the supported engine names"""
+        query_engines = get_query_engines_by_ids(self.dag_exporter_engines)
+        return [engine.name for engine in query_engines]
 
     # TODO: update documentation
     @property
@@ -28,6 +34,11 @@ class BaseDAGExporter(metaclass=ABCMeta):
         """
         raise NotImplementedError()
 
+    def is_engine_supported(self, query_cell: DataCell) -> bool:
+        """Helper function to validate if a query cell's engine is supported"""
+        engine_id = query_cell.meta.get("engine")
+        return engine_id in self.dag_exporter_engines
+
     @abstractmethod
     def export(self, nodes, edges, meta, cell_by_id):
         """
@@ -40,8 +51,7 @@ class BaseDAGExporter(metaclass=ABCMeta):
             cell_by_id: Dict of query cell data by cell id
 
         Returns Dict {
-            type: dag_exporter_type
-            export: string
+            data: (string) Markdown string
         }
         """
         raise NotImplementedError()
@@ -49,6 +59,6 @@ class BaseDAGExporter(metaclass=ABCMeta):
     def to_dict(self):
         return {
             "name": self.dag_exporter_name,
+            "engines": self.dag_exporter_engines,
             "meta": self.dag_exporter_meta,
-            "type": self.dag_exporter_type,
         }

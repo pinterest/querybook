@@ -1,22 +1,28 @@
 import * as React from 'react';
+import toast from 'react-hot-toast';
+import { useSelector } from 'react-redux';
 
 import { IDataDocDAGExportMeta } from 'const/datadoc';
 import { useExporterSettings } from 'hooks/dag/useExporterSettings';
 import { titleize } from 'lib/utils';
+import { IStoreState } from 'redux/store/types';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Button } from 'ui/Button/Button';
 import { FormField, FormSectionHeader } from 'ui/Form/FormField';
 import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 import { SmartForm } from 'ui/SmartForm/SmartForm';
+import { Tag } from 'ui/Tag/Tag';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
 interface IProps {
+    docId: number;
     onExport: (name: string, settings: any) => Promise<any>;
     savedMeta: IDataDocDAGExportMeta;
     onSave: (meta: any, useTemplatedVariables?: boolean) => Promise<any>;
 }
 
 export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
+    docId,
     onExport,
     savedMeta,
     onSave,
@@ -26,14 +32,29 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
         selectedExporter,
         setSelectedExporter,
         settingValues,
+        exporterEngines,
         exporterMeta,
         handleSettingValuesChange,
         useTemplatedVariables,
-    } = useExporterSettings({ savedMeta });
+    } = useExporterSettings({ docId, savedMeta });
+
+    const queryEngineById = useSelector(
+        (state: IStoreState) => state.queryEngine.queryEngineById
+    );
 
     const handleExport = React.useCallback(
         () => onExport(selectedExporter, settingValues),
         [onExport, selectedExporter, settingValues]
+    );
+
+    const enginesDOM = exporterEngines && (
+        <div>
+            {exporterEngines.map((engineId) => (
+                <Tag key={engineId} mini>
+                    {queryEngineById[engineId].name}
+                </Tag>
+            ))}
+        </div>
     );
 
     return (
@@ -54,6 +75,8 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
                     value={selectedExporter}
                     onChange={setSelectedExporter}
                 />
+                <FormSectionHeader>Query Engines Supported</FormSectionHeader>
+                {enginesDOM}
                 <FormSectionHeader>Settings</FormSectionHeader>
                 {exporterMeta && settingValues && (
                     <SmartForm
@@ -63,29 +86,44 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
                     />
                 )}
             </div>
-            <div className="DataDocDAGExporter-bottom flex-row right-align">
+            <div className="DataDocDAGExporter-bottom">
                 {selectedExporter && (
                     <>
                         <Button
                             icon="Save"
-                            title="Save Progress"
-                            onClick={() =>
-                                onSave(
+                            title="Save"
+                            aria-label="Save progress"
+                            data-balloon-pos="up"
+                            onClick={() => {
+                                toast.promise(
+                                    onSave(
+                                        {
+                                            ...savedMeta.exporter_meta,
+                                            [selectedExporter]: settingValues,
+                                        },
+                                        useTemplatedVariables
+                                    ),
                                     {
-                                        ...savedMeta.exporter_meta,
-                                        [selectedExporter]: settingValues,
+                                        loading: 'Saving progress ...',
+                                        success: 'Progress saved successfully',
+                                        error: 'Failed to save progress',
                                     },
-                                    useTemplatedVariables
-                                )
-                            }
+                                    {
+                                        position: 'bottom-center',
+                                    }
+                                );
+                            }}
                         />
                         <AsyncButton
                             icon="FileOutput"
-                            title={`Export to ${titleize(
+                            title="Export"
+                            aria-label={`Export to ${titleize(
                                 selectedExporter,
                                 '_',
                                 ' '
                             )}`}
+                            data-balloon-pos="up"
+                            color="accent"
                             onClick={handleExport}
                         />
                     </>

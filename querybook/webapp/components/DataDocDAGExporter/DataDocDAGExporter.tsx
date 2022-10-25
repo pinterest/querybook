@@ -1,36 +1,41 @@
-import * as React from 'react';
+import React, { useMemo } from 'react';
 
+import { DataDocDAGExporterContext } from 'context/DataDocDAGExporter';
 import {
     useExporterDAG,
     useQueryCells,
     useUnusedQueryCells,
 } from 'hooks/dag/useExporterDAG';
+import { useCurrentExporter } from 'hooks/dag/useExporterSettings';
 import { useSavedDAG } from 'hooks/dag/useSavedDAG';
 import { DataDocResource } from 'resource/dataDoc';
-import { Button } from 'ui/Button/Button';
-import { CopyPasteModal } from 'ui/CopyPasteModal/CopyPasteModal';
+import { IconButton } from 'ui/Button/IconButton';
+import { Markdown } from 'ui/Markdown/Markdown';
 import { Modal } from 'ui/Modal/Modal';
+import { AccentText } from 'ui/StyledText/StyledText';
 
-import { DataDocDAGExporterForm } from './DataDocDAGExporterForm';
 import { DataDocDAGExporterGraph } from './DataDocDAGExporterGraph';
 import { DataDocDagExporterList } from './DataDocDAGExporterList';
+import { DataDocDAGExporterSettings } from './DataDocDAGExporterSettings';
 
 import './DataDocDAGExporter.scss';
 
 interface IProps {
     docId: number;
+    onClose: () => void;
 }
 
 export const queryCellDraggableType = 'QueryCell-';
 
 export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
     docId,
+    onClose,
 }) => {
     const graphRef = React.useRef();
-    const [isExporting, setIsExporting] = React.useState(false);
-    const [exportData, setExportData] = React.useState<string>();
-    const [exportType, setExportType] = React.useState<string>();
 
+    const [exportData, setExportData] = React.useState<string>();
+
+    const currentExporter = useCurrentExporter(docId);
     const { onSave, savedNodes, savedEdges, savedMeta } = useSavedDAG(docId);
     const queryCells = useQueryCells(docId);
     const [nodes, edges, setNodes, setEdges, dropRef, setGraphInstance] =
@@ -40,32 +45,45 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
 
     const handleExport = React.useCallback(
         async (exporterName: string, exporterSettings: Record<string, any>) => {
-            const meta = { ...savedMeta, [exporterName]: exporterSettings };
+            const meta = { [exporterName]: exporterSettings };
             await onSave(nodes, edges, meta);
 
             const { data: exportData } = await DataDocResource.exportDAG(
                 docId,
                 exporterName
             );
-            setExportData(exportData?.export);
-            setExportType(exportData?.type);
+            setExportData(exportData);
         },
-        [docId, nodes, edges, onSave, savedMeta]
+        [docId, nodes, edges, onSave]
     );
 
+    const DAGExporterContextState = useMemo(() => {
+        // for the "?? true" below, we assume all the query cells
+        // are supported before current exporter is loaded
+        const isEngineSupported = (engineId: number) =>
+            currentExporter?.engines.includes(engineId) ?? true;
+        return {
+            docId,
+            currentExporter,
+            isEngineSupported,
+        };
+    }, [docId, currentExporter]);
+
     return (
-        <div className="DataDocDAGExporter">
-            {isExporting ? (
-                <DataDocDAGExporterForm
-                    handleExport={handleExport}
-                    savedMeta={savedMeta}
-                    nodes={nodes}
-                    edges={edges}
-                    onSave={onSave}
-                    onReturn={() => setIsExporting(false)}
-                />
-            ) : (
-                <>
+        <DataDocDAGExporterContext.Provider value={DAGExporterContextState}>
+            <div className="DataDocDAGExporter">
+                <div className="DataDocDAGExporter-header">
+                    <AccentText size="large" weight="bold" color="dark">
+                        DAG Exporter
+                    </AccentText>
+                    <IconButton
+                        aria-label="close"
+                        icon="X"
+                        onClick={onClose}
+                        noPadding
+                    />
+                </div>
+                <div className="DataDocDAGExporter-body">
                     <DataDocDagExporterList queryCells={unusedQueryCells} />
                     <DataDocDAGExporterGraph
                         dropRef={dropRef}
@@ -75,49 +93,38 @@ export const DataDocDAGExporter: React.FunctionComponent<IProps> = ({
                         edges={edges}
                         setNodes={setNodes}
                         setEdges={setEdges}
-                        onSave={onSave}
-                        onNext={() => setIsExporting(true)}
                     />
-                </>
-            )}
-            {exportData &&
-                (exportType === 'url' ? (
-                    <Modal
-                        onHide={() => setExportData(undefined)}
-                        title="Export Data"
-                    >
-                        <div className="flex-center mv24">
-                            <Button
-                                icon="ChevronRight"
-                                title="Go To Export"
-                                onClick={() => window.open(exportData)}
-                            />
-                        </div>
-                    </Modal>
-                ) : (
-                    <CopyPasteModal
-                        text={exportData}
-                        title="Export Data"
-                        onHide={() => setExportData(undefined)}
+                    <DataDocDAGExporterSettings
+                        docId={docId}
+                        onExport={handleExport}
+                        savedMeta={savedMeta}
+                        onSave={(exporterMeta, useTemplatedVariables) =>
+                            onSave(
+                                nodes,
+                                edges,
+                                exporterMeta,
+                                useTemplatedVariables
+                            )
+                        }
                     />
-                ))}
-        </div>
+                    {exportData && (
+                        <Modal
+                            onHide={() => {
+                                // Prevent modal from being closed unless explicitly click the "Close" button
+                            }}
+                            title="DAG Export"
+                            topDOM={
+                                <IconButton
+                                    icon="X"
+                                    onClick={() => setExportData(undefined)}
+                                />
+                            }
+                        >
+                            <Markdown>{exportData}</Markdown>
+                        </Modal>
+                    )}
+                </div>
+            </div>
+        </DataDocDAGExporterContext.Provider>
     );
 };
-
-export const DataDocDAGExporterSave: React.FunctionComponent<{
-    onSave: () => Promise<any>;
-    onNext: () => void;
-}> = ({ onSave, onNext }) => (
-    <div className="DataDocDAGExporter-bottom flex-row right-align">
-        <Button icon="Save" title="Save Progress" onClick={onSave} />
-        <Button
-            icon="ChevronRight"
-            title="Configure Exporter"
-            onClick={async () => {
-                await onSave();
-                onNext();
-            }}
-        />
-    </div>
-);
