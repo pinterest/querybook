@@ -99,7 +99,7 @@ export const QueryCellNode = React.memo<IProps>(
                                 data-balloon-pos="up"
                             >
                                 <Icon
-                                    name="AlertCircle"
+                                    name="AlertOctagon"
                                     size={10}
                                     color="false"
                                 />

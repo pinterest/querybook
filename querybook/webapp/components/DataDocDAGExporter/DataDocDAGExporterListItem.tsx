@@ -59,7 +59,7 @@ export const DataDocDAGExporterListItem =
                                         </Tag>
                                         {!engineSupported && (
                                             <Icon
-                                                name="AlertCircle"
+                                                name="AlertOctagon"
                                                 size={16}
                                                 color="false"
                                             />
@@ -95,7 +95,7 @@ export const DataDocDAGExporterListItem =
                                         {!engineSupported && (
                                             <div className="flex-left mb8">
                                                 <Icon
-                                                    name="AlertCircle"
+                                                    name="AlertOctagon"
                                                     size={16}
                                                     color="false"
                                                     className="mr4"
