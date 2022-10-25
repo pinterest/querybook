@@ -96,6 +96,9 @@ function searchDataTable(): ThunkResult<Promise<ITableSearchResult[]>> {
                 const tableSortAsc = tableSort.asc ? 'asc' : 'desc';
                 search['sort_key'] = ['schema', 'name'];
                 search['sort_order'] = [tableSortAsc, tableSortAsc];
+            } else if (tableSort.key === 'importance_score') {
+                search['sort_key'] = '_score';
+                search['sort_order'] = tableSort.asc ? 'asc' : 'desc';
             }
             const searchRequest = SearchTableResource.searchConcise(search);
             dispatch(resetSearchResult());
@@ -196,7 +199,8 @@ export function searchTableBySchema(
                         schema: schemaName,
                     },
                 }),
-                sort_key: orderBy.key,
+                sort_key:
+                    orderBy.key === 'importance_score' ? '_score' : orderBy.key,
                 sort_order: orderBy.asc ? 'asc' : 'desc',
                 offset: resultsCount,
             });
