@@ -22,7 +22,7 @@ export function useCodeAnalysis({
         analyzeCode(debouncedQuery, 'autocomplete', language).then(
             (codeAnalysis) => {
                 codeAnalysisRef.current = codeAnalysis;
-                onAnalyzed(codeAnalysis);
+                onAnalyzed?.(codeAnalysis);
             }
         );
     }, [debouncedQuery, language, onAnalyzed]);
