@@ -4,11 +4,17 @@ import { useEffect, useRef } from 'react';
 
 import { analyzeCode } from 'lib/web-worker';
 
-export function useCodeAnalysis(
-    onAnalyzed: (codeAnalysis: ICodeAnalysis) => void,
-    language: string,
-    query: string
-) {
+interface IUseCodeAnalysisParams {
+    onAnalyzed?: (codeAnalysis: ICodeAnalysis) => void;
+    language: string;
+    query: string;
+}
+
+export function useCodeAnalysis({
+    onAnalyzed,
+    language,
+    query,
+}: IUseCodeAnalysisParams) {
     const codeAnalysisRef = useRef<ICodeAnalysis>(null);
     const debouncedQuery = useDebounce(query, 500);
 

@@ -60,18 +60,30 @@ function useTableLint(getTableByName: (schema: string, name: string) => any) {
     return getTableLintAnnotations;
 }
 
-export function useLint(
-    query: string,
+interface IUseLintParams {
+    query: string;
 
-    editorRef: React.MutableRefObject<CodeMirror.Editor>,
-    metastoreId: Nullable<number>,
-    codeAnalysisRef: React.MutableRefObject<Nullable<ICodeAnalysis>>,
-    getTableByName: (schema: string, name: string) => any,
+    editorRef: React.MutableRefObject<CodeMirror.Editor>;
+    metastoreId: Nullable<number>;
+    codeAnalysisRef: React.MutableRefObject<Nullable<ICodeAnalysis>>;
+    getTableByName: (schema: string, name: string) => any;
     getLintErrors: Nullable<
         (query: string, editor: CodeMirror.Editor) => Promise<ILinterWarning[]>
-    >,
-    onLintCompletion: Nullable<(hasError: boolean) => void>
-) {
+    >;
+
+    onLintCompletion: Nullable<(hasError: boolean) => void>;
+}
+
+export function useLint({
+    query,
+
+    editorRef,
+    metastoreId,
+    codeAnalysisRef,
+    getTableByName,
+    getLintErrors,
+    onLintCompletion,
+}: IUseLintParams) {
     const [isLinting, setIsLinting] = useState(false);
     const [lintSummary, setLintSummary] = useState(() => ({
         numWarnings: 0,

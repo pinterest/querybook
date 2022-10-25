@@ -131,23 +131,23 @@ export const QueryEditor: React.FC<
             autoCompleteType,
             language
         );
-        const codeAnalysisRef = useCodeAnalysis(
-            autoCompleter.updateCodeAnalysis,
+        const codeAnalysisRef = useCodeAnalysis({
+            onAnalyzed: autoCompleter.updateCodeAnalysis,
             language,
-            value
-        );
+            query: value,
+        });
 
         const [fullScreen, setFullScreen] = useState(false);
 
-        const { getLintAnnotations, lintSummary, isLinting } = useLint(
-            value,
+        const { getLintAnnotations, lintSummary, isLinting } = useLint({
+            query: value,
             editorRef,
             metastoreId,
             codeAnalysisRef,
             getTableByName,
             getLintErrors,
-            onLintCompletion
-        );
+            onLintCompletion,
+        });
 
         const openTableModal = useCallback((tableId: number) => {
             navigateWithinEnv(`/table/${tableId}/`, {
