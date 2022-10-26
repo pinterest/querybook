@@ -53,7 +53,11 @@ const MarkdownCode: React.FC<{
     return (
         <StyledMarkdownCode>
             <ThemedCodeHighlight value={children} language={language} />
-            <CopyButton copyText={children} theme="text" />
+            <CopyButton
+                tooltipDirection="left"
+                copyText={children}
+                theme="text"
+            />
         </StyledMarkdownCode>
     );
 };
