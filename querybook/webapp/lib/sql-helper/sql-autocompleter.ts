@@ -4,6 +4,7 @@ import CodeMirror from 'lib/codemirror';
 import { ICodeAnalysis, TableToken } from 'lib/sql-helper/sql-lexer';
 import { reduxStore } from 'redux/store';
 import { SearchTableResource } from 'resource/search';
+import { bind } from 'lodash-decorators';
 
 interface ILineAnalysis {
     statementNum: number;
@@ -137,6 +138,11 @@ export class SqlAutoCompleter {
         this.registerHelper();
     }
 
+    @bind
+    public updateCodeAnalysis(codeAnalysis: ICodeAnalysis) {
+        this.codeAnalysis = codeAnalysis;
+    }
+
     public getKeywords() {
         if (!this.keywords) {
             const languageSetting = getLanguageSetting(this.language);
@@ -151,10 +157,6 @@ export class SqlAutoCompleter {
             'sql',
             this.getSqlHint.bind(this)
         );
-    }
-
-    public updateCodeAnalysis(codeAnalysis: ICodeAnalysis) {
-        this.codeAnalysis = codeAnalysis;
     }
 
     private prefixMatch(prefix: string, word: string) {
