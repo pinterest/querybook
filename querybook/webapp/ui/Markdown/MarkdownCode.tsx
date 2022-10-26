@@ -20,8 +20,8 @@ const StyledMarkdownCode = styled.div.attrs({ className: 'MarkdownCode' })`
     position: relative;
     .CopyButton {
         position: absolute;
-        top: 6px;
-        right: 6px;
+        top: 16px;
+        right: 16px;
         padding: 0;
         visibility: hidden;
     }
@@ -53,7 +53,11 @@ const MarkdownCode: React.FC<{
     return (
         <StyledMarkdownCode>
             <ThemedCodeHighlight value={children} language={language} />
-            <CopyButton copyText={children} theme="text" />
+            <CopyButton
+                tooltipDirection="left"
+                copyText={children}
+                theme="text"
+            />
         </StyledMarkdownCode>
     );
 };
