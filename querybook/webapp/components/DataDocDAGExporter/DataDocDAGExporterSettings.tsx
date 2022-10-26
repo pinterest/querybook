@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { IDataDocDAGExportMeta } from 'const/datadoc';
 import { useExporterSettings } from 'hooks/dag/useExporterSettings';
 import { titleize } from 'lib/utils';
+import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
 import { IStoreState } from 'redux/store/types';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Button } from 'ui/Button/Button';
@@ -38,9 +39,7 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
         useTemplatedVariables,
     } = useExporterSettings({ docId, savedMeta });
 
-    const queryEngineById = useSelector(
-        (state: IStoreState) => state.queryEngine.queryEngineById
-    );
+    const queryEngineById = useSelector(queryEngineByIdEnvSelector);
 
     const handleExport = React.useCallback(
         () => onExport(selectedExporter, settingValues),
@@ -49,11 +48,14 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
 
     const enginesDOM = exporterEngines && (
         <div>
-            {exporterEngines.map((engineId) => (
-                <Tag key={engineId} mini>
-                    {queryEngineById[engineId].name}
-                </Tag>
-            ))}
+            {exporterEngines.map(
+                (engineId) =>
+                    queryEngineById[engineId]?.id === engineId && (
+                        <Tag key={engineId} mini>
+                            {queryEngineById[engineId].name}
+                        </Tag>
+                    )
+            )}
         </div>
     );
 
