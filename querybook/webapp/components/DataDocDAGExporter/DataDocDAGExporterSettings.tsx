@@ -6,7 +6,6 @@ import { IDataDocDAGExportMeta } from 'const/datadoc';
 import { useExporterSettings } from 'hooks/dag/useExporterSettings';
 import { titleize } from 'lib/utils';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
-import { IStoreState } from 'redux/store/types';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Button } from 'ui/Button/Button';
 import { FormField, FormSectionHeader } from 'ui/Form/FormField';
@@ -50,7 +49,7 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
         <div>
             {exporterEngines.map(
                 (engineId) =>
-                    queryEngineById[engineId]?.id === engineId && (
+                    engineId in queryEngineById && (
                         <Tag key={engineId} mini>
                             {queryEngineById[engineId].name}
                         </Tag>
