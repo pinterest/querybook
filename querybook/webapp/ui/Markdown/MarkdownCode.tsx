@@ -20,8 +20,8 @@ const StyledMarkdownCode = styled.div.attrs({ className: 'MarkdownCode' })`
     position: relative;
     .CopyButton {
         position: absolute;
-        top: 6px;
-        right: 6px;
+        top: 16px;
+        right: 16px;
         padding: 0;
         visibility: hidden;
     }
