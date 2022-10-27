@@ -1,7 +1,6 @@
 from typing import Dict
 
 from app.db import with_session
-from logic import user as user_logic
 
 LEGACY_KEYS = ["exporter_cell_id", "exporter_name", "exporter_params"]
 
@@ -53,8 +52,7 @@ def convert_if_legacy_datadoc_schedule_v0(schedule_config: Dict) -> Dict:
     return new_schedule_config
 
 
-@with_session
-def convert_if_legacy_datadoc_schedule_v1(schedule_config: Dict, session=None) -> Dict:
+def convert_if_legacy_datadoc_schedule_v1(schedule_config: Dict) -> Dict:
     """Convert a legacy v1 datadoc schedule config to the latest version.
 
     For v1, the datadoc schedule only supported to send notification to the
@@ -115,8 +113,7 @@ def convert_if_legacy_datadoc_schedule_v1(schedule_config: Dict, session=None) -
     return schedule_config
 
 
-@with_session
-def convert_if_legacy_datadoc_schedule(schedule_config: Dict, session=None) -> Dict:
+def convert_if_legacy_datadoc_schedule(schedule_config: Dict) -> Dict:
     """Convert a legacy datadoc schedule config to the latest version.
 
     Args:
@@ -126,7 +123,5 @@ def convert_if_legacy_datadoc_schedule(schedule_config: Dict, session=None) -> D
         Dict: new schedule config
     """
     new_schedule_config = convert_if_legacy_datadoc_schedule_v0(schedule_config)
-    new_schedule_config = convert_if_legacy_datadoc_schedule_v1(
-        new_schedule_config, session=session
-    )
+    new_schedule_config = convert_if_legacy_datadoc_schedule_v1(new_schedule_config)
     return new_schedule_config

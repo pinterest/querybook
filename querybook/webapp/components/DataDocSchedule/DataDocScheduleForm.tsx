@@ -20,7 +20,7 @@ import {
     recurrenceToCron,
     recurrenceTypes,
 } from 'lib/utils/cron';
-import { IOptions, makeReactSelectStyle } from 'lib/utils/react-select';
+import { IOptions } from 'lib/utils/react-select';
 import { queryCellSelector } from 'redux/dataDoc/selector';
 import { notificationServiceSelector } from 'redux/notificationService/selector';
 import { INotifier } from 'redux/notificationService/types';
@@ -393,9 +393,25 @@ const ScheduleNotifactionsForm: React.FC<{
         []
     );
 
-    const getNotifierHelp = (notifierName: string) =>
-        notifiers.find((n) => n.name === notifierName)?.help ||
-        'Add comma(,) separated recepients here';
+    const getNotifierHelp = useCallback(
+        (notifierName: string) =>
+            notifiers.find((n) => n.name === notifierName)?.help ||
+            'Add comma(,) separated recepients here',
+        [notifiers]
+    );
+
+    const handleNewNotification = useCallback(
+        (arrayHelpers) => {
+            arrayHelpers.push({
+                with: notifierOptions[0] ?? null,
+                on: notifyOnOptions[0]?.value ?? null,
+                config: {
+                    to: [],
+                },
+            });
+        },
+        [notifierOptions, notifyOnOptions]
+    );
 
     return (
         <FieldArray
@@ -423,17 +439,9 @@ const ScheduleNotifactionsForm: React.FC<{
                             <SoftButton
                                 icon="Plus"
                                 title="New Notification"
-                                onClick={() => {
-                                    console.log(notifierOptions);
-                                    console.log(notifyOnOptions);
-                                    arrayHelpers.push({
-                                        with: notifierOptions[0] ?? null,
-                                        on: notifyOnOptions[0]?.value ?? null,
-                                        config: {
-                                            to: [],
-                                        },
-                                    });
-                                }}
+                                onClick={() =>
+                                    handleNewNotification(arrayHelpers)
+                                }
                             />
                         </div>
                     </>

@@ -1,4 +1,4 @@
-from unittest import TestCase, mock
+from unittest import TestCase
 from lib.scheduled_datadoc.legacy import convert_if_legacy_datadoc_schedule
 
 
