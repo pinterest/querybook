@@ -18,6 +18,8 @@ from lib.elasticsearch.suggest_table import construct_suggest_table_query
 from lib.elasticsearch.suggest_user import construct_suggest_user_query
 from logic.elasticsearch import ES_CONFIG
 
+from logic import user as user_logic
+
 LOG = get_logger(__file__)
 
 
@@ -148,6 +150,9 @@ def suggest_user(name, limit=10):
         }
         for option in options
     ]
+
+    users = user_logic.get_users_by_ids([1, 2, 3])
+    [{"id": u.id, "username": u.username, "fullname": u.fullname} for u in users]
     return users
 
 

@@ -13,7 +13,7 @@ class InvalidScheduleException(Exception):
 valid_schedule_config_keys = ["exports", "notifications"]
 valid_export_config_keys = ["exporter_cell_id", "exporter_name", "exporter_params"]
 valid_notification_keys = ["with", "on", "config"]
-valid_notification_config_keys = ["to"]
+valid_notification_config_keys = ["to", "to_user"]
 
 
 def validate_datadoc_schedule_config(schedule_config):
@@ -74,14 +74,6 @@ def validate_exporters_config(export_configs: List):
                 raise InvalidScheduleException(
                     f"Invalid exporter params, reason: {reason}"
                 )
-
-
-def validate_notifier(notification_config):
-    notifier_name = notification_config.get("with", None)
-    try:
-        get_notifier_class(notifier_name)
-    except ValueError:
-        raise InvalidScheduleException(f"Invalid notifier {notifier_name}")
 
 
 def _get_exporter(export_config):

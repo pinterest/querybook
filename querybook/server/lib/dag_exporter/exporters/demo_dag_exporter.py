@@ -63,16 +63,16 @@ class DemoDAGExporter(BaseDAGExporter):
         1: sqlite
         """
         # you can return the query engine ids directly
-        # return [1]
+        return [1, 2, 6]
 
         # or get the query id based on the language like
-        engines = get_all_query_engines()
-        return [engine.id for engine in engines if engine.language == "sqlite"]
+        # engines = get_all_query_engines()
+        # return [engine.id for engine in engines if engine.language == "sqlite"]
 
     @property
     def dag_exporter_meta(self):
         return StructFormField(
-            name=FormField(description="dag name"),
+            name=FormField(description="dag name", required=True),
             description=FormField(description="dag description"),
         )
 

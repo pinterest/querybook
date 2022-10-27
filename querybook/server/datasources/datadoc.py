@@ -319,7 +319,8 @@ def update_datadoc_schedule(id, cron=None, enabled=None, kwargs=None):
 
         # schedule update will not change the owner
         # it will be always the datadoc owner
-        user_id = schedule.kwargs.get("user_id")
+        data_doc = logic.get_data_doc_by_id(id, session=session)
+        user_id = data_doc.owner_uid
 
         updated_fields = {}
         if cron is not None:

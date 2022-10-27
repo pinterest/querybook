@@ -16,7 +16,7 @@ class BaseNotifier(metaclass=ABCMeta):
     @abstractmethod
     def notifier_help(self) -> str:
         """Help text of the notifier recipients"""
-        raise NotImplementedError()
+        return "This notifier doesn't provide help text about recipients"
 
     @property
     @abstractmethod
@@ -30,11 +30,11 @@ class BaseNotifier(metaclass=ABCMeta):
         This function sends the notification message to the given recipients.
 
         Arguments:
-            recipient (str): recipients to send notification to, which could be like slack
+            recipients (list[str]): recipients to send notification to, which could be like slack
                 user/channel names or email addresses according to the actual notifer
             message (str): message content in markdown format
         """
-        raise NotImplementedError()
+        pass
 
     @abstractmethod
     def notify(self, user: User, message: str):

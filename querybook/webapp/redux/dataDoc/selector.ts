@@ -193,9 +193,9 @@ export const canCurrentUserEditSelector = createSelector(
         const editor = uid in editorsByUserId ? editorsByUserId[uid] : null;
         const permission = readWriteToPermission(
             editor ? editor.read : false,
-            false,
+            editor ? editor.write : false,
             dataDoc.owner_uid === uid,
-            false
+            dataDoc.public
         );
         return permissionToReadWrite(permission).write;
     }

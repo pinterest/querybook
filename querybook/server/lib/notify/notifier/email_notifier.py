@@ -16,7 +16,7 @@ class EmailNotifier(BaseNotifier):
 
     @property
     def notifier_help(self) -> str:
-        return "Comma(,) separated list of valid Emails"
+        return "Recipient could be a Querybook user or a valid Email address"
 
     @property
     def notifier_format(self):

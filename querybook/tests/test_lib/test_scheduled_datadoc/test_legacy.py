@@ -1,6 +1,5 @@
 from unittest import TestCase, mock
 from lib.scheduled_datadoc.legacy import convert_if_legacy_datadoc_schedule
-from models.user import User
 
 
 class LegacyScheduleTestCase(TestCase):
@@ -36,12 +35,10 @@ class LegacyScheduleTestCase(TestCase):
     new_exporter_fields_semi = {"exports": []}
 
     new_notification_fields_email = {
-        "notifications": [
-            {"with": "email", "on": 0, "config": {"to": ["test@pinterest.com"]}}
-        ],
+        "notifications": [{"with": "email", "on": 0, "config": {"to_user": [1]}}],
     }
     new_notification_fields_slack = {
-        "notifications": [{"with": "slack", "on": 0, "config": {"to": ["@test"]}}],
+        "notifications": [{"with": "slack", "on": 0, "config": {"to_user": [1]}}],
     }
 
     current_config_email = {
@@ -67,15 +64,6 @@ class LegacyScheduleTestCase(TestCase):
         **new_notification_fields_slack,
         **new_exporter_fields_semi,
     }
-
-    def setUp(self):
-        get_user_by_id_patch = mock.patch("logic.user.get_user_by_id")
-        self.get_user_by_id_mock = get_user_by_id_patch.start()
-        self.addCleanup(get_user_by_id_patch.stop)
-
-        self.get_user_by_id_mock.return_value = User(
-            username="test", email="test@pinterest.com"
-        )
 
     def test_convert_current(self):
         assert (

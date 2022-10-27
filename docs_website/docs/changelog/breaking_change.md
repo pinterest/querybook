@@ -7,9 +7,9 @@ slug: /changelog
 
 Here are the list of breaking changes that you should be aware of when updating Querybook:
 
-## v3.12.0
+## v3.13.0
 
-Added a new abstract method `notify_recipients` for `BaseNotifier`, which will allow a notifier to send messages to a list of recipients. Follow the example of `SlackNotifier` and `EmailNotifier` to implement it for your own notifier.
+Added two new abstract methods `notify_recipients` and `notifier_help` for `BaseNotifier`, which will allow a notifier to send messages to a list of recipients and provide help text for the recipients. Follow the example of `SlackNotifier` and `EmailNotifier` to implement it for your own notifier.
 
 ## v3.6.0
 

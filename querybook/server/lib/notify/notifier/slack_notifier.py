@@ -15,7 +15,7 @@ class SlackNotifier(BaseNotifier):
 
     @property
     def notifier_help(self) -> str:
-        return "Comma(,) separated list of Slack user(starts with @) or channel (starts with #) names"
+        return "Recipient could be a Querybook user or a Slack user(starts with @) or channel(starts with #)"
 
     @property
     def notifier_format(self):

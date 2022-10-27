@@ -1,4 +1,6 @@
 from typing import Dict
+
+from app.db import with_session
 from logic import user as user_logic
 
 LEGACY_KEYS = ["exporter_cell_id", "exporter_name", "exporter_params"]
@@ -51,7 +53,8 @@ def convert_if_legacy_datadoc_schedule_v0(schedule_config: Dict) -> Dict:
     return new_schedule_config
 
 
-def convert_if_legacy_datadoc_schedule_v1(schedule_config: Dict) -> Dict:
+@with_session
+def convert_if_legacy_datadoc_schedule_v1(schedule_config: Dict, session=None) -> Dict:
     """Convert a legacy v1 datadoc schedule config to the latest version.
 
     For v1, the datadoc schedule only supported to send notification to the
@@ -64,24 +67,26 @@ def convert_if_legacy_datadoc_schedule_v1(schedule_config: Dict) -> Dict:
             "user_id": 1,
             "notifications": [
                 {
-                "on": 0,
-                "with": "slack",
-                "config": {
-                    "to": [
-                    "@some-username",
-                    "#some-slack-channel-name"
-                    ]
-                }
+                    "on": 0,
+                    "with": "slack",
+                    "config": {
+                        "to": [
+                            "@some-username",
+                            "#some-slack-channel-name"
+                        ],
+                        "to_user": [1]
+                    }
                 },
                 {
-                "on": 0,
-                "with": "email",
-                "config": {
-                    "to": [
-                    "a@pinterest.com",
-                    "b@pinterest.com"
-                    ]
-                }
+                    "on": 0,
+                    "with": "email",
+                    "config": {
+                        "to": [
+                            "a@pinterest.com",
+                            "b@pinterest.com"
+                        ],
+                        "to_user": [1]
+                    }
                 }
             ]
         }
@@ -97,17 +102,11 @@ def convert_if_legacy_datadoc_schedule_v1(schedule_config: Dict) -> Dict:
     if schedule_config.get("notifications") is not None:
         return schedule_config
 
-    user = user_logic.get_user_by_id(schedule_config.get("user_id"))
-    notify_to = (
-        user.email
-        if schedule_config.get("notify_with") == "email"
-        else f"@{user.username}"
-    )
     schedule_config["notifications"] = [
         {
             "on": schedule_config.get("notify_on"),
             "with": schedule_config.get("notify_with"),
-            "config": {"to": [notify_to]},
+            "config": {"to_user": [schedule_config.get("user_id")]},
         }
     ]
     schedule_config.pop("notify_on", None)
@@ -116,7 +115,8 @@ def convert_if_legacy_datadoc_schedule_v1(schedule_config: Dict) -> Dict:
     return schedule_config
 
 
-def convert_if_legacy_datadoc_schedule(schedule_config: Dict) -> Dict:
+@with_session
+def convert_if_legacy_datadoc_schedule(schedule_config: Dict, session=None) -> Dict:
     """Convert a legacy datadoc schedule config to the latest version.
 
     Args:
@@ -126,5 +126,7 @@ def convert_if_legacy_datadoc_schedule(schedule_config: Dict) -> Dict:
         Dict: new schedule config
     """
     new_schedule_config = convert_if_legacy_datadoc_schedule_v0(schedule_config)
-    new_schedule_config = convert_if_legacy_datadoc_schedule_v1(new_schedule_config)
+    new_schedule_config = convert_if_legacy_datadoc_schedule_v1(
+        new_schedule_config, session=session
+    )
     return new_schedule_config

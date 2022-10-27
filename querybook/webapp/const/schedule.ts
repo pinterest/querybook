@@ -70,6 +70,7 @@ export interface IDataDocScheduleNotification {
     on?: NotifyOn;
     config?: {
         to: string[];
+        to_user: number[];
     };
 }
 

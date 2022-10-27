@@ -3,8 +3,9 @@ from typing import Dict, List
 from app.db import DBSession, with_session
 from const.schedule import NotifyOn
 from env import QuerybookSettings
-from lib.notify.utils import notify_recipients
+from lib.notify.utils import notify_recipients, notify_user
 from logic.datadoc import get_data_doc_by_id
+from models.user import User
 
 
 def notifiy_on_datadoc_complete(
@@ -17,18 +18,35 @@ def notifiy_on_datadoc_complete(
     for notification in notifications:
         notify_with = notification.get("with")
         notify_on = notification.get("on")
-        notify_to = notification.get("config", {}).get("to", [])
+        notify_to_recipients = notification.get("config", {}).get("to", [])
+        notify_to_users = notification.get("config", {}).get("to_user", [])
 
         if _should_notify(notify_with, notify_on, is_success):
             with DBSession() as session:
-                notify_recipients(
-                    recipients=notify_to,
-                    template_name="datadoc_completion_notification",
-                    template_params=_get_datadoc_notification_params(
+                notification_params = (
+                    _get_datadoc_notification_params(
                         doc_id, is_success, error_msg, export_urls, session=session
                     ),
+                )
+
+                # notify recipients in config.to
+                notify_recipients(
+                    recipients=notify_to_recipients,
+                    template_name="datadoc_completion_notification",
+                    template_params=notification_params,
                     notify_name=notify_with,
                 )
+
+                # notify users(user_id) in config.to_user
+                for user_id in notify_to_users:
+                    user = User.get(id=user_id, session=session)
+                    notify_user(
+                        user=user,
+                        template_name="datadoc_completion_notification",
+                        template_params=notification_params,
+                        notifier_name=notify_with,
+                        session=session,
+                    )
 
 
 def _should_notify(notify_with: str, notify_on: NotifyOn, is_success: bool):

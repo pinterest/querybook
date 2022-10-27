@@ -36,7 +36,7 @@ def run_datadoc(self, *args, **kwargs):
 def run_datadoc_with_config(
     self,
     doc_id,
-    notifications,
+    notifications=[],
     user_id=None,
     execution_type=QueryExecutionType.SCHEDULED.value,
     # Exporting related settings
