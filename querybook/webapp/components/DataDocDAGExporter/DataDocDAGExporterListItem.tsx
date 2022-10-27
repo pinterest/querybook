@@ -86,7 +86,8 @@ export const DataDocDAGExporterListItem =
                                             .join(', ')}
                                     </StyledText>
                                 </div>
-                                {showPopover && anchorElement && (
+                                {/* TODO: Disable the popover for now, will revisit the design */}
+                                {false && showPopover && anchorElement && (
                                     <Popover
                                         onHide={NOOP}
                                         anchor={anchorElement}

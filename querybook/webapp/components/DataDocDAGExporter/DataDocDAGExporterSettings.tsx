@@ -8,11 +8,10 @@ import { titleize } from 'lib/utils';
 import { queryEngineByIdEnvSelector } from 'redux/queryEngine/selector';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Button } from 'ui/Button/Button';
-import { FormField, FormSectionHeader } from 'ui/Form/FormField';
+import { FormSectionHeader } from 'ui/Form/FormField';
 import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 import { SmartForm } from 'ui/SmartForm/SmartForm';
 import { Tag } from 'ui/Tag/Tag';
-import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
 interface IProps {
     docId: number;
@@ -61,15 +60,6 @@ export const DataDocDAGExporterSettings: React.FunctionComponent<IProps> = ({
     return (
         <div className="DataDocDAGExporterSettings">
             <div className="DataDocDAGExporterSettings-form">
-                <FormField
-                    label="Use Templated Variables"
-                    className="horizontal-space-between"
-                >
-                    <ToggleSwitch
-                        checked={useTemplatedVariables}
-                        onChange={() => onSave(null, !useTemplatedVariables)}
-                    />
-                </FormField>
                 <FormSectionHeader>Exporter</FormSectionHeader>
                 <SimpleReactSelect
                     options={exporterNames}
