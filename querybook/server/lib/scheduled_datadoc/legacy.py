@@ -1,7 +1,5 @@
 from typing import Dict
 
-from app.db import with_session
-
 LEGACY_KEYS = ["exporter_cell_id", "exporter_name", "exporter_params"]
 
 
