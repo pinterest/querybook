@@ -1,14 +1,16 @@
 import CodeMirror from 'lib/codemirror';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import {
     AutoCompleteType,
     SqlAutoCompleter,
 } from 'lib/sql-helper/sql-autocompleter';
+import { ICodeAnalysis } from 'lib/sql-helper/sql-lexer';
 
 export function useAutoComplete(
     metastoreId: number,
     autoCompleteType: AutoCompleteType,
-    language: string
+    language: string,
+    codeAnalysis: ICodeAnalysis
 ) {
     const autoCompleter = useMemo(
         () =>
@@ -20,6 +22,10 @@ export function useAutoComplete(
             ),
         [language, metastoreId, autoCompleteType]
     );
+
+    useEffect(() => {
+        autoCompleter.updateCodeAnalysis(codeAnalysis);
+    }, [codeAnalysis, autoCompleter]);
 
     return autoCompleter;
 }

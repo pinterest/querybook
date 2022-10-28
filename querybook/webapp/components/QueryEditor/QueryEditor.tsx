@@ -126,16 +126,16 @@ export const QueryEditor: React.FC<
         const markerRef = useRef(null);
         const editorRef = useRef<CodeMirror.Editor>(null);
 
-        const autoCompleter = useAutoComplete(
-            metastoreId,
-            autoCompleteType,
-            language
-        );
-        const codeAnalysisRef = useCodeAnalysis({
-            onAnalyzed: autoCompleter.updateCodeAnalysis,
+        const { codeAnalysis, codeAnalysisRef } = useCodeAnalysis({
             language,
             query: value,
         });
+        const autoCompleter = useAutoComplete(
+            metastoreId,
+            autoCompleteType,
+            language,
+            codeAnalysis
+        );
 
         const [fullScreen, setFullScreen] = useState(false);
 
@@ -143,7 +143,7 @@ export const QueryEditor: React.FC<
             query: value,
             editorRef,
             metastoreId,
-            codeAnalysisRef,
+            codeAnalysis,
             getTableByName,
             getLintErrors,
             onLintCompletion,
