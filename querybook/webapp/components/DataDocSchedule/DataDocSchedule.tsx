@@ -4,9 +4,11 @@ import toast from 'react-hot-toast';
 import { IScheduleTabs } from 'components/DataDocRightSidebar/DataDocScheduleModal';
 import { useResource } from 'hooks/useResource';
 import { DataDocScheduleResource } from 'resource/dataDoc';
+
 import { Loading } from 'ui/Loading/Loading';
 import { ErrorMessage } from 'ui/Message/ErrorMessage';
 import { EmptyText } from 'ui/StyledText/StyledText';
+import { formatDateValue } from 'lib/utils/datetime';
 
 import { DataDocScheduleForm } from './DataDocScheduleForm';
 import { DataDocScheduleRunLogs } from './DataDocScheduleRunLogs';
@@ -44,22 +46,40 @@ export const DataDocScheduleFormWrapper: React.FunctionComponent<
                 cron={data?.cron ?? null}
                 enabled={data?.enabled ?? false}
                 kwargs={data?.kwargs ?? {}}
-                onCreate={(cron, kwargs) =>
-                    DataDocScheduleResource.create(docId, cron, kwargs).then(
-                        () => {
-                            toast.success('Schedule Created!');
-                            forceFetch();
-                            if (onSave) {
-                                onSave();
-                            }
+                startTime={data?.start_time}
+                endTime={data?.end_time}
+                occurrences={data?.occurrences}
+                totalRunCount={data?.total_run_count}
+                onCreate={(cron, kwargs, startTime, endTime, occurrences) =>
+                    DataDocScheduleResource.create(docId, {
+                        cron,
+                        kwargs,
+                        start_time: formatDateValue(startTime),
+                        end_time: formatDateValue(endTime),
+                        occurrences,
+                    }).then(() => {
+                        toast.success('Schedule Created!');
+                        forceFetch();
+                        if (onSave) {
+                            onSave();
                         }
-                    )
+                    })
                 }
-                onUpdate={(cron, enabled, kwargs) =>
+                onUpdate={(
+                    cron,
+                    enabled,
+                    kwargs,
+                    startTime,
+                    endTime,
+                    occurrences
+                ) =>
                     DataDocScheduleResource.update(docId, {
                         cron,
-                        enabled,
                         kwargs,
+                        enabled,
+                        start_time: formatDateValue(startTime),
+                        end_time: formatDateValue(endTime),
+                        occurrences,
                     }).then(() => {
                         toast.success('Schedule Updated!');
                         forceFetch();

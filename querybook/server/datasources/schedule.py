@@ -26,6 +26,9 @@ def create_task_schedule(
     args=None,
     kwargs=None,
     options=None,
+    start_time=None,
+    occurrences=None,
+    end_time=None,
 ):
     with DBSession() as session:
         api_assert(validate_cron(cron), "Invalid cron expression")
@@ -38,6 +41,9 @@ def create_task_schedule(
             kwargs=kwargs,
             task_type=task_type,
             options=options,
+            start_time=start_time,
+            end_time=end_time,
+            occurrences=occurrences,
             enabled=enabled,
             session=session,
         )

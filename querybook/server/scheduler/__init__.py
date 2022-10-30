@@ -82,6 +82,20 @@ class ModelEntry(ScheduleEntry):
                 delay = math.ceil((self.model.start_time - now).total_seconds())
                 return schedules.schedstate(False, delay)
 
+        if self.model.end_time is not None:
+            now = self._default_now()
+            if now > self.model.end_time:
+                self._disable(self.model)
+
+            return schedules.schedstate(False, 5)
+
+        if (
+            self.model.occurrences is not None
+            and self.model.occurrences <= self.model.total_run_count
+        ):
+            self._disable(self.model)
+            return schedules.schedstate(False, 5)
+
         return self.schedule.is_due(self.last_run_at)
 
     def _default_now(self):

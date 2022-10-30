@@ -50,6 +50,8 @@ class TaskSchedule(CRUDMixin, Base):
     name = sql.Column(sql.String(length=name_length), unique=True, nullable=False)
     # for the name of the task, ex: celery.backend_cleanup
     task = sql.Column(sql.String(length=name_length), nullable=False)
+    end_time = sql.Column(sql.DateTime, nullable=True)
+    occurrences = sql.Column(sql.Integer, nullable=True)
 
     # schedule time setting
     cron = sql.Column(sql.String(length=name_length), default="* * * * *")

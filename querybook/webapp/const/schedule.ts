@@ -79,4 +79,16 @@ export interface IDataDocScheduleKwargs {
 
 export interface IDataDocTaskSchedule extends ITaskSchedule {
     kwargs: IDataDocScheduleKwargs;
+    start_time?: string;
+    end_time?: string;
+    occurrences?: number;
 }
+
+export type DataDocType = {
+    cron: string;
+    kwargs: IDataDocScheduleKwargs;
+    enabled?: boolean;
+    start_time?: string;
+    end_time?: string;
+    occurrences?: number;
+};

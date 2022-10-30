@@ -40,3 +40,7 @@ export function generateFormattedDate(utcTime: number, momentFormat = 'X') {
 export function fromNow(utcTime: number, momentFormat = 'X') {
     return moment.utc(utcTime, momentFormat).fromNow();
 }
+
+export function formatDateValue(value: moment.Moment): string {
+    return value ? moment(value, 'X').format('YYYY-MM-DD HH:mm:ss') : null;
+}

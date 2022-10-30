@@ -33,6 +33,9 @@ import {
     updateValue,
 } from 'ui/SmartForm/SmartForm';
 
+import moment from 'moment';
+import { ScheduleRangeField } from 'components/ScheduleRangeField/ScheduleRangeField';
+
 interface IDataDocScheduleFormProps {
     isEditable: boolean;
     docId: number;
@@ -40,14 +43,27 @@ interface IDataDocScheduleFormProps {
     enabled?: boolean;
     kwargs: IDataDocScheduleKwargs;
 
-    onCreate: (cron: string, kwargs: IDataDocScheduleKwargs) => Promise<any>;
+    onCreate: (
+        cron: string,
+        kwargs: IDataDocScheduleKwargs,
+        start_time?: moment.Moment,
+        end_time?: moment.Moment,
+        occurrences?: number
+    ) => Promise<any>;
     onUpdate: (
         cron: string,
         enabled: boolean,
-        kwargs: IDataDocScheduleKwargs
+        kwargs: IDataDocScheduleKwargs,
+        start_time?: moment.Moment,
+        end_time?: moment.Moment,
+        occurrences?: number
     ) => Promise<any>;
+    totalRunCount: number;
     onDelete?: () => Promise<void>;
     onRun?: () => Promise<void>;
+    startTime?: string;
+    endTime?: string;
+    occurrences?: number;
 }
 
 const scheduleFormSchema = Yup.object().shape({
@@ -97,6 +113,13 @@ interface IScheduleFormValues {
         notify_on: NotifyOn;
         exports: IDataDocScheduleKwargs['exports'];
     };
+    start_time?: string;
+    end_time?: string;
+    occurrences?: number;
+}
+
+function timestampToMoment(value: string) {
+    return value ? moment.utc(value, 'X') : null;
 }
 
 export const DataDocScheduleForm: React.FunctionComponent<
@@ -108,6 +131,10 @@ export const DataDocScheduleForm: React.FunctionComponent<
     cron,
     enabled,
     kwargs,
+    startTime,
+    endTime,
+    occurrences,
+    totalRunCount,
 
     onCreate,
     onUpdate,
@@ -131,6 +158,9 @@ export const DataDocScheduleForm: React.FunctionComponent<
                   notify_on: NotifyOn.ALL,
                   exports: [],
               },
+              start_time: startTime,
+              end_time: endTime,
+              occurrences,
           }
         : {
               recurrence,
@@ -140,6 +170,9 @@ export const DataDocScheduleForm: React.FunctionComponent<
                   notify_on: kwargs.notify_on,
                   exports: kwargs.exports,
               },
+              start_time: startTime,
+              end_time: endTime,
+              occurrences,
           };
 
     return (
@@ -159,9 +192,22 @@ export const DataDocScheduleForm: React.FunctionComponent<
                 }
 
                 if (isCreateForm) {
-                    await onCreate(cronRepr, values.kwargs);
+                    await onCreate(
+                        cronRepr,
+                        values.kwargs,
+                        timestampToMoment(values.start_time),
+                        timestampToMoment(values.end_time),
+                        values.occurrences
+                    );
                 } else {
-                    await onUpdate(cronRepr, values.enabled, values.kwargs);
+                    await onUpdate(
+                        cronRepr,
+                        values.enabled,
+                        values.kwargs,
+                        timestampToMoment(values.start_time),
+                        timestampToMoment(values.end_time),
+                        values.occurrences
+                    );
                 }
             }}
         >
@@ -172,6 +218,7 @@ export const DataDocScheduleForm: React.FunctionComponent<
                 setFieldValue,
                 isValid,
                 dirty,
+                setValues,
             }) => {
                 const enabledField = !isCreateForm && (
                     <SimpleField label="Enabled" name="enabled" type="toggle" />
@@ -261,6 +308,26 @@ export const DataDocScheduleForm: React.FunctionComponent<
                         <FormWrapper minLabelWidth="180px" size={7}>
                             <Form>
                                 <DisabledSection disabled={!isEditable}>
+                                    <ScheduleRangeField
+                                        values={{
+                                            startTime: values.start_time,
+                                            endTime: values.end_time,
+                                            occurrences: values.occurrences,
+                                        }}
+                                        totalRunCount={totalRunCount}
+                                        updateValues={({
+                                            endTime,
+                                            startTime,
+                                            occurrences,
+                                        }) => {
+                                            setValues({
+                                                ...values,
+                                                end_time: endTime,
+                                                start_time: startTime,
+                                                occurrences,
+                                            });
+                                        }}
+                                    />
                                     <RecurrenceEditor
                                         recurrence={values.recurrence}
                                         recurrenceError={errors?.recurrence}
