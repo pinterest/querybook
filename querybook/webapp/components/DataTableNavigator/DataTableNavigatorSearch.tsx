@@ -4,7 +4,10 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { TableTagGroupSelect } from 'components/DataTableTags/TableTagGroupSelect';
 import { useToggleState } from 'hooks/useToggleState';
-import { changeSchemasSort } from 'redux/dataTableSearch/action';
+import {
+    changeSchemasSort,
+    updateTableSort,
+} from 'redux/dataTableSearch/action';
 import { ITableSearchFilters } from 'redux/dataTableSearch/types';
 import { IStoreState } from 'redux/store/types';
 import { SoftButton } from 'ui/Button/Button';
@@ -44,6 +47,11 @@ export const DataTableNavigatorSearch: React.FC<{
         () => Object.keys(searchFilters).length,
         [searchFilters]
     );
+
+    const { asc: sortTableAsc, key: sortTableKey } = useSelector(
+        (state: IStoreState) => state.dataTableSearch.sortTablesBy
+    );
+
     const { key: sortSchemaKey, asc: sortSchemaAsc } = useSelector(
         (state: IStoreState) => state.dataTableSearch.schemas.sortSchemasBy
     );
@@ -116,6 +124,28 @@ export const DataTableNavigatorSearch: React.FC<{
                 placeholder="Search by Name"
                 transparent
             />
+
+            {showTableSearchResult && (
+                <OrderByButton
+                    className="mr4"
+                    asc={sortTableAsc}
+                    hideAscToggle={sortTableKey === 'importance_score'}
+                    orderByField={startCase(sortTableKey)}
+                    orderByFieldSymbol={sortTableKey === 'name' ? 'Aa' : 'Is'}
+                    onAscToggle={() => {
+                        dispatch(updateTableSort(null, !sortTableAsc));
+                    }}
+                    onOrderByFieldToggle={() => {
+                        dispatch(
+                            updateTableSort(
+                                sortTableKey === 'name'
+                                    ? 'importance_score'
+                                    : 'name'
+                            )
+                        );
+                    }}
+                />
+            )}
 
             {!showTableSearchResult && (
                 <OrderByButton

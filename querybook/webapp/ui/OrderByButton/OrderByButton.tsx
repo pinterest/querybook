@@ -22,6 +22,7 @@ export interface ISortButtonProps {
      */
     orderByFieldSymbol?: string;
     className?: string;
+    hideAscToggle?: boolean;
 
     onOrderByFieldToggle?: () => void;
     onAscToggle?: () => void;
@@ -32,6 +33,7 @@ export const OrderByButton: React.FC<ISortButtonProps> = ({
     orderByField,
     orderByFieldSymbol,
     className,
+    hideAscToggle,
 
     onOrderByFieldToggle = NOOP,
     onAscToggle = NOOP,
@@ -41,15 +43,19 @@ export const OrderByButton: React.FC<ISortButtonProps> = ({
         [orderByField, orderByFieldSymbol]
     );
 
+    console.log(`Hide Asc Toggle: ${hideAscToggle}`);
+
     return (
         <span className={clsx('OrderByButton', className)}>
-            <TextToggleButton
-                value={false}
-                onChange={onAscToggle}
-                tooltip={asc ? 'Ascending' : 'Descending'}
-                tooltipPos="left"
-                text={asc ? '↑' : '↓'}
-            />
+            {!hideAscToggle && (
+                <TextToggleButton
+                    value={false}
+                    onChange={onAscToggle}
+                    tooltip={asc ? 'Ascending' : 'Descending'}
+                    tooltipPos="left"
+                    text={asc ? '↑' : '↓'}
+                />
+            )}
             <TextToggleButton
                 value={false}
                 onChange={onOrderByFieldToggle}

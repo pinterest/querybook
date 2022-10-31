@@ -87,6 +87,7 @@ export const SchemaTableItem: React.FC<{
                 </div>
                 <OrderByButton
                     asc={sortOrder.asc}
+                    hideAscToggle={sortOrder.key === 'importance_score'}
                     orderByField={startCase(sortOrder.key)}
                     orderByFieldSymbol={sortOrder.key === 'name' ? 'Aa' : 'Is'}
                     onAscToggle={() => onSortChanged(null, !sortOrder.asc)}

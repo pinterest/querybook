@@ -39,7 +39,7 @@ export interface ISearchTableParams {
     filters?: Array<[filterName: string, filterValue: any]>;
     fields?: string[];
     sort_key?: string | string[];
-    sort_order?: 'desc' | 'asc';
+    sort_order?: 'desc' | 'asc' | Array<'desc' | 'asc'>;
     limit?: number;
     offset?: number;
 }

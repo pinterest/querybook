@@ -3,6 +3,7 @@ import {
     SchemaSortKey,
     SchemaTableSortKey,
 } from 'const/metastore';
+import { Nullable } from 'lib/typescript';
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
 import { SearchSchemaResource, SearchTableResource } from 'resource/search';
 
@@ -90,9 +91,17 @@ function searchDataTable(): ThunkResult<Promise<ITableSearchResult[]>> {
             if (state.searchRequest) {
                 state.searchRequest.cancel();
             }
-            const searchRequest = SearchTableResource.searchConcise(
-                mapStateToSearch(state)
-            );
+            const tableSort = state.sortTablesBy;
+            const search = { ...mapStateToSearch(state) };
+            if (tableSort.key === 'name') {
+                const tableSortAsc = tableSort.asc ? 'asc' : 'desc';
+                search['sort_key'] = ['schema', 'name'];
+                search['sort_order'] = [tableSortAsc, tableSortAsc];
+            } else if (tableSort.key === 'importance_score') {
+                search['sort_key'] = '_score';
+                search['sort_order'] = 'desc';
+            }
+            const searchRequest = SearchTableResource.searchConcise(search);
             dispatch(resetSearchResult());
             dispatch({
                 type: '@@dataTableSearch/DATA_TABLE_SEARCH_STARTED',
@@ -183,6 +192,7 @@ export function searchTableBySchema(
         try {
             const orderBy =
                 state.schemas.schemaSortByIds[id] || defaultSortSchemaTableBy;
+            const sortOrder = orderBy.asc ? 'asc' : 'desc';
             const searchRequest = SearchTableResource.searchConcise({
                 ...mapStateToSearch({
                     ...state,
@@ -191,8 +201,10 @@ export function searchTableBySchema(
                         schema: schemaName,
                     },
                 }),
-                sort_key: orderBy.key,
-                sort_order: orderBy.asc ? 'asc' : 'desc',
+                sort_key:
+                    orderBy.key === 'importance_score' ? '_score' : orderBy.key,
+                sort_order:
+                    orderBy.key === 'importance_score' ? 'desc' : sortOrder,
                 offset: resultsCount,
             });
             dispatch({
@@ -282,6 +294,24 @@ export function updateSearchString(searchString: string): ThunkResult<void> {
             type: '@@dataTableSearch/DATA_TABLE_SEARCH_STRING_UPDATE',
             payload: {
                 searchString,
+            },
+        });
+        dispatch(searchDataTable());
+    };
+}
+
+export function updateTableSort(
+    sortKey?: Nullable<SchemaTableSortKey>,
+    sortAsc?: boolean | undefined | null
+): ThunkResult<void> {
+    return (dispatch) => {
+        dispatch({
+            type: '@@dataTableSearch/DATA_TABLE_SEARCH_SORT_UPDATE',
+            payload: {
+                sortTablesBy: {
+                    sortKey,
+                    sortAsc,
+                },
             },
         });
         dispatch(searchDataTable());
