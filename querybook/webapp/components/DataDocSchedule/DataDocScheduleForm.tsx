@@ -303,13 +303,10 @@ const NotificationFormRow: React.FC<{
     notifyOnOptions: IOptions;
     getHelp: (notifierName: string) => string;
 }> = ({ name, onRemove, notifierOptions, notifyOnOptions, getHelp }) => {
-    console.log('#####################');
     const [{ value: notification }, ,] = useField(name);
-    console.log(notification);
     const [, notifyToAllMeta, notifyToAllHelpers] = useField(
         `${name}.config.to_all`
     );
-    console.log(notifyToAllMeta, notifyToAllHelpers);
 
     return (
         <div className="cell-export-field mb24 flex-row">
