@@ -16,10 +16,10 @@ def notifiy_on_datadoc_complete(
     export_urls: List[str],
 ):
     for notification in notifications:
-        notify_with = notification.get("with")
-        notify_on = notification.get("on")
-        notify_to_recipients = notification.get("config", {}).get("to", [])
-        notify_to_users = notification.get("config", {}).get("to_user", [])
+        notify_with = notification["with"]
+        notify_on = notification["on"]
+        notify_to_recipients = notification["config"].get("to", [])
+        notify_to_users = notification["config"].get("to_user", [])
 
         if _should_notify(notify_with, notify_on, is_success):
             with DBSession() as session:
@@ -30,12 +30,13 @@ def notifiy_on_datadoc_complete(
                 )
 
                 # notify recipients in config.to
-                notify_recipients(
-                    recipients=notify_to_recipients,
-                    template_name="datadoc_completion_notification",
-                    template_params=notification_params,
-                    notify_name=notify_with,
-                )
+                if notify_to_recipients:
+                    notify_recipients(
+                        recipients=notify_to_recipients,
+                        template_name="datadoc_completion_notification",
+                        template_params=notification_params,
+                        notify_name=notify_with,
+                    )
 
                 # notify users(user_id) in config.to_user
                 for user_id in notify_to_users:

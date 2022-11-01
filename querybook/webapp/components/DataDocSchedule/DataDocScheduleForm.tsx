@@ -296,31 +296,20 @@ export const DataDocScheduleForm: React.FunctionComponent<
     );
 };
 
-const NotifactionFormRow: React.FC<{
+const NotificationFormRow: React.FC<{
     name: string;
-    index: number;
-    removeRow: (index: number) => void;
-    notificationRow: IDataDocScheduleNotification;
+    onRemove: () => void;
     notifierOptions: string[];
     notifyOnOptions: IOptions;
     getHelp: (notifierName: string) => string;
-}> = ({
-    name,
-    index,
-    notificationRow,
-    removeRow,
-    notifierOptions,
-    notifyOnOptions,
-    getHelp,
-}) => {
-    const notificationFormName = `${name}[${index}]`;
-    const handleRemoveNotifier = useCallback(
-        () => removeRow(index),
-        [removeRow, index]
+}> = ({ name, onRemove, notifierOptions, notifyOnOptions, getHelp }) => {
+    console.log('#####################');
+    const [{ value: notification }, ,] = useField(name);
+    console.log(notification);
+    const [, notifyToAllMeta, notifyToAllHelpers] = useField(
+        `${name}.config.to_all`
     );
-    const [_, notifyToAllMeta, notifyToAllHelpers] = useField(
-        `${notificationFormName}.config.to_all`
-    );
+    console.log(notifyToAllMeta, notifyToAllHelpers);
 
     return (
         <div className="cell-export-field mb24 flex-row">
@@ -328,7 +317,7 @@ const NotifactionFormRow: React.FC<{
                 <div className="horizontal-space-between">
                     <WrappedFormField
                         label="Notify With"
-                        name={`${notificationFormName}.with`}
+                        name={`${name}.with`}
                         type="react-select"
                         options={notifierOptions}
                         withDeselect
@@ -336,16 +325,16 @@ const NotifactionFormRow: React.FC<{
 
                     <WrappedFormField
                         label="Notify On"
-                        name={`${notificationFormName}.on`}
+                        name={`${name}.on`}
                         type="react-select"
-                        isDisabled={!notificationRow.with}
+                        isDisabled={!notification.with}
                         options={notifyOnOptions}
                     />
                 </div>
 
                 <FormField
                     label="Notify To"
-                    help={getHelp(notificationRow.with)}
+                    help={getHelp(notification.with)}
                     error={
                         notifyToAllMeta.touched ? notifyToAllMeta.error : null
                     }
@@ -358,23 +347,23 @@ const NotifactionFormRow: React.FC<{
                         onChange={notifyToAllHelpers.setValue}
                         selectProps={{
                             isClearable: true,
-                            placeholder: getHelp(notificationRow.with),
+                            placeholder: getHelp(notification.with),
                             onBlur: () => notifyToAllHelpers.setTouched(true),
                         }}
                     />
                 </FormField>
             </div>
             <div>
-                <IconButton icon="X" onClick={handleRemoveNotifier} />
+                <IconButton icon="X" onClick={onRemove} />
             </div>
         </div>
     );
 };
 
+const NotifactionsFormName = 'kwargs.notifications';
 const ScheduleNotifactionsForm: React.FC<{
     notifiers: INotifier[];
 }> = ({ notifiers }) => {
-    const name = 'kwargs.notifications';
     const { values } = useFormikContext<IScheduleFormValues>();
 
     const notificationValues = values.kwargs.notifications ?? [];
@@ -403,10 +392,10 @@ const ScheduleNotifactionsForm: React.FC<{
     const handleNewNotification = useCallback(
         (arrayHelpers) => {
             arrayHelpers.push({
-                with: notifierOptions[0] ?? null,
-                on: notifyOnOptions[0]?.value ?? null,
+                with: notifierOptions[0],
+                on: notifyOnOptions[0]?.value,
                 config: {
-                    to: [],
+                    to_all: [],
                 },
             });
         },
@@ -415,16 +404,14 @@ const ScheduleNotifactionsForm: React.FC<{
 
     return (
         <FieldArray
-            name={name}
+            name={NotifactionsFormName}
             render={(arrayHelpers) => {
                 const notificationFields = notificationValues.map(
                     (_, index) => (
-                        <NotifactionFormRow
+                        <NotificationFormRow
                             key={index}
-                            name={name}
-                            index={index}
-                            removeRow={arrayHelpers.remove}
-                            notificationRow={notificationValues[index]}
+                            name={`${NotifactionsFormName}[${index}]`}
+                            onRemove={() => arrayHelpers.remove(index)}
                             notifierOptions={notifierOptions}
                             notifyOnOptions={notifyOnOptions}
                             getHelp={getNotifierHelp}

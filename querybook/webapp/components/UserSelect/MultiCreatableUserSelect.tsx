@@ -61,7 +61,7 @@ const loadOptions = debounce(
 );
 
 interface IUserSelectProps {
-    value: ISelectOption[];
+    value: ISelectOption[] | undefined;
     onChange: (values: ISelectOption[]) => any;
     usePortalMenu?: boolean;
     selectProps?: Partial<AsyncCreatableProps<any, boolean>>;
@@ -85,7 +85,7 @@ export const MultiCreatableUserSelect: React.FunctionComponent<
 
     const valueWithLabel = useMemo(
         () =>
-            value.map((v) => ({
+            (value ?? []).map((v) => ({
                 ...v,
                 label:
                     v.label ??

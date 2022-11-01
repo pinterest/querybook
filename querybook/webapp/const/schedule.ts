@@ -66,11 +66,11 @@ export enum NotifyOn {
 }
 
 export interface IDataDocScheduleNotification {
-    with?: string;
-    on?: NotifyOn;
-    config?: {
-        to: string[];
-        to_user: number[];
+    with: string;
+    on: NotifyOn;
+    config: {
+        to?: string[];
+        to_user?: number[];
     };
 }
 

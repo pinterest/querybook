@@ -52,7 +52,6 @@ def validate_notifications_config(notifications: List):
             raise InvalidScheduleException(
                 f"Invalid notify on {notification.get('on')}"
             )
-    pass
 
 
 def validate_exporters_config(export_configs: List):
