@@ -174,6 +174,26 @@ export const miniAsyncReactSelectStyles: StylesConfig<any, false, any> =
         }),
     });
 
+export const multiCreatableReactSelectStyles: StylesConfig<any, false, any> =
+    mergeStyles(defaultReactSelectStyles, {
+        dropdownIndicator: (styles) => ({
+            ...styles,
+            display: 'none',
+        }),
+        multiValue: (styles) => ({
+            ...styles,
+            display: 'flex',
+            alignItems: 'center',
+            height: '30px',
+        }),
+        multiValueLabel: (styles) => ({
+            ...styles,
+            display: 'flex',
+            alignItems: 'center',
+            fontWeight: 'bold',
+        }),
+    });
+
 export function makeReactSelectStyle(
     modalMenu?: boolean,
     style?: Record<string, unknown>

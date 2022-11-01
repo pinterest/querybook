@@ -11,6 +11,7 @@ export interface INotificationState {
 
 export interface INotifier {
     name: string;
+    help: string;
 }
 
 export interface IReceiveNotifiersAction extends Action {

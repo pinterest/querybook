@@ -2,6 +2,8 @@ from abc import ABCMeta, abstractmethod
 import markdown2
 from bs4 import BeautifulSoup
 
+from models.user import User
+
 
 class BaseNotifier(metaclass=ABCMeta):
     @property
@@ -12,17 +14,35 @@ class BaseNotifier(metaclass=ABCMeta):
 
     @property
     @abstractmethod
+    def notifier_help(self) -> str:
+        """Help text of the notifier recipients"""
+        return "This notifier doesn't provide help text about recipients"
+
+    @property
+    @abstractmethod
     def notifier_format(self):
         # Can be one of 'markdown' | 'html' | 'plaintext' or any custom format
         raise NotImplementedError()
 
     @abstractmethod
-    def notify(self, user, message: str):
+    def notify_recipients(self, recipients: list[str], message: str):
+        """
+        This function sends the notification message to the given recipients.
+
+        Arguments:
+            recipients (list[str]): recipients to send notification to, which could be like slack
+                user/channel names or email addresses according to the actual notifer
+            message (str): message content in markdown format
+        """
+        pass
+
+    @abstractmethod
+    def notify(self, user: User, message: str):
         """
         This function sends the notification message to the given user.
 
         Arguments:
-            user (models.user): user to send notification to
+            user (models.user): Querybook user to send notification to
             message (str): message content in markdown format
         """
         raise NotImplementedError()
@@ -47,6 +67,4 @@ class BaseNotifier(metaclass=ABCMeta):
             return message
 
     def to_dict(self):
-        return {
-            "name": self.notifier_name,
-        }
+        return {"name": self.notifier_name, "help": self.notifier_help}

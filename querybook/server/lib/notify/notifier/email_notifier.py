@@ -15,10 +15,14 @@ class EmailNotifier(BaseNotifier):
         return "email"
 
     @property
+    def notifier_help(self) -> str:
+        return "Recipient could be a Querybook user or a valid Email address"
+
+    @property
     def notifier_format(self):
         return "html"
 
-    def notify(self, user, message):
+    def notify_recipients(self, recipients, message):
         from_email = QuerybookSettings.QUERYBOOK_EMAIL_ADDRESS
         subject = message.split("\n")[0]
         message = self._convert_markdown(message)
@@ -29,10 +33,13 @@ class EmailNotifier(BaseNotifier):
             msg["Subject"] = subject
             msg["Date"] = date
             msg["From"] = from_email
-            msg["To"] = user.email
+            msg["To"] = ",".join(recipients)
             msg.attach(MIMEText(message, "html"))
 
             smtp = smtplib.SMTP(QuerybookSettings.EMAILER_CONN)
             smtp.sendmail(msg["From"], msg["To"], msg.as_string())
         except Exception as e:
             LOG.info(e)
+
+    def notify(self, user, message):
+        self.notify_recipients(recipients=[user.email], message=message)

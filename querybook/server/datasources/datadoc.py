@@ -291,7 +291,7 @@ def create_datadoc_schedule(
             cron=cron,
             kwargs={
                 **kwargs,
-                "user_id": current_user.id,
+                "user_id": data_doc.owner_uid,
                 "doc_id": id,
             },
             task_type="user",
@@ -317,6 +317,10 @@ def update_datadoc_schedule(id, cron=None, enabled=None, kwargs=None):
         api_assert(schedule, "Schedule does not exist")
         verify_data_doc_permission(id, session=session)
 
+        # schedule update will not change the owner
+        # it will be always the datadoc owner
+        data_doc = logic.get_data_doc_by_id(id, session=session)
+
         updated_fields = {}
         if cron is not None:
             updated_fields["cron"] = cron
@@ -325,7 +329,7 @@ def update_datadoc_schedule(id, cron=None, enabled=None, kwargs=None):
         if kwargs is not None:
             updated_fields["kwargs"] = {
                 **kwargs,
-                "user_id": current_user.id,
+                "user_id": data_doc.owner_uid,
                 "doc_id": id,
             }
 

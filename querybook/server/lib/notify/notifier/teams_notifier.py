@@ -26,8 +26,16 @@ class TeamsNotifier(BaseNotifier):
         return "teams"
 
     @property
+    def notifier_help(self) -> str:
+        return ""
+
+    @property
     def notifier_format(self):
         return "html"
+
+    def notify_recipients(self, recipients: list[str], message: str):
+        # TODO: send Teams message to a list of users or channels
+        pass
 
     def notify(self, user, message):
         auth_endpoint = (
