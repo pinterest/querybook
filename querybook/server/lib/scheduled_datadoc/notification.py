@@ -23,10 +23,8 @@ def notifiy_on_datadoc_complete(
 
         if _should_notify(notify_with, notify_on, is_success):
             with DBSession() as session:
-                notification_params = (
-                    _get_datadoc_notification_params(
-                        doc_id, is_success, error_msg, export_urls, session=session
-                    ),
+                notification_params = _get_datadoc_notification_params(
+                    doc_id, is_success, error_msg, export_urls, session=session
                 )
 
                 # notify recipients in config.to
@@ -35,7 +33,7 @@ def notifiy_on_datadoc_complete(
                         recipients=notify_to_recipients,
                         template_name="datadoc_completion_notification",
                         template_params=notification_params,
-                        notify_name=notify_with,
+                        notifier_name=notify_with,
                     )
 
                 # notify users(user_id) in config.to_user
