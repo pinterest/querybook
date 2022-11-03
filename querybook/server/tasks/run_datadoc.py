@@ -46,6 +46,7 @@ def run_datadoc_with_config(
 ):
     tasks_to_run = []
     record_id = None
+
     with DBSession() as session:
         data_doc = datadoc_logic.get_data_doc_by_id(doc_id, session=session)
         if not data_doc or data_doc.archived:
@@ -54,10 +55,32 @@ def run_datadoc_with_config(
         runner_id = user_id if user_id is not None else data_doc.owner_uid
         query_cells = data_doc.get_query_cells()
 
-        # Preping chain jobs each unit is a [make_qe_task, run_query_task] combo
+        # Create db entry record
+        record_id = create_task_run_record_for_celery_task(self, session=session)
+
+        completion_params = {
+            "doc_id": doc_id,
+            "user_id": user_id,
+            "record_id": record_id,
+            "notifications": notifications,
+            "exports": exports,
+        }
+
+        # Prepping chain jobs each unit is a [make_qe_task, run_query_task] combo
         for index, query_cell in enumerate(query_cells):
             engine_id = query_cell.meta["engine"]
-            query = render_templated_query(query_cell.context, data_doc.meta, engine_id)
+
+            try:
+                query = render_templated_query(
+                    query_cell.context, data_doc.meta, engine_id
+                )
+            except Exception as e:
+                on_datadoc_completion(
+                    is_success=False,
+                    error_msg=f"Error rendering template: {str(e)}",
+                    **completion_params,
+                )
+                raise Exception(e)
 
             start_query_execution_kwargs = {
                 "cell_id": query_cell.id,
@@ -77,17 +100,6 @@ def run_datadoc_with_config(
             )
 
             tasks_to_run.append(run_query_task.s(execution_type=execution_type))
-
-        # Create db entry record
-        record_id = create_task_run_record_for_celery_task(self, session=session)
-
-    completion_params = {
-        "doc_id": doc_id,
-        "user_id": user_id,
-        "record_id": record_id,
-        "notifications": notifications,
-        "exports": exports,
-    }
 
     chain(*tasks_to_run).apply_async(
         link=on_datadoc_run_success.s(
