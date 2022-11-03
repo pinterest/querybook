@@ -43,8 +43,6 @@ export const OrderByButton: React.FC<ISortButtonProps> = ({
         [orderByField, orderByFieldSymbol]
     );
 
-    console.log(`Hide Asc Toggle: ${hideAscToggle}`);
-
     return (
         <span className={clsx('OrderByButton', className)}>
             {!hideAscToggle && (
