@@ -3,9 +3,11 @@ import * as React from 'react';
 
 import { DataTableColumnStats } from 'components/DataTableStats/DataTableColumnStats';
 import { IDataColumn } from 'const/metastore';
+import { parseType } from 'lib/utils/complex-types';
 import { Card } from 'ui/Card/Card';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
 import { Icon } from 'ui/Icon/Icon';
+import { Json } from 'ui/Json/Json';
 import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
 import { AccentText, StyledText } from 'ui/StyledText/StyledText';
 
@@ -31,6 +33,9 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
             onSave={updateDataColumnDescription.bind(null, column.id)}
         />
     );
+
+    const parsedType = parseType(column.type);
+
     return (
         <div className="DataTableColumnCard">
             <Card key={column.id} alignLeft>
@@ -56,6 +61,13 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
                             <KeyContentDisplay keyString="Definition">
                                 {column.comment}
                             </KeyContentDisplay>
+                        )}
+                        {parsedType !== column.type && (
+                            <>
+                                <KeyContentDisplay keyString="Complex Type">
+                                    <Json json={parsedType} />
+                                </KeyContentDisplay>
+                            </>
                         )}
                         <KeyContentDisplay keyString="User Comments">
                             {userCommentsContent}

@@ -2,7 +2,9 @@ import { ContentState } from 'draft-js';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
+import { parseType } from 'lib/utils/complex-types';
 import { IStoreState } from 'redux/store/types';
+import { Json } from 'ui/Json/Json';
 
 import { PanelSection, SubPanelSection } from './PanelSection';
 
@@ -18,6 +20,8 @@ export const ColumnPanelView: React.FunctionComponent<
     const column = useSelector(
         (state: IStoreState) => state.dataSources.dataColumnsById[columnId]
     );
+
+    const parsedType = parseType(column.type);
 
     const overviewPanel = (
         <PanelSection title="column">
@@ -39,11 +43,19 @@ export const ColumnPanelView: React.FunctionComponent<
         <PanelSection title="type info">{typeInfo}</PanelSection>
     ) : null;
 
+    const complexTypePanel =
+        parsedType !== column.type ? (
+            <PanelSection title="complex type">
+                <Json json={parsedType} />
+            </PanelSection>
+        ) : null;
+
     return (
         <>
             {overviewPanel}
             {descriptionPanel}
             {typeInfoPanel}
+            {complexTypePanel}
         </>
     );
 };
