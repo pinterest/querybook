@@ -142,6 +142,9 @@ const StyledColumnRow = styled.div<IStyledColumnRowProps>`
         font-size: var(--xxsmall-text-size);
         color: var(--text-light);
         white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 50%;
     }
 
     ${({ selected }) =>
