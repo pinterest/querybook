@@ -64,14 +64,14 @@ export const QueryExecutionNotificationButton: React.FunctionComponent<
 
     return (
         <span
-            className="copy-permalink-button"
+            className="copy-permalink-button flex-row"
             onClick={loading ? null : handleNotificationToggle}
         >
             <Icon name={iconName} size={16} />
             <span
                 aria-label={`Notify me with ${notificationPreference} when finished`}
                 data-balloon-pos={'up'}
-                className="ml8"
+                className="ml4"
             >
                 Notify Me
             </span>
