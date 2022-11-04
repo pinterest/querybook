@@ -2,6 +2,7 @@ import { ContentState } from 'draft-js';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
+import { prettyPrintType } from 'lib/utils/complex-types';
 import { IStoreState } from 'redux/store/types';
 
 import { PanelSection, SubPanelSection } from './PanelSection';
@@ -22,7 +23,11 @@ export const ColumnPanelView: React.FunctionComponent<
     const overviewPanel = (
         <PanelSection title="column">
             <SubPanelSection title="name">{column.name}</SubPanelSection>
-            <SubPanelSection title="type">{column.type}</SubPanelSection>
+            <SubPanelSection title="type">
+                <div className="preformatted">
+                    {prettyPrintType(column.type)}
+                </div>
+            </SubPanelSection>
         </PanelSection>
     );
 

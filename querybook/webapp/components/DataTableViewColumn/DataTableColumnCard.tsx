@@ -1,13 +1,17 @@
 import { ContentState } from 'draft-js';
-import * as React from 'react';
+import React, { useMemo } from 'react';
 
 import { DataTableColumnStats } from 'components/DataTableStats/DataTableColumnStats';
 import { IDataColumn } from 'const/metastore';
+import { useToggleState } from 'hooks/useToggleState';
+import { parseType } from 'lib/utils/complex-types';
 import { Card } from 'ui/Card/Card';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
 import { Icon } from 'ui/Icon/Icon';
 import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
 import { AccentText, StyledText } from 'ui/StyledText/StyledText';
+
+import { DataTableColumnCardNestedType } from './DataTableColumnCardNestedType';
 
 import './DataTableColumnCard.scss';
 
@@ -23,7 +27,8 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
     column,
     updateDataColumnDescription,
 }) => {
-    const [expanded, setExpanded] = React.useState(false);
+    const [expanded, , toggleExpanded] = useToggleState(false);
+    const parsedType = useMemo(() => parseType('', column.type), [column.type]);
 
     const userCommentsContent = (
         <EditableTextField
@@ -37,7 +42,7 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
             <Card key={column.id} alignLeft>
                 <div
                     className="DataTableColumnCard-top horizontal-space-between"
-                    onClick={() => setExpanded(!expanded)}
+                    onClick={() => toggleExpanded()}
                     aria-label={
                         expanded ? 'click to collapse' : 'click to expand'
                     }
@@ -53,6 +58,13 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
                 </div>
                 {expanded ? (
                     <div className="mt16">
+                        {parsedType.children && (
+                            <KeyContentDisplay keyString="Type Detail">
+                                <DataTableColumnCardNestedType
+                                    complexType={parsedType}
+                                />
+                            </KeyContentDisplay>
+                        )}
                         {column.comment && (
                             <KeyContentDisplay keyString="Definition">
                                 {column.comment}
