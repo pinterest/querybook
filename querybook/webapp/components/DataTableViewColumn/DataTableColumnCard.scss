@@ -9,10 +9,12 @@
             .DataTableColumnCard-left {
                 display: flex;
                 flex-direction: row;
-                align-items: baseline;
+                align-items: center;
+                max-width: 95%;
 
                 .column-type {
                     min-width: 80px;
+                    word-break: break-all;
                 }
             }
         }
