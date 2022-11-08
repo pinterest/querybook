@@ -82,6 +82,16 @@ The following settings are only relevant if you are using `s3` and your S3 bucke
 
 `LOG_LOCATION` (optional): By default server logs goes to stderr. Supply a log path if you want the log to appear in a file.
 
+### Event Logging
+
+`EVENT_LOGGER_NAME` (optional, defaults to **null**): This configures where the event logs will be stored.
+
+    - null: This is the default logger, which does nothing and disregards the logs.
+    - console: This will print the event logs to the console. Could be used for debugging purpose.
+    - db: This will save the event logs to table **event_logs** in querybook mysql db.
+
+You can also add addtional loggers in the event logger plugin. See [Add Event Logger guide](../integrations/add_event_logger.md) for more details.
+
 ## Authentication
 
 `AUTH_BACKEND` (optional, defaults to **app.auth.password_auth**): Python path to the authentication file. By default Querybook provides:
