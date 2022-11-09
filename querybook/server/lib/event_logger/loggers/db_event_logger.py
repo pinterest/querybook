@@ -15,7 +15,6 @@ class DBEventLogger(BaseEventLogger):
         return "db"
 
     def log(self, uid: int, event_type: EventType, event_data: dict):
-        with DBSession() as session:
-            event_log = EventLog(uid=uid, event_type=event_type, event_data=event_data)
-            session.add(event_log)
-            session.commit()
+        EventLog.create(
+            {"uid": uid, "event_type": event_type, "event_data": event_data}
+        )

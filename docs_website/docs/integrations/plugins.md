@@ -61,7 +61,7 @@ Web page plugin allows you to inject custom js, css to Querybook. Place your cus
 Lineage plugin allows you to extend Querybook to fetch lineage information from a custom data lineage backend. Please check [Add Lineage guide](./add_lineage.md) for more details.
 
 ### Event Logger Plugin
-By default, querybook supports printing/storing event logs(e.g. API requests, frontend instrumentation logs and etc) to console and mysql db. If you'd like to store event logs to somewhere else, you can add a custom event logger. Please check [Add Event Logger guide](./add_event_logger.md) for more details.
+By default, Querybook supports printing/storing event logs(e.g. API requests, frontend instrumentation logs and etc) to console and mysql db. If you'd like to store event logs to somewhere else, you can add a custom event logger. Please check [Add Event Logger guide](./add_event_logger.md) for more details.
 
 ### DAG Exporter Plugin (Experimental)
 

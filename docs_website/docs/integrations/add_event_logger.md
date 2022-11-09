@@ -8,21 +8,24 @@ sidebar_label: Event Logging
 This is an experimental feature. You can use the plugins for customization but they may break in future updates.
 :::
 
-Querybook provides the instrumentation support of logging client action events, as well as API events. With event logs, we can analyze user behavior on Querybook and gauging interactions with some specific features, e.g.
+Querybook provides the instrumentation support of logging client action events, as well as API events. With event logs, we can analyze user behavior on Querybook and gauge interactions with some specific features, e.g.
   - Number of times a user has interacted with the feature of query formatting
   - Which result gets clicked for a table search string
   - How many times the home page gets viewed and clicked
   - ...
 
 ## Event Log
-An event log contains
- - created_at: timestamp of when the event occurred
- - uid: id of the user who performed the action
- - event type: action type like view, click an ui element
- - event data: json to provide addtional info about the action.
+An event log contains:
+ - created_at (datetime): timestamp of when the event occurred
+ - uid (int): id of the user who performed the action
+ - event_type (EventType): action type like view, click an ui element
+ - event_data (dict): json to provide addtional info about the action.
+
+## Event Type
+
 
 ## Configure Event Logger
-Update `EVENT_LOGGER_NAME` in the querybook config yaml file to the logger name you'd like to use. See below for the available loggers.
+Update `EVENT_LOGGER_NAME` in the querybook config yaml file with the logger name you'd like to use. See below for the available loggers.
 
 ```
 # --------------- Logging ---------------
@@ -38,9 +41,9 @@ This is the default logger, which does nothing and disregards the logs.
 This will print the event logs to the console. Could be used for debugging purpose.
 
 ### DBEventLoger (name: db)
-This will save the event logs to table **event_logs** in querybook mysql db.
+This will save the event logs to the table **event_logs** in querybook mysql db.
 
-By default, logs will be only kept for 7 days. To change the default retention, you can update the setting of `days_to_keep_event_logs` in the scheduled task `run_all_db_clean_up_jobs` from the admin tool.
+By default, the logs are kept forever. If you have scheduled the task `run_all_db_clean_up_jobs`, logs will be kept for 7 days. To change the default retention of 7 days, you can update the setting of `days_to_keep_event_logs` in the scheduled task `run_all_db_clean_up_jobs` from the admin tool.
 
 
 ## Adding a new Event Logger as a plugin

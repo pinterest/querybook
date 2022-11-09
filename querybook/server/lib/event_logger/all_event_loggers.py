@@ -15,8 +15,6 @@ ALL_EVENT_LOGGERS = [
     DBEventLogger(),
 ] + ALL_PLUGIN_EVENT_LOGGERS
 
-DEFAULT_EVENT_LOGGER = NullEventLogger()
-
 
 def get_event_logger_class(name: str):
     for logger in ALL_EVENT_LOGGERS:

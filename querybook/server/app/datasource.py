@@ -40,7 +40,7 @@ def DATE_MILLISECONDS(dt):
 
 
 def register(
-    url, methods=None, require_auth=True, custom_response=False, api_logging=False
+    url, methods=None, require_auth=True, custom_response=False, api_logging=True
 ):
     """Register an endpoint to be a data source."""
 
@@ -57,15 +57,18 @@ def register(
             elif flask.request.is_json:
                 params = flask.request.json
 
-            # api event logging
-            if api_logging:
-                event_logger.log_api_request(
-                    method=flask.request.method, path=flask.request.path, params=params
-                )
-
             status = 200
             try:
                 kwargs.update(params)
+
+                # api event logging
+                if api_logging:
+                    event_logger.log_api_request(
+                        method=flask.request.method,
+                        route=f"{DS_PATH}{url}",
+                        params=kwargs,
+                    )
+
                 results = fn(**kwargs)
 
                 if not custom_response:

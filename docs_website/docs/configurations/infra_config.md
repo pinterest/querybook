@@ -84,7 +84,7 @@ The following settings are only relevant if you are using `s3` and your S3 bucke
 
 ### Event Logging
 
-`EVENT_LOGGER_NAME` (optional, defaults to **null**): This configures where the event logs will be stored.
+`EVENT_LOGGER_NAME` (optional, defaults to **"null"**): This configures where the event logs will be stored.
 
     - null: This is the default logger, which does nothing and disregards the logs.
     - console: This will print the event logs to the console. Could be used for debugging purpose.
