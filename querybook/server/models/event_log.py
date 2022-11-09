@@ -15,12 +15,3 @@ class EventLog(CRUDMixin, Base):
     uid = sql.Column(sql.Integer)
     event_type = sql.Column(sql.Enum(EventType), index=True)
     event_data = sql.Column(sql.JSON, default={})
-
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "created_at": self.created_at,
-            "uid": self.uid,
-            "event_type": self.event_type,
-            "event_data": self.event_data,
-        }
