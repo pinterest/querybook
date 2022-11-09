@@ -1,4 +1,3 @@
-from app.db import DBSession
 from const.event_log import EventType
 from lib.event_logger.base_event_logger import BaseEventLogger
 from lib.logger import get_logger
