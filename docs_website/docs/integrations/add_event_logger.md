@@ -22,7 +22,10 @@ An event log contains:
  - event_data (dict): json to provide addtional info about the action.
 
 ## Event Type
-
+We may add more event types in the future. Here are what have been supported right now:
+  - API: an api request
+  - VIEW:  a UI element gets viewed
+  - CLICK: a UI element gets clicked
 
 ## Configure Event Logger
 Update `EVENT_LOGGER_NAME` in the querybook config yaml file with the logger name you'd like to use. See below for the available loggers.
