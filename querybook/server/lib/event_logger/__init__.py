@@ -43,7 +43,7 @@ class EventLogger:
         self.log(event_type=EventType.API, event_data=event_data)
 
     def __prune_api_request_params(self, params: dict):
-        """Remove str type params which has big size.
+        """Trim str type params which has big size.
 
         Args:
             params (dict): api request params
@@ -54,6 +54,7 @@ class EventLogger:
         new_params = {}
         for key, value in params.items():
             if isinstance(value, str) and len(value) > MAX_STR_PARAM_LENGTH:
+                new_params[key] = value[:MAX_STR_PARAM_LENGTH] + "..."
                 continue
 
             if isinstance(value, dict):

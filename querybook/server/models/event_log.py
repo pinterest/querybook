@@ -12,7 +12,7 @@ class EventLog(CRUDMixin, Base):
     __tablename__ = "event_log"
     id = sql.Column(sql.Integer, primary_key=True)
     created_at = sql.Column(sql.DateTime, default=now)
-    uid = sql.Column(sql.Integer, sql.ForeignKey("user.id"))
+    uid = sql.Column(sql.Integer)
     event_type = sql.Column(sql.Enum(EventType), index=True)
     event_data = sql.Column(sql.JSON, default={})
 
