@@ -8,6 +8,7 @@ from models.schedule import TaskRunRecord
 from models.query_execution import QueryExecution
 from models.impression import Impression
 from models.datadoc import DataDoc
+from models.event_log import EventLog
 from logic.schedule import with_task_logging
 
 
@@ -20,6 +21,7 @@ def run_all_db_clean_up_jobs(
     days_to_keep_query_exec_else=30,
     days_to_keep_impression=30,
     days_to_keep_archived_data_doc=60,
+    days_to_keep_event_logs=7,
 ):
     with DBSession() as session:
         clean_up_task_run_record(days_to_keep=days_to_keep_task_record, session=session)
@@ -32,6 +34,7 @@ def run_all_db_clean_up_jobs(
         clean_up_archived_data_doc(
             days_to_keep=days_to_keep_archived_data_doc, session=session
         )
+        clean_up_event_logs(days_to_keep=days_to_keep_event_logs, session=session)
 
 
 @with_session
@@ -90,4 +93,14 @@ def clean_up_archived_data_doc(days_to_keep=60, session=None):
     session.query(DataDoc).filter(archived=False).filter(
         DataDoc.updated_at < last_day
     ).delete(synchronize_session=False)
+    session.commit()
+
+
+@with_session
+def clean_up_event_logs(days_to_keep=7, session=None):
+    last_day = datetime.now() - timedelta(days_to_keep)
+
+    session.query(EventLog).filter(EventLog.created_at < last_day).delete(
+        synchronize_session=False
+    )
     session.commit()

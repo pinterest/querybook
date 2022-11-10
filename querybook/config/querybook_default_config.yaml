@@ -74,3 +74,6 @@ LOG_LOCATION: ~
 # --------------- Table Upload (Experimental) ---------------
 # Size in bytes
 TABLE_MAX_UPLOAD_SIZE: ~
+
+# --------------- Event Logging ---------------
+EVENT_LOGGER_NAME: ~

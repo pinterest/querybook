@@ -13,6 +13,7 @@ from app.db import get_session
 from const.datasources import DS_PATH
 from lib.logger import get_logger
 from logic.impression import create_impression
+from lib.event_logger import event_logger
 
 LOG = get_logger(__file__)
 _host = socket.gethostname()
@@ -38,7 +39,9 @@ def DATE_MILLISECONDS(dt):
     return delta.total_seconds() * 1000.0
 
 
-def register(url, methods=None, require_auth=True, custom_response=False):
+def register(
+    url, methods=None, require_auth=True, custom_response=False, api_logging=True
+):
     """Register an endpoint to be a data source."""
 
     def wrapper(fn):
@@ -57,6 +60,15 @@ def register(url, methods=None, require_auth=True, custom_response=False):
             status = 200
             try:
                 kwargs.update(params)
+
+                # api event logging
+                if api_logging:
+                    event_logger.log_api_request(
+                        method=flask.request.method,
+                        route=f"{DS_PATH}{url}",
+                        params=kwargs,
+                    )
+
                 results = fn(**kwargs)
 
                 if not custom_response:

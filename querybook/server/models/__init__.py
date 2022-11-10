@@ -11,3 +11,4 @@ from .result_store import *
 from .schedule import *
 from .user import *
 from .tag import *
+from .event_log import *
