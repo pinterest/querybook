@@ -594,6 +594,10 @@ export const QueryEditor: React.FC<
         /* ---- end of <ReactCodeMirror /> properties ---- */
 
         const renderLintButtons = () => {
+            if (value.length === 0) {
+                return null;
+            }
+
             if (isLinting) {
                 return (
                     <span className="flex-row mr8">
