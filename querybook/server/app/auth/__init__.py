@@ -54,14 +54,14 @@ def get_login_config():
         has_oauth_url = hasattr(auth, "oauth_authorization_url")
 
         if has_login:
-            register("/login/", methods=["POST"], require_auth=False)(
-                auth.login_user_endpoint
-            )
+            register(
+                "/login/", methods=["POST"], require_auth=False, api_logging=False
+            )(auth.login_user_endpoint)
 
         if has_signup:
-            register("/signup/", methods=["POST"], require_auth=False)(
-                auth.signup_user_endpoint
-            )
+            register(
+                "/signup/", methods=["POST"], require_auth=False, api_logging=False
+            )(auth.signup_user_endpoint)
 
         if has_oauth_url:
             oauth_url = auth.oauth_authorization_url()

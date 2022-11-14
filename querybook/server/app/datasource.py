@@ -61,11 +61,11 @@ def register(
             try:
                 kwargs.update(params)
 
-                # api event logging
-                if api_logging:
+                # api event logging. Ignore admin api endpoints
+                if api_logging and not url.startswith("/admin"):
                     event_logger.log_api_request(
                         method=flask.request.method,
-                        route=f"{DS_PATH}{url}",
+                        route=url,
                         params=kwargs,
                     )
 

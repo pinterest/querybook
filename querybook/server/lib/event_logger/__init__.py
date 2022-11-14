@@ -30,7 +30,7 @@ class EventLogger:
             LOG.error(e, exc_info=True)
 
     def log_api_request(self, route: str, method: str, params: dict):
-        """Log an API request
+        """Log an API request.
 
         Args:
             method (str): request method, e.g. GET, POST
