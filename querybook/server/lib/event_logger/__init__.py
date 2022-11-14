@@ -30,7 +30,7 @@ class EventLogger:
             LOG.error(e, exc_info=True)
 
     def log_api_request(self, route: str, method: str, params: dict):
-        """Log an API request. Admin api requests will not be logged.
+        """Log an API request.
 
         Args:
             method (str): request method, e.g. GET, POST
@@ -38,10 +38,6 @@ class EventLogger:
             params (dict): params of the request, includes path params,
                 query strings and post body
         """
-        # Skip admin apis
-        if route.startswith("/admin"):
-            return
-
         params = self.__prune_api_request_params(params)
         event_data = {"method": method, "route": route, "params": params}
         self.log(event_type=EventType.API, event_data=event_data)
