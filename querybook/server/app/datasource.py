@@ -65,7 +65,7 @@ def register(
                 if api_logging:
                     event_logger.log_api_request(
                         method=flask.request.method,
-                        route=f"{DS_PATH}{url}",
+                        route=url,
                         params=kwargs,
                     )
 

@@ -71,7 +71,7 @@ def get_user_environment_ids():
     return [visible_environments, user_environment_ids]
 
 
-@register("/user/setting/<key>/", methods=["POST"])
+@register("/user/setting/<key>/", methods=["POST"], api_logging=False)
 def set_user_setting(key, value=None):
     return logic.create_or_update_user_setting(
         uid=current_user.id, key=key, value=value
