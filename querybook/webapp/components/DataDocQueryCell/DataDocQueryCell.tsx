@@ -262,9 +262,9 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         }
     }
 
-    @bind
-    public getLintAnnotations(query: string, cm: CodeMirror.Editor) {
-        return createSQLLinter(this.engineId)(query, cm);
+    @decorate(memoizeOne)
+    public createGetLintAnnotations(engineId: number) {
+        return createSQLLinter(engineId);
     }
 
     @bind
@@ -721,7 +721,9 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                     height={isFullScreen ? 'full' : 'auto'}
                     onFullScreen={this.props.toggleFullScreen}
                     getLintErrors={
-                        this.hasQueryValidators ? this.getLintAnnotations : null
+                        this.hasQueryValidators
+                            ? this.createGetLintAnnotations(this.engineId)
+                            : null
                     }
                 />
                 {openSnippetDOM}

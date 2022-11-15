@@ -102,8 +102,9 @@ function useQueryLintAnnotations(
             .finally(() => {
                 setIsLinting(false);
             });
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [debouncedQuery]);
+    }, [debouncedQuery, getQueryLintAnnotations]);
 
     return { isLintingQuery, queryAnnotations };
 }
