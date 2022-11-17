@@ -35,9 +35,9 @@ class DisablePolicy(Enum):
 
 
 DISABLE_POLICY_TO_REASON = {
-    DisablePolicy.INACTIVE_OWNER.value: "Disabled due to inactive owner",
-    DisablePolicy.NO_IMPRESSION_FOR_N_DAYS.value: "Disabled due to no impression for {} days",
-    DisablePolicy.FAILED_FOR_N_RUNS.value: "Disabled due to failing for the past {} runs",
+    DisablePolicy.INACTIVE_OWNER.value: "Disabled due to deactivated owner",
+    DisablePolicy.NO_IMPRESSION_FOR_N_DAYS.value: "Disabled due to no one viewing the doc for the past {} days",
+    DisablePolicy.FAILED_FOR_N_RUNS.value: "Disabled due to past {} runs all ended up failing",
 }
 
 
