@@ -1,21 +1,22 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 export const useInterval = (
     func: () => any,
     freq: number,
     disabled: boolean = false
 ) => {
+    const savedFunc = useRef(func);
+
+    useEffect(() => {
+        savedFunc.current = func;
+    }, [func]);
+
     useEffect(() => {
         let interval: number = null;
         if (!disabled) {
-            interval = setInterval(func, freq);
+            interval = setInterval(() => savedFunc.current(), freq);
         }
 
-        return () => {
-            if (interval) {
-                clearInterval(interval);
-                interval = null;
-            }
-        };
-    }, [disabled, func, freq]);
+        return () => clearInterval(interval);
+    }, [disabled, freq]);
 };

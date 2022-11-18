@@ -14,8 +14,12 @@ import './Announcements.scss';
 export const Announcements: React.FunctionComponent = () => {
     const announcements = useAnnouncements();
     const dispatch: Dispatch = useDispatch();
-    const loadAnnouncements = () =>
-        dispatch(querybookUIActions.loadAnnouncements());
+    const loadAnnouncements = () => {
+        // load announcements only if the tab is active
+        if (document.hasFocus()) {
+            dispatch(querybookUIActions.loadAnnouncements());
+        }
+    };
     const dismissAnnouncement = (id: number) =>
         dispatch(querybookUIActions.dismissAnnouncement(id));
 
@@ -24,12 +28,7 @@ export const Announcements: React.FunctionComponent = () => {
         dispatch(querybookUIActions.loadDismissedAnnouncements());
     }, []);
 
-    useInterval(() => {
-        // load announcements only if the tab is active
-        if (document.hasFocus()) {
-            loadAnnouncements();
-        }
-    }, 300000);
+    useInterval(loadAnnouncements, 300000);
 
     if (announcements.length === 0) {
         return null;
