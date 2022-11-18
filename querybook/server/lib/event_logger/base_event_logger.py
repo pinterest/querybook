@@ -1,9 +1,24 @@
 from abc import ABC, abstractmethod
+from typing import TypedDict
+
 
 from const.event_log import EventType
 
 
 MAX_STR_PARAM_LENGTH = 128
+
+
+class ApiFilterRule(TypedDict):
+    """Filter rule for the api logging allow/deny list.
+
+    type: 'prefix' | 'exact'
+    route: api route
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE' | '*' ('*' to match any)
+    """
+
+    type: str
+    route: str
+    method: str
 
 
 class BaseEventLogger(ABC):
@@ -16,7 +31,7 @@ class BaseEventLogger(ABC):
         raise NotImplementedError()
 
     @property
-    def api_allow_list(self) -> list:
+    def _api_allow_list(self) -> list[ApiFilterRule]:
         """API endpoints from this list will be logged.
         If None is returned, all endpoints will be loggeed.
 
@@ -25,9 +40,9 @@ class BaseEventLogger(ABC):
         return None
 
     @property
-    def api_block_list(self) -> list:
-        """API endpoints from this list will not be logged. This list will only be used
-        when the allow list is None.
+    def _api_deny_list(self) -> list[ApiFilterRule]:
+        """API endpoints from this list will not be logged. If allow list is
+        provided then deny list will be ignored.
 
         You can override this property to provide your own list in your logger.
         """
@@ -37,7 +52,7 @@ class BaseEventLogger(ABC):
             {"type": "exact", "route": "/signup/", "method": "POST"},
         ]
 
-    def should_log_api_request(self, route, method) -> bool:
+    def _should_log_api_request(self, route: str, method: str) -> bool:
         """Check whether this api request should be logged or not. It will honor the allow list
         first and then the block list. You can override this method in the sub class to provide
         your owner checker.
@@ -45,26 +60,16 @@ class BaseEventLogger(ABC):
         Returns:
             bool: True to log, False to skip.
         """
-        if self.api_allow_list is not None:
-            for api in self.api_allow_list:
-                if api["method"] != method:
-                    continue
-
-                if api["type"] == "prefix" and route.startswith(api["route"]):
-                    return True
-                elif api["type"] == "exact" and route == api["route"]:
+        if self._api_allow_list is not None:
+            for rule in self._api_allow_list:
+                if self.__match_filter_rule(rule, route, method):
                     return True
 
             return False
 
-        if self.api_block_list is not None:
-            for api in self.api_block_list:
-                if api["method"] != method:
-                    continue
-
-                if api["type"] == "prefix" and route.startswith(api["route"]):
-                    return False
-                elif api["type"] == "exact" and route == api["route"]:
+        if self._api_deny_list is not None:
+            for rule in self._api_deny_list:
+                if self.__match_filter_rule(rule, route, method):
                     return False
 
         return True
@@ -89,12 +94,22 @@ class BaseEventLogger(ABC):
             params (dict): params of the request, includes path params,
                 query strings and post body
         """
-        if not self.should_log_api_request(route, method):
+        if not self._should_log_api_request(route, method):
             return
 
         params = self.__prune_api_request_params(params)
         event_data = {"method": method, "route": route, "params": params}
         self.log(uid=uid, event_type=EventType.API, event_data=event_data)
+
+    def __match_filter_rule(self, rule: ApiFilterRule, route: str, method: str) -> bool:
+        route_matched = (
+            route.startswith(rule["route"])
+            if rule["type"] == "prefix"
+            else rule["route"] == route
+        )
+        method_matched = rule["method"] == "*" or rule["method"] == method
+
+        return route_matched and method_matched
 
     def __prune_api_request_params(self, params: dict):
         """Trim str type params which has big size.

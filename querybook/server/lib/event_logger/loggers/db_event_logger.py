@@ -11,14 +11,14 @@ class DBEventLogger(BaseEventLogger):
         return "db"
 
     @property
-    def api_block_list(self) -> list:
+    def _api_deny_list(self) -> list:
         """API endpoints from this list will not be logged. This list will only be used
         when the allow list is None.
 
         You can override this property to provide your own list in your logger.
         """
         return [
-            {"type": "prefix", "route": "/admin", "method": "GET"},
+            {"type": "prefix", "route": "/admin", "method": "*"},
             {"type": "prefix", "route": "/user", "method": "GET"},
             {"type": "exact", "route": "/login/", "method": "POST"},
             {"type": "exact", "route": "/signup/", "method": "POST"},
