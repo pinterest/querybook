@@ -33,8 +33,6 @@ class EventLogger:
                 uid=current_user.id, route=route, method=method, params=params
             )
         except Exception as e:
-            # catch any potential exceptions to avoid event logging
-            # from interrupting the normal flow
             LOG.error(e, exc_info=True)
 
 
