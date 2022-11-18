@@ -24,7 +24,12 @@ export const Announcements: React.FunctionComponent = () => {
         dispatch(querybookUIActions.loadDismissedAnnouncements());
     }, []);
 
-    useInterval(loadAnnouncements, 300000);
+    useInterval(() => {
+        // load announcements only if the tab is active
+        if (document.hasFocus()) {
+            loadAnnouncements();
+        }
+    }, 300000);
 
     if (announcements.length === 0) {
         return null;
