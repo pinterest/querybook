@@ -47,7 +47,7 @@ class BaseEventLogger(ABC):
         You can override this property to provide your own list in your logger.
         """
         return [
-            {"type": "prefix", "route": "/admin", "method": "GET"},
+            {"type": "prefix", "route": "/admin", "method": "*"},
             {"type": "exact", "route": "/login/", "method": "POST"},
             {"type": "exact", "route": "/signup/", "method": "POST"},
         ]
