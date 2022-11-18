@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
 from typing import Optional
@@ -8,8 +9,9 @@ from models.schedule import (
 )
 from app.db import with_session
 from env import QuerybookSettings
-from const.schedule import TaskRunStatus
+from const.data_doc import DataCellType
 from const.impression import ImpressionItemType
+from const.schedule import TaskRunStatus
 from lib.notify.utils import notify_user
 from lib.scheduled_datadoc.legacy import convert_if_legacy_datadoc_schedule
 from logic.schedule import (
@@ -19,6 +21,7 @@ from logic.schedule import (
     get_task_run_records,
     delete_task_schedule,
 )
+from lib.query_analysis.lineage import get_table_statement_type
 from logic.datadoc import get_data_doc_by_id
 from logic.user import get_user_by_id
 from logic.impression import get_viewers_count_by_item_after_date
@@ -29,20 +32,25 @@ logger = get_logger(__name__)
 
 
 class DisablePolicy(Enum):
-    INACTIVE_OWNER = "INACTIVE_OWNER"
-    NO_IMPRESSION_FOR_N_DAYS = "NO_IMPRESSION_FOR_N_DAYS"
-    FAILED_FOR_N_RUNS = "FAILED_FOR_N_RUNS"
+    INACTIVE_OWNER = "Disabled due to deactivated owner"
+    NO_IMPRESSION_FOR_N_DAYS = (
+        "Disabled due to no one viewing the doc for the past {} days"
+    )
+    FAILED_FOR_N_RUNS = "Disabled due to past {} runs all ended up failing"
 
 
-DISABLE_POLICY_TO_REASON = {
-    DisablePolicy.INACTIVE_OWNER.value: "Disabled due to deactivated owner",
-    DisablePolicy.NO_IMPRESSION_FOR_N_DAYS.value: "Disabled due to no one viewing the doc for the past {} days",
-    DisablePolicy.FAILED_FOR_N_RUNS.value: "Disabled due to past {} runs all ended up failing",
-}
+@dataclass
+class DisableConfig:
+    disable_if_inactive_owner: bool
+    disable_if_failed_for_n_runs: int
+
+    disable_if_no_impression_for_n_days: int
+    skip_if_no_impression_but_non_select: bool
+    skip_if_no_impression_with_export: bool
 
 
 def disable_policy_to_reason(policy: DisablePolicy, n_runs: int, n_days: int):
-    reason = DISABLE_POLICY_TO_REASON[policy.value]
+    reason = policy.value
     if policy == DisablePolicy.NO_IMPRESSION_FOR_N_DAYS:
         reason = reason.format(n_days)
     elif policy == DisablePolicy.FAILED_FOR_N_RUNS:
@@ -92,7 +100,8 @@ def check_task_inactive_owner(task_dict, session):
     return task_owner.deleted
 
 
-def check_task_failed_for_n_runs(task_dict, n_runs, session):
+def check_task_failed_for_n_runs(task_dict, disable_config: DisableConfig, session):
+    n_runs = disable_config.disable_if_failed_for_n_runs
     task_logs = get_task_run_records(task_dict["name"], limit=n_runs, session=session)
 
     if len(task_logs) == n_runs and all(
@@ -103,8 +112,29 @@ def check_task_failed_for_n_runs(task_dict, n_runs, session):
     return False
 
 
-def check_task_no_impression_for_n_days(task_dict, n_days, session):
+def check_task_no_impression_for_n_days(
+    task_dict, disable_config: DisableConfig, session
+):
     doc_id = task_dict["kwargs"]["doc_id"]
+
+    if not disable_config.skip_if_no_impression_with_export:
+        task_have_export = len(task_dict["kwargs"].get("exports", [])) > 0
+        if task_have_export:
+            return False
+
+    if not disable_config.skip_if_no_impression_but_non_select:
+        # Check if every DML/DDL of queries are select
+        doc = get_data_doc_by_id(doc_id, session=session)
+        queries_in_doc = [
+            cell.context for cell in doc.cells if cell.cell_type == DataCellType.query
+        ]
+        for query in queries_in_doc:
+            statement_types = get_table_statement_type(query)
+            if not all(t == "SELECT" for t in statement_types):
+                return False
+
+    # Finally, check impression
+    n_days = disable_config.disable_if_no_impression_for_n_days
     num_impressions = get_viewers_count_by_item_after_date(
         ImpressionItemType.DATA_DOC,
         doc_id,
@@ -122,10 +152,14 @@ def notify_schedule_owners(notifier: str, tasks_to_disable: list, session):
         # Findout who should be notified of this change
         # it must be someone who can take action on the doc
         possible_owners = (
-            [task_to_disable["task_owner_uid"], doc.owner_uid]
-            if task_to_disable["task_owner_uid"]
-            else [doc.owner_uid]
-        ) + [editor.uid for editor in doc.editors if editor.write]
+            (
+                [task_to_disable["task_owner_uid"], doc.owner_uid]
+                if task_to_disable["task_owner_uid"]
+                else [doc.owner_uid]
+            )
+            + [editor.uid for editor in doc.editors if editor.write]
+            + [editor.uid for editor in doc.editors if editor.read and not editor.write]
+        )
         doc_owner = None
 
         for possible_owner in possible_owners:
@@ -150,45 +184,60 @@ def notify_schedule_owners(notifier: str, tasks_to_disable: list, session):
         )
 
 
+def should_task_be_disabled(
+    task_dict,
+    disable_config: DisableConfig,
+    session,
+):
+    should_disable = None
+    if disable_config.disable_if_inactive_owner and check_task_inactive_owner(
+        task_dict, session
+    ):
+        should_disable = DisablePolicy.INACTIVE_OWNER
+
+    if (
+        should_disable is None
+        and disable_config.disable_if_failed_for_n_runs is not None
+        and check_task_failed_for_n_runs(task_dict, disable_config, session)
+    ):
+        should_disable = DisablePolicy.FAILED_FOR_N_RUNS
+
+    if (
+        not should_disable
+        and disable_config.disable_if_no_impression_for_n_days is not None
+        and check_task_no_impression_for_n_days(task_dict, disable_config, session)
+    ):
+        should_disable = DisablePolicy.NO_IMPRESSION_FOR_N_DAYS
+
+    return should_disable
+
+
 @with_session
 def disable_deactivated_scheduled_docs(
     dry_run: bool = False,
     notifier: Optional[str] = None,
-    disable_if_inactive_owner: bool = True,
-    disable_if_failed_for_n_runs: Optional[int] = 5,
-    disable_if_no_impression_for_n_days: Optional[int] = 30,
+    disable_config: DisableConfig = DisableConfig(
+        disable_if_inactive_owner=True,
+        disable_if_failed_for_n_runs=5,
+        disable_if_no_impression_for_n_days=30,
+        skip_if_no_impression_but_non_select=False,
+        skip_if_no_impression_with_export=False,
+    ),
     session=None,
 ):
     tasks_to_disable: list[dict] = []
     tasks_to_delete: list[int] = []
     task_dicts = get_scheduled_datadoc_tasks(session=session)
     for task_dict in task_dicts:
-        should_disable = None
-
         if not check_if_doc_exists(task_dict, session=session):
             tasks_to_delete.append(task_dict["id"])
             continue
 
-        if disable_if_inactive_owner and check_task_inactive_owner(task_dict, session):
-            should_disable = DisablePolicy.INACTIVE_OWNER
-
-        if (
-            should_disable is None
-            and disable_if_failed_for_n_runs is not None
-            and check_task_failed_for_n_runs(
-                task_dict, disable_if_failed_for_n_runs, session
-            )
-        ):
-            should_disable = DisablePolicy.FAILED_FOR_N_RUNS
-
-        if (
-            not should_disable
-            and disable_if_no_impression_for_n_days is not None
-            and check_task_no_impression_for_n_days(
-                task_dict, disable_if_no_impression_for_n_days, session
-            )
-        ):
-            should_disable = DisablePolicy.NO_IMPRESSION_FOR_N_DAYS
+        should_disable = should_task_be_disabled(
+            task_dict,
+            disable_config,
+            session,
+        )
 
         if should_disable is not None:
             tasks_to_disable.append(
@@ -197,8 +246,8 @@ def disable_deactivated_scheduled_docs(
                     "task_id": task_dict["id"],
                     "reason": disable_policy_to_reason(
                         should_disable,
-                        disable_if_failed_for_n_runs,
-                        disable_if_no_impression_for_n_days,
+                        disable_config.disable_if_failed_for_n_runs,
+                        disable_config.disable_if_no_impression_for_n_days,
                     ),
                     "task_owner_uid": task_dict["kwargs"].get("user_id"),
                 }

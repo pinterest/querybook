@@ -2,4 +2,4 @@ Your scheduled DataDoc [{{ data_doc_title }}]({{ doc_url }}) has been disabled d
 
 **{{ disabled_reason }}**
 
-You can re-enable the scheduled doc by going to the URL and configure the workflow on the bottom right corner.
+You can re-enable the scheduled doc by going to the above link and configure the `Schedule` on the bottom right corner.
