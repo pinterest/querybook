@@ -154,6 +154,19 @@
             }
         }
     }
+
+    .display-preview-input {
+        width: 140px;
+    }
+
+    .display-preview-input[readonly] {
+        cursor: not-allowed !important;
+        filter: opacity(50%);
+    }
+
+    .input-opacity {
+        filter: opacity(50%);
+    }
 }
 
 .Modal-content {

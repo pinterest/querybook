@@ -86,13 +86,65 @@ interface IQueryItemProps {
     searchString: string;
     environmentName: string;
     fromBoardId: number | undefined;
+    displayLines: number;
+    displayPreview: boolean;
 }
+
+const DisplayCutPreview = ({
+    queryText,
+    stopPropagation,
+    displayLines,
+    displayPreview,
+}) => {
+    const [isDisplayFull, setIsDisplayFull] = useState(false);
+    const text = useMemo(() => {
+        const isShowFullText = isDisplayFull || !displayPreview;
+
+        if (isShowFullText || (!isShowFullText && !displayLines)) {
+            return queryText;
+        } else if (!isShowFullText && displayLines) {
+            return queryText.split('\n').slice(0, displayLines).join('\n');
+        }
+    }, [isDisplayFull, displayLines, queryText, displayPreview]);
+
+    const textLength = useMemo(() => queryText.split('\n').length, queryText);
+    const isDisplayShowMoreBtn =
+        displayLines && displayPreview && textLength > displayLines;
+
+    return (
+        <>
+            <ThemedCodeHighlight
+                className="result-item-query"
+                value={text}
+                onClick={stopPropagation}
+                onContextMenuCapture={stopPropagation}
+            />
+            {isDisplayShowMoreBtn ? (
+                <div
+                    className="flex-center cursor-pointer"
+                    onClick={() => setIsDisplayFull((v) => !v)}
+                >
+                    {isDisplayFull ? 'Hide more' : 'Show more'}{' '}
+                    <Icon
+                        className="ml8"
+                        name={isDisplayFull ? 'ChevronUp' : 'ChevronDown'}
+                        size={16}
+                    />
+                </div>
+            ) : (
+                ''
+            )}
+        </>
+    );
+};
 
 export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
     preview,
     environmentName,
     searchString,
     fromBoardId,
+    displayLines,
+    displayPreview,
 }) => {
     const {
         author_uid: authorUid,
@@ -106,6 +158,10 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
 
     const [isQueryTextExpanded, setIsQueryTextExpanded] = useState(false);
     const isQueryCell = preview.query_type === 'query_cell';
+
+    React.useEffect(() => {
+        setIsQueryTextExpanded(displayPreview);
+    }, [displayPreview]);
 
     const url = isQueryCell
         ? `/${environmentName}/datadoc/${preview.data_doc_id}/?cellId=${id}`
@@ -132,12 +188,15 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
     const queryTextHighlightedContent = preview.highlight?.query_text;
 
     const getSyntaxHighlightedQueryDOM = () => (
-        <ThemedCodeHighlight
-            className="result-item-query"
-            value={queryText}
-            onClick={stopPropagation}
-            onContextMenuCapture={stopPropagation}
-        />
+        <>
+            <ThemedCodeHighlight
+                className="result-item-query"
+                value={queryText}
+                onClick={stopPropagation}
+                onContextMenuCapture={stopPropagation}
+            />
+            <div>Display full</div>
+        </>
     );
 
     const getSearchResultHighlightedQueryDOM = () => (
@@ -164,7 +223,12 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
                     }}
                 />
             ) : (
-                getSyntaxHighlightedQueryDOM()
+                <DisplayCutPreview
+                    queryText={queryText}
+                    stopPropagation={stopPropagation}
+                    displayLines={displayLines}
+                    displayPreview={displayPreview}
+                />
             )}
         </div>
     );

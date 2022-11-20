@@ -87,6 +87,10 @@
     background-color: transparent;
 }
 
+.cursor-pointer {
+    cursor: pointer;
+}
+
 /* force scrollbar to appear on Mac & -webkit (Chrome, Safari) despite user 'hide' preference */
 .force-scrollbar-x {
     overflow-x: scroll !important;
