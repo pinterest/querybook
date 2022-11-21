@@ -6,12 +6,12 @@ import history from 'lib/router-history';
 import { getQueryEngineId } from 'lib/utils';
 import { createDataDoc } from 'redux/dataDoc/action';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
-import { queryEngineSelector } from 'redux/queryEngine/selector';
+import { enabledQueryEngineSelector } from 'redux/queryEngine/selector';
 import { Dispatch, IStoreState } from 'redux/store/types';
 
 export function useCreateDataDoc(withTour = false) {
     const environment = useSelector(currentEnvironmentSelector);
-    const queryEngines = useSelector(queryEngineSelector);
+    const queryEngines = useSelector(enabledQueryEngineSelector);
     const defaultEngineId = useSelector((state: IStoreState) =>
         getQueryEngineId(
             state.user.computedSettings['default_query_engine'],

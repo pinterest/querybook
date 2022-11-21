@@ -1,7 +1,7 @@
 from flask_login import current_user
 
 from app.auth.permission import (
-    verify_query_engine_permission,
+    verify_query_engine_read_permission,
     verify_environment_permission,
 )
 from app.datasource import register, api_assert
@@ -26,7 +26,7 @@ def get_query_engine_status(engine_id):
     engine_checker = None
     # Security check
     with DBSession() as session:
-        verify_query_engine_permission(engine_id, session=session)
+        verify_query_engine_read_permission(engine_id, session=session)
         engine = admin_logic.get_query_engine_by_id(engine_id, session=session)
         engine_checker = get_engine_checker_class(
             engine.get_feature_params().get("status_checker", "NullChecker")

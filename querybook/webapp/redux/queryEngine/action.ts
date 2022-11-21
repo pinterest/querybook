@@ -2,7 +2,7 @@ import { IQueryEngine, QueryEngineStatus } from 'const/queryEngine';
 import { QueryEngineResource } from 'resource/queryEngine';
 import { TemplatedQueryResource } from 'resource/queryExecution';
 
-import { queryEngineByIdEnvSelector } from './selector';
+import { enabledQueryEngineByIdEnvSelector } from './selector';
 import { ThunkResult } from './types';
 
 export function loadQueryEngine(): ThunkResult<Promise<IQueryEngine[]>> {
@@ -79,7 +79,7 @@ export function fetchSystemStatus(
 export function fetchAllSystemStatus(force = false): ThunkResult<Promise<any>> {
     return async (dispatch, getState) =>
         Promise.all(
-            Object.keys(queryEngineByIdEnvSelector(getState())).map(
+            Object.keys(enabledQueryEngineByIdEnvSelector(getState())).map(
                 (engineId) =>
                     dispatch(fetchSystemStatus(Number(engineId), force))
             )
