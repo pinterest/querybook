@@ -16,7 +16,9 @@ import ReactFlow, {
     ReactFlowInstance,
     ReactFlowProvider,
     useReactFlow,
-} from 'react-flow-renderer';
+} from 'reactflow';
+
+import 'reactflow/dist/style.css';
 
 import { GraphControls } from './GraphControls';
 import {

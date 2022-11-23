@@ -1,6 +1,6 @@
 import React from 'react';
-import { Edge, Node } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
+import { Edge, Node } from 'reactflow';
 
 import { hashString } from 'lib/data-doc/data-doc-utils';
 import { fetchDAGExport, saveDAGExport } from 'redux/dataDoc/action';

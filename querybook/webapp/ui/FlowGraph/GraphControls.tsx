@@ -5,7 +5,7 @@ import {
     useReactFlow,
     useStore,
     useStoreApi,
-} from 'react-flow-renderer';
+} from 'reactflow';
 
 import { IconButton } from 'ui/Button/IconButton';
 

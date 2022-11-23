@@ -1,5 +1,5 @@
 import React from 'react';
-import { getBezierPath, getEdgeCenter, Position } from 'react-flow-renderer';
+import { getBezierPath, Position } from 'reactflow';
 
 import { IconButton } from 'ui/Button/IconButton';
 
@@ -33,19 +33,13 @@ export const RemovableEdge: React.FC<IProps> = ({
     markerEnd,
 }: IProps) => {
     const { onRemove } = data;
-    const edgePath = getBezierPath({
+    const [edgePath, labelX, labelY] = getBezierPath({
         sourceX,
         sourceY,
         sourcePosition,
         targetX,
         targetY,
         targetPosition,
-    });
-    const [edgeCenterX, edgeCenterY] = getEdgeCenter({
-        sourceX,
-        sourceY,
-        targetX,
-        targetY,
     });
 
     return (
@@ -60,8 +54,8 @@ export const RemovableEdge: React.FC<IProps> = ({
             <foreignObject
                 width={foreignObjectSize}
                 height={foreignObjectSize}
-                x={edgeCenterX - foreignObjectSize / 2}
-                y={edgeCenterY - foreignObjectSize / 2}
+                x={labelX - foreignObjectSize / 2}
+                y={labelY - foreignObjectSize / 2}
             >
                 <IconButton
                     icon="X"

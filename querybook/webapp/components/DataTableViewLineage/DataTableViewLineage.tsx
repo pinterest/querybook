@@ -1,5 +1,5 @@
 import React from 'react';
-import { Edge, Node } from 'react-flow-renderer';
+import { Edge, Node } from 'reactflow';
 
 import { DataTableViewMini } from 'components/DataTableViewMini/DataTableViewMini';
 import { IDataTable, ILineage, ILineageCollection } from 'const/metastore';
