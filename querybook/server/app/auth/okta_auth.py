@@ -5,7 +5,7 @@ import flask_login
 from app.auth.oauth_auth import OAuthLoginManager, OAUTH_CALLBACK_PATH
 from app.db import with_session, DBSession
 from env import QuerybookSettings, get_env_config
-from flask import request, session as flask_session, redirect
+from flask import Markup, request, session as flask_session, redirect
 from lib.logger import get_logger
 from lib.utils.decorators import in_mem_memoized
 from logic.user import (
@@ -85,7 +85,7 @@ class OktaLoginManager(OAuthLoginManager):
         LOG.debug("Handling Oauth callback...")
 
         if request.args.get("error"):
-            return f"<h1>Error: {request.args.get('error')}</h1>"
+            return f"<h1>Error: { Markup.escape(request.args.get('error')) }</h1>"
 
         code = request.args.get("code")
         try:
