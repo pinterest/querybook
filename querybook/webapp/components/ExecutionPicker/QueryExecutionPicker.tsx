@@ -127,7 +127,7 @@ export const QueryExecutionPicker: React.FunctionComponent<IProps> = React.memo(
                             {execution.id}: {dateString}
                             {!shortVersion && (
                                 <>
-                                    <span className="mh4">ago by</span>
+                                    <span className="mh4">by</span>
                                     <UserName uid={execution.uid} />
                                 </>
                             )}

@@ -34,6 +34,10 @@
             height: 100%;
             border-top: var(--border);
             padding: 12px;
+
+            * {
+                white-space: nowrap;
+            }
         }
     }
 
