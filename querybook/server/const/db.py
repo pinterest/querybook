@@ -3,6 +3,7 @@ import datetime
 now = datetime.datetime.utcnow
 utf8mb4_name_length = 191
 name_length = 255
+type_length = 4096
 password_length = 255
 description_length = 5000
 text_length = 65535
