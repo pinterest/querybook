@@ -1,5 +1,5 @@
 import { ContentState } from 'draft-js';
-import { Edge, Node } from 'react-flow-renderer';
+import { Edge, Node } from 'reactflow';
 
 import { IChartConfig } from './dataDocChart';
 

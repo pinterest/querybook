@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ConnectDropTarget } from 'react-dnd';
-import { Edge, Node, ReactFlowInstance } from 'react-flow-renderer';
+import { Edge, Node, ReactFlowInstance } from 'reactflow';
 
 import { QueryDAGNodeTypes } from 'hooks/dag/useExporterDAG';
 import { FlowGraph } from 'ui/FlowGraph/FlowGraph';

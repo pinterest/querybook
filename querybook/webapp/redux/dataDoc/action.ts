@@ -2,7 +2,7 @@ import { ContentState, convertToRaw } from 'draft-js';
 import { mapValues } from 'lodash';
 import moment from 'moment';
 import { normalize, schema } from 'normalizr';
-import { Edge, Node } from 'react-flow-renderer';
+import { Edge, Node } from 'reactflow';
 
 import { IAccessRequest } from 'const/accessRequest';
 import {

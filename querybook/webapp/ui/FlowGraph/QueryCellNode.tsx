@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import React, { useCallback, useContext, useState } from 'react';
-import { Handle, Position, useReactFlow } from 'react-flow-renderer';
 import { useSelector } from 'react-redux';
+import { Handle, Position, useReactFlow } from 'reactflow';
 
 import { IDataQueryCell } from 'const/datadoc';
 import { DataDocDAGExporterContext } from 'context/DataDocDAGExporter';
@@ -33,7 +33,7 @@ export const QueryCellNode = React.memo<IProps>(
     ({ data, sourcePosition, targetPosition, id, selected }) => {
         const { isEngineSupported } = useContext(DataDocDAGExporterContext);
 
-        const { setNodes } = useReactFlow();
+        const { getNode, deleteElements } = useReactFlow();
         const [showQuery, setShowQuery] = useState(false);
 
         const { queryCell, updated } = data;
@@ -54,8 +54,8 @@ export const QueryCellNode = React.memo<IProps>(
         });
 
         const deleteNode = useCallback(() => {
-            setNodes((nds) => nds.filter((node) => node.id !== id));
-        }, [id, setNodes]);
+            deleteElements({ nodes: [getNode(id)] });
+        }, [deleteElements, getNode, id]);
 
         return (
             <div

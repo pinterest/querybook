@@ -6,8 +6,8 @@ import {
     useState,
 } from 'react';
 import { useDrop } from 'react-dnd';
-import { Edge, Node, Position, ReactFlowInstance } from 'react-flow-renderer';
 import { useSelector } from 'react-redux';
+import { Edge, Node, Position, ReactFlowInstance } from 'reactflow';
 
 import { queryCellDraggableType } from 'components/DataDocDAGExporter/DataDocDAGExporter';
 import { IDataQueryCell } from 'const/datadoc';

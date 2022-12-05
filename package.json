@@ -1,6 +1,6 @@
 {
     "name": "querybook",
-    "version": "3.14.0",
+    "version": "3.14.1",
     "description": "A Big Data Webapp",
     "private": true,
     "scripts": {
@@ -79,7 +79,6 @@
         "react-dnd": "^15.1.2",
         "react-dnd-html5-backend": "^15.1.2",
         "react-dom": "17.0.2",
-        "react-flow-renderer": "^10.3.17",
         "react-hot-toast": "^2.0.0",
         "react-json-view": "^1.21.3",
         "react-lazyload": "^3.2.0",
@@ -88,6 +87,7 @@
         "react-select": "4.3.1",
         "react-table": "6.8.6",
         "react-virtualized": "9.22.3",
+        "reactflow": "^11.3.0",
         "reactour": "^1.18.6",
         "redux": "4.1.0",
         "redux-logger": "3.0.6",
