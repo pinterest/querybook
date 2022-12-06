@@ -165,7 +165,7 @@ def notify_schedule_owners(notifier: str, tasks_to_disable: list, session):
         for possible_owner in possible_owners:
             user = get_user_by_id(possible_owner, session=session)
             if not user.deleted:
-                doc_owner = possible_owner
+                doc_owner = user
                 break
 
         if doc_owner is None:

@@ -1,4 +1,4 @@
-Your scheduled DataDoc [{{ data_doc_title }}]({{ doc_url }}) has been disabled due to the following reason:
+Your scheduled DataDoc {{ data_doc_title }} {{ doc_url }} has been disabled due to the following reason:
 
 **{{ disabled_reason }}**
 
