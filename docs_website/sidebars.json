@@ -49,6 +49,7 @@
         "User Guide": ["user_guide/api_token", "user_guide/faq"],
         "Changelog": [
             "changelog/breaking_changes",
+            "changelog/security_advisories",
             "changelog/nov_2020_2_4_2",
             "changelog/may_2020_2_3_0",
             "changelog/jan_2020_2_1_0"
