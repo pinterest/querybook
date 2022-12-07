@@ -14,3 +14,9 @@ export const defaultSortSchemaTableBy: SchemaSortByIds[keyof SchemaSortByIds] =
         asc: true,
         key: 'name',
     };
+
+export const defaultSortSearchTableBy: SchemaSortByIds[keyof SchemaSortByIds] =
+    {
+        key: 'importance_score',
+        asc: true,
+    };
