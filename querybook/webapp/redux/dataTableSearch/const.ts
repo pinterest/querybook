@@ -17,6 +17,6 @@ export const defaultSortSchemaTableBy: SchemaSortByIds[keyof SchemaSortByIds] =
 
 export const defaultSortSearchTableBy: SchemaSortByIds[keyof SchemaSortByIds] =
     {
-        key: 'importance_score',
+        key: 'relevance',
         asc: true,
     };
