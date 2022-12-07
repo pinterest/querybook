@@ -27,6 +27,8 @@ def _match_table_phrase_queries(fields, keywords):
             phrase_queries.append(
                 {"match_phrase": {"full_name": {"query": keywords, "boost": 10}}}
             )
+            # boost score for table name exact match
+            phrase_queries.append({"match": {"name": {"query": keywords, "boost": 10}}})
         elif field == "column":
             phrase_queries.append({"match_phrase": {"columns": {"query": keywords}}})
     return phrase_queries
