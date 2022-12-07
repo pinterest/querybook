@@ -23,7 +23,7 @@ repos:
                 - prettier@2.7.1
                 # - '@trivago/prettier-plugin-sort-imports@3.2.0' # removing it since pre-commit install fails
 
-    - repo: https://gitlab.com/pycqa/flake8
+    - repo: https://github.com/PyCQA/flake8
       rev: 3.9.2
       hooks:
           - id: flake8
