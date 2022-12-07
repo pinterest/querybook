@@ -1,6 +1,10 @@
 import { produce } from 'immer';
 
-import { defaultSortSchemaBy, defaultSortSchemaTableBy } from './const';
+import {
+    defaultSortSchemaBy,
+    defaultSortSearchTableBy,
+    defaultSortSchemaTableBy,
+} from './const';
 import {
     DataTableSearchAction,
     IDataTableSearchPaginationState,
@@ -25,7 +29,7 @@ const initialState: IDataTableSearchState = {
     searchString: '',
     searchRequest: null,
     metastoreId: null,
-    sortTablesBy: defaultSortSchemaTableBy,
+    sortTablesBy: defaultSortSearchTableBy,
     ...initialResultState,
 };
 

@@ -129,18 +129,16 @@ export const DataTableNavigatorSearch: React.FC<{
                 <OrderByButton
                     className="mr4"
                     asc={sortTableAsc}
-                    hideAscToggle={sortTableKey === 'importance_score'}
+                    hideAscToggle={sortTableKey === 'relevance'}
                     orderByField={startCase(sortTableKey)}
-                    orderByFieldSymbol={sortTableKey === 'name' ? 'Aa' : 'Is'}
+                    orderByFieldSymbol={sortTableKey === 'name' ? 'Aa' : 'Rl'}
                     onAscToggle={() => {
                         dispatch(updateTableSort(null, !sortTableAsc));
                     }}
                     onOrderByFieldToggle={() => {
                         dispatch(
                             updateTableSort(
-                                sortTableKey === 'name'
-                                    ? 'importance_score'
-                                    : 'name'
+                                sortTableKey === 'name' ? 'relevance' : 'name'
                             )
                         );
                     }}

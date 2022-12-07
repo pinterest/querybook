@@ -192,6 +192,6 @@ export interface ITableColumnStats {
 }
 
 export type SchemaSortKey = 'name' | 'table_count';
-export type SchemaTableSortKey = 'name' | 'importance_score';
+export type SchemaTableSortKey = 'name' | 'relevance';
 export const tableNameDraggableType = 'TableName-';
 export const tableNameDataTransferName = 'tableName';
