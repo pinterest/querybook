@@ -64,8 +64,9 @@ def construct_tables_query(
 
         # boost score for table name exact match
         if table_name:
+            boost_score = 100 if table_schema else 10
             should_clause.append(
-                {"term": {"name": {"value": table_name, "boost": 100}}},
+                {"term": {"name": {"value": table_name, "boost": boost_score}}},
             )
 
         keywords_query = {
