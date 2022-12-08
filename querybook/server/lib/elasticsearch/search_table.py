@@ -6,6 +6,18 @@ from lib.elasticsearch.query_utils import (
 )
 
 
+def _get_potential_exact_schema_table_name(keywords):
+    """Get the schema and table name from a full table name.
+
+    E.g. "default.table_a", will return (default, table_a)
+    """
+    dot_index = keywords.find(".")
+    if dot_index == -1:
+        return None, keywords
+
+    return keywords[:dot_index], keywords[dot_index + 1 :]
+
+
 def _match_table_word_fields(fields):
     search_fields = []
     for field in fields:
@@ -44,6 +56,18 @@ def construct_tables_query(
 ):
     keywords_query = {}
     if keywords:
+        should_clause = _match_table_phrase_queries(fields, keywords)
+
+        table_schema, table_name = _get_potential_exact_schema_table_name(keywords)
+        if table_schema:
+            filters.append(["schema", table_schema])
+
+        # boost score for table name exact match
+        if table_name:
+            should_clause.append(
+                {"term": {"name": {"value": table_name, "boost": 100}}},
+            )
+
         keywords_query = {
             "bool": {
                 "must": {
@@ -54,7 +78,7 @@ def construct_tables_query(
                         "operator": "and",
                     },
                 },
-                "should": _match_table_phrase_queries(fields, keywords),
+                "should": should_clause,
             }
         }
     else:

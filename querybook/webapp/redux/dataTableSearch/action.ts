@@ -28,11 +28,6 @@ function mapStateToSearch(state: IDataTableSearchState) {
         ([_, filterValue]) => filterValue != null
     );
 
-    const matchSchemaName = searchString.match(/(\w+)\.(\w*)/);
-    if (matchSchemaName) {
-        filters.push(['schema', matchSchemaName[1]]);
-    }
-
     const searchParam = {
         metastore_id: state.metastoreId,
         keywords: searchString,
