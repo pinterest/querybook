@@ -6,12 +6,16 @@ from lib.elasticsearch.query_utils import (
 )
 
 
-def _get_potential_exact_table_name(keywords):
+def _get_potential_exact_schema_table_name(keywords):
+    """Get the schema and table name from a full table name.
+
+    E.g. "default.table_a", will return (default, table_a)
+    """
     dot_index = keywords.find(".")
     if dot_index == -1:
-        return keywords
+        return None, keywords
 
-    return keywords[dot_index + 1 :]
+    return keywords[:dot_index], keywords[dot_index + 1 :]
 
 
 def _match_table_word_fields(fields):
@@ -35,11 +39,6 @@ def _match_table_phrase_queries(fields, keywords):
             phrase_queries.append(
                 {"match_phrase": {"full_name": {"query": keywords, "boost": 10}}}
             )
-            # boost score for table name exact match
-            table_name = _get_potential_exact_table_name(keywords)
-            phrase_queries.append(
-                {"match": {"name": {"query": table_name, "boost": 10}}}
-            )
         elif field == "column":
             phrase_queries.append({"match_phrase": {"columns": {"query": keywords}}})
     return phrase_queries
@@ -57,6 +56,18 @@ def construct_tables_query(
 ):
     keywords_query = {}
     if keywords:
+        table_schema, table_name = _get_potential_exact_schema_table_name(keywords)
+        if table_schema:
+            filters.append(["schema", table_schema])
+
+        should_clause = _match_table_phrase_queries(fields, keywords)
+
+        # boost score for table name exact match
+        if table_name:
+            should_clause.append(
+                {"term": {"name": {"value": table_name, "boost": 100}}},
+            )
+
         keywords_query = {
             "bool": {
                 "must": {
@@ -67,7 +78,7 @@ def construct_tables_query(
                         "operator": "and",
                     },
                 },
-                "should": _match_table_phrase_queries(fields, keywords),
+                "should": should_clause,
             }
         }
     else:
@@ -112,5 +123,8 @@ def construct_tables_query(
             }
         )
     )
+    import json
+
+    print("######################", json.dumps(query, indent=2))
 
     return query
