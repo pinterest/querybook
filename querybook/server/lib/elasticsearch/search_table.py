@@ -6,6 +6,14 @@ from lib.elasticsearch.query_utils import (
 )
 
 
+def _get_potential_exact_table_name(keywords):
+    dot_index = keywords.find(".")
+    if dot_index == -1:
+        return keywords
+
+    return keywords[dot_index + 1 :]
+
+
 def _match_table_word_fields(fields):
     search_fields = []
     for field in fields:
@@ -28,7 +36,10 @@ def _match_table_phrase_queries(fields, keywords):
                 {"match_phrase": {"full_name": {"query": keywords, "boost": 10}}}
             )
             # boost score for table name exact match
-            phrase_queries.append({"match": {"name": {"query": keywords, "boost": 10}}})
+            table_name = _get_potential_exact_table_name(keywords)
+            phrase_queries.append(
+                {"match": {"name": {"query": table_name, "boost": 10}}}
+            )
         elif field == "column":
             phrase_queries.append({"match_phrase": {"columns": {"query": keywords}}})
     return phrase_queries
