@@ -14,7 +14,6 @@ RUN rm -rf /var/lib/apt/lists/* \
     libsasl2-dev \
     libsasl2-modules \
     build-essential \
-    python-dev \
     libssl-dev \
     libldap2-dev \
     && curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
