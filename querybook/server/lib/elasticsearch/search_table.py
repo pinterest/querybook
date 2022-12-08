@@ -123,8 +123,5 @@ def construct_tables_query(
             }
         )
     )
-    import json
-
-    print("######################", json.dumps(query, indent=2))
 
     return query
