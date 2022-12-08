@@ -136,7 +136,7 @@ def make_socketio(app):
 
 
 def make_blue_print(app, limiter):
-    # Have flask automatically return the files within build, so that it gzips them
+    # Have flask automatically return the files within the build, so that it gzips them
     # and handles its 200/304 logic.
     blueprint = Blueprint(
         "static_build_files",

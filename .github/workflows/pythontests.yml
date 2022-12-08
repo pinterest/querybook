@@ -21,7 +21,6 @@ jobs:
                   libsasl2-dev
                   libsasl2-modules
                   build-essential
-                  python-dev
                   libssl-dev
                   libldap2-dev
             - uses: actions/setup-python@v2
