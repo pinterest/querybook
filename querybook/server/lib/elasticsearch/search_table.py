@@ -56,11 +56,11 @@ def construct_tables_query(
 ):
     keywords_query = {}
     if keywords:
+        should_clause = _match_table_phrase_queries(fields, keywords)
+
         table_schema, table_name = _get_potential_exact_schema_table_name(keywords)
         if table_schema:
             filters.append(["schema", table_schema])
-
-        should_clause = _match_table_phrase_queries(fields, keywords)
 
         # boost score for table name exact match
         if table_name:
