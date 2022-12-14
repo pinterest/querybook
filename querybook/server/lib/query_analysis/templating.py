@@ -7,7 +7,7 @@ from jinja2.exceptions import TemplateSyntaxError
 from jinja2.sandbox import SandboxedEnvironment
 from jinja2 import meta
 
-from app.db import DBSession
+from app.db import with_session
 from lib import metastore
 from logic import admin as admin_logic
 
@@ -71,7 +71,10 @@ def get_default_variables():
     }
 
 
-def create_get_latest_partition(engine_id: int) -> Callable[[str, str], str]:
+@with_session
+def create_get_latest_partition(
+    engine_id: int, session=None
+) -> Callable[[str, str], str]:
     _metastore_loader = None
 
     def get_metastore():
@@ -88,19 +91,18 @@ def create_get_latest_partition(engine_id: int) -> Callable[[str, str], str]:
         if _metastore_loader is not None:
             return _metastore_loader
 
-        with DBSession() as session:
-            engine = admin_logic.get_query_engine_by_id(engine_id, session=session)
-            metastore_id = engine.metastore_id if engine else None
-            _metastore_loader = (
-                metastore.get_metastore_loader(metastore_id, session=session)
-                if metastore_id is not None
-                else None
-            )
+        engine = admin_logic.get_query_engine_by_id(engine_id, session=session)
+        metastore_id = engine.metastore_id if engine else None
+        _metastore_loader = (
+            metastore.get_metastore_loader(metastore_id, session=session)
+            if metastore_id is not None
+            else None
+        )
 
-            if _metastore_loader is None:
-                raise LatestPartitionException(
-                    f"Unable to load metastore for engine id {engine_id}"
-                )
+        if _metastore_loader is None:
+            raise LatestPartitionException(
+                f"Unable to load metastore for engine id {engine_id}"
+            )
 
         return _metastore_loader
 
@@ -162,11 +164,13 @@ def create_get_latest_partition(engine_id: int) -> Callable[[str, str], str]:
     return get_latest_partition
 
 
-def get_templated_query_env(engine_id: int):
+def get_templated_query_env(engine_id: int, session=None):
     jinja_env = SandboxedEnvironment()
 
     # Inject helper functions
-    jinja_env.globals.update(latest_partition=create_get_latest_partition(engine_id))
+    jinja_env.globals.update(
+        latest_partition=create_get_latest_partition(engine_id, session=session)
+    )
 
     # Template rendering config
     jinja_env.trim_blocks = True
@@ -311,7 +315,7 @@ def get_templated_query_variables(variables_provided, jinja_env):
 
 
 def render_templated_query(
-    query: str, variables: Dict[str, str], engine_id: int
+    query: str, variables: Dict[str, str], engine_id: int, session=None
 ) -> str:
     """Renders the templated query, with global variables such as today/yesterday
        and functions such as `latest_partition`.
@@ -330,7 +334,7 @@ def render_templated_query(
     Returns:
         str -- The rendered string
     """
-    jinja_env = get_templated_query_env(engine_id)
+    jinja_env = get_templated_query_env(engine_id, session=session)
     try:
         escaped_query = _escape_sql_comments(query)
         variables_in_query = get_templated_variables_in_string(escaped_query, jinja_env)
