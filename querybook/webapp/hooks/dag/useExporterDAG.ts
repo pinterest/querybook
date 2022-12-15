@@ -6,36 +6,17 @@ import {
     useState,
 } from 'react';
 import { useDrop } from 'react-dnd';
-import { useSelector } from 'react-redux';
 import { Edge, Node, Position, ReactFlowInstance } from 'reactflow';
 
 import { queryCellDraggableType } from 'components/DataDocDAGExporter/DataDocDAGExporter';
 import { IDataQueryCell } from 'const/datadoc';
 import { usePrevious } from 'hooks/usePrevious';
 import { hashString } from 'lib/data-doc/data-doc-utils';
-import * as dataDocSelectors from 'redux/dataDoc/selector';
-import { IStoreState } from 'redux/store/types';
 import { IDragItem } from 'ui/DraggableList/types';
 import { QueryCellNode } from 'ui/FlowGraph/QueryCellNode';
 
 export const queryCellNode = 'queryCellNode';
 export const QueryDAGNodeTypes = { queryCellNode: QueryCellNode };
-
-export function useQueryCells(docId: number) {
-    const { dataDocCells } = useSelector((state: IStoreState) =>
-        dataDocSelectors.dataDocSelector(state, docId)
-    );
-
-    const queryCells: IDataQueryCell[] = useMemo(
-        () =>
-            dataDocCells.filter(
-                (cells) => cells.cell_type === 'query'
-            ) as IDataQueryCell[],
-        [dataDocCells]
-    );
-
-    return queryCells;
-}
 
 export const initialNodePosition = { x: 0, y: 0 };
 export const edgeStyle = { stroke: 'var(--bg-dark)' };

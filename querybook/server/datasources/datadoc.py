@@ -7,13 +7,15 @@ from app.auth.permission import (
     verify_data_cells_permission,
 )
 from app.datasource import register, api_assert, with_impression
-from app.flask_app import socketio
+from app.flask_app import socketio, celery
 from app.db import DBSession, with_session
 from const.impression import ImpressionItemType
+from const.query_execution import QueryExecutionType
 from env import QuerybookSettings
 
 from lib.celery.cron import validate_cron
 from lib.logger import get_logger
+from lib.notify.all_notifiers import DEFAULT_NOTIFIER
 from lib.scheduled_datadoc.validator import validate_datadoc_schedule_config
 from lib.scheduled_datadoc.legacy import convert_if_legacy_datadoc_schedule
 
@@ -377,6 +379,41 @@ def run_data_doc(id):
         )
         api_assert(schedule, "Schedule does not exist")
         run_and_log_scheduled_task(schedule.id, session=session)
+
+
+@register("/datadoc/<int:id>/run/", methods=["POST"])
+def adhoc_run_data_doc(id, originator=None):
+    with DBSession() as session:
+        assert_can_write(id, session=session)
+        verify_data_doc_permission(id, session=session)
+
+        notification_preference = user_logic.get_user_settings(
+            current_user.id, "notification_preference", session=session
+        )
+        notifier_name = (
+            notification_preference.value
+            if notification_preference is not None
+            else DEFAULT_NOTIFIER
+        )
+
+        result = celery.send_task(
+            "tasks.run_datadoc.run_datadoc",
+            args=[],
+            kwargs={
+                "doc_id": id,
+                "user_id": current_user.id,
+                "execution_type": QueryExecutionType.ADHOC.value,
+                "notifications": [
+                    {
+                        "config": {"to_user": [current_user.id]},
+                        "on": 0,
+                        "with": notifier_name,
+                    }
+                ],
+                "originator": originator,
+            },
+        )
+        return result
 
 
 @register("/datadoc/<int:doc_id>/editor/", methods=["GET"])

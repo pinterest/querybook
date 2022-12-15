@@ -1,7 +1,7 @@
 from celery import chain
 
 from app.db import DBSession
-from app.flask_app import celery
+from app.flask_app import celery, socketio
 
 from const.query_execution import QueryExecutionStatus, QueryExecutionType
 from const.schedule import TaskRunStatus
@@ -41,6 +41,7 @@ def run_datadoc_with_config(
     execution_type=QueryExecutionType.SCHEDULED.value,
     # Exporting related settings
     exports=[],
+    originator=None,
     *args,
     **kwargs,
 ):
@@ -55,8 +56,9 @@ def run_datadoc_with_config(
         runner_id = user_id if user_id is not None else data_doc.owner_uid
         query_cells = data_doc.get_query_cells()
 
-        # Create db entry record
-        record_id = create_task_run_record_for_celery_task(self, session=session)
+        # Create db entry record only for scheduled run
+        if execution_type == QueryExecutionType.SCHEDULED.value:
+            record_id = create_task_run_record_for_celery_task(self, session=session)
 
         completion_params = {
             "doc_id": doc_id,
@@ -89,6 +91,8 @@ def run_datadoc_with_config(
                     "engine_id": engine_id,
                     "uid": runner_id,
                 },
+                "data_doc_id": doc_id,
+                "originator": originator,
             }
             tasks_to_run.append(
                 _start_query_execution_task.si(
@@ -115,18 +119,37 @@ def _start_query_execution_task(
     previous_query_status,
     cell_id,
     query_execution_params,
+    data_doc_id,
+    originator,
 ):
     if previous_query_status != QueryExecutionStatus.DONE.value:
         raise Exception(GENERIC_QUERY_FAILURE_MSG)
 
     with DBSession() as session:
-        query_execution_id = qe_logic.create_query_execution(
+        query_execution = qe_logic.create_query_execution(
             **query_execution_params, session=session
-        ).id
-        datadoc_logic.append_query_executions_to_data_cell(
-            cell_id, [query_execution_id], session=session
         )
-        return query_execution_id
+        datadoc_logic.append_query_executions_to_data_cell(
+            cell_id,
+            [query_execution.id],
+            session=session,
+        )
+
+        # adhoc datadoc run will pass over originator for realtime status update through websocket
+        if originator:
+            socketio.emit(
+                "data_doc_query_execution",
+                (
+                    originator,
+                    query_execution.to_dict(),
+                    cell_id,
+                    True,  # True here indicates the message is from data doc run (fromDataDocRun).
+                ),
+                namespace="/datadoc",
+                room=data_doc_id,
+                broadcast=True,
+            )
+        return query_execution.id
 
 
 @celery.task
@@ -189,10 +212,11 @@ def on_datadoc_completion(
         error_msg = str(e)
         LOG.error(e, exc_info=True)
     finally:
-        update_task_run_record(
-            id=record_id,
-            status=TaskRunStatus.SUCCESS if is_success else TaskRunStatus.FAILURE,
-            error_message=error_msg,
-        )
+        if record_id:
+            update_task_run_record(
+                id=record_id,
+                status=TaskRunStatus.SUCCESS if is_success else TaskRunStatus.FAILURE,
+                error_message=error_msg,
+            )
 
     return is_success

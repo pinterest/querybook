@@ -91,3 +91,28 @@ export const queryExecutionViewersByUidSelector = createSelector(
             ? viewersByExecutionIdUid[queryExecution.id]
             : {}
 );
+
+const latestQueryExecutionIdsSelector = (
+    state: IStoreState,
+    cellIds: number[]
+) =>
+    cellIds
+        .map((cellId) => {
+            const executions =
+                state.queryExecutions.dataCellIdQueryExecution[cellId] ?? [];
+            return [...executions].sort((a, b) => b - a)[0];
+        })
+        .filter(Boolean);
+
+// By given a list of query cell ids, this selector will return the latest
+// query execution of each query cell in an array. The order may be different
+// from the order of the input query cell ids.
+export const makeLatestQueryExecutionsSelector = () =>
+    createSelector(
+        latestQueryExecutionIdsSelector,
+        queryExecutionByIdSelector,
+        (queryExecutionIds, queryExecutionById) =>
+            queryExecutionIds
+                .map((queryExecutionId) => queryExecutionById[queryExecutionId])
+                .filter((q) => q)
+    );

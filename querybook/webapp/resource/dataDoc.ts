@@ -101,6 +101,11 @@ export const DataDocResource = {
         }>(`/favorite_data_doc/${docId}/`),
     unfavorite: (docId: number) => ds.delete(`/favorite_data_doc/${docId}/`),
 
+    run: (docId: number) =>
+        ds.save<null>(`/datadoc/${docId}/run/`, {
+            originator: dataDocSocket.socketId,
+        }),
+
     getDAGExport: (docId: number) =>
         ds.fetch<IDataDocSavedDAGExport>(`/datadoc/${docId}/dag_export/`),
     saveDAGExport: (
