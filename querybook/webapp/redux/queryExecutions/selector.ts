@@ -92,7 +92,7 @@ export const queryExecutionViewersByUidSelector = createSelector(
             : {}
 );
 
-const latestQueryExecutionIdsSelector = (
+const latestQueryExecutionIdsPerCellSelector = (
     state: IStoreState,
     cellIds: number[]
 ) =>
@@ -100,7 +100,7 @@ const latestQueryExecutionIdsSelector = (
         .map((cellId) => {
             const executions =
                 state.queryExecutions.dataCellIdQueryExecution[cellId] ?? [];
-            return [...executions].sort((a, b) => b - a)[0];
+            return Math.max(...executions);
         })
         .filter(Boolean);
 
@@ -109,7 +109,7 @@ const latestQueryExecutionIdsSelector = (
 // from the order of the input query cell ids.
 export const makeLatestQueryExecutionsSelector = () =>
     createSelector(
-        latestQueryExecutionIdsSelector,
+        latestQueryExecutionIdsPerCellSelector,
         queryExecutionByIdSelector,
         (queryExecutionIds, queryExecutionById) =>
             queryExecutionIds

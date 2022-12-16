@@ -7,6 +7,7 @@ import { sendConfirm } from 'lib/querybookUI';
 import { makeLatestQueryExecutionsSelector } from 'redux/queryExecutions/selector';
 import { DataDocResource } from 'resource/dataDoc';
 import { IconButton } from 'ui/Button/IconButton';
+import { Message } from 'ui/Message/Message';
 
 interface IProps {
     docId: number;
@@ -20,30 +21,38 @@ export const DataDocRunAllButton: React.FunctionComponent<IProps> = ({
         makeLatestQueryExecutionsSelector,
         queryCells.map((c) => c.id) ?? []
     );
+    const hasQueryRunning = latestQueryExecutions.some((q) => q.status < 3);
 
-    const runAll = useCallback(
-        () =>
-            DataDocResource.run(docId).then(() => {
-                toast.success('DataDoc execution started!');
-            }),
-        [docId]
+    const ConfirmMessageDOM = useCallback(
+        () => (
+            <div>
+                <div>
+                    {`You will be executing ${queryCells.length} query cells sequentially. If any of them
+                fails, the sequence of execution will be stopped.`}
+                </div>
+                {hasQueryRunning && (
+                    <Message type="warning" className="mt8">
+                        There are some query cells still running. Do you want to
+                        run anyway?
+                    </Message>
+                )}
+            </div>
+        ),
+        [queryCells.length, hasQueryRunning]
     );
 
     const onRunAll = useCallback(() => {
-        if (latestQueryExecutions.some((q) => q.status < 3)) {
-            sendConfirm({
-                header: 'Run All Cells',
-                message:
-                    'At least one of the query cell is still running. Do you want to run anyway?',
-                onConfirm: () => {
-                    runAll();
-                },
-                confirmText: 'Run Anyway',
-            });
-        } else {
-            runAll();
-        }
-    }, [latestQueryExecutions, runAll]);
+        sendConfirm({
+            header: 'Run All Cells',
+            message: ConfirmMessageDOM(),
+            onConfirm: () => {
+                DataDocResource.run(docId).then(() => {
+                    toast.success('DataDoc execution started!');
+                });
+            },
+            confirmText: 'Run',
+        });
+    }, [ConfirmMessageDOM, docId]);
 
     return (
         <IconButton

@@ -16,6 +16,7 @@ from env import QuerybookSettings
 from lib.celery.cron import validate_cron
 from lib.logger import get_logger
 from lib.notify.all_notifiers import DEFAULT_NOTIFIER
+from lib.notify.utils import get_user_preferred_notifier, notify_user
 from lib.scheduled_datadoc.validator import validate_datadoc_schedule_config
 from lib.scheduled_datadoc.legacy import convert_if_legacy_datadoc_schedule
 
@@ -32,7 +33,6 @@ from logic.schedule import (
     update_datadoc_schedule_owner,
 )
 from models.environment import Environment
-from lib.notify.utils import notify_user
 
 LOG = get_logger(__file__)
 
@@ -382,38 +382,29 @@ def run_data_doc(id):
 
 
 @register("/datadoc/<int:id>/run/", methods=["POST"])
-def adhoc_run_data_doc(id, originator=None):
-    with DBSession() as session:
-        assert_can_write(id, session=session)
-        verify_data_doc_permission(id, session=session)
+def adhoc_run_data_doc(id):
+    assert_can_write(id)
+    verify_data_doc_permission(id)
 
-        notification_preference = user_logic.get_user_settings(
-            current_user.id, "notification_preference", session=session
-        )
-        notifier_name = (
-            notification_preference.value
-            if notification_preference is not None
-            else DEFAULT_NOTIFIER
-        )
+    notifier_name = get_user_preferred_notifier(current_user.id)
 
-        result = celery.send_task(
-            "tasks.run_datadoc.run_datadoc",
-            args=[],
-            kwargs={
-                "doc_id": id,
-                "user_id": current_user.id,
-                "execution_type": QueryExecutionType.ADHOC.value,
-                "notifications": [
-                    {
-                        "config": {"to_user": [current_user.id]},
-                        "on": 0,
-                        "with": notifier_name,
-                    }
-                ],
-                "originator": originator,
-            },
-        )
-        return result
+    result = celery.send_task(
+        "tasks.run_datadoc.run_datadoc",
+        args=[],
+        kwargs={
+            "doc_id": id,
+            "user_id": current_user.id,
+            "execution_type": QueryExecutionType.ADHOC.value,
+            "notifications": [
+                {
+                    "config": {"to_user": [current_user.id]},
+                    "on": 0,
+                    "with": notifier_name,
+                }
+            ],
+        },
+    )
+    return result
 
 
 @register("/datadoc/<int:doc_id>/editor/", methods=["GET"])

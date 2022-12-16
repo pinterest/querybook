@@ -41,7 +41,6 @@ def run_datadoc_with_config(
     execution_type=QueryExecutionType.SCHEDULED.value,
     # Exporting related settings
     exports=[],
-    originator=None,
     *args,
     **kwargs,
 ):
@@ -92,7 +91,6 @@ def run_datadoc_with_config(
                     "uid": runner_id,
                 },
                 "data_doc_id": doc_id,
-                "originator": originator,
             }
             tasks_to_run.append(
                 _start_query_execution_task.si(
@@ -120,7 +118,6 @@ def _start_query_execution_task(
     cell_id,
     query_execution_params,
     data_doc_id,
-    originator,
 ):
     if previous_query_status != QueryExecutionStatus.DONE.value:
         raise Exception(GENERIC_QUERY_FAILURE_MSG)
@@ -135,20 +132,18 @@ def _start_query_execution_task(
             session=session,
         )
 
-        # adhoc datadoc run will pass over originator for realtime status update through websocket
-        if originator:
-            socketio.emit(
-                "data_doc_query_execution",
-                (
-                    originator,
-                    query_execution.to_dict(),
-                    cell_id,
-                    True,  # True here indicates the message is from data doc run (fromDataDocRun).
-                ),
-                namespace="/datadoc",
-                room=data_doc_id,
-                broadcast=True,
-            )
+        socketio.emit(
+            "data_doc_query_execution",
+            (
+                None,
+                query_execution.to_dict(),
+                cell_id,
+                True,  # True here indicates the message is from data doc run (fromDataDocRun).
+            ),
+            namespace="/datadoc",
+            room=data_doc_id,
+            broadcast=True,
+        )
         return query_execution.id
 
 
@@ -212,6 +207,7 @@ def on_datadoc_completion(
         error_msg = str(e)
         LOG.error(e, exc_info=True)
     finally:
+        # when record_id is None, it's trigerred by adhoc datadoc run, no need to update the record.
         if record_id:
             update_task_run_record(
                 id=record_id,
