@@ -1,13 +1,10 @@
 import React, { useMemo } from 'react';
 
 import { DataDocDAGExporterContext } from 'context/DataDocDAGExporter';
-import {
-    useExporterDAG,
-    useQueryCells,
-    useUnusedQueryCells,
-} from 'hooks/dag/useExporterDAG';
+import { useExporterDAG, useUnusedQueryCells } from 'hooks/dag/useExporterDAG';
 import { useCurrentExporter } from 'hooks/dag/useExporterSettings';
 import { useSavedDAG } from 'hooks/dag/useSavedDAG';
+import { useQueryCells } from 'hooks/dataDoc/useQueryCells';
 import { DataDocResource } from 'resource/dataDoc';
 import { IconButton } from 'ui/Button/IconButton';
 import { Markdown } from 'ui/Markdown/Markdown';

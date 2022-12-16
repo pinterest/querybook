@@ -7,13 +7,15 @@ from app.auth.permission import (
     verify_data_cells_permission,
 )
 from app.datasource import register, api_assert, with_impression
-from app.flask_app import socketio
+from app.flask_app import socketio, celery
 from app.db import DBSession, with_session
 from const.impression import ImpressionItemType
+from const.query_execution import QueryExecutionType
 from env import QuerybookSettings
 
 from lib.celery.cron import validate_cron
 from lib.logger import get_logger
+from lib.notify.utils import get_user_preferred_notifier, notify_user
 from lib.scheduled_datadoc.validator import validate_datadoc_schedule_config
 from lib.scheduled_datadoc.legacy import convert_if_legacy_datadoc_schedule
 
@@ -30,7 +32,6 @@ from logic.schedule import (
     update_datadoc_schedule_owner,
 )
 from models.environment import Environment
-from lib.notify.utils import notify_user
 
 LOG = get_logger(__file__)
 
@@ -377,6 +378,31 @@ def run_data_doc(id):
         )
         api_assert(schedule, "Schedule does not exist")
         run_and_log_scheduled_task(schedule.id, session=session)
+
+
+@register("/datadoc/<int:id>/run/", methods=["POST"])
+def adhoc_run_data_doc(id):
+    assert_can_write(id)
+    verify_data_doc_permission(id)
+
+    notifier_name = get_user_preferred_notifier(current_user.id)
+
+    celery.send_task(
+        "tasks.run_datadoc.run_datadoc",
+        args=[],
+        kwargs={
+            "doc_id": id,
+            "user_id": current_user.id,
+            "execution_type": QueryExecutionType.ADHOC.value,
+            "notifications": [
+                {
+                    "config": {"to_user": [current_user.id]},
+                    "on": 0,
+                    "with": notifier_name,
+                }
+            ],
+        },
+    )
 
 
 @register("/datadoc/<int:doc_id>/editor/", methods=["GET"])
