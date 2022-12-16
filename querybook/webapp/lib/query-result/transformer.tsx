@@ -104,6 +104,11 @@ const queryResultTransformers: IColumnTransformer[] = [
                 if (!json || typeof json !== 'object') {
                     return v;
                 }
+
+                // This is a workaround for https://github.com/sidorares/json-bigint/issues/38
+                // to make sure it is of `Object` prototype when passed over to <ReactJson />
+                const jsonSrc = { ...json };
+
                 return (
                     <ReactJson
                         collapsed={1} // keep first level expanded by default
@@ -111,7 +116,7 @@ const queryResultTransformers: IColumnTransformer[] = [
                         enableClipboard={false}
                         name={false}
                         quotesOnKeys={false}
-                        src={json}
+                        src={jsonSrc}
                         theme={ReactJsonTheme}
                     />
                 );
