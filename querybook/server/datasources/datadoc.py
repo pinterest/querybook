@@ -387,7 +387,7 @@ def adhoc_run_data_doc(id):
 
     notifier_name = get_user_preferred_notifier(current_user.id)
 
-    result = celery.send_task(
+    celery.send_task(
         "tasks.run_datadoc.run_datadoc",
         args=[],
         kwargs={
@@ -403,7 +403,6 @@ def adhoc_run_data_doc(id):
             ],
         },
     )
-    return result
 
 
 @register("/datadoc/<int:doc_id>/editor/", methods=["GET"])

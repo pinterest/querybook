@@ -104,9 +104,11 @@ const latestQueryExecutionIdsPerCellSelector = (
         })
         .filter(Boolean);
 
-// By given a list of query cell ids, this selector will return the latest
-// query execution of each query cell in an array. The order may be different
-// from the order of the input query cell ids.
+/**
+ * By given a list of query cell ids, this selector will return the latest
+ * query execution of each query cell in an array. The order may be different
+ * from the order of the input query cell ids.
+ */
 export const makeLatestQueryExecutionsSelector = () =>
     createSelector(
         latestQueryExecutionIdsPerCellSelector,

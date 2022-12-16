@@ -66,7 +66,6 @@ export interface IDataDocSocketEvent {
         (
             queryExecution: IQueryExecution,
             dataCellId: number,
-            fromDataDocRun: boolean,
             isSameOrigin: boolean
         ) => any
     >;
@@ -413,13 +412,12 @@ export class DataDocSocket {
 
             this.socket.on(
                 'data_doc_query_execution',
-                (originator, rawQueryExecution, dataCellId, fromDataDocRun) =>
+                (originator, rawQueryExecution, dataCellId) =>
                     this.resolvePromiseAndEvent(
                         'receiveQueryExecution',
                         originator,
                         rawQueryExecution,
-                        dataCellId,
-                        fromDataDocRun
+                        dataCellId
                     )
             );
 

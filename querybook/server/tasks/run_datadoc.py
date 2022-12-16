@@ -138,7 +138,6 @@ def _start_query_execution_task(
                 None,
                 query_execution.to_dict(),
                 cell_id,
-                True,  # True here indicates the message is from data doc run (fromDataDocRun).
             ),
             namespace="/datadoc",
             room=data_doc_id,

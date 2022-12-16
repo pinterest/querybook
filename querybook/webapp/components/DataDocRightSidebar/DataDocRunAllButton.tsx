@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import toast from 'react-hot-toast';
 
 import { useQueryCells } from 'hooks/dataDoc/useQueryCells';
@@ -21,21 +21,24 @@ export const DataDocRunAllButton: React.FunctionComponent<IProps> = ({
         makeLatestQueryExecutionsSelector,
         queryCells.map((c) => c.id) ?? []
     );
-    const hasQueryRunning = latestQueryExecutions.some((q) => q.status < 3);
+    const hasQueryRunning = useMemo(
+        () => latestQueryExecutions.some((q) => q.status < 3),
+        [latestQueryExecutions]
+    );
 
     const ConfirmMessageDOM = useCallback(
         () => (
             <div>
-                <div>
-                    {`You will be executing ${queryCells.length} query cells sequentially. If any of them
-                fails, the sequence of execution will be stopped.`}
-                </div>
                 {hasQueryRunning && (
-                    <Message type="warning" className="mt8">
+                    <Message type="warning" className="mb8">
                         There are some query cells still running. Do you want to
                         run anyway?
                     </Message>
                 )}
+                <div>
+                    {`You will be executing ${queryCells.length} query cells sequentially. If any of them
+                fails, the sequence of execution will be stopped.`}
+                </div>
             </div>
         ),
         [queryCells.length, hasQueryRunning]
@@ -46,8 +49,10 @@ export const DataDocRunAllButton: React.FunctionComponent<IProps> = ({
             header: 'Run All Cells',
             message: ConfirmMessageDOM(),
             onConfirm: () => {
-                DataDocResource.run(docId).then(() => {
-                    toast.success('DataDoc execution started!');
+                toast.promise(DataDocResource.run(docId), {
+                    loading: null,
+                    success: 'DataDoc execution started!',
+                    error: 'Failed to start the execution',
                 });
             },
             confirmText: 'Run',

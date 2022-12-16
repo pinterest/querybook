@@ -188,13 +188,8 @@ export function openDataDoc(docId: number): ThunkResult<Promise<any>> {
             },
 
             receiveQueryExecution: {
-                resolve: (
-                    queryExecution,
-                    dataCellId,
-                    fromDataDocRun,
-                    isSameOrigin
-                ) => {
-                    if (!isSameOrigin || fromDataDocRun) {
+                resolve: (queryExecution, dataCellId, isSameOrigin) => {
+                    if (!isSameOrigin) {
                         (dispatch as QueryExecutionDispatch)(
                             receiveQueryExecution(queryExecution, dataCellId)
                         );
