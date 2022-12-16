@@ -15,7 +15,6 @@ from env import QuerybookSettings
 
 from lib.celery.cron import validate_cron
 from lib.logger import get_logger
-from lib.notify.all_notifiers import DEFAULT_NOTIFIER
 from lib.notify.utils import get_user_preferred_notifier, notify_user
 from lib.scheduled_datadoc.validator import validate_datadoc_schedule_config
 from lib.scheduled_datadoc.legacy import convert_if_legacy_datadoc_schedule
