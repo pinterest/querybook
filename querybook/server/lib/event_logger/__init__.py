@@ -29,9 +29,10 @@ class EventLogger:
 
     def log_api_request(self, route: str, method: str, params: dict):
         try:
-            self.logger.log_api_request(
-                uid=current_user.id, route=route, method=method, params=params
-            )
+            if current_user.is_authenticated:
+                self.logger.log_api_request(
+                    uid=current_user.id, route=route, method=method, params=params
+                )
         except Exception as e:
             LOG.error(e, exc_info=True)
 
