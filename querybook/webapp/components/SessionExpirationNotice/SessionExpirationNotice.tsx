@@ -1,11 +1,17 @@
 import React, { useCallback } from 'react';
 
 import { useGlobalState } from 'hooks/redux/useGlobalState';
+import { UserResource } from 'resource/user';
 import { Title } from 'ui/Title/Title';
 
 export const SessionExpirationNotice: React.FC = () => {
     const [sessionExpired] = useGlobalState('sessionExpired', false);
-    const refreshPage = useCallback(() => window.location.reload(), []);
+    const refreshPage = useCallback(() => {
+        // Try to logout in case it wasn't shown correctly
+        UserResource.logout().finally(() => {
+            window.location.reload();
+        });
+    }, []);
     return sessionExpired ? (
         <div
             className="flex-center"

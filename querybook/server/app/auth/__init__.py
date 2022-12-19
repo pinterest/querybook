@@ -39,6 +39,11 @@ def load_auth():
 
 
 def logout():
+    global auth
+    has_logout = hasattr(auth, "on_logout_user")
+    if has_logout:
+        auth.on_logout_user()
+
     logout_user()
 
 
