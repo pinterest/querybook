@@ -28,19 +28,23 @@ export const DataDocSchemaNavigator: React.FunctionComponent = () => {
         />
     );
 
-    const tableViewDOM = tableId ? (
-        <DataTableViewMini tableId={tableId} onHide={() => setTableId(null)} />
-    ) : exactMatchId ? (
-        <div className="DataTableViewMini-with-message">
-            <div className="p8">
-                <Message type="success" size="small">
-                    Exact table match found.
-                </Message>
-            </div>
+    const tableViewDOM =
+        tableId && tableId !== exactMatchId ? (
+            <DataTableViewMini
+                tableId={tableId}
+                onHide={() => setTableId(null)}
+            />
+        ) : exactMatchId ? (
+            <div className="DataTableViewMini-with-message">
+                <div className="p8">
+                    <Message type="success" size="small">
+                        Exact table match found.
+                    </Message>
+                </div>
 
-            <DataTableViewMini tableId={exactMatchId} />
-        </div>
-    ) : null;
+                <DataTableViewMini tableId={exactMatchId} />
+            </div>
+        ) : null;
 
     const tableViewContainer = tableViewDOM && (
         <Resizable
