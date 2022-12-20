@@ -1,5 +1,6 @@
 from datetime import datetime
 from functools import wraps
+from sqlalchemy.orm import aliased
 from sqlalchemy.sql.expression import func, and_
 
 from app.flask_app import celery
@@ -10,9 +11,7 @@ from models.schedule import (
     TaskSchedule,
     TaskRunRecord,
 )
-from models.datadoc import DataDoc
-
-DATADOC_SCHEDULE_PREFIX = "run_data_doc_"
+from models.datadoc import DATADOC_SCHEDULE_PREFIX, DataDoc
 
 
 @with_session
@@ -178,11 +177,16 @@ def get_data_doc_schedule_name(id: int):
 def get_scheduled_data_docs_by_user(
     uid, environment_id, offset, limit, filters={}, session=None
 ):
+    # TaskSchedule is already included in the query through the
+    # DataDoc column property, `scheduled`
+    # Need to use an alias here to join the same table twice
+    aliasedTaskSchedule = aliased(TaskSchedule)
     query = (
-        session.query(DataDoc, TaskSchedule)
+        session.query(DataDoc, aliasedTaskSchedule)
         .join(
-            TaskSchedule,
-            TaskSchedule.name == func.concat(DATADOC_SCHEDULE_PREFIX, DataDoc.id),
+            aliasedTaskSchedule,
+            aliasedTaskSchedule.name
+            == func.concat(DATADOC_SCHEDULE_PREFIX, DataDoc.id),
             isouter=(not filters.get("scheduled_only", False)),
         )
         .filter(DataDoc.owner_uid == uid)

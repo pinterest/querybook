@@ -59,7 +59,7 @@ export const BoardList: React.FunctionComponent<IProps> = ({
                     className={className}
                     onClick={() => onBoardClick(board)}
                     isRow
-                    icon={selectedIcon}
+                    icons={[selectedIcon]}
                     title={name}
                 />
             );

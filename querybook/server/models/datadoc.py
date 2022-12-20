@@ -1,10 +1,14 @@
 import sqlalchemy as sql
-from sqlalchemy.orm import backref, relationship
+from sqlalchemy.orm import backref, column_property, relationship
+from sqlalchemy.sql.expression import func
 
 from app import db
 from const.db import name_length, now, description_length, mediumtext_length
 from const.data_doc import DataCellType
 from lib.sqlalchemy import CRUDMixin
+from models.schedule import TaskSchedule
+
+DATADOC_SCHEDULE_PREFIX = "run_data_doc_"
 
 Base = db.Base
 
@@ -24,6 +28,12 @@ class DataDoc(Base, CRUDMixin):
     public = sql.Column(sql.Boolean, default=True, nullable=False)
     # When archived, data doc will be hidden from everyone
     archived = sql.Column(sql.Boolean, default=False, nullable=False)
+
+    scheduled = column_property(
+        sql.exists().where(
+            TaskSchedule.name == func.concat(DATADOC_SCHEDULE_PREFIX, id),
+        )
+    )
 
     # AKA creator
     owner_uid = sql.Column(sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"))
@@ -54,6 +64,7 @@ class DataDoc(Base, CRUDMixin):
             "environment_id": self.environment_id,
             "public": self.public,
             "archived": self.archived,
+            "scheduled": self.scheduled,
             "owner_uid": self.owner_uid,
             "created_at": self.created_at,
             "updated_at": self.updated_at,

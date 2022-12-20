@@ -58,6 +58,7 @@ export interface IDataDoc {
     id: number;
     public: boolean;
     archived: boolean;
+    scheduled: boolean;
 
     environment_id: number;
     owner_uid: number;

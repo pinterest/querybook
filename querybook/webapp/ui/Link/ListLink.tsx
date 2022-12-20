@@ -13,7 +13,7 @@ interface IProps extends ILinkProps {
     className?: string;
     title?: string;
     noPlaceHolder?: boolean;
-    icon?: AllLucideIconNames;
+    icons?: AllLucideIconNames[];
     isRow?: boolean;
 }
 
@@ -21,7 +21,7 @@ export const ListLink: React.FunctionComponent<IProps> = React.memo(
     ({
         className,
         title,
-        icon,
+        icons,
         isRow,
         noPlaceHolder = false,
         children,
@@ -41,7 +41,10 @@ export const ListLink: React.FunctionComponent<IProps> = React.memo(
                 ) : noPlaceHolder ? null : (
                     <UntitledText size="small" />
                 )}
-                {icon && <Icon name={icon} size={16} />}
+                {icons &&
+                    icons.map((icon) => (
+                        <Icon key={icon} name={icon} size={16} />
+                    ))}
                 {children}
             </Link>
         );
