@@ -1,5 +1,5 @@
 import Resizable from 're-resizable';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { DataTableNavigator } from 'components/DataTableNavigator/DataTableNavigator';
 import { DataTableViewMini } from 'components/DataTableViewMini/DataTableViewMini';
@@ -15,6 +15,12 @@ export const DataDocSchemaNavigator: React.FunctionComponent = () => {
     const [tableId, setTableId] = React.useState<number>(null);
     const exactMatchId = useExactMatchTableId();
 
+    useEffect(() => {
+        if (exactMatchId) {
+            setTableId(exactMatchId);
+        }
+    }, [exactMatchId]);
+
     const schemaPanel = (
         <DataTableNavigator
             onTableRowClick={(id, e) => {
@@ -28,23 +34,22 @@ export const DataDocSchemaNavigator: React.FunctionComponent = () => {
         />
     );
 
-    const tableViewDOM =
-        tableId && tableId !== exactMatchId ? (
-            <DataTableViewMini
-                tableId={tableId}
-                onHide={() => setTableId(null)}
-            />
-        ) : exactMatchId ? (
-            <div className="DataTableViewMini-with-message">
+    const tableViewDOM = tableId ? (
+        <div className="DataTableViewMini-wrapper">
+            {tableId === exactMatchId && (
                 <div className="p8">
                     <Message type="success" size="small">
                         Exact table match found.
                     </Message>
                 </div>
+            )}
 
-                <DataTableViewMini tableId={exactMatchId} />
-            </div>
-        ) : null;
+            <DataTableViewMini
+                tableId={tableId}
+                onHide={() => setTableId(null)}
+            />
+        </div>
+    ) : null;
 
     const tableViewContainer = tableViewDOM && (
         <Resizable
@@ -54,8 +59,6 @@ export const DataDocSchemaNavigator: React.FunctionComponent = () => {
                 height: '600px',
             }}
             enable={enableResizable({ top: true, bottom: true })}
-            // minHeight={'200px'}
-            // maxHeight={'900px'}
         >
             {tableViewDOM}
         </Resizable>

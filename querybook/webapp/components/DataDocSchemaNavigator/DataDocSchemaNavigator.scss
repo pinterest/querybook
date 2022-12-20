@@ -8,14 +8,10 @@
         max-height: 80%;
         box-shadow: var(--box-shadow-sm);
 
-        > .DataTableViewMini,
-        > .DataTableViewMini-with-message {
+        > .DataTableViewMini-wrapper {
             border-top: var(--border);
             height: 100%;
             margin-left: 4px;
-        }
-
-        > .DataTableViewMini-with-message {
             display: flex;
             flex-direction: column;
 
