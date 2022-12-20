@@ -1,16 +1,25 @@
 import Resizable from 're-resizable';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { DataTableNavigator } from 'components/DataTableNavigator/DataTableNavigator';
 import { DataTableViewMini } from 'components/DataTableViewMini/DataTableViewMini';
+import { useExactMatchTableId } from 'hooks/table/useExactMatchTableId';
 import { enableResizable } from 'lib/utils';
 import { getCurrentEnv } from 'lib/utils/query-string';
 import { FullHeight } from 'ui/FullHeight/FullHeight';
+import { Message } from 'ui/Message/Message';
 
 import './DataDocSchemaNavigator.scss';
 
 export const DataDocSchemaNavigator: React.FunctionComponent = () => {
     const [tableId, setTableId] = React.useState<number>(null);
+    const exactMatchId = useExactMatchTableId();
+
+    useEffect(() => {
+        if (exactMatchId) {
+            setTableId(exactMatchId);
+        }
+    }, [exactMatchId]);
 
     const schemaPanel = (
         <DataTableNavigator
@@ -24,7 +33,25 @@ export const DataDocSchemaNavigator: React.FunctionComponent = () => {
             selectedTableId={tableId}
         />
     );
-    const tableView = tableId && (
+
+    const tableViewDOM = tableId ? (
+        <div className="DataTableViewMini-wrapper">
+            {tableId === exactMatchId && (
+                <div className="p8">
+                    <Message type="success" size="small">
+                        Exact table match found.
+                    </Message>
+                </div>
+            )}
+
+            <DataTableViewMini
+                tableId={tableId}
+                onHide={() => setTableId(null)}
+            />
+        </div>
+    ) : null;
+
+    const tableViewContainer = tableViewDOM && (
         <Resizable
             className="schema-info-panel"
             defaultSize={{
@@ -32,20 +59,15 @@ export const DataDocSchemaNavigator: React.FunctionComponent = () => {
                 height: '600px',
             }}
             enable={enableResizable({ top: true, bottom: true })}
-            // minHeight={'200px'}
-            // maxHeight={'900px'}
         >
-            <DataTableViewMini
-                tableId={tableId}
-                onHide={() => setTableId(null)}
-            />
+            {tableViewDOM}
         </Resizable>
     );
 
     const contentDOM = (
         <FullHeight flex="column" className="DataDocSchemaNavigator">
             {schemaPanel}
-            {tableView}
+            {tableViewContainer}
         </FullHeight>
     );
 
