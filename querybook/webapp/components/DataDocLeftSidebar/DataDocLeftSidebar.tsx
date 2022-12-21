@@ -1,9 +1,11 @@
 import clsx from 'clsx';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { DataTableViewMini } from 'components/DataTableViewMini/DataTableViewMini';
 import { IDataCell } from 'const/datadoc';
+import { useEvent } from 'hooks/useEvent';
+import { getShortcutSymbols, KeyMap, matchKeyMap } from 'lib/utils/keyboard';
 import { setSidebarTableId } from 'redux/querybookUI/action';
 import { IStoreState } from 'redux/store/types';
 import { IconButton } from 'ui/Button/IconButton';
@@ -20,6 +22,7 @@ interface IProps {
 }
 
 type LeftSidebarContentState = 'contents' | 'table' | 'default';
+const TOGGLE_TOC_SHORTCUT = getShortcutSymbols(KeyMap.dataDoc.toggleToC.key);
 
 export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
     docId,
@@ -33,6 +36,22 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
 
     const [contentState, setContentState] =
         React.useState<LeftSidebarContentState>('default');
+
+    useEvent(
+        'keydown',
+        useCallback((evt: KeyboardEvent) => {
+            if (matchKeyMap(evt, KeyMap.dataDoc.toggleToC)) {
+                setContentState((contentState) => {
+                    if (contentState !== 'contents') {
+                        return 'contents';
+                    }
+                    return 'default';
+                });
+                evt.stopPropagation();
+                evt.preventDefault();
+            }
+        }, [])
+    );
 
     useEffect(
         () => () => {
@@ -60,7 +79,9 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
                         onClick={() => setContentState('default')}
                     />
                     <div className="flex-row">
-                        <span className="mr4">contents</span>
+                        <span className="mr4">
+                            contents ({TOGGLE_TOC_SHORTCUT})
+                        </span>
                         <InfoButton layout={['right', 'top']}>
                             Click to jump to the corresponding cell. Drag cells
                             to reorder them.
@@ -89,7 +110,7 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
                     color="light"
                     invertCircle
                     size={20}
-                    tooltip="Table of Contents"
+                    tooltip={`Table of Contents (${TOGGLE_TOC_SHORTCUT})`}
                     tooltipPos="right"
                 />
             </div>

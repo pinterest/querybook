@@ -30,7 +30,6 @@ interface IProps {
         context?: string | DraftJs.ContentState;
         meta?: IDataCellMetaBase;
     }) => any;
-    onDeleteKeyPressed?: () => any;
     onFocus?: () => any;
     onBlur?: () => any;
     onUpKeyPressed?: () => any;
@@ -45,7 +44,6 @@ export const DataDocTextCell = React.memo<IProps>(
         isEditable,
         shouldFocus,
         onChange,
-        onDeleteKeyPressed,
         onFocus,
         onBlur,
         onUpKeyPressed,
@@ -139,9 +137,6 @@ export const DataDocTextCell = React.memo<IProps>(
                         onDownKeyPressed();
                         handled = true;
                     }
-                } else if (matchKeyMap(event, KeyMap.richText.deleteCell)) {
-                    onDeleteKeyPressed?.();
-                    handled = true;
                 } else if (matchKeyMap(event, KeyMap.dataDoc.openSearch)) {
                     searchContext.showSearchAndReplace();
                     handled = true;
@@ -152,7 +147,7 @@ export const DataDocTextCell = React.memo<IProps>(
 
                 return handled;
             },
-            [onUpKeyPressed, onDownKeyPressed, onDeleteKeyPressed]
+            [onUpKeyPressed, onDownKeyPressed]
         );
 
         const className = clsx({

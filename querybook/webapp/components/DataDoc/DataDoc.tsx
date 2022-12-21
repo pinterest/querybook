@@ -30,7 +30,11 @@ import {
     deserializeCopyCommand,
     serializeCopyCommand,
 } from 'lib/data-doc/copy';
-import { getShareUrl, scrollToCell } from 'lib/data-doc/data-doc-utils';
+import {
+    getShareUrl,
+    isCellEmpty,
+    scrollToCell,
+} from 'lib/data-doc/data-doc-utils';
 import { replaceDataDoc, searchDataDocCells } from 'lib/data-doc/search';
 import { sendConfirm, setBrowserTitle } from 'lib/querybookUI';
 import history from 'lib/router-history';
@@ -383,6 +387,46 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
+    public deleteCellAt(index: number) {
+        const { dataDoc, docId } = this.props;
+
+        const numberOfCells = dataDoc.dataDocCells.length;
+        const cell = dataDoc.dataDocCells[index];
+        const cellIsEmpty = isCellEmpty(cell);
+
+        return new Promise<void>((resolve) => {
+            if (numberOfCells > 0) {
+                const shouldConfirm = !cellIsEmpty;
+                const deleteCell = async () => {
+                    try {
+                        await dataDocActions.deleteDataDocCell(docId, cell.id);
+                    } catch (e) {
+                        toast.error(
+                            `Delete cell failed, reason: ${formatError(e)}`
+                        );
+                    } finally {
+                        resolve();
+                    }
+                };
+                if (shouldConfirm) {
+                    sendConfirm({
+                        header: 'Delete Cell?',
+                        message: 'Deleted cells cannot be recovered',
+                        onConfirm: deleteCell,
+                        onHide: resolve,
+                        confirmColor: 'cancel',
+                        cancelColor: 'default',
+                    });
+                } else {
+                    deleteCell().finally(resolve);
+                }
+            } else {
+                resolve();
+            }
+        });
+    }
+
+    @bind
     public updateCell(cellId: number, fields: DataCellUpdateFields) {
         return this.props.updateDataDocCell(this.props.docId, cellId, fields);
     }
@@ -465,6 +509,8 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
             updateCell: this.updateCell,
             copyCellAt: this.copyCellAt,
             pasteCellAt: this.pasteCellAt,
+            deleteCellAt: this.deleteCellAt,
+
             fullScreenCellAt: this.fullScreenCellAt,
 
             defaultCollapse,
@@ -530,6 +576,12 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
             if (focusedCellIndex != null) {
                 stopEvent = true;
                 this.pasteCellAt(this.state.focusedCellIndex);
+            }
+        } else if (matchKeyMap(event, KeyMap.dataDoc.deleteCell)) {
+            const { focusedCellIndex } = this.state;
+            if (focusedCellIndex != null) {
+                stopEvent = true;
+                this.deleteCellAt(this.state.focusedCellIndex);
             }
         }
 
