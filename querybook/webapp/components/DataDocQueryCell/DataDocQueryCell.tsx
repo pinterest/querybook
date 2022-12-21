@@ -88,7 +88,6 @@ interface IOwnProps {
     onBlur?: () => any;
     onUpKeyPressed?: () => any;
     onDownKeyPressed?: () => any;
-    onDeleteKeyPressed?: () => any;
     toggleFullScreen: () => any;
 }
 type IProps = IOwnProps & StateProps & DispatchProps;
@@ -192,7 +191,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     public _keyMapMemo(engines: IQueryEngine[]) {
         const keyMap = {
             [KeyMap.queryEditor.runQuery.key]: this.clickOnRunButton,
-            [KeyMap.queryEditor.deleteCell.key]: this.props.onDeleteKeyPressed,
         };
 
         for (const [index, engine] of engines.entries()) {
