@@ -1,3 +1,5 @@
+import { IDataCell } from 'const/datadoc';
+import { ContentState } from 'draft-js';
 import scrollIntoView from 'smooth-scroll-into-view-if-needed';
 
 export async function scrollToCell(
@@ -53,3 +55,14 @@ export const hashString = (str: string) => {
     }
     return hash;
 };
+
+export function isCellEmpty(cell: IDataCell): boolean {
+    const cellType = cell.cell_type;
+    if (cellType === 'query') {
+        return cell.context === '';
+    } else if (cellType === 'text') {
+        return !(cell.context as ContentState).hasText();
+    }
+
+    return false;
+}

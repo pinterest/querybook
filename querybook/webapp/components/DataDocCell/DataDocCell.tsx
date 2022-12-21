@@ -1,7 +1,5 @@
 import clsx from 'clsx';
-import type { ContentState } from 'draft-js';
 import React, { useCallback, useContext, useEffect, useMemo } from 'react';
-import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux';
 
 import { DataDocCellControl } from 'components/DataDoc/DataDocCellControl';
@@ -15,8 +13,6 @@ import { DataDocContext } from 'context/DataDoc';
 import { useMakeSelector } from 'hooks/redux/useMakeSelector';
 import { useBoundFunc } from 'hooks/useBoundFunction';
 import { getShareUrl } from 'lib/data-doc/data-doc-utils';
-import { sendConfirm } from 'lib/querybookUI';
-import { formatError } from 'lib/utils/error';
 import * as dataDocActions from 'redux/dataDoc/action';
 import * as dataDocSelectors from 'redux/dataDoc/selector';
 import { IStoreState } from 'redux/store/types';
@@ -47,17 +43,6 @@ function getEstimatedCellHeight(cell: IDataCell) {
     return 80;
 }
 
-function isCellEmpty(cell: IDataCell): boolean {
-    const cellType = cell.cell_type;
-    if (cellType === 'query') {
-        return cell.context === '';
-    } else if (cellType === 'text') {
-        return !(cell.context as ContentState).hasText();
-    }
-
-    return false;
-}
-
 // renders cell
 export const DataDocCell: React.FunctionComponent<IDataDocCellProps> =
     React.memo(
@@ -79,6 +64,7 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> =
                 updateCell,
                 copyCellAt,
                 pasteCellAt,
+                deleteCellAt,
                 fullScreenCellAt,
 
                 cellFocus,
@@ -136,48 +122,6 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> =
                 [cell.meta, handleUpdateCell]
             );
 
-            const cellIsEmpty = useMemo(() => isCellEmpty(cell), [cell]);
-            const handleDeleteCell = React.useCallback(
-                () =>
-                    new Promise<void>((resolve) => {
-                        if (numberOfCells > 0) {
-                            const shouldConfirm = !cellIsEmpty;
-                            const deleteCell = async () => {
-                                try {
-                                    await dataDocActions.deleteDataDocCell(
-                                        docId,
-                                        cell.id
-                                    );
-                                } catch (e) {
-                                    toast.error(
-                                        `Delete cell failed, reason: ${formatError(
-                                            e
-                                        )}`
-                                    );
-                                } finally {
-                                    resolve();
-                                }
-                            };
-                            if (shouldConfirm) {
-                                sendConfirm({
-                                    header: 'Delete Cell?',
-                                    message:
-                                        'Deleted cells cannot be recovered',
-                                    onConfirm: deleteCell,
-                                    onHide: resolve,
-                                    confirmColor: 'cancel',
-                                    cancelColor: 'default',
-                                });
-                            } else {
-                                deleteCell().finally(resolve);
-                            }
-                        } else {
-                            resolve();
-                        }
-                    }),
-                [docId, numberOfCells, cell.id, cellIsEmpty]
-            );
-
             const shareUrl = useMemo(
                 () => getShareUrl(cell.id, cellIdToExecutionId[cell.id]),
                 [cell.id, cellIdToExecutionId[cell.id]]
@@ -215,7 +159,6 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> =
                     showCollapsed,
 
                     onChange: handleUpdateCell,
-                    onDeleteKeyPressed: handleDeleteCell,
 
                     onFocus: handleFocus,
                     onBlur: handleBlur,
@@ -271,7 +214,7 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> =
                         pasteCellAt={pasteCellAt}
                         copyCellAt={copyCellAt}
                         insertCellAt={insertCellAt}
-                        deleteCellAt={handleDeleteCell}
+                        deleteCellAt={deleteCellAt}
                         isHeader={isHeaderParam}
                         isEditable={isEditable}
                         showCollapsed={showCollapsed}

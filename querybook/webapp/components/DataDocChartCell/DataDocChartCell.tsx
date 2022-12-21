@@ -33,7 +33,6 @@ interface IProps {
     onBlur?: () => any;
     onUpKeyPressed?: () => any;
     onDownKeyPressed?: () => any;
-    onDeleteKeyPressed?: () => any;
 }
 
 export const DataDocChartCell = React.memo<IProps>(
