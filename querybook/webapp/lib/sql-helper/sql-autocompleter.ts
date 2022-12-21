@@ -1,4 +1,4 @@
-import { getLanguageSetting } from './sql-setting';
+import { getLanguageSetting, ILanguageSetting } from './sql-setting';
 
 import CodeMirror from 'lib/codemirror';
 import { ICodeAnalysis, TableToken } from 'lib/sql-helper/sql-lexer';
@@ -103,6 +103,10 @@ function findLast(arr: Array<[number, any]>, num: number) {
     return arr[index];
 }
 
+function checkNameNeedsEscape(name: string) {
+    return !name.match(/^\w+$/);
+}
+
 interface IAutoCompleteResult {
     list: ICompletionRow[];
     from: CodeMirror.Position;
@@ -117,7 +121,7 @@ export class SqlAutoCompleter {
     private Pos: CodeMirror.PositionConstructor;
     private codeAnalysis?: ICodeAnalysis;
     private metastoreId?: number;
-    private language: string;
+    private languageSetting: ILanguageSetting;
     private keywords?: string[];
     private type: AutoCompleteType;
 
@@ -129,11 +133,11 @@ export class SqlAutoCompleter {
     ) {
         this.codeMirrorInstance = codeMirrorInstance;
         this.metastoreId = metastoreId;
-        this.language = language;
         this.type = type;
 
         this.Pos = this.codeMirrorInstance.Pos;
         this.codeAnalysis = null;
+        this.languageSetting = getLanguageSetting(language);
 
         this.registerHelper();
     }
@@ -143,10 +147,28 @@ export class SqlAutoCompleter {
         this.codeAnalysis = codeAnalysis;
     }
 
+    @bind
+    private flatQuotationFormatter(name: string) {
+        if (!this.languageSetting.quoteChars) {
+            return name;
+        }
+
+        if (!checkNameNeedsEscape(name)) {
+            return name;
+        }
+
+        const [quoteStart, quoteEnd] = this.languageSetting.quoteChars;
+        return quoteStart + name + quoteEnd;
+    }
+
+    @bind
+    private hierarchicalQuotationFormatter(name: string) {
+        return name.split('.').map(this.flatQuotationFormatter).join('.');
+    }
+
     public getKeywords() {
         if (!this.keywords) {
-            const languageSetting = getLanguageSetting(this.language);
-            this.keywords = [...languageSetting.keywords];
+            this.keywords = [...this.languageSetting.keywords];
         }
         return this.keywords;
     }
@@ -233,7 +255,7 @@ export class SqlAutoCompleter {
             (id) => dataSources.dataColumnsById[id].name
         );
         const filteredColumnNames = columnNames.filter((name) =>
-            name.startsWith(prefix)
+            name.toLowerCase().startsWith(prefix)
         );
 
         return filteredColumnNames;
@@ -247,9 +269,9 @@ export class SqlAutoCompleter {
         return new Promise(async (resolve) => {
             let results: ICompletionRow[] = [];
             if (lineAnalysis.context === 'table') {
-                results = (await this.getTableNamesFromPrefix(searchStr)).map(
-                    formatter.bind(null, lineAnalysis.context)
-                );
+                results = (await this.getTableNamesFromPrefix(searchStr))
+                    .map(this.hierarchicalQuotationFormatter)
+                    .map(formatter.bind(null, lineAnalysis.context));
             } else if (
                 lineAnalysis.context === 'column' &&
                 lineAnalysis.reference
@@ -257,7 +279,9 @@ export class SqlAutoCompleter {
                 results = this.getColumnsFromPrefix(
                     searchStr,
                     lineAnalysis.reference
-                ).map(formatter.bind(null, lineAnalysis.context));
+                )
+                    .map(this.flatQuotationFormatter)
+                    .map(formatter.bind(null, lineAnalysis.context));
             }
             resolve(results);
         });
@@ -287,10 +311,17 @@ export class SqlAutoCompleter {
                 const tableNames = await this.getTableNamesFromPrefix(prefix);
 
                 for (const tableName of tableNames) {
-                    const match = tableName.match(/^(\w+)\.(\w+)$/);
-                    if (match) {
+                    const schemaTableNames = tableName.split('.');
+
+                    if (schemaTableNames.length === 2) {
                         results.push(
-                            formatter(lineAnalysis.context, match[2], tableName)
+                            formatter(
+                                lineAnalysis.context,
+                                this.flatQuotationFormatter(
+                                    schemaTableNames[1]
+                                ),
+                                tableName
+                            )
                         );
                     }
                 }
@@ -316,9 +347,11 @@ export class SqlAutoCompleter {
                 }
 
                 const prefix = context[context.length - 1];
-                results = this.getColumnsFromPrefix(prefix, tableNames).map(
-                    (column) => formatter(lineAnalysis.context, column, column)
-                );
+                results = this.getColumnsFromPrefix(prefix, tableNames)
+                    .map(this.flatQuotationFormatter)
+                    .map((column) =>
+                        formatter(lineAnalysis.context, column, column)
+                    );
             }
 
             resolve(results);
