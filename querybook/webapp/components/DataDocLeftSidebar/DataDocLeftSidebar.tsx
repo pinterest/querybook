@@ -110,7 +110,7 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
                     color="light"
                     invertCircle
                     size={20}
-                    tooltip="Table of Contents"
+                    tooltip={`Table of Contents (${TOGGLE_TOC_SHORTCUT})`}
                     tooltipPos="right"
                 />
             </div>
