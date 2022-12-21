@@ -22,13 +22,14 @@ export function getValueDataType(value: any): AxesValueType {
 
 export function getDefaultScaleType(value: any): ChartScaleType {
     const valueType = getValueDataType(value);
+
     switch (valueType) {
         case 'datetime':
             return 'time';
         case 'number':
             return 'linear';
         case 'date':
-            return 'time';
+            return 'date';
         case 'string':
         default:
             return 'category';

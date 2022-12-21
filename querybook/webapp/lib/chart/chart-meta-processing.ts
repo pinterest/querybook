@@ -17,6 +17,7 @@ import {
     ChartValueSourceType,
     IChartAxisMeta,
     IChartFormValues,
+    chartScaleToChartJSScale,
 } from 'const/dataDocChart';
 import { StatementExecutionDefaultResultSize } from 'const/queryResultLimit';
 import type { DeepPartial } from 'lib/typescript';
@@ -344,7 +345,7 @@ function computeScaleOptions(
     };
 
     if (scaleType != null) {
-        axis.type = scaleType;
+        axis.type = chartScaleToChartJSScale[scaleType];
     }
 
     if (scaleType === 'time') {
@@ -355,6 +356,14 @@ function computeScaleOptions(
                 hour: 'MM/DD hA',
                 minute: 'h:mm a',
             },
+        };
+    } else if (scaleType === 'date') {
+        (axis as DeepPartial<TimeScaleOptions>).time = {
+            tooltipFormat: 'YYYY-MM-DD',
+            displayFormats: {
+                day: 'YYYY-MM-DD',
+            },
+            minUnit: 'day',
         };
     } else if (scaleType === 'linear' || scaleType === 'logarithmic') {
         // for empty case, it might be null or ""

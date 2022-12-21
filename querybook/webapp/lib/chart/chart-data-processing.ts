@@ -17,7 +17,7 @@ function processDataPoint(val: any, scale: ChartScaleType) {
     // Convert data by Axis type
     if (scale === 'category') {
         return val;
-    } else if (scale === 'time' && isNaN(val)) {
+    } else if ((scale === 'time' || scale === 'date') && isNaN(val)) {
         return val;
     }
 
