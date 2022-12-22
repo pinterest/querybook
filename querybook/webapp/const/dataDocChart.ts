@@ -62,13 +62,32 @@ export interface IChartSeriesMeta {
     agg_type?: ChartDataAggType;
 }
 
-export type ChartScaleType = 'time' | 'category' | 'linear' | 'logarithmic';
+export type ChartScaleType =
+    | 'time'
+    | 'date'
+    | 'category'
+    | 'linear'
+    | 'logarithmic';
 export const ChartScaleOptions: ChartScaleType[] = [
     'time',
+    'date',
     'category',
     'linear',
     'logarithmic',
 ];
+
+// The hard code for values is a bug on the chartJS side
+// We should  use the type ScaleType instead once this is fixed
+export const chartScaleToChartJSScale: Record<
+    ChartScaleType,
+    'time' | 'category' | 'linear' | 'logarithmic'
+> = {
+    category: 'category',
+    linear: 'linear',
+    logarithmic: 'logarithmic',
+    time: 'time',
+    date: 'time', // This is the only one that is different
+};
 
 export enum ChartScaleFormat {
     NONE = '',
@@ -88,11 +107,11 @@ export const chartTypeToAllowedAxisType: Partial<
         y: ['linear', 'logarithmic'],
     },
     bar: {
-        x: ['time', 'category'],
+        x: ['time', 'date', 'category'],
         y: ['linear', 'logarithmic'],
     },
     histogram: {
-        x: ['time', 'category'],
+        x: ['time', 'date', 'category'],
         y: ['linear', 'logarithmic'],
     },
     pie: {
