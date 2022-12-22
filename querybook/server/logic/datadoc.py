@@ -150,7 +150,12 @@ def update_data_doc(id, commit=True, session=None, **fields):
 
         if commit:
             session.commit()
-            update_es_data_doc_by_id(data_doc.id)
+
+            if any(
+                field_name in fields
+                for field_name in ["public", "archived", "owner_uid", "title"]
+            ):
+                update_es_data_doc_by_id(data_doc.id)
 
             # update es queries if doc is switched between public/private
             if "public" in fields:

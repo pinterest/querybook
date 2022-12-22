@@ -1,10 +1,15 @@
 import sqlalchemy as sql
 from sqlalchemy.orm import backref, relationship
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from app import db
 from const.db import name_length, now, description_length, mediumtext_length
 from const.data_doc import DataCellType
 from lib.sqlalchemy import CRUDMixin
+from lib.data_doc.meta import (
+    convert_if_legacy_datadoc_meta,
+    get_datadoc_meta_variables_dict,
+)
 
 Base = db.Base
 
@@ -31,7 +36,7 @@ class DataDoc(Base, CRUDMixin):
     updated_at = sql.Column(sql.DateTime, default=now, nullable=False)
 
     title = sql.Column(sql.String(length=name_length), default="", nullable=False)
-    meta = sql.Column(sql.JSON, default={}, nullable=False)
+    _meta = sql.Column("meta", sql.JSON, default={}, nullable=False)
 
     cells = relationship(
         "DataCell",
@@ -48,6 +53,18 @@ class DataDoc(Base, CRUDMixin):
         backref=backref("data_docs", cascade="all, delete", passive_deletes=True),
     )
 
+    @hybrid_property
+    def meta(self):
+        return convert_if_legacy_datadoc_meta(self._meta)
+
+    @meta.setter
+    def meta(self, new_meta):
+        self._meta = convert_if_legacy_datadoc_meta(new_meta)
+
+    @property
+    def meta_variables(self):
+        return get_datadoc_meta_variables_dict(self.meta)
+
     def to_dict(self, with_cells=False):
         data_doc_dict = {
             "id": self.id,
@@ -58,6 +75,7 @@ class DataDoc(Base, CRUDMixin):
             "created_at": self.created_at,
             "updated_at": self.updated_at,
             "meta": self.meta,
+            "meta_variables": self.meta_variables,
             "title": self.title,
         }
 
