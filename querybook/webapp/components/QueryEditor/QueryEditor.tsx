@@ -130,7 +130,7 @@ export const QueryEditor: React.FC<
             language,
             query: value,
         });
-        const { autoCompleter, autoCompleterRef } = useAutoComplete(
+        const autoCompleterRef = useAutoComplete(
             metastoreId,
             autoCompleteType,
             language,

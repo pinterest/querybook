@@ -28,5 +28,5 @@ export function useAutoComplete(
         autoCompleter.updateCodeAnalysis(codeAnalysis);
     }, [codeAnalysis, autoCompleter]);
 
-    return { autoCompleter, autoCompleterRef };
+    return autoCompleterRef;
 }
