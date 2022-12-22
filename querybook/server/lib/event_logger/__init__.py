@@ -36,5 +36,13 @@ class EventLogger:
         except Exception as e:
             LOG.error(e, exc_info=True)
 
+    def log_websocket_event(self, route: str, args: list, kwargs: dict):
+        try:
+            self.logger.log_websocket_event(
+                uid=current_user.id, route=route, args=args, kwargs=kwargs
+            )
+        except Exception as e:
+            LOG.error(e, exc_info=True)
+
 
 event_logger = EventLogger()
