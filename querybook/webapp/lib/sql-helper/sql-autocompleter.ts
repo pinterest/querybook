@@ -30,10 +30,17 @@ interface ICompletionRow {
     score: number;
 }
 
+/**
+ * Flat: we treat the whole string as a single entity like table name or column name
+ * Hierarchical: we treat the '.' as a separator of entities
+ * null: disable quoting
+ */
+type QuoteType = 'flat' | 'hierarchical' | null;
 type Formatter = (
     word: string,
     context?: string,
-    label?: string
+    label?: string,
+    quoteType?: QuoteType
 ) => ICompletionRow;
 
 export type AutoCompleteType = 'none' | 'schema' | 'all';
@@ -164,8 +171,13 @@ export class SqlAutoCompleter {
     }
 
     @bind
-    private hierarchicalQuotationFormatter(name: string) {
-        return name.split('.').map(this.flatQuotationFormatter).join('.');
+    private quotationFormatter(name: string, quoteType: QuoteType) {
+        if (quoteType == null) {
+            return name;
+        } else if (quoteType === 'hierarchical') {
+            return name.split('.').map(this.flatQuotationFormatter).join('.');
+        }
+        return this.flatQuotationFormatter(name);
     }
 
     public getKeywords() {
@@ -271,9 +283,15 @@ export class SqlAutoCompleter {
         return new Promise(async (resolve) => {
             let results: ICompletionRow[] = [];
             if (lineAnalysis.context === 'table') {
-                results = (await this.getTableNamesFromPrefix(searchStr))
-                    .map(this.hierarchicalQuotationFormatter)
-                    .map(formatter.bind(null, lineAnalysis.context));
+                results = (await this.getTableNamesFromPrefix(searchStr)).map(
+                    (tableName) =>
+                        formatter(
+                            tableName,
+                            lineAnalysis.context,
+                            undefined,
+                            'hierarchical'
+                        )
+                );
             } else if (
                 lineAnalysis.context === 'column' &&
                 lineAnalysis.reference
@@ -281,9 +299,14 @@ export class SqlAutoCompleter {
                 results = this.getColumnsFromPrefix(
                     searchStr,
                     lineAnalysis.reference
-                )
-                    .map(this.flatQuotationFormatter)
-                    .map(formatter.bind(null, lineAnalysis.context));
+                ).map((columnName) =>
+                    formatter(
+                        columnName,
+                        lineAnalysis.context,
+                        undefined,
+                        'flat'
+                    )
+                );
             }
             resolve(results);
         });
@@ -318,11 +341,10 @@ export class SqlAutoCompleter {
                     if (schemaTableNames.length === 2) {
                         results.push(
                             formatter(
+                                schemaTableNames[1],
                                 lineAnalysis.context,
-                                this.flatQuotationFormatter(
-                                    schemaTableNames[1]
-                                ),
-                                tableName
+                                tableName,
+                                'flat'
                             )
                         );
                     }
@@ -349,11 +371,10 @@ export class SqlAutoCompleter {
                 }
 
                 const prefix = context[context.length - 1];
-                results = this.getColumnsFromPrefix(prefix, tableNames)
-                    .map(this.flatQuotationFormatter)
-                    .map((column) =>
-                        formatter(lineAnalysis.context, column, column)
-                    );
+                results = this.getColumnsFromPrefix(prefix, tableNames).map(
+                    (column) =>
+                        formatter(column, lineAnalysis.context, column, 'flat')
+                );
             }
 
             resolve(results);
@@ -415,11 +436,12 @@ export class SqlAutoCompleter {
             };
         };
 
-        const flatFormatter: Formatter = (context, word) => {
+        const flatFormatter: Formatter = (word, context, _, quoteType) => {
             const score = 0;
+
             return {
                 originalText: text,
-                text: word,
+                text: this.quotationFormatter(word, quoteType),
                 label: word,
                 tooltip: context,
                 render: this.autoSuggestionRenderer,
@@ -428,11 +450,16 @@ export class SqlAutoCompleter {
             };
         };
 
-        const hierarchicalFormatter: Formatter = (context, word, label) => {
+        const hierarchicalFormatter: Formatter = (
+            word,
+            context,
+            label,
+            quoteType
+        ) => {
             const score = 0;
             return {
                 originalText: text,
-                text: word,
+                text: this.quotationFormatter(word, quoteType),
                 label,
                 tooltip: context,
                 render: this.autoSuggestionRenderer,

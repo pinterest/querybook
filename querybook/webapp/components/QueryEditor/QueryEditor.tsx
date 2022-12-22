@@ -130,7 +130,7 @@ export const QueryEditor: React.FC<
             language,
             query: value,
         });
-        const autoCompleter = useAutoComplete(
+        const { autoCompleter, autoCompleterRef } = useAutoComplete(
             metastoreId,
             autoCompleteType,
             language,
@@ -559,11 +559,16 @@ export const QueryEditor: React.FC<
 
         const handleOnFocus = useCallback(
             (editor: CodeMirror.Editor, event) => {
+                // This is needed because we could have multiple QueryEditor
+                // instances on the same page
+                // Note that we are using ref here because ReactCodeMirror doesn't
+                // use the new handleOnFocus - it only uses the one on mount
+                autoCompleterRef.current.registerHelper();
                 if (onFocus) {
                     onFocus(editor, event);
                 }
             },
-            [onFocus]
+            [onFocus, autoCompleterRef]
         );
 
         const handleOnKeyUp = useCallback(
