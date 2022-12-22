@@ -1,4 +1,4 @@
-import { getLanguageSetting } from './sql-setting';
+import { getLanguageSetting, ILanguageSetting } from './sql-setting';
 
 import CodeMirror from 'lib/codemirror';
 import { ICodeAnalysis, TableToken } from 'lib/sql-helper/sql-lexer';
@@ -30,10 +30,17 @@ interface ICompletionRow {
     score: number;
 }
 
+/**
+ * Flat: we treat the whole string as a single entity like table name or column name
+ * Hierarchical: we treat the '.' as a separator of entities
+ * null: disable quoting
+ */
+type QuoteType = 'flat' | 'hierarchical' | null;
 type Formatter = (
     word: string,
     context?: string,
-    label?: string
+    label?: string,
+    quoteType?: QuoteType
 ) => ICompletionRow;
 
 export type AutoCompleteType = 'none' | 'schema' | 'all';
@@ -103,6 +110,9 @@ function findLast(arr: Array<[number, any]>, num: number) {
     return arr[index];
 }
 
+function checkNameNeedsEscape(name: string) {
+    return !name.match(/^\w+$/);
+}
 interface IAutoCompleteResult {
     list: ICompletionRow[];
     from: CodeMirror.Position;
@@ -118,6 +128,7 @@ export class SqlAutoCompleter {
     private codeAnalysis?: ICodeAnalysis;
     private metastoreId?: number;
     private language: string;
+    private languageSetting: ILanguageSetting;
     private keywords?: string[];
     private type: AutoCompleteType;
 
@@ -129,11 +140,13 @@ export class SqlAutoCompleter {
     ) {
         this.codeMirrorInstance = codeMirrorInstance;
         this.metastoreId = metastoreId;
-        this.language = language;
         this.type = type;
 
         this.Pos = this.codeMirrorInstance.Pos;
         this.codeAnalysis = null;
+
+        this.language = language;
+        this.languageSetting = getLanguageSetting(this.language);
 
         this.registerHelper();
     }
@@ -143,10 +156,33 @@ export class SqlAutoCompleter {
         this.codeAnalysis = codeAnalysis;
     }
 
+    @bind
+    private flatQuotationFormatter(name: string) {
+        if (!this.languageSetting.quoteChars) {
+            return name;
+        }
+
+        if (!checkNameNeedsEscape(name)) {
+            return name;
+        }
+
+        const [quoteStart, quoteEnd] = this.languageSetting.quoteChars;
+        return quoteStart + name + quoteEnd;
+    }
+
+    @bind
+    private quotationFormatter(name: string, quoteType: QuoteType) {
+        if (quoteType == null) {
+            return name;
+        } else if (quoteType === 'hierarchical') {
+            return name.split('.').map(this.flatQuotationFormatter).join('.');
+        }
+        return this.flatQuotationFormatter(name);
+    }
+
     public getKeywords() {
         if (!this.keywords) {
-            const languageSetting = getLanguageSetting(this.language);
-            this.keywords = [...languageSetting.keywords];
+            this.keywords = [...this.languageSetting.keywords];
         }
         return this.keywords;
     }
@@ -233,7 +269,7 @@ export class SqlAutoCompleter {
             (id) => dataSources.dataColumnsById[id].name
         );
         const filteredColumnNames = columnNames.filter((name) =>
-            name.startsWith(prefix)
+            name.toLowerCase().startsWith(prefix)
         );
 
         return filteredColumnNames;
@@ -248,7 +284,13 @@ export class SqlAutoCompleter {
             let results: ICompletionRow[] = [];
             if (lineAnalysis.context === 'table') {
                 results = (await this.getTableNamesFromPrefix(searchStr)).map(
-                    formatter.bind(null, lineAnalysis.context)
+                    (tableName) =>
+                        formatter(
+                            tableName,
+                            lineAnalysis.context,
+                            undefined,
+                            'hierarchical'
+                        )
                 );
             } else if (
                 lineAnalysis.context === 'column' &&
@@ -257,7 +299,14 @@ export class SqlAutoCompleter {
                 results = this.getColumnsFromPrefix(
                     searchStr,
                     lineAnalysis.reference
-                ).map(formatter.bind(null, lineAnalysis.context));
+                ).map((columnName) =>
+                    formatter(
+                        columnName,
+                        lineAnalysis.context,
+                        undefined,
+                        'flat'
+                    )
+                );
             }
             resolve(results);
         });
@@ -287,10 +336,16 @@ export class SqlAutoCompleter {
                 const tableNames = await this.getTableNamesFromPrefix(prefix);
 
                 for (const tableName of tableNames) {
-                    const match = tableName.match(/^(\w+)\.(\w+)$/);
-                    if (match) {
+                    const schemaTableNames = tableName.split('.');
+
+                    if (schemaTableNames.length === 2) {
                         results.push(
-                            formatter(lineAnalysis.context, match[2], tableName)
+                            formatter(
+                                schemaTableNames[1],
+                                lineAnalysis.context,
+                                tableName,
+                                'flat'
+                            )
                         );
                     }
                 }
@@ -317,7 +372,8 @@ export class SqlAutoCompleter {
 
                 const prefix = context[context.length - 1];
                 results = this.getColumnsFromPrefix(prefix, tableNames).map(
-                    (column) => formatter(lineAnalysis.context, column, column)
+                    (column) =>
+                        formatter(column, lineAnalysis.context, column, 'flat')
                 );
             }
 
@@ -380,11 +436,12 @@ export class SqlAutoCompleter {
             };
         };
 
-        const flatFormatter: Formatter = (context, word) => {
+        const flatFormatter: Formatter = (word, context, _, quoteType) => {
             const score = 0;
+
             return {
                 originalText: text,
-                text: word,
+                text: this.quotationFormatter(word, quoteType),
                 label: word,
                 tooltip: context,
                 render: this.autoSuggestionRenderer,
@@ -393,11 +450,16 @@ export class SqlAutoCompleter {
             };
         };
 
-        const hierarchicalFormatter: Formatter = (context, word, label) => {
+        const hierarchicalFormatter: Formatter = (
+            word,
+            context,
+            label,
+            quoteType
+        ) => {
             const score = 0;
             return {
                 originalText: text,
-                text: word,
+                text: this.quotationFormatter(word, quoteType),
                 label,
                 tooltip: context,
                 render: this.autoSuggestionRenderer,

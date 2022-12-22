@@ -1,12 +1,13 @@
 // https://github.com/codemirror/CodeMirror/blob/master/mode/sql/sql.js
 // Language Setting
-interface ILanguageSetting {
+export interface ILanguageSetting {
     keywords: Set<string>;
     type: Set<string>;
     bool: Set<string>;
     operatorChars: RegExp;
     punctuationChars: RegExp;
     placeholderVariable?: RegExp;
+    quoteChars?: [quoteStart: string, quoteEnd: string];
 }
 
 const SQL_KEYWORDS =
@@ -30,6 +31,7 @@ const SettingsByLanguage: Record<string, ILanguageSetting> = {
         operatorChars: /^[*+\-%<>!=&|^~]/,
         punctuationChars: /^[/:.]/,
         placeholderVariable: /^\${.*?}/,
+        quoteChars: ['`', '`'],
         // These are code mirror specific
         // dateSQL: new Set("date timestamp".split(" ")),
         // support: new Set("ODBCdotTable doubleQuote binaryNumber hexNumber".split(" "))
@@ -49,6 +51,7 @@ const SettingsByLanguage: Record<string, ILanguageSetting> = {
         bool: new Set('false true null'.split(' ')),
         operatorChars: /^[*+\-%<>!=|]/,
         punctuationChars: /^[/:.]/,
+        quoteChars: ['"', '"'],
     },
     mysql: {
         keywords: new Set(
@@ -65,6 +68,7 @@ const SettingsByLanguage: Record<string, ILanguageSetting> = {
         bool: new Set('false true null'.split(' ')),
         operatorChars: /^[*+\-%<>!=&|^~]/,
         punctuationChars: /^[/:.]/,
+        quoteChars: ['`', '`'],
     },
     trino: {
         keywords: new Set(
@@ -81,6 +85,7 @@ const SettingsByLanguage: Record<string, ILanguageSetting> = {
         bool: new Set('false true null'.split(' ')),
         operatorChars: /^[*+\-%<>!=|]/,
         punctuationChars: /^[/:.]/,
+        quoteChars: ['"', '"'],
     },
 };
 SettingsByLanguage['sparksql'] = SettingsByLanguage['hive'];

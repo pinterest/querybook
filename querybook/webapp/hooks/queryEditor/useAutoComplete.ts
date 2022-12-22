@@ -1,5 +1,5 @@
 import CodeMirror from 'lib/codemirror';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import {
     AutoCompleteType,
     SqlAutoCompleter,
@@ -12,20 +12,21 @@ export function useAutoComplete(
     language: string,
     codeAnalysis: ICodeAnalysis
 ) {
-    const autoCompleter = useMemo(
-        () =>
-            new SqlAutoCompleter(
-                CodeMirror,
-                language,
-                metastoreId,
-                autoCompleteType
-            ),
-        [language, metastoreId, autoCompleteType]
-    );
+    const autoCompleterRef = useRef<SqlAutoCompleter>();
+    const autoCompleter = useMemo(() => {
+        const completer = new SqlAutoCompleter(
+            CodeMirror,
+            language,
+            metastoreId,
+            autoCompleteType
+        );
+        autoCompleterRef.current = completer;
+        return completer;
+    }, [language, metastoreId, autoCompleteType]);
 
     useEffect(() => {
         autoCompleter.updateCodeAnalysis(codeAnalysis);
     }, [codeAnalysis, autoCompleter]);
 
-    return autoCompleter;
+    return autoCompleterRef;
 }
