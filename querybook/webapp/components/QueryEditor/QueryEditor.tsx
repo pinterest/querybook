@@ -559,13 +559,11 @@ export const QueryEditor: React.FC<
 
         const handleOnFocus = useCallback(
             (editor: CodeMirror.Editor, event) => {
-                autoCompleter.registerHelper();
-
                 if (onFocus) {
                     onFocus(editor, event);
                 }
             },
-            [onFocus, autoCompleter]
+            [onFocus]
         );
 
         const handleOnKeyUp = useCallback(

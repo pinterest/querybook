@@ -106,7 +106,6 @@ function findLast(arr: Array<[number, any]>, num: number) {
 function checkNameNeedsEscape(name: string) {
     return !name.match(/^\w+$/);
 }
-
 interface IAutoCompleteResult {
     list: ICompletionRow[];
     from: CodeMirror.Position;
@@ -121,6 +120,7 @@ export class SqlAutoCompleter {
     private Pos: CodeMirror.PositionConstructor;
     private codeAnalysis?: ICodeAnalysis;
     private metastoreId?: number;
+    private language: string;
     private languageSetting: ILanguageSetting;
     private keywords?: string[];
     private type: AutoCompleteType;
@@ -137,7 +137,9 @@ export class SqlAutoCompleter {
 
         this.Pos = this.codeMirrorInstance.Pos;
         this.codeAnalysis = null;
-        this.languageSetting = getLanguageSetting(language);
+
+        this.language = language;
+        this.languageSetting = getLanguageSetting(this.language);
 
         this.registerHelper();
     }
