@@ -89,6 +89,7 @@ class BaseEventLogger(ABC):
         """Log an API request.
 
         Args:
+            uid (int): id of the user who performed the action
             method (str): request method, e.g. GET, POST
             route (str): route of the api endpoint which serves the request
             params (dict): params of the request, includes path params,
@@ -107,7 +108,7 @@ class BaseEventLogger(ABC):
         """Log websocket event.
 
         Args:
-            method (str): request method, e.g. GET, POST.
+            uid (int): id of the user who performed the action
             route (str): route is namespace joined with event name.
             args (list):  non-keyworded arguments passed over from client.
             params (dict): keyworded arguments passed over from client.
