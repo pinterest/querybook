@@ -53,7 +53,15 @@ export interface IDataChartCell extends IDataCellBase {
 export type IDataCell = IDataQueryCell | IDataTextCell | IDataChartCell;
 export type DataCellUpdateFields = Partial<Pick<IDataCell, 'context' | 'meta'>>;
 
-export type TDataDocMetaVariableType = 'string' | 'boolean' | 'number';
+export const TEMPLATED_VAR_SUPPORTED_TYPES = [
+    'boolean',
+    'number',
+    'string',
+] as const;
+export type TDataDocMetaVariableType =
+    typeof TEMPLATED_VAR_SUPPORTED_TYPES[number];
+export type TTemplateVariableType = boolean | number | string;
+export type TDataDocMetaVariableDict = Record<string, TTemplateVariableType>;
 export interface IDataDocMetaVariable {
     name: string;
     value: any;
@@ -74,7 +82,7 @@ export interface IDataDoc {
     updated_at: number;
 
     meta: IDataDocMeta;
-    meta_variables: Record<string, any>;
+    meta_variables: TDataDocMetaVariableDict;
     title: string;
 
     cells?: number[];

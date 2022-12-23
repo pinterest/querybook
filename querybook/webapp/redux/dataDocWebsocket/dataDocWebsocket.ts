@@ -3,6 +3,7 @@ import { IDataDocEditor } from 'const/datadoc';
 import dataDocSocket, {
     IDataDocSocketEvent,
 } from 'lib/data-doc/datadoc-socketio';
+import { isEmpty, isEqual } from 'lodash';
 import {
     deserializeCell,
     fetchDataDoc,
@@ -57,6 +58,38 @@ export function openDataDoc(docId: number): ThunkResult<Promise<any>> {
                             payload: {
                                 dataDoc,
                             },
+                        });
+                    } else {
+                        // Even if it is sameOrigin, dervied fields also needs to be updated
+                        const derviedFields = ['meta_variables'];
+                        const docId = rawDataDoc.id;
+
+                        dispatch((thunkDispatch, getState) => {
+                            const state = getState();
+                            const oldDoc =
+                                state.dataDoc.dataDocById[docId] ?? {};
+
+                            // make a partial dataDoc with all the dervied fields
+                            const newDocFields = {};
+                            for (const field of derviedFields) {
+                                if (
+                                    !isEqual(oldDoc[field], rawDataDoc[field])
+                                ) {
+                                    newDocFields[field] = rawDataDoc[field];
+                                }
+                            }
+
+                            if (!isEmpty(newDocFields)) {
+                                thunkDispatch({
+                                    type: '@@dataDoc/RECEIVE_DATA_DOC_UPDATE',
+                                    payload: {
+                                        dataDoc: {
+                                            id: docId,
+                                            ...newDocFields,
+                                        },
+                                    },
+                                });
+                            }
                         });
                     }
                 },

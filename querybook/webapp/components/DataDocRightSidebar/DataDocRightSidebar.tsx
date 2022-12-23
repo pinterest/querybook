@@ -5,7 +5,7 @@ import { DataDocBoardsButton } from 'components/DataDocBoardsButton/DataDocBoard
 import { DataDocDAGExporterButton } from 'components/DataDocDAGExporter/DataDocDAGExporterButton';
 import { DataDocTemplateButton } from 'components/DataDocTemplateButton/DataDocTemplateButton';
 import { DataDocUIGuide } from 'components/UIGuide/DataDocUIGuide';
-import { IDataDoc } from 'const/datadoc';
+import { IDataDoc, IDataDocMeta } from 'const/datadoc';
 import { useAnnouncements } from 'hooks/redux/useAnnouncements';
 import { useScrollToTop } from 'hooks/ui/useScrollToTop';
 import { fetchDAGExporters } from 'redux/dataDoc/action';
@@ -24,7 +24,7 @@ interface IProps {
     isEditable: boolean;
     isConnected: boolean;
 
-    changeDataDocMeta: (docId: number, meta: Record<string, any>) => any;
+    changeDataDocMeta: (docId: number, meta: IDataDocMeta) => Promise<void>;
     onClone: () => any;
 
     onCollapse: () => any;

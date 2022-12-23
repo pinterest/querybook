@@ -9,6 +9,7 @@ from lib.sqlalchemy import CRUDMixin
 from lib.data_doc.meta import (
     convert_if_legacy_datadoc_meta,
     get_datadoc_meta_variables_dict,
+    validate_datadoc_meta,
 )
 
 Base = db.Base
@@ -55,11 +56,15 @@ class DataDoc(Base, CRUDMixin):
 
     @hybrid_property
     def meta(self):
-        return convert_if_legacy_datadoc_meta(self._meta)
+        return convert_if_legacy_datadoc_meta(self._meta or {})
 
     @meta.setter
     def meta(self, new_meta):
-        self._meta = convert_if_legacy_datadoc_meta(new_meta)
+        is_valid = validate_datadoc_meta(new_meta)
+        if not is_valid:
+            raise ValueError("Invalid DataDoc.meta")
+
+        self._meta = new_meta
 
     @property
     def meta_variables(self):

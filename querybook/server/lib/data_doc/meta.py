@@ -40,3 +40,30 @@ def get_datadoc_meta_variables_dict(datadoc_meta: DataDocMeta) -> Dict:
         variables[config["name"]] = config["value"]
 
     return variables
+
+
+valid_meta_keys = ["variables"]
+
+
+def validate_datadoc_meta(datadoc_meta: DataDocMeta) -> bool:
+    for key in datadoc_meta.keys():
+        if key not in valid_meta_keys:
+            return False
+
+    if "variables" in datadoc_meta:
+        variables = datadoc_meta["variables"]
+        if not isinstance(variables, list):
+            return False
+
+        for variable_config in variables:
+            var_type = variable_config["type"]
+            var_val = variable_config["value"]
+
+            if var_type == "string" and not isinstance(var_val, str):
+                return False
+            if var_type == "boolean" and not isinstance(var_val, bool):
+                return False
+            if var_type == "number" and not isinstance(var_val, (float, int)):
+                return False
+
+    return True

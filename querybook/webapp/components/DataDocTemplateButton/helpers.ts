@@ -1,24 +1,8 @@
-import { isBoolean, isNumber } from 'lodash';
+import { IDataDocMetaVariable, TDataDocMetaVariableType } from 'const/datadoc';
 
-export const SUPPORTED_TYPES = ['boolean', 'number', 'string'] as const;
-export type TSupportedTypes = typeof SUPPORTED_TYPES[number];
-
-type TTemplateVariableType = boolean | number | string;
-export type TTemplateVariableDict = Record<string, TTemplateVariableType>;
-
-export function detectVariableType(value: any): TSupportedTypes {
-    if (isBoolean(value)) {
-        return 'boolean';
-    }
-    if (isNumber(value)) {
-        return 'number';
-    }
-    return 'string';
-}
-
-export function getVariableValueByType(
+function getVariableValueByType(
     value: any,
-    valueType: TSupportedTypes
+    valueType: TDataDocMetaVariableType
 ): any {
     if (value !== null) {
         if (valueType === 'number') {
@@ -28,4 +12,14 @@ export function getVariableValueByType(
         }
     }
     return value;
+}
+
+export function typeCastVariables(
+    variables: IDataDocMetaVariable[]
+): IDataDocMetaVariable[] {
+    return variables.map(({ name, type, value }) => ({
+        name,
+        type,
+        value: getVariableValueByType(value, type),
+    }));
 }

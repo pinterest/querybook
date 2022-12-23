@@ -49,16 +49,18 @@ def create_data_doc(
     commit=True,
     session=None,
 ):
-    data_doc = DataDoc(
-        public=public,
-        archived=archived,
-        owner_uid=owner_uid,
-        environment_id=environment_id,
-        title=title,
-        meta=meta,
+    data_doc = DataDoc.create(
+        fields={
+            "public": public,
+            "archived": archived,
+            "owner_uid": owner_uid,
+            "environment_id": environment_id,
+            "title": title,
+            "meta": meta,
+        },
+        commit=False,
+        session=session,
     )
-    session.add(data_doc)
-    session.flush()
 
     for index, cell in enumerate(cells):
         data_cell = create_data_cell(

@@ -47,7 +47,7 @@ export interface IReceiveDataDocAction extends Action {
 export interface IReceiveDataDocUpdateAction extends Action {
     type: '@@dataDoc/RECEIVE_DATA_DOC_UPDATE';
     payload: {
-        dataDoc: IDataDoc;
+        dataDoc: Partial<IDataDoc> & Pick<IDataDoc, 'id'>;
         dataDocCellById?: Record<number, IDataCell>;
     };
 }
