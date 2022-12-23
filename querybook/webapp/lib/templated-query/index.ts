@@ -1,3 +1,4 @@
+import { TDataDocMetaVariables } from 'const/datadoc';
 import { TemplatedQueryResource } from 'resource/queryExecution';
 
 export async function getTemplatedQueryVariables(query: string) {
@@ -11,7 +12,7 @@ export async function getTemplatedQueryVariables(query: string) {
 
 export async function renderTemplatedQuery(
     query: string,
-    variables: Record<string, string>,
+    variables: TDataDocMetaVariables,
     engineId: number
 ) {
     const { data } = await TemplatedQueryResource.renderTemplatedQuery(

@@ -11,7 +11,7 @@ import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import {
     DataCellUpdateFields,
     IDataCell,
-    TDataDocMetaVariableDict,
+    TDataDocMetaVariables,
 } from 'const/datadoc';
 import { DataDocContext } from 'context/DataDoc';
 import { useMakeSelector } from 'hooks/redux/useMakeSelector';
@@ -26,7 +26,7 @@ import './DataDocCell.scss';
 interface IDataDocCellProps {
     docId: number;
     numberOfCells: number;
-    templatedVariables: TDataDocMetaVariableDict;
+    templatedVariables: TDataDocMetaVariables;
 
     cell: IDataCell;
     index: number;

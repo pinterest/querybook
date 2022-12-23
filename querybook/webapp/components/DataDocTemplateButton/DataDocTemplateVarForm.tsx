@@ -21,8 +21,8 @@ import { typeCastVariables } from './helpers';
 import './DataDocTemplateVarForm.scss';
 
 export interface IDataDocTemplateVarFormProps {
-    onSave: (meta: IDataDocMeta) => Promise<void>;
-    meta: IDataDocMeta;
+    onSave: (variables: IDataDocMeta['variables']) => Promise<void>;
+    variables: IDataDocMeta['variables'];
     isEditable: boolean;
 }
 
@@ -66,34 +66,28 @@ const defaultTemplatedVariables: IDataDocMetaVariableWithId[] = [
 
 export const DataDocTemplateVarForm: React.FunctionComponent<
     IDataDocTemplateVarFormProps
-> = ({ onSave, meta, isEditable }) => {
+> = ({ onSave, variables, isEditable }) => {
     const initialValue = useMemo(
         () => ({
-            variables: meta.variables?.length
-                ? meta.variables.map((varConfig) => ({
+            variables: variables?.length
+                ? variables.map((varConfig) => ({
                       ...varConfig,
                       id: uniqueId(templatedVarUniqueIdPrefix),
                   }))
                 : defaultTemplatedVariables,
         }),
 
-        [meta?.variables]
+        [variables]
     );
 
     const handleSaveMeta = useCallback(
-        (values: typeof initialValue) => {
-            const newMeta: IDataDocMeta = {
-                ...meta,
-                // This also gets rid of the id field
-                variables: typeCastVariables(values.variables),
-            };
-            return toast.promise(onSave(newMeta), {
+        (values: typeof initialValue) =>
+            toast.promise(onSave(typeCastVariables(values.variables)), {
                 loading: 'Saving variables',
                 success: 'Variables saved!',
                 error: 'Failed to save variables',
-            });
-        },
-        [onSave, meta]
+            }),
+        [onSave]
     );
 
     return (

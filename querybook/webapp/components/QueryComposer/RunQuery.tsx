@@ -1,6 +1,7 @@
 import React from 'react';
 import toast from 'react-hot-toast';
 
+import { TDataDocMetaVariables } from 'const/datadoc';
 import { IQueryEngine } from 'const/queryEngine';
 import { sendConfirm } from 'lib/querybookUI';
 import { getDroppedTables } from 'lib/sql-helper/sql-checker';
@@ -16,7 +17,7 @@ import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 
 export async function transformQuery(
     query: string,
-    templatedVariables: Record<string, string>,
+    templatedVariables: TDataDocMetaVariables,
     engine: IQueryEngine,
     rowLimit: Nullable<number>
 ): Promise<string> {
@@ -57,7 +58,7 @@ export async function runQuery(
 
 async function transformTemplatedQuery(
     query: string,
-    templatedVariables: Record<string, string>,
+    templatedVariables: TDataDocMetaVariables,
     engineId: number
 ) {
     try {

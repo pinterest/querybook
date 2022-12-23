@@ -68,7 +68,9 @@ export class QuerySnippetView extends React.PureComponent<
         if (templatedVariables.length) {
             renderedQuery = await renderTemplatedQuery(
                 context,
-                this.state.templatedQueryForm,
+                Object.entries(this.state.templatedQueryForm).map(
+                    ([key, value]) => ({ name: key, value })
+                ),
                 engineId
             );
         }

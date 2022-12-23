@@ -20,7 +20,6 @@ import './QuerySnippetInsertionModal.scss';
 
 interface IOwnProps {
     onInsert: (query: string) => any;
-    onDismiss: () => any;
     onHide: () => void;
 }
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -71,13 +70,11 @@ class QuerySnippetInsertionModalComponent extends React.PureComponent<
 
     @bind
     public onInsertSnippet(query: string) {
-        const { onInsert, onDismiss } = this.props;
+        const { onInsert } = this.props;
 
         if (onInsert) {
             onInsert(query);
         }
-
-        onDismiss();
     }
 
     @bind

@@ -1,5 +1,5 @@
 from typing import Dict, Any
-from .doc_types import DataDocMeta
+from .doc_types import DataDocMeta, DataDocMetaVarConfig
 
 
 def check_variable_type(val: Any):
@@ -47,13 +47,13 @@ def convert_if_legacy_datadoc_meta(datadoc_meta: Dict) -> DataDocMeta:
     return datadoc_meta
 
 
-def get_datadoc_meta_variables_dict(datadoc_meta: DataDocMeta) -> Dict:
-    variables = {}
+def var_config_to_var_dict(variables: list[DataDocMetaVarConfig]) -> Dict:
+    var_dict = {}
 
-    for config in datadoc_meta.get("variables", []):
-        variables[config["name"]] = config["value"]
+    for config in variables:
+        var_dict[config["name"]] = config["value"]
 
-    return variables
+    return var_dict
 
 
 valid_meta_keys = ["variables"]

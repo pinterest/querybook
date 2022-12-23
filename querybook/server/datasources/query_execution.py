@@ -1,5 +1,3 @@
-from typing import Dict
-
 from flask import abort, Response, redirect
 from flask_login import current_user
 
@@ -20,6 +18,8 @@ from lib.query_analysis.templating import (
     render_templated_query,
 )
 from lib.form import validate_form
+from lib.data_doc.meta import var_config_to_var_dict
+from lib.data_doc.doc_types import DataDocMetaVarConfig
 from const.query_execution import QueryExecutionExportStatus, QueryExecutionStatus
 from const.datasources import RESOURCE_NOT_FOUND_STATUS_CODE
 from logic import (
@@ -450,9 +450,13 @@ def poll_export_statement_execution_result(task_id):
 
 
 @register("/query_execution/templated_query/", methods=["POST"])
-def get_templated_query(query: str, variables: Dict[str, str], engine_id: int):
+def get_templated_query(
+    query: str, var_config: list[DataDocMetaVarConfig], engine_id: int
+):
     try:
-        return render_templated_query(query, variables, engine_id)
+        return render_templated_query(
+            query, var_config_to_var_dict(var_config), engine_id
+        )
     except QueryTemplatingError as e:
         raise RequestException(e)
 

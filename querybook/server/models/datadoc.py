@@ -8,9 +8,10 @@ from const.data_doc import DataCellType
 from lib.sqlalchemy import CRUDMixin
 from lib.data_doc.meta import (
     convert_if_legacy_datadoc_meta,
-    get_datadoc_meta_variables_dict,
+    var_config_to_var_dict,
     validate_datadoc_meta,
 )
+from lib.data_doc.doc_types import DataDocMeta
 
 Base = db.Base
 
@@ -55,11 +56,11 @@ class DataDoc(Base, CRUDMixin):
     )
 
     @hybrid_property
-    def meta(self):
+    def meta(self) -> DataDocMeta:
         return convert_if_legacy_datadoc_meta(self._meta or {})
 
     @meta.setter
-    def meta(self, new_meta):
+    def meta(self, new_meta: DataDocMeta):
         is_valid = validate_datadoc_meta(new_meta)
         if not is_valid:
             raise ValueError("Invalid DataDoc.meta")
@@ -73,7 +74,7 @@ class DataDoc(Base, CRUDMixin):
         It is used in scheduled data docs and passed to frontend to generate
         templated queries
         """
-        return get_datadoc_meta_variables_dict(self.meta)
+        return var_config_to_var_dict(self.meta.get("variables", []))
 
     def to_dict(self, with_cells=False):
         data_doc_dict = {
@@ -85,7 +86,6 @@ class DataDoc(Base, CRUDMixin):
             "created_at": self.created_at,
             "updated_at": self.updated_at,
             "meta": self.meta,
-            "meta_variables": self.meta_variables,
             "title": self.title,
         }
 

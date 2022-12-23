@@ -1,4 +1,5 @@
 import { ContentState } from 'draft-js';
+import { WithOptional } from 'lib/typescript';
 import { Edge, Node } from 'reactflow';
 
 import { IChartConfig } from './dataDocChart';
@@ -67,6 +68,10 @@ export interface IDataDocMetaVariable {
     value: any;
     type: TDataDocMetaVariableType;
 }
+export type TDataDocMetaVariables = Array<
+    WithOptional<IDataDocMetaVariable, 'type'>
+>;
+
 export interface IDataDocMeta {
     variables: IDataDocMetaVariable[];
 }
@@ -82,7 +87,6 @@ export interface IDataDoc {
     updated_at: number;
 
     meta: IDataDocMeta;
-    meta_variables: TDataDocMetaVariableDict;
     title: string;
 
     cells?: number[];

@@ -30,10 +30,13 @@ export const DataDocTemplateButton: React.FunctionComponent<IProps> = ({
         >
             <DataDocTemplateVarForm
                 isEditable={isEditable}
-                meta={dataDoc.meta}
-                onSave={(meta) => {
+                variables={dataDoc.meta?.variables}
+                onSave={(variables) => {
                     setShowTemplateForm(false);
-                    return changeDataDocMeta(dataDoc.id, meta);
+                    return changeDataDocMeta(dataDoc.id, {
+                        ...dataDoc.meta,
+                        variables,
+                    });
                 }}
             />
         </Modal>

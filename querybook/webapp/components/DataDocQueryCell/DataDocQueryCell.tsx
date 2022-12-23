@@ -21,7 +21,7 @@ import { QuerySnippetInsertionModal } from 'components/QuerySnippetInsertionModa
 import { TemplatedQueryView } from 'components/TemplateQueryView/TemplatedQueryView';
 import { TranspileQueryModal } from 'components/TranspileQueryModal/TranspileQueryModal';
 import { UDFForm } from 'components/UDFForm/UDFForm';
-import { IDataQueryCellMeta } from 'const/datadoc';
+import { IDataQueryCellMeta, TDataDocMetaVariables } from 'const/datadoc';
 import type { IQueryEngine, IQueryTranspiler } from 'const/queryEngine';
 import CodeMirror from 'lib/codemirror';
 import { createSQLLinter } from 'lib/codemirror/codemirror-lint';
@@ -73,7 +73,7 @@ interface IOwnProps {
     cellId: number;
 
     queryIndexInDoc: number;
-    templatedVariables: Record<string, string>;
+    templatedVariables: TDataDocMetaVariables;
 
     shouldFocus: boolean;
     isFullScreen: boolean;
@@ -364,7 +364,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
     @bind
     public async getTransformedQuery() {
-        const { templatedVariables = {} } = this.props;
+        const { templatedVariables = [] } = this.props;
         const { query } = this.state;
         const selectedRange =
             this.queryEditorRef.current &&

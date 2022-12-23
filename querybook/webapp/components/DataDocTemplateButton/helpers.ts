@@ -1,4 +1,15 @@
 import { IDataDocMetaVariable, TDataDocMetaVariableType } from 'const/datadoc';
+import { isBoolean, isNumber } from 'lodash';
+
+export function detectVariableType(value: any): TDataDocMetaVariableType {
+    if (isBoolean(value)) {
+        return 'boolean';
+    }
+    if (isNumber(value)) {
+        return 'number';
+    }
+    return 'string';
+}
 
 function getVariableValueByType(
     value: any,

@@ -61,12 +61,15 @@ export const DataDocTemplateCell: React.FunctionComponent<IProps> = ({
                 </div>
                 <DataDocTemplateVarForm
                     isEditable={isEditable}
-                    meta={dataDoc.meta}
-                    onSave={(meta) => {
-                        if (meta.variables.length === 0) {
+                    variables={dataDoc.meta?.variables}
+                    onSave={(newVariables) => {
+                        if (newVariables.length === 0) {
                             setShowFacade(true);
                         }
-                        return changeDataDocMeta(dataDoc.id, meta);
+                        return changeDataDocMeta(dataDoc.id, {
+                            ...dataDoc.meta,
+                            variables: newVariables,
+                        });
                     }}
                 />
             </>
