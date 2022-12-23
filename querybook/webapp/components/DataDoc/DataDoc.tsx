@@ -834,7 +834,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                 const cellIndexToFocus = this.focusCellIndexAfterInsert;
                 setImmediate(() => {
                     // setting focus cell during componentDidUpdate would not
-                    // actually focus the cell, we need to do it in another thread
+                    // actually focus the cell, we need to do it in another event loop
                     this.focusCellAt(cellIndexToFocus);
                 });
                 this.focusCellIndexAfterInsert = null;

@@ -297,29 +297,28 @@ const QueryExamplesList: React.FC<{
         }
 
         const queryExamplesDOM = queryExamples
-            .map((queryExample) => {
-                const query = queryExample.queryExecution;
-                const queryTitle = queryExample.cellTitle;
-
+            .map(({ queryExecution, cellTitle }) => {
                 const language =
-                    queryEngineById[query.engine_id]?.language ?? 'presto';
-                const formattedQuery = format(query.query, language, {
+                    queryEngineById[queryExecution.engine_id]?.language ??
+                    'presto';
+                const formattedQuery = format(queryExecution.query, language, {
                     case: 'upper',
                 });
                 return (
                     <div
                         className="DataTableViewQueryExamples-item"
-                        key={query.id}
+                        key={queryExecution.id}
                     >
-                        <div className="horizontal-space-between mb4">
-                            <Title size="med" untitled={!queryTitle}>
-                                {queryTitle || 'Untitled Execution'}
+                        <div className="DataTableViewQueryExamples-header mb4">
+                            <Title size="med" untitled={!cellTitle}>
+                                {cellTitle || 'Untitled Execution'}
                             </Title>
                             <TextButton
                                 icon="ArrowRight"
                                 title="Open Execution"
-                                className="mt8"
-                                onClick={() => openDisplayModal(query.id)}
+                                onClick={() =>
+                                    openDisplayModal(queryExecution.id)
+                                }
                             />
                         </div>
 
@@ -329,7 +328,7 @@ const QueryExamplesList: React.FC<{
                         />
                         <div className="DataTableViewQueryExamples-info">
                             <span>by </span>
-                            <UserName uid={query.uid} />
+                            <UserName uid={queryExecution.uid} />
                         </div>
                     </div>
                 );
