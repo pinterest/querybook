@@ -67,7 +67,12 @@ class DataDoc(Base, CRUDMixin):
         self._meta = new_meta
 
     @property
-    def meta_variables(self):
+    def meta_variables(self) -> dict:
+        """
+        The field is used to generate a dictionary of templated variables.
+        It is used in scheduled data docs and passed to frontend to generate
+        templated queries
+        """
         return get_datadoc_meta_variables_dict(self.meta)
 
     def to_dict(self, with_cells=False):

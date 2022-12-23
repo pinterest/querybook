@@ -15,6 +15,20 @@ def check_variable_type(val: Any):
 
 
 def convert_if_legacy_datadoc_meta_v0(datadoc_meta: Dict) -> DataDocMeta:
+    """Converts the old meta format which is only a dictionary of templated variables
+       to a more general format that has templated vars as array plus other fields
+
+        Old meta: `{ "foo": "bar" }`
+        New meta: `{ "variables": ["name": "foo", "type": "string", "value": "bar", ...] }`
+
+        If the new meta is passed in, no change would be made.
+
+    Args:
+        datadoc_meta (Dict): Old/New meta format
+
+    Returns:
+        DataDocMeta: New meta format
+    """
     if isinstance(datadoc_meta.get("variables"), list):
         return datadoc_meta
 

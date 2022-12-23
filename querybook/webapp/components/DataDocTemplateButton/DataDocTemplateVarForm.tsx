@@ -53,7 +53,7 @@ const templatedVarSchema = Yup.object().shape({
 interface IDataDocMetaVariableWithId extends IDataDocMetaVariable {
     id: string;
 }
-const templatedVarUniqueIdPrefix = '_tvar';
+const templatedVarUniqueIdPrefix = 'tvar_';
 
 const defaultTemplatedVariables: IDataDocMetaVariableWithId[] = [
     {
