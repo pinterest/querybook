@@ -71,8 +71,7 @@ class DataDoc(Base, CRUDMixin):
     def meta_variables(self) -> dict:
         """
         The field is used to generate a dictionary of templated variables.
-        It is used in scheduled data docs and passed to frontend to generate
-        templated queries
+        It is used in scheduled data docs
         """
         return var_config_to_var_dict(self.meta.get("variables", []))
 

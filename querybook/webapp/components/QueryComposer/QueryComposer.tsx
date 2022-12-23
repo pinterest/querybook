@@ -160,9 +160,9 @@ const useTemplatedVariables = (dispatch: Dispatch, environmentId: number) => {
     const templatedVariables = useSelector((state: IStoreState) => {
         const templatedVariablesInState =
             state.adhocQuery[environmentId]?.templatedVariables ?? [];
-        if (Array.isArray(templatedVariablesInState)) {
-            return templatedVariablesInState;
-        } else {
+
+        if (!Array.isArray(templatedVariablesInState)) {
+            // This whole block is only here for legacy reason
             // In the older version, we are storing it as a dictionary
             // so we need to convert to the new format
             const oldTemplatedVarConfig: Record<string, any> =
@@ -177,6 +177,7 @@ const useTemplatedVariables = (dispatch: Dispatch, environmentId: number) => {
             });
             return newConfig;
         }
+        return templatedVariablesInState;
     });
     const setTemplatedVariables = useCallback(
         (newVariables: IDataDocMetaVariable[]) =>

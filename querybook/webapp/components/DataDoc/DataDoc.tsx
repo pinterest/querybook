@@ -633,7 +633,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                     key={cell.id}
                     docId={dataDoc.id}
                     numberOfCells={dataDoc.dataDocCells.length}
-                    templatedVariables={dataDoc.meta?.variables ?? []}
+                    templatedVariables={dataDoc.meta.variables}
                     cell={cell}
                     index={index}
                     queryIndexInDoc={queryIndexInDoc}
