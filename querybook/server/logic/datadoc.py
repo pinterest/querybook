@@ -49,16 +49,18 @@ def create_data_doc(
     commit=True,
     session=None,
 ):
-    data_doc = DataDoc(
-        public=public,
-        archived=archived,
-        owner_uid=owner_uid,
-        environment_id=environment_id,
-        title=title,
-        meta=meta,
+    data_doc = DataDoc.create(
+        fields={
+            "public": public,
+            "archived": archived,
+            "owner_uid": owner_uid,
+            "environment_id": environment_id,
+            "title": title,
+            "meta": meta,
+        },
+        commit=False,
+        session=session,
     )
-    session.add(data_doc)
-    session.flush()
 
     for index, cell in enumerate(cells):
         data_cell = create_data_cell(
@@ -150,7 +152,12 @@ def update_data_doc(id, commit=True, session=None, **fields):
 
         if commit:
             session.commit()
-            update_es_data_doc_by_id(data_doc.id)
+
+            if any(
+                field_name in fields
+                for field_name in ["public", "archived", "owner_uid", "title"]
+            ):
+                update_es_data_doc_by_id(data_doc.id)
 
             # update es queries if doc is switched between public/private
             if "public" in fields:

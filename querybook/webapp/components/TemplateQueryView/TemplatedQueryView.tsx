@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { TDataDocMetaVariables } from 'const/datadoc';
 import { useResource } from 'hooks/useResource';
 import { formatError } from 'lib/utils/error';
 import { TemplatedQueryResource } from 'resource/queryExecution';
@@ -13,7 +14,7 @@ import './TemplatedQueryView.scss';
 
 export interface ITemplatedQueryViewProps {
     query: string;
-    templatedVariables: Record<string, string>;
+    templatedVariables: TDataDocMetaVariables;
     engineId: number;
     onRunQueryClick?: () => void;
 }
@@ -36,7 +37,7 @@ export const TemplatedQueryView: React.FC<ITemplatedQueryViewProps> = ({
                     templatedVariables,
                     engineId
                 ),
-            [query, templatedVariables]
+            [query, templatedVariables, engineId]
         )
     );
 

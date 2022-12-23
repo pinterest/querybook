@@ -73,7 +73,10 @@ def run_datadoc_with_config(
 
             try:
                 query = render_templated_query(
-                    query_cell.context, data_doc.meta, engine_id, session=session
+                    query_cell.context,
+                    data_doc.meta_variables,
+                    engine_id,
+                    session=session,
                 )
             except Exception as e:
                 on_datadoc_completion(

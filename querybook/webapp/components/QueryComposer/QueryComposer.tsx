@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { DataDocTemplateInfoButton } from 'components/DataDocTemplateButton/DataDocTemplateInfoButton';
 import { DataDocTemplateVarForm } from 'components/DataDocTemplateButton/DataDocTemplateVarForm';
+import { detectVariableType } from 'components/DataDocTemplateButton/helpers';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
 import { IQueryEditorHandles } from 'components/QueryEditor/QueryEditor';
 import {
@@ -26,6 +27,7 @@ import {
 import { TemplatedQueryView } from 'components/TemplateQueryView/TemplatedQueryView';
 import { TranspileQueryModal } from 'components/TranspileQueryModal/TranspileQueryModal';
 import { UDFForm } from 'components/UDFForm/UDFForm';
+import { IDataDocMetaVariable } from 'const/datadoc';
 import KeyMap from 'const/keyMap';
 import { IQueryEngine } from 'const/queryEngine';
 import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
@@ -155,12 +157,30 @@ const useRowLimit = (dispatch: Dispatch, environmentId: number) => {
 };
 
 const useTemplatedVariables = (dispatch: Dispatch, environmentId: number) => {
-    const templatedVariables = useSelector(
-        (state: IStoreState) =>
-            state.adhocQuery[environmentId]?.templatedVariables ?? {}
-    );
+    const templatedVariables = useSelector((state: IStoreState) => {
+        const templatedVariablesInState =
+            state.adhocQuery[environmentId]?.templatedVariables ?? [];
+
+        if (!Array.isArray(templatedVariablesInState)) {
+            // This whole block is only here for legacy reason
+            // In the older version, we are storing it as a dictionary
+            // so we need to convert to the new format
+            const oldTemplatedVarConfig: Record<string, any> =
+                templatedVariablesInState;
+            const newConfig: IDataDocMetaVariable[] = [];
+            Object.entries(oldTemplatedVarConfig).forEach(([key, value]) => {
+                newConfig.push({
+                    name: key,
+                    value,
+                    type: detectVariableType(value),
+                });
+            });
+            return newConfig;
+        }
+        return templatedVariablesInState;
+    });
     const setTemplatedVariables = useCallback(
-        (newVariables: Record<string, any>) =>
+        (newVariables: IDataDocMetaVariable[]) =>
             dispatch(
                 adhocQueryActions.receiveAdhocQuery(
                     { templatedVariables: newVariables },
@@ -373,6 +393,7 @@ const QueryComposer: React.FC = () => {
         dispatch,
         environmentId
     );
+
     const [showRenderedTemplateModal, setShowRenderedTemplateModal] =
         useState(false);
 
@@ -597,9 +618,9 @@ const QueryComposer: React.FC = () => {
         >
             <DataDocTemplateVarForm
                 isEditable={true}
-                templatedVariables={templatedVariables}
-                onSave={(meta) => {
-                    setTemplatedVariables(meta);
+                variables={templatedVariables}
+                onSave={async (newVariables) => {
+                    setTemplatedVariables(newVariables);
                     setShowTemplateForm(false);
                     toast.success('Variables saved!');
                 }}

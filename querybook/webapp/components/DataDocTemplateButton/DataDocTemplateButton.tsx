@@ -1,15 +1,14 @@
 import React from 'react';
-import toast from 'react-hot-toast';
 
 import { DataDocTemplateVarForm } from 'components/DataDocTemplateButton/DataDocTemplateVarForm';
-import { IDataDoc } from 'const/datadoc';
+import { IDataDoc, IDataDocMeta } from 'const/datadoc';
 import { IconButton } from 'ui/Button/IconButton';
 import { Modal } from 'ui/Modal/Modal';
 
 import { DataDocTemplateInfoButton } from './DataDocTemplateInfoButton';
 
 interface IProps {
-    changeDataDocMeta: (docId: number, meta: Record<string, any>) => any;
+    changeDataDocMeta: (docId: number, meta: IDataDocMeta) => Promise<void>;
     dataDoc: IDataDoc;
     isEditable?: boolean;
 }
@@ -31,11 +30,13 @@ export const DataDocTemplateButton: React.FunctionComponent<IProps> = ({
         >
             <DataDocTemplateVarForm
                 isEditable={isEditable}
-                templatedVariables={dataDoc.meta}
-                onSave={(meta) => {
-                    changeDataDocMeta(dataDoc.id, meta);
+                variables={dataDoc.meta.variables}
+                onSave={(variables) => {
                     setShowTemplateForm(false);
-                    toast.success('Variables saved');
+                    return changeDataDocMeta(dataDoc.id, {
+                        ...dataDoc.meta,
+                        variables,
+                    });
                 }}
             />
         </Modal>

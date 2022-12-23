@@ -1,4 +1,5 @@
 import { ContentState } from 'draft-js';
+import { WithOptional } from 'lib/typescript';
 import { Edge, Node } from 'reactflow';
 
 import { IChartConfig } from './dataDocChart';
@@ -53,6 +54,27 @@ export interface IDataChartCell extends IDataCellBase {
 export type IDataCell = IDataQueryCell | IDataTextCell | IDataChartCell;
 export type DataCellUpdateFields = Partial<Pick<IDataCell, 'context' | 'meta'>>;
 
+export const TEMPLATED_VAR_SUPPORTED_TYPES = [
+    'boolean',
+    'number',
+    'string',
+] as const;
+export type TDataDocMetaVariableType =
+    typeof TEMPLATED_VAR_SUPPORTED_TYPES[number];
+export type TTemplateVariableType = boolean | number | string;
+export type TDataDocMetaVariableDict = Record<string, TTemplateVariableType>;
+export interface IDataDocMetaVariable {
+    name: string;
+    value: any;
+    type: TDataDocMetaVariableType;
+}
+export type TDataDocMetaVariables = Array<
+    WithOptional<IDataDocMetaVariable, 'type'>
+>;
+
+export interface IDataDocMeta {
+    variables: IDataDocMetaVariable[];
+}
 export interface IDataDoc {
     dataDocCells: IDataCell[];
     id: number;
@@ -64,7 +86,7 @@ export interface IDataDoc {
     created_at: number;
     updated_at: number;
 
-    meta: Record<string, any>;
+    meta: IDataDocMeta;
     title: string;
 
     cells?: number[];

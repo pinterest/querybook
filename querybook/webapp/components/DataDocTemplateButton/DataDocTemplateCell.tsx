@@ -1,16 +1,14 @@
-import { isEmpty } from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
-import toast from 'react-hot-toast';
 
 import { DataDocTemplateVarForm } from 'components/DataDocTemplateButton/DataDocTemplateVarForm';
-import { IDataDoc } from 'const/datadoc';
+import { IDataDoc, IDataDocMeta } from 'const/datadoc';
 import { TextButton } from 'ui/Button/Button';
 import { AccentText } from 'ui/StyledText/StyledText';
 
 import { DataDocTemplateInfoButton } from './DataDocTemplateInfoButton';
 
 interface IProps {
-    changeDataDocMeta: (docId: number, meta: Record<string, any>) => any;
+    changeDataDocMeta: (docId: number, meta: IDataDocMeta) => Promise<void>;
     dataDoc: IDataDoc;
     isEditable?: boolean;
 }
@@ -21,12 +19,12 @@ export const DataDocTemplateCell: React.FunctionComponent<IProps> = ({
     isEditable,
 }) => {
     const hasMeta = useMemo(
-        () => dataDoc.meta && !isEmpty(dataDoc.meta),
+        () => dataDoc.meta.variables.length > 0,
         [dataDoc.meta]
     );
-    const [showFacade, setShowFacde] = useState(!hasMeta && isEditable);
+    const [showFacade, setShowFacade] = useState(!hasMeta && isEditable);
     useEffect(() => {
-        setShowFacde(!hasMeta && isEditable);
+        setShowFacade(!hasMeta && isEditable);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dataDoc.id]);
 
@@ -42,7 +40,7 @@ export const DataDocTemplateCell: React.FunctionComponent<IProps> = ({
                     icon="Plus"
                     className="mr4"
                     title="New Variable"
-                    onClick={() => setShowFacde(false)}
+                    onClick={() => setShowFacade(false)}
                 />
                 <DataDocTemplateInfoButton style="icon" />
             </div>
@@ -63,13 +61,15 @@ export const DataDocTemplateCell: React.FunctionComponent<IProps> = ({
                 </div>
                 <DataDocTemplateVarForm
                     isEditable={isEditable}
-                    templatedVariables={dataDoc.meta}
-                    onSave={(meta) => {
-                        changeDataDocMeta(dataDoc.id, meta);
-                        if (isEmpty(meta)) {
-                            setShowFacde(true);
+                    variables={dataDoc.meta.variables}
+                    onSave={(newVariables) => {
+                        if (newVariables.length === 0) {
+                            setShowFacade(true);
                         }
-                        toast.success('Variables saved');
+                        return changeDataDocMeta(dataDoc.id, {
+                            ...dataDoc.meta,
+                            variables: newVariables,
+                        });
                     }}
                 />
             </>

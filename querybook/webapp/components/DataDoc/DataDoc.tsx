@@ -22,6 +22,7 @@ import {
     IDataCell,
     IDataCellMeta,
     IDataDoc,
+    IDataDocMeta,
     IDataQueryCell,
 } from 'const/datadoc';
 import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
@@ -632,7 +633,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                     key={cell.id}
                     docId={dataDoc.id}
                     numberOfCells={dataDoc.dataDocCells.length}
-                    templatedVariables={dataDoc.meta}
+                    templatedVariables={dataDoc.meta.variables}
                     cell={cell}
                     index={index}
                     queryIndexInDoc={queryIndexInDoc}
@@ -907,7 +908,7 @@ function mapDispatchToProps(dispatch: Dispatch) {
             );
         },
 
-        changeDataDocMeta: (docId: number, meta: IDataCellMeta) =>
+        changeDataDocMeta: (docId: number, meta: IDataDocMeta) =>
             dispatch(dataDocActions.updateDataDocField(docId, 'meta', meta)),
 
         cloneDataDoc: (docId: number) =>

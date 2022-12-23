@@ -8,7 +8,11 @@ import { DataDocChartCell } from 'components/DataDocChartCell/DataDocChartCell';
 import { DataDocQueryCell } from 'components/DataDocQueryCell/DataDocQueryCell';
 import { DataDocTextCell } from 'components/DataDocTextCell/DataDocTextCell';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
-import { DataCellUpdateFields, IDataCell } from 'const/datadoc';
+import {
+    DataCellUpdateFields,
+    IDataCell,
+    TDataDocMetaVariables,
+} from 'const/datadoc';
 import { DataDocContext } from 'context/DataDoc';
 import { useMakeSelector } from 'hooks/redux/useMakeSelector';
 import { useBoundFunc } from 'hooks/useBoundFunction';
@@ -22,7 +26,7 @@ import './DataDocCell.scss';
 interface IDataDocCellProps {
     docId: number;
     numberOfCells: number;
-    templatedVariables: Record<string, string>;
+    templatedVariables: TDataDocMetaVariables;
 
     cell: IDataCell;
     index: number;
