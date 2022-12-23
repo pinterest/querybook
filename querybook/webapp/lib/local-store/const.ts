@@ -1,4 +1,5 @@
-import { IAdhocQuery } from 'const/adhocQuery';
+import type { Entity } from 'components/EnvironmentAppSidebar/types';
+import type { IAdhocQuery } from 'const/adhocQuery';
 
 export const DISMISSED_ANNOUNCEMENT_KEY = 'dismissed_announcement_ids';
 export type DismissedAnnouncementValue = number[];
@@ -14,3 +15,6 @@ export type DataDocNavSectionValue = Record<string, boolean>;
 
 export const ADHOC_QUERY_KEY = 'adhoc_query_editor';
 export type AdhocQueryValue = IAdhocQuery;
+
+export const SIDEBAR_ENTITY = 'sidebar_entity';
+export type TSidebarEntity = Entity;

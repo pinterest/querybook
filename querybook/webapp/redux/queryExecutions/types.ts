@@ -111,6 +111,8 @@ export interface IReceiveQueryCellIdFromExecution extends Action {
     payload: {
         executionId: number;
         cellId: number;
+        cellTitle: string;
+        docId: number;
     };
 }
 
@@ -184,7 +186,16 @@ export type QueryExecutionAction =
 export interface IQueryExecutionState {
     queryExecutionById: Record<number, IQueryExecution>;
     statementExecutionById: Record<number, IStatementExecution>;
+
     dataCellIdQueryExecution: Record<number, Set<number>>;
+    queryExecutionIdToCellInfo: Record<
+        number,
+        {
+            cellId: number;
+            cellTitle: string;
+            docId: number;
+        }
+    >;
 
     queryErrorById: Record<number, IQueryError>;
     statementResultById: Record<number, IStatementResult>;

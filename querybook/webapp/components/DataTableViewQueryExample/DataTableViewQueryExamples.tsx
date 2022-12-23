@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { UserName } from 'components/UserBadge/UserName';
 import { IPaginatedQuerySampleFilters } from 'const/metastore';
+import { IQueryExecution } from 'const/queryExecution';
 import { useImmer } from 'hooks/useImmer';
 import { useLoader } from 'hooks/useLoader';
 import { format } from 'lib/sql-helper/sql-formatter';
@@ -21,6 +22,7 @@ import { Button, TextButton } from 'ui/Button/Button';
 import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
 import { Loading } from 'ui/Loading/Loading';
 import { AccentText } from 'ui/StyledText/StyledText';
+import { Title } from 'ui/Title/Title';
 
 import { DataTableViewQueryConcurrences } from './DataTableViewQueryConcurrences';
 import { DataTableViewQueryEngines } from './DataTableViewQueryEngines';
@@ -32,6 +34,11 @@ interface IProps {
     tableId: number;
 }
 
+interface IQueryExample {
+    queryExecution: IQueryExecution;
+    cellTitle?: string;
+}
+
 function useQueryExampleState(tableId: number) {
     const queryExecutionById = useSelector(
         (state: IStoreState) => state.queryExecutions.queryExecutionById
@@ -39,6 +46,10 @@ function useQueryExampleState(tableId: number) {
     const queryExampleIdsState = useSelector(
         (state: IStoreState) => state.dataSources.queryExampleIdsById[tableId]
     );
+    const queryExecutionIdToCellInfo = useSelector(
+        (state: IStoreState) => state.queryExecutions.queryExecutionIdToCellInfo
+    );
+
     return React.useMemo(
         () => ({
             queryExampleIds: queryExampleIdsState?.queryIds,
@@ -48,10 +59,17 @@ function useQueryExampleState(tableId: number) {
                 queryExampleIdsState?.queryIds ?? []
             ).filter((id) => !(id in queryExecutionById)),
             queryExamples: (queryExampleIdsState?.queryIds ?? [])
-                .map((id) => queryExecutionById[id])
-                .filter((query) => query),
+                .map(
+                    (id) =>
+                        ({
+                            queryExecution: queryExecutionById[id],
+                            cellTitle:
+                                queryExecutionIdToCellInfo[id]?.cellTitle ?? '',
+                        } as IQueryExample)
+                )
+                .filter((query) => query.queryExecution),
         }),
-        [queryExampleIdsState, queryExecutionById]
+        [queryExampleIdsState, queryExecutionById, queryExecutionIdToCellInfo]
     );
 }
 
@@ -223,11 +241,18 @@ const QueryExamplesList: React.FC<{
 
     const loadQueryExecution = React.useCallback(
         (queryExecutionId) =>
-            dispatch(
-                queryExecutionsActions.fetchQueryExecutionIfNeeded(
-                    queryExecutionId
-                )
-            ),
+            Promise.all([
+                dispatch(
+                    queryExecutionsActions.fetchQueryExecutionIfNeeded(
+                        queryExecutionId
+                    )
+                ),
+                dispatch(
+                    queryExecutionsActions.fetchDataDocInfoByQueryExecutionIdIfNeeded(
+                        queryExecutionId
+                    )
+                ),
+            ]),
         []
     );
 
@@ -272,7 +297,10 @@ const QueryExamplesList: React.FC<{
         }
 
         const queryExamplesDOM = queryExamples
-            .map((query) => {
+            .map((queryExample) => {
+                const query = queryExample.queryExecution;
+                const queryTitle = queryExample.cellTitle;
+
                 const language =
                     queryEngineById[query.engine_id]?.language ?? 'presto';
                 const formattedQuery = format(query.query, language, {
@@ -283,6 +311,18 @@ const QueryExamplesList: React.FC<{
                         className="DataTableViewQueryExamples-item"
                         key={query.id}
                     >
+                        <div className="horizontal-space-between mb4">
+                            <Title size="med" untitled={!queryTitle}>
+                                {queryTitle || 'Untitled Execution'}
+                            </Title>
+                            <TextButton
+                                icon="ArrowRight"
+                                title="Open Execution"
+                                className="mt8"
+                                onClick={() => openDisplayModal(query.id)}
+                            />
+                        </div>
+
                         <ThemedCodeHighlight
                             className="DataTableViewQueryExamples-query"
                             value={formattedQuery}
@@ -291,12 +331,6 @@ const QueryExamplesList: React.FC<{
                             <span>by </span>
                             <UserName uid={query.uid} />
                         </div>
-                        <TextButton
-                            icon="ArrowRight"
-                            title="Open Execution"
-                            className="mt8"
-                            onClick={() => openDisplayModal(query.id)}
-                        />
                     </div>
                 );
             })

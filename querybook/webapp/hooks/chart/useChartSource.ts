@@ -95,7 +95,7 @@ export function useChartSource(
             getCellQueryExecutions(cellId);
         } else if (cellId == null && executionId) {
             dispatch(
-                queryExecutionsActions.fetchDataDocInfoByQueryExecutionId(
+                queryExecutionsActions.fetchDataDocInfoByQueryExecutionIdIfNeeded(
                     executionId
                 )
             ).then(({ cell_id: newCellId }) => {

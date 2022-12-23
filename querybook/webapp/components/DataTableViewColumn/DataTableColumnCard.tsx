@@ -29,6 +29,7 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
         <EditableTextField
             value={column.description as ContentState}
             onSave={updateDataColumnDescription.bind(null, column.id)}
+            placeholder="No user comments yet for column."
         />
     );
     return (

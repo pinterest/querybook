@@ -8,7 +8,11 @@ export const ColorPalette: IColorPalette[] = [
     { name: 'pink', color: '#ff3975', fillColor: 'rgba(255, 57, 117, 0.25)' },
     { name: 'grey', color: '#bfbfbf', fillColor: 'rgba(191, 191, 191, 0.25)' },
     { name: 'gold', color: '#ffca00', fillColor: 'rgba(255, 202, 0, 0.25)' },
-    { name: 'blue', color: '#529dce', fillColor: 'rgba(82, 157, 206, 0.25)' },
+    {
+        name: 'picton blue',
+        color: '#529dce',
+        fillColor: 'rgba(82, 157, 206, 0.25)',
+    },
     { name: 'orange', color: '#ff9f42', fillColor: 'rgba(255, 159, 66, 0.25)' },
     {
         name: 'creamy forest green',

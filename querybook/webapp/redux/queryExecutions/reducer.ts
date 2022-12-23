@@ -10,7 +10,9 @@ import { IQueryExecutionState, QueryExecutionAction } from './types';
 const initialState: IQueryExecutionState = {
     queryExecutionById: {},
     statementExecutionById: {},
+
     dataCellIdQueryExecution: {},
+    queryExecutionIdToCellInfo: {},
 
     statementResultById: {},
     statementResultLoadingById: {},
@@ -22,6 +24,26 @@ const initialState: IQueryExecutionState = {
     viewersByExecutionIdUserId: {},
     accessRequestsByExecutionIdUserId: {},
 };
+
+function queryExecutionIdToCellInfoReducer(
+    state = initialState.queryExecutionIdToCellInfo,
+    action: QueryExecutionAction
+) {
+    return produce(state, (draft) => {
+        switch (action.type) {
+            case '@@queryExecutions/RECEIVE_QUERY_CELL_ID_FROM_EXECUTION': {
+                const { executionId, cellId, cellTitle, docId } =
+                    action.payload;
+                draft[executionId] = {
+                    cellId,
+                    cellTitle,
+                    docId,
+                };
+                return;
+            }
+        }
+    });
+}
 
 function dataCellIdQueryExecutionReducer(
     state = initialState.dataCellIdQueryExecution,
@@ -414,6 +436,8 @@ function statementExportersReducer(
 
 export default combineReducers({
     dataCellIdQueryExecution: dataCellIdQueryExecutionReducer,
+    queryExecutionIdToCellInfo: queryExecutionIdToCellInfoReducer,
+
     statementExecutionById: statementExecutionByIdReducer,
     queryExecutionById: queryExecutionByIdReducer,
 

@@ -13,11 +13,12 @@ export interface IEditableTextFieldProps {
     onSave: (content: DraftJs.ContentState) => Promise<any>;
     className?: string;
     readonly?: boolean;
+    placeholder?: string;
 }
 
 export const EditableTextField: React.FunctionComponent<
     IEditableTextFieldProps
-> = ({ value, onSave, className, readonly = false }) => {
+> = ({ value, onSave, className, placeholder, readonly = false }) => {
     const [editMode, setEditMode] = React.useState(false);
     const editorRef = React.useRef<RichTextEditor>(null);
 
@@ -73,6 +74,7 @@ export const EditableTextField: React.FunctionComponent<
                 value={value}
                 readOnly={readonly || !editMode}
                 ref={editorRef}
+                placeholder={placeholder}
             />
             {toggleEditModeButton}
         </div>
