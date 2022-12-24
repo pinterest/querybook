@@ -39,7 +39,10 @@ export const ListLink: React.FunctionComponent<IProps> = React.memo(
                         {title}
                     </StyledText>
                 ) : noPlaceHolder ? null : (
-                    <UntitledText size="small" />
+                    <UntitledText
+                        className="ListLinkPlaceholder"
+                        size="small"
+                    />
                 )}
                 {icon && <Icon name={icon} size={16} />}
                 {children}

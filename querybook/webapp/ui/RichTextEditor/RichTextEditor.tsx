@@ -26,6 +26,7 @@ export interface IRichTextEditorProps {
     className?: string;
     readOnly?: boolean;
     value: DraftJs.ContentState;
+    placeholder?: string;
 
     onChange?: (editorState: DraftJs.EditorState) => any;
     onKeyDown?: (
@@ -550,7 +551,8 @@ export class RichTextEditor extends React.PureComponent<
     }
 
     public render() {
-        const { className, onFocus, onBlur, readOnly } = this.props;
+        const { className, onFocus, onBlur, readOnly, placeholder } =
+            this.props;
 
         const { editorState, toolBarStyle } = this.state;
         const toolBar = readOnly ? null : (
@@ -567,6 +569,7 @@ export class RichTextEditor extends React.PureComponent<
         const editor = (
             <DraftJs.Editor
                 editorState={editorState}
+                placeholder={placeholder}
                 keyBindingFn={this.keyBindingFn}
                 handleKeyCommand={this.handleKeyCommand}
                 onChange={this.onChange}

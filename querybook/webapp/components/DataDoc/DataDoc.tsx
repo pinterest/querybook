@@ -832,7 +832,12 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
             // during this time we will focus the new inserted cell
             const cellLengthChanged = cells.length !== previousCells.length;
             if (cellLengthChanged && this.focusCellIndexAfterInsert != null) {
-                this.focusCellAt(this.focusCellIndexAfterInsert);
+                const cellIndexToFocus = this.focusCellIndexAfterInsert;
+                setImmediate(() => {
+                    // setting focus cell during componentDidUpdate would not
+                    // actually focus the cell, we need to do it in another event loop
+                    this.focusCellAt(cellIndexToFocus);
+                });
                 this.focusCellIndexAfterInsert = null;
             }
         }

@@ -115,6 +115,7 @@ export const DataTableViewOverview: React.FC<
         <EditableTextField
             value={table.description as DraftJs.ContentState}
             onSave={onDescriptionSave}
+            placeholder="No description for this table yet."
         />
     ) : null;
 

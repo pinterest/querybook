@@ -7,6 +7,8 @@ import { DataDocSchemaNavigator } from 'components/DataDocSchemaNavigator/DataDo
 import { QuerySnippetNavigator } from 'components/QuerySnippetNavigator/QuerySnippetNavigator';
 import { QueryViewNavigator } from 'components/QueryViewNavigator/QueryViewNavigator';
 import { useEvent } from 'hooks/useEvent';
+import { useLocalStoreState } from 'hooks/useLocalStoreState';
+import { SIDEBAR_ENTITY } from 'lib/local-store/const';
 import { KeyMap, matchKeyMap } from 'lib/utils/keyboard';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
@@ -30,7 +32,10 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
         (state: IStoreState) => state.querybookUI.isEnvCollapsed
     );
     const dispatch: Dispatch = useDispatch();
-    const [entity, setEntity] = React.useState<Entity>('datadoc');
+    const [entity, setEntity] = useLocalStoreState<Entity>({
+        storeKey: SIDEBAR_ENTITY,
+        defaultValue: 'datadoc',
+    });
 
     const currentEnvironment = useSelector(currentEnvironmentSelector);
 
@@ -47,7 +52,7 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
                 return newEntity;
             });
         },
-        [dispatch, collapsed]
+        [dispatch, collapsed, setEntity]
     );
 
     const scrollToCollapseSidebar = React.useCallback(

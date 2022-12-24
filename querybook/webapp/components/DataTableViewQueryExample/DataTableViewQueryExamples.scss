@@ -10,6 +10,12 @@
         position: relative;
         margin-top: 24px;
 
+        .DataTableViewQueryExamples-header {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
         .DataTableViewQueryExamples-query {
             height: auto;
             max-height: 360px;
@@ -27,12 +33,6 @@
             span:last-child {
                 font-weight: var(--bold-font);
             }
-        }
-
-        .Button {
-            position: absolute;
-            top: 0px;
-            right: 20px;
         }
     }
 }

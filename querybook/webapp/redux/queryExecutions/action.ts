@@ -240,7 +240,7 @@ export function fetchQueryExecutionsByCell(
     };
 }
 
-export function fetchDataDocInfoByQueryExecutionId(
+export function fetchDataDocInfoByQueryExecutionIdIfNeeded(
     executionId: number
 ): ThunkResult<
     Promise<{
@@ -249,7 +249,16 @@ export function fetchDataDocInfoByQueryExecutionId(
         cell_title: string;
     }>
 > {
-    return async (dispatch) => {
+    return async (dispatch, getState) => {
+        const state = getState().queryExecutions.queryExecutionIdToCellInfo;
+        if (executionId in state) {
+            return {
+                cell_id: state[executionId].cellId,
+                doc_id: state[executionId].docId,
+                cell_title: state[executionId].cellTitle,
+            };
+        }
+
         const { data: result } = await QueryExecutionResource.getDataDoc(
             executionId
         );
@@ -259,6 +268,8 @@ export function fetchDataDocInfoByQueryExecutionId(
             payload: {
                 executionId,
                 cellId: result.cell_id,
+                cellTitle: result.cell_title,
+                docId: result.doc_id,
             },
         });
         return result;
