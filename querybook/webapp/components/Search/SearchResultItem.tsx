@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 
 import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
+import { ComponentType, ElementType } from 'const/analytics';
 import {
     IBoardPreview,
     IDataDocPreview,
@@ -11,6 +12,7 @@ import {
     ITablePreview,
 } from 'const/search';
 import { useUser } from 'hooks/redux/useUser';
+import { trackClick } from 'lib/analytics';
 import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { stopPropagation } from 'lib/utils/noop';
@@ -325,6 +327,7 @@ interface IDataTableItemProps {
     searchString: string;
     url: string;
     fromBoardId: number | undefined;
+    pos: number;
 }
 
 export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
@@ -332,6 +335,7 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
     searchString,
     url,
     fromBoardId,
+    pos,
 }) => {
     const selfRef = useRef<HTMLDivElement>();
     const {
@@ -343,7 +347,21 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
         tags,
         id,
     } = preview;
-    const handleClick = React.useMemo(() => openClick.bind(null, url), [url]);
+    const handleClick = React.useCallback(
+        (e) => {
+            trackClick({
+                component: ComponentType.LEFT_SIDEBAR,
+                element: ElementType.TABLE_RESULT_ITEM,
+                aux: {
+                    search: searchString,
+                    table: id,
+                    pos,
+                },
+            });
+            openClick(url, e);
+        },
+        [url, id, pos, searchString]
+    );
 
     const goldenIcon = golden ? (
         <div className="result-item-golden ml4">

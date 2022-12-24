@@ -13,6 +13,7 @@ from . import board
 from . import utils
 from . import table_upload
 from . import tag
+from . import event_log
 
 # Flake8 :(
 admin
@@ -30,3 +31,4 @@ board
 utils
 table_upload
 tag
+event_log

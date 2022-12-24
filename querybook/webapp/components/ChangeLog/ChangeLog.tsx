@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { useParams } from 'react-router-dom';
 
+import { ComponentType } from 'const/analytics';
 import { IChangeLogItem } from 'const/changeLog';
+import { useTrackView } from 'hooks/useTrackView';
 import localStore from 'lib/local-store';
 import { CHANGE_LOG_KEY, ChangeLogValue } from 'lib/local-store/const';
 import { sanitizeAndExtraMarkdown } from 'lib/markdown';
@@ -29,6 +31,7 @@ const ChangeLogMarkdown: React.FC<{ markdown: string }> = ({ markdown }) => {
 };
 
 export const ChangeLog: React.FunctionComponent = () => {
+    useTrackView(ComponentType.CHANGE_LOG);
     const { date: changeLogDate } = useParams();
     const [changeLogContent, setChangeLogContent] = React.useState<string[]>(
         []
