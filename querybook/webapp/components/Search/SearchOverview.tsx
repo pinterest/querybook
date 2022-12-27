@@ -1,4 +1,5 @@
 import { isEmpty } from 'lodash';
+import clsx from 'clsx';
 import moment from 'moment';
 import React, { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
@@ -56,6 +57,7 @@ import {
     QueryItem,
 } from './SearchResultItem';
 import { TableSelect } from './TableSelect';
+
 import { SearchSchemaSelect } from './SearchSchemaSelect';
 
 import './SearchOverview.scss';
@@ -237,6 +239,10 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
         mapQueryParamToState();
     }, []);
 
+    const [displayLines, setDisplayLines] = React.useState<number>(null);
+    const [isDisplayPreview, setIsDisplayPreview] =
+        React.useState<boolean>(false);
+
     const searchTypeDOM = (
         <div className="search-types mv4">
             <Tabs
@@ -306,10 +312,18 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                 {searchOrder === SearchOrder.Recency
                     ? 'Most recent'
                     : 'Most relevant'}
+                {isDisplayPreview ? (
+                    <div className="ml12">
+                        Preview: expanded
+                        {displayLines ? `, Lines: ${displayLines}` : ''}
+                    </div>
+                ) : (
+                    ''
+                )}
                 <Icon className="ml8" name="ChevronDown" size={16} />
             </div>
         ),
-        [searchOrder]
+        [searchOrder, isDisplayPreview, displayLines]
     );
 
     const orderByDOM = (
@@ -333,6 +347,39 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                 )}
                 type="select"
             />
+            {searchType === 'Query' ? (
+                <div className="p12 Menu">
+                    <div className="mb12">
+                        <Checkbox
+                            title="Expand previews"
+                            value={isDisplayPreview}
+                            onChange={(checked) => {
+                                setIsDisplayPreview(checked);
+                            }}
+                        />
+                    </div>
+                    <div className="horizontal-space-between mb12">
+                        <span
+                            className={clsx({
+                                'input-opacity': !isDisplayPreview,
+                            })}
+                        >
+                            Lines:{' '}
+                        </span>
+                        <NumberInput
+                            className="ml8 display-preview-input"
+                            value={displayLines}
+                            onChange={(lines) => {
+                                setDisplayLines(+lines);
+                            }}
+                            readOnly={!isDisplayPreview}
+                            min="0"
+                        />
+                    </div>
+                </div>
+            ) : (
+                ''
+            )}
         </Dropdown>
     );
 
@@ -346,6 +393,8 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                       preview={result}
                       environmentName={environment.name}
                       fromBoardId={fromBoardId}
+                      displayLines={displayLines}
+                      displayPreview={isDisplayPreview}
                   />
               ))
             : searchType === SearchType.DataDoc
