@@ -1,4 +1,5 @@
 from celery import chain
+from celery.contrib.abortable import AbortableTask
 
 from app.db import DBSession
 from app.flask_app import celery, socketio
@@ -41,6 +42,7 @@ def run_datadoc_with_config(
     execution_type=QueryExecutionType.SCHEDULED.value,
     # Exporting related settings
     exports=[],
+    retry={"delay_sec": 0, "max_retries": 0, "enabled": False},
     *args,
     **kwargs,
 ):
@@ -95,16 +97,21 @@ def run_datadoc_with_config(
                 },
                 "data_doc_id": doc_id,
             }
+            
             tasks_to_run.append(
-                _start_query_execution_task.si(
+                _run_datadoc_cell.si(
                     **start_query_execution_kwargs,
                     previous_query_status=QueryExecutionStatus.DONE.value,
+                    execution_type=execution_type,
+                    retry=retry,
                 )
                 if index == 0
-                else _start_query_execution_task.s(**start_query_execution_kwargs)
+                else _run_datadoc_cell.s(
+                    **start_query_execution_kwargs,
+                    execution_type=execution_type,
+                    retry=retry,
+                )
             )
-
-            tasks_to_run.append(run_query_task.s(execution_type=execution_type))
 
     chain(*tasks_to_run).apply_async(
         link=on_datadoc_run_success.s(
@@ -114,13 +121,15 @@ def run_datadoc_with_config(
     )
 
 
-@celery.task(bind=True)
-def _start_query_execution_task(
+@celery.task(bind=True, base=AbortableTask)
+def _run_datadoc_cell(
     self,
     previous_query_status,
     cell_id,
     query_execution_params,
     data_doc_id,
+    execution_type,
+    retry
 ):
     if previous_query_status != QueryExecutionStatus.DONE.value:
         raise Exception(GENERIC_QUERY_FAILURE_MSG)
@@ -146,8 +155,21 @@ def _start_query_execution_task(
             room=data_doc_id,
             broadcast=True,
         )
-        return query_execution.id
 
+    # Run synchronously
+    query_run_status = run_query_task(
+        query_execution_id=query_execution.id,
+        execution_type=execution_type,
+        celery_task=self,
+    )
+    if (
+        retry["enabled"] is True
+        and retry["max_retries"] != 0
+        and query_run_status == QueryExecutionStatus.ERROR.value
+    ):
+        self.retry(countdown=retry["delay_sec"], max_retries=retry["max_retries"])
+
+    return query_run_status
 
 @celery.task
 def on_datadoc_run_success(
