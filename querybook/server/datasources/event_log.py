@@ -1,14 +1,6 @@
-from typing import TypedDict
-
 from app.datasource import register
-from const.event_log import EventType
+from const.event_log import EventType, FrontendEvent
 from lib.event_logger import event_logger
-
-
-class FrontendEvent(TypedDict):
-    timestamp: int
-    event_data: dict
-    event_type: str
 
 
 @register("/event_log/", methods=["POST"], api_logging=False)
