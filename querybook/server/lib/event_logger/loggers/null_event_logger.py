@@ -10,6 +10,6 @@ class NullEventLogger(BaseEventLogger):
         return "null"
 
     def log(
-        self, uid: int, event_type: EventType, event_data: dict, timestamp: int
+        self, uid: int, event_type: EventType, event_data: dict, timestamp: int = None
     ) -> None:
         pass

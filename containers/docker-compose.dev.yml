@@ -16,6 +16,7 @@ services:
             - /opt/querybook/node_modules/
             # Make sure the build files don't leak back
             - /opt/querybook/dist/
+            - /opt/querybook/querybook/static/changelog/
     web:
         extends:
             service: base
