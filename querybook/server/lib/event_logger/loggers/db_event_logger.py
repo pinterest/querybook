@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from const.event_log import EventType
 from lib.event_logger.base_event_logger import BaseEventLogger
 from models.event_log import EventLog
@@ -65,6 +67,16 @@ class DBEventLogger(BaseEventLogger):
     def log(
         self, uid: int, event_type: EventType, event_data: dict, timestamp: int = None
     ):
+        created_at = (
+            datetime.utcfromtimestamp(timestamp / 1000)
+            if timestamp is not None
+            else None
+        )
         EventLog.create(
-            {"uid": uid, "event_type": event_type, "event_data": event_data}
+            {
+                "uid": uid,
+                "event_type": event_type,
+                "event_data": event_data,
+                "created_at": created_at,
+            }
         )
