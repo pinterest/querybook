@@ -11,6 +11,7 @@ x-querybook-depends-on: &querybook-depends-on
 x-querybook-volumes: &querybook-volumes
     # This is to sync in live code change
     - $PWD:/opt/querybook
+    - $PWD/docs_website/static/changelog:/opt/querybook/querybook/static/changelog
     # See https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
     - /opt/querybook/node_modules/
     # Make sure the build files don't leak back

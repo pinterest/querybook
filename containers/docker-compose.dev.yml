@@ -12,11 +12,11 @@ services:
         volumes:
             # This is for code change via watcher
             - $PWD:/opt/querybook
+            - $PWD/docs_website/static/changelog:/opt/querybook/querybook/static/changelog
             # See https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
             - /opt/querybook/node_modules/
             # Make sure the build files don't leak back
             - /opt/querybook/dist/
-            - /opt/querybook/querybook/static/changelog/
     web:
         extends:
             service: base
