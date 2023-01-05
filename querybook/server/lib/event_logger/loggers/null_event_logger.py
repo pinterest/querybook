@@ -9,8 +9,7 @@ class NullEventLogger(BaseEventLogger):
     def logger_name(self) -> str:
         return "null"
 
-    def log(self, uid: int, event_type: EventType, event_data: dict) -> None:
-        pass
-
-    def log_api_request(self, uid: int, route: str, method: str, params: dict) -> None:
+    def log(
+        self, uid: int, event_type: EventType, event_data: dict, timestamp: int
+    ) -> None:
         pass

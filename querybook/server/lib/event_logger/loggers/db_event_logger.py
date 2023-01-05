@@ -62,7 +62,9 @@ class DBEventLogger(BaseEventLogger):
             },
         ]
 
-    def log(self, uid: int, event_type: EventType, event_data: dict):
+    def log(
+        self, uid: int, event_type: EventType, event_data: dict, timestamp: int = None
+    ):
         EventLog.create(
             {"uid": uid, "event_type": event_type, "event_data": event_data}
         )

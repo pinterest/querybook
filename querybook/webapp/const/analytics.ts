@@ -9,12 +9,16 @@ export enum EventType {
 }
 
 export enum ComponentType {
+    LANDING_PAGE = 'LANDING_PAGE',
+    CHANGE_LOG = 'CHANGE_LOG',
     LEFT_SIDEBAR = 'LEFT_SIDEBAR',
     SEARCH_MODAL = 'SEARCH_MODAL',
-    CHANGE_LOG = 'CHANGE_LOG',
 }
 
 export enum ElementType {
+    // Landing page
+    TUTORIAL_BUTTON = 'TUTORIAL_BUTTON',
+
     // Side bar
     HOME_BUTTON = 'HOME_BUTTON',
     SEARCH_BUTTON = 'SEARCH_BUTTON',
@@ -40,4 +44,10 @@ export interface EventData {
     component?: ComponentType;
     element?: ElementType;
     aux?: object;
+}
+
+export interface AnalyticsEvent {
+    type: EventType;
+    data: EventData;
+    timestamp: number;
 }
