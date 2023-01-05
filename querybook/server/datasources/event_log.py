@@ -8,7 +8,7 @@ def log_track_event(events: list):
     """Log a list of frontend tracking events.
 
     Args:
-        events (list): Each event is type of { event_type: str, event_data: dict }
+        events (list): Each event is type of { event_type: str, event_data: dict, timestamp: int }
     """
     for event in events:
         event_logger.log(
