@@ -3,7 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { TokenCreation } from 'components/Token/TokenCreation';
 import { UserBadge } from 'components/UserBadge/UserBadge';
+import { ComponentType, ElementType } from 'const/analytics';
 import { TooltipDirection } from 'const/tooltip';
+import { trackClick } from 'lib/analytics';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import * as UserActions from 'redux/user/action';
@@ -27,10 +29,13 @@ export const UserMenu: React.FC<IUserMenuProps> = ({
     popoverLayout = ['right', 'bottom'] as PopoverLayout,
 }) => {
     const [showUserMenuPopover, setShowUserMenuPopover] = useState(false);
-    const toggleUserMenuPopover = useCallback(
-        () => setShowUserMenuPopover((val) => !val),
-        []
-    );
+    const toggleUserMenuPopover = useCallback(() => {
+        trackClick({
+            component: ComponentType.LEFT_SIDEBAR,
+            element: ElementType.SETTINGS_BUTTON,
+        });
+        setShowUserMenuPopover((val) => !val);
+    }, []);
 
     const [showTokenModal, setShowTokenModal] = useState(false);
     const toggleShowTokenModal = useCallback(

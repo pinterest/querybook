@@ -55,8 +55,8 @@ import {
     DataTableItem,
     QueryItem,
 } from './SearchResultItem';
-import { TableSelect } from './TableSelect';
 import { SearchSchemaSelect } from './SearchSchemaSelect';
+import { TableSelect } from './TableSelect';
 
 import './SearchOverview.scss';
 
@@ -359,13 +359,14 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                   />
               ))
             : searchType === SearchType.Table
-            ? (results as ITablePreview[]).map((result) => (
+            ? (results as ITablePreview[]).map((result, index) => (
                   <DataTableItem
                       key={result.id}
                       preview={result}
                       url={`/${environment.name}/table/${result.id}/`}
                       searchString={searchString}
                       fromBoardId={fromBoardId}
+                      pos={index}
                   />
               ))
             : (results as IBoardPreview[]).map((result) => (

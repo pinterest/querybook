@@ -17,8 +17,16 @@ class ConsoleEventLogger(BaseEventLogger):
     def logger_name(self) -> str:
         return "console"
 
-    def log(self, uid: int, event_type: EventType, event_data: dict):
-        now = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+    def log(
+        self, uid: int, event_type: EventType, event_data: dict, timestamp: int = None
+    ):
+        now = (
+            datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+            if timestamp is None
+            else datetime.utcfromtimestamp(timestamp / 1000).strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
+        )
         event = f"created_at: {now}, uid={uid}, event_type={event_type}, event_data={event_data}"
 
         LOG.info(f"{COLOR_YELLOW}{self.__class__.__name__} - {event}{COLOR_RESET}")

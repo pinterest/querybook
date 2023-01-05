@@ -3,8 +3,10 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { QuerybookSidebarUIGuide } from 'components/UIGuide/QuerybookSidebarUIGuide';
+import { ComponentType } from 'const/analytics';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import { useBrowserTitle } from 'hooks/useBrowserTitle';
+import { useTrackView } from 'hooks/useTrackView';
 import { titleize } from 'lib/utils';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { fetchDataDocs } from 'redux/dataDoc/action';
@@ -115,6 +117,7 @@ const DefaultLanding: React.FC = ({ children }) => {
 };
 
 const Landing: React.FC = () => {
+    useTrackView(ComponentType.LANDING_PAGE);
     useBrowserTitle();
 
     const customLandingConfig = window.CUSTOM_LANDING_PAGE;
