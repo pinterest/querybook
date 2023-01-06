@@ -394,7 +394,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     public async onRunButtonClick() {
         trackClick({
             component: ComponentType.DATADOC_QUERY_CELL,
-            element: ElementType.FORMAT_BUTTON,
+            element: ElementType.RUN_QUERY_BUTTON,
             aux: {
                 lintError: this.state.hasLintError,
             },
