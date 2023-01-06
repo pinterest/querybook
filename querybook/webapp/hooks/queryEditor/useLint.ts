@@ -6,7 +6,6 @@ import {
     ILinterWarning,
     TableToken,
 } from 'lib/sql-helper/sql-lexer';
-import { isQueryUsingTemplating } from 'lib/templated-query/validation';
 import { Nullable } from 'lib/typescript';
 import React, {
     useCallback,
@@ -81,11 +80,7 @@ function useQueryLintAnnotations(
 
     const getQueryLintAnnotations = useCallback(
         async (code: string) => {
-            if (
-                !getLintErrors ||
-                code.length === 0 ||
-                isQueryUsingTemplating(code)
-            ) {
+            if (!getLintErrors || code.length === 0) {
                 return [];
             }
 

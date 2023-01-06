@@ -163,9 +163,14 @@ export const TemplatedQueryResource = {
             false
         ),
 
-    validateQuery: (query: string, engineId: number) =>
+    validateQuery: (
+        query: string,
+        engineId: number,
+        templatedVariables: TDataDocMetaVariables
+    ) =>
         ds.save<IQueryValidationResult[]>('/query/validate/', {
             query,
+            var_config: templatedVariables,
             engine_id: engineId,
         }),
 
