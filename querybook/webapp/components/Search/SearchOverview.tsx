@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash';
 import moment from 'moment';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import CreatableSelect from 'react-select/creatable';
 
@@ -16,7 +16,7 @@ import {
 } from 'const/search';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import { useTrackView } from 'hooks/useTrackView';
-import { trackClick } from 'lib/analytics';
+import { trackClick, trackView } from 'lib/analytics';
 import { titleize } from 'lib/utils';
 import { getCurrentEnv } from 'lib/utils/query-string';
 import {
@@ -111,6 +111,18 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
 
     const results = resultByPage[currentPage] || [];
     const isLoading = !!searchRequest;
+
+    // Log search results
+    useEffect(() => {
+        if (!isLoading && !!searchString.length && !!results.length) {
+            const elementType = SearchTypeToElementType[searchType];
+            trackView(ComponentType.SEARCH_MODAL, elementType, {
+                search: searchString,
+                results: results.map((r) => r.id),
+                page: currentPage,
+            });
+        }
+    }, [isLoading, searchString, results]);
 
     const dispatch = useDispatch();
     const handleUpdateSearchString = React.useCallback(
