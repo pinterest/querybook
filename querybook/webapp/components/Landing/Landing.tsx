@@ -3,10 +3,11 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { QuerybookSidebarUIGuide } from 'components/UIGuide/QuerybookSidebarUIGuide';
-import { ComponentType } from 'const/analytics';
+import { ComponentType, ElementType } from 'const/analytics';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import { useBrowserTitle } from 'hooks/useBrowserTitle';
 import { useTrackView } from 'hooks/useTrackView';
+import { trackClick } from 'lib/analytics';
 import { titleize } from 'lib/utils';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { fetchDataDocs } from 'redux/dataDoc/action';
@@ -43,7 +44,14 @@ const DefaultLanding: React.FC = ({ children }) => {
         dispatch(fetchDataDocs('recent'));
     }, [environment.id]);
 
-    const onDataDocClick = React.useCallback((docId) => {
+    const onDataDocClick = React.useCallback((docId, elementType) => {
+        trackClick({
+            component: ComponentType.LANDING_PAGE,
+            element: elementType,
+            aux: {
+                docId,
+            },
+        });
         navigateWithinEnv(`/datadoc/${docId}/`);
     }, []);
 
@@ -51,7 +59,9 @@ const DefaultLanding: React.FC = ({ children }) => {
         recentDataDocs.map((dataDoc) => (
             <div
                 className="Landing-data-doc"
-                onClick={() => onDataDocClick(dataDoc.id)}
+                onClick={() =>
+                    onDataDocClick(dataDoc.id, ElementType.RECENT_DATADOC)
+                }
                 key={dataDoc.id}
             >
                 {dataDoc.title || 'Untitled'}
@@ -61,7 +71,9 @@ const DefaultLanding: React.FC = ({ children }) => {
         favoriteDataDocs.map((dataDoc) => (
             <div
                 className="Landing-data-doc"
-                onClick={() => onDataDocClick(dataDoc.id)}
+                onClick={() =>
+                    onDataDocClick(dataDoc.id, ElementType.FAVORITE_DATADOC)
+                }
                 key={dataDoc.id}
             >
                 {dataDoc.title || 'Untitled'}

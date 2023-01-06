@@ -3,7 +3,9 @@ import React, { useCallback, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { TableTagGroupSelect } from 'components/DataTableTags/TableTagGroupSelect';
+import { ComponentType, ElementType } from 'const/analytics';
 import { useToggleState } from 'hooks/useToggleState';
+import { trackClick } from 'lib/analytics';
 import {
     changeSchemasSort,
     updateTableSort,
@@ -136,6 +138,10 @@ export const DataTableNavigatorSearch: React.FC<{
                         dispatch(updateTableSort(null, !sortTableAsc));
                     }}
                     onOrderByFieldToggle={() => {
+                        trackClick({
+                            component: ComponentType.TABLE_NAVIGATOR_SEARCH,
+                            element: ElementType.TABLE_ORDER_BY_BUTTON,
+                        });
                         dispatch(
                             updateTableSort(
                                 sortTableKey === 'name' ? 'relevance' : 'name'

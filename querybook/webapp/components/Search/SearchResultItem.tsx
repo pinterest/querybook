@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 
 import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
-import { ComponentType, ElementType } from 'const/analytics';
 import {
     IBoardPreview,
     IDataDocPreview,
@@ -12,7 +11,6 @@ import {
     ITablePreview,
 } from 'const/search';
 import { useUser } from 'hooks/redux/useUser';
-import { trackClick } from 'lib/analytics';
 import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { stopPropagation } from 'lib/utils/noop';
@@ -88,6 +86,7 @@ interface IQueryItemProps {
     searchString: string;
     environmentName: string;
     fromBoardId: number | undefined;
+    onTrackClick: () => void;
 }
 
 export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
@@ -95,6 +94,7 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
     environmentName,
     searchString,
     fromBoardId,
+    onTrackClick,
 }) => {
     const {
         author_uid: authorUid,
@@ -112,7 +112,13 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
     const url = isQueryCell
         ? `/${environmentName}/datadoc/${preview.data_doc_id}/?cellId=${id}`
         : `/${environmentName}/query_execution/${id}/`;
-    const handleClick = React.useMemo(() => openClick.bind(null, url), [url]);
+    const handleClick = React.useCallback(
+        (e) => {
+            onTrackClick();
+            openClick(url, e);
+        },
+        [url, onTrackClick]
+    );
     const queryEngineById = useSelector(queryEngineByIdEnvSelector);
     const selfRef = useRef<HTMLDivElement>();
 
@@ -239,6 +245,7 @@ interface IDataDocItemProps {
     searchString: string;
     url: string;
     fromBoardId: number | undefined;
+    onTrackClick: () => void;
 }
 
 export const DataDocItem: React.FunctionComponent<IDataDocItemProps> = ({
@@ -246,12 +253,19 @@ export const DataDocItem: React.FunctionComponent<IDataDocItemProps> = ({
     url,
     searchString,
     fromBoardId,
+    onTrackClick,
 }) => {
     const selfRef = useRef<HTMLDivElement>();
 
     const { owner_uid: ownerUid, created_at: createdAt, id } = preview;
     const { userInfo: ownerInfo, loading } = useUser({ uid: ownerUid });
-    const handleClick = React.useMemo(() => openClick.bind(null, url), [url]);
+    const handleClick = React.useCallback(
+        (e) => {
+            onTrackClick();
+            openClick(url, e);
+        },
+        [url, onTrackClick]
+    );
 
     if (loading) {
         return (
@@ -327,7 +341,9 @@ interface IDataTableItemProps {
     searchString: string;
     url: string;
     fromBoardId: number | undefined;
-    pos: number;
+    currentPage: number;
+    index: number;
+    onTrackClick: () => void;
 }
 
 export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
@@ -335,7 +351,7 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
     searchString,
     url,
     fromBoardId,
-    pos,
+    onTrackClick,
 }) => {
     const selfRef = useRef<HTMLDivElement>();
     const {
@@ -349,18 +365,10 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
     } = preview;
     const handleClick = React.useCallback(
         (e) => {
-            trackClick({
-                component: ComponentType.LEFT_SIDEBAR,
-                element: ElementType.TABLE_RESULT_ITEM,
-                aux: {
-                    search: searchString,
-                    table: id,
-                    pos,
-                },
-            });
+            onTrackClick();
             openClick(url, e);
         },
-        [url, id, pos, searchString]
+        [url, onTrackClick]
     );
 
     const goldenIcon = golden ? (
@@ -445,11 +453,18 @@ export const BoardItem: React.FunctionComponent<{
     url: string;
     searchString: string;
     fromBoardId: number | undefined;
-}> = ({ preview, url, searchString, fromBoardId }) => {
+    onTrackClick: () => void;
+}> = ({ preview, url, searchString, fromBoardId, onTrackClick }) => {
     const selfRef = useRef<HTMLDivElement>();
     const { owner_uid: ownerUid, description, id } = preview;
     const { userInfo: ownerInfo, loading } = useUser({ uid: ownerUid });
-    const handleClick = React.useMemo(() => openClick.bind(null, url), [url]);
+    const handleClick = React.useCallback(
+        (e) => {
+            onTrackClick();
+            openClick(url, e);
+        },
+        [url, onTrackClick]
+    );
 
     if (loading) {
         return (

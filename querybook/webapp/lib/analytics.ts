@@ -1,6 +1,7 @@
 import {
     AnalyticsEvent,
     ComponentType,
+    ElementType,
     EventData,
     EventType,
 } from 'const/analytics';
@@ -23,10 +24,16 @@ const track = (eventType: EventType, eventData: EventData) => {
     });
 };
 
-export const trackView = (component?: ComponentType) => {
+export const trackView = (
+    component?: ComponentType,
+    element?: ElementType,
+    aux?: object
+) => {
     const eventData = {
         path: location.pathname,
         component,
+        element,
+        aux,
     };
     track(EventType.VIEW, eventData);
 };

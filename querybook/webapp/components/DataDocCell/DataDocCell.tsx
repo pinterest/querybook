@@ -8,6 +8,7 @@ import { DataDocChartCell } from 'components/DataDocChartCell/DataDocChartCell';
 import { DataDocQueryCell } from 'components/DataDocQueryCell/DataDocQueryCell';
 import { DataDocTextCell } from 'components/DataDocTextCell/DataDocTextCell';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
+import { ComponentType, ElementType } from 'const/analytics';
 import {
     DataCellUpdateFields,
     IDataCell,
@@ -16,6 +17,7 @@ import {
 import { DataDocContext } from 'context/DataDoc';
 import { useMakeSelector } from 'hooks/redux/useMakeSelector';
 import { useBoundFunc } from 'hooks/useBoundFunction';
+import { trackClick } from 'lib/analytics';
 import { getShareUrl } from 'lib/data-doc/data-doc-utils';
 import * as dataDocActions from 'redux/dataDoc/action';
 import * as dataDocSelectors from 'redux/dataDoc/selector';
@@ -113,6 +115,10 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> =
 
             const handleMoveCell = React.useCallback(
                 (fromIndex: number, toIndex: number) => {
+                    trackClick({
+                        component: ComponentType.DATADOC_PAGE,
+                        element: ElementType.MOVE_CELL_BUTTON,
+                    });
                     dataDocActions.moveDataDocCell(docId, fromIndex, toIndex);
                 },
                 [docId]

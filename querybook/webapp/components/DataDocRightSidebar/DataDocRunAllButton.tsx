@@ -1,8 +1,10 @@
 import React, { useCallback, useMemo } from 'react';
 import toast from 'react-hot-toast';
 
+import { ComponentType, ElementType } from 'const/analytics';
 import { useQueryCells } from 'hooks/dataDoc/useQueryCells';
 import { useMakeSelector } from 'hooks/redux/useMakeSelector';
+import { trackClick } from 'lib/analytics';
 import { sendConfirm } from 'lib/querybookUI';
 import { makeLatestQueryExecutionsSelector } from 'redux/queryExecutions/selector';
 import { DataDocResource } from 'resource/dataDoc';
@@ -49,6 +51,10 @@ export const DataDocRunAllButton: React.FunctionComponent<IProps> = ({
             header: 'Run All Cells',
             message: ConfirmMessageDOM(),
             onConfirm: () => {
+                trackClick({
+                    component: ComponentType.DATADOC_PAGE,
+                    element: ElementType.RUN_ALL_CELLS_BUTTON,
+                });
                 toast.promise(DataDocResource.run(docId), {
                     loading: null,
                     success: 'DataDoc execution started!',

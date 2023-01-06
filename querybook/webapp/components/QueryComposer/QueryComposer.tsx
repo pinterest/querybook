@@ -27,12 +27,15 @@ import {
 import { TemplatedQueryView } from 'components/TemplateQueryView/TemplatedQueryView';
 import { TranspileQueryModal } from 'components/TranspileQueryModal/TranspileQueryModal';
 import { UDFForm } from 'components/UDFForm/UDFForm';
+import { ComponentType, ElementType } from 'const/analytics';
 import { IDataDocMetaVariable } from 'const/datadoc';
 import KeyMap from 'const/keyMap';
 import { IQueryEngine } from 'const/queryEngine';
 import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
 import { useDebounceState } from 'hooks/redux/useDebounceState';
 import { useBrowserTitle } from 'hooks/useBrowserTitle';
+import { useTrackView } from 'hooks/useTrackView';
+import { trackClick } from 'lib/analytics';
 import { createSQLLinter } from 'lib/codemirror/codemirror-lint';
 import { replaceStringIndices, searchText } from 'lib/data-doc/search';
 import { getSelectedQuery, IRange } from 'lib/sql-helper/sql-lexer';
@@ -244,6 +247,10 @@ const useQueryComposerSearchAndReplace = (
 function useQueryEditorHelpers() {
     const queryEditorRef = useRef<IQueryEditorHandles>(null);
     const handleFormatQuery = useCallback(() => {
+        trackClick({
+            component: ComponentType.ADHOC_QUERY,
+            element: ElementType.FORMAT_BUTTON,
+        });
         if (queryEditorRef.current) {
             queryEditorRef.current.formatQuery();
         }
@@ -367,6 +374,7 @@ function useTranspileQuery(
 }
 
 const QueryComposer: React.FC = () => {
+    useTrackView(ComponentType.ADHOC_QUERY);
     useBrowserTitle('Adhoc Query');
 
     const environmentId = useSelector(
@@ -403,6 +411,8 @@ const QueryComposer: React.FC = () => {
     const [showRenderedTemplateModal, setShowRenderedTemplateModal] =
         useState(false);
 
+    const [hasLintErrors, setHasLintErrors] = useState(false);
+
     const runButtonRef = useRef<IQueryRunButtonHandles>(null);
     const clickOnRunButton = useCallback(() => {
         if (runButtonRef.current) {
@@ -424,14 +434,19 @@ const QueryComposer: React.FC = () => {
     } = useTranspileQuery(engine, queryEngines, setEngineId, setQuery);
 
     const handleCreateDataDoc = useCallback(async () => {
+        trackClick({
+            component: ComponentType.ADHOC_QUERY,
+            element: ElementType.CREATE_DATADOC_BUTTON,
+        });
         let dataDoc = null;
+        const meta = { variables: templatedVariables };
         if (executionId) {
             dataDoc = await dispatch(
                 dataDocActions.createDataDocFromAdhoc(
                     executionId,
                     engine.id,
                     query,
-                    templatedVariables
+                    meta
                 )
             );
         } else {
@@ -441,7 +456,7 @@ const QueryComposer: React.FC = () => {
                 meta: { engine: engine.id },
             };
             dataDoc = await dispatch(
-                dataDocActions.createDataDoc([cell], templatedVariables)
+                dataDocActions.createDataDoc([cell], meta)
             );
         }
         navigateWithinEnv(`/datadoc/${dataDoc.id}/`);
@@ -453,6 +468,13 @@ const QueryComposer: React.FC = () => {
     }, [query, queryEditorRef]);
 
     const handleRunQuery = React.useCallback(async () => {
+        trackClick({
+            component: ComponentType.ADHOC_QUERY,
+            element: ElementType.RUN_QUERY_BUTTON,
+            aux: {
+                lintError: hasLintErrors,
+            },
+        });
         // Throttle to prevent double run
         await sleep(250);
         const transformedQuery = await transformQuery(
@@ -483,6 +505,7 @@ const QueryComposer: React.FC = () => {
         dispatch,
         getCurrentSelectedQuery,
         setExecutionId,
+        hasLintErrors,
     ]);
 
     const keyMap = useKeyMap(clickOnRunButton, queryEngines, setEngineId);
@@ -519,6 +542,7 @@ const QueryComposer: React.FC = () => {
                 engine={engine}
                 onSelection={handleEditorSelection}
                 getLintErrors={getLintAnnotations}
+                onLintCompletion={setHasLintErrors}
             />
         </>
     );
@@ -659,14 +683,26 @@ const QueryComposer: React.FC = () => {
         const additionalButtons: IListMenuItem[] = [
             {
                 name: 'Template Config',
-                onClick: () => setShowTemplateForm(true),
+                onClick: () => {
+                    trackClick({
+                        component: ComponentType.ADHOC_QUERY,
+                        element: ElementType.TEMPLATE_CONFIG_BUTTON,
+                    });
+                    setShowTemplateForm(true);
+                },
                 icon: 'Code',
                 tooltip: 'Set Variables',
                 tooltipPos: 'right',
             },
             {
                 name: 'Render Template',
-                onClick: () => setShowRenderedTemplateModal(true),
+                onClick: () => {
+                    trackClick({
+                        component: ComponentType.ADHOC_QUERY,
+                        element: ElementType.RENDER_QUERY_BUTTON,
+                    });
+                    setShowRenderedTemplateModal(true);
+                },
                 icon: 'Eye',
                 tooltip: 'Show the rendered templated query',
                 tooltipPos: 'right',
@@ -732,6 +768,10 @@ const QueryComposer: React.FC = () => {
                             icon="Delete"
                             title="Clear"
                             onClick={() => {
+                                trackClick({
+                                    component: ComponentType.ADHOC_QUERY,
+                                    element: ElementType.CLEAR_BUTTON,
+                                });
                                 setQuery('');
                                 setExecutionId(null);
                             }}

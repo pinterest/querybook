@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { ComponentType, ElementType } from 'const/analytics';
+import { trackClick } from 'lib/analytics';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { TextButton } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
@@ -56,13 +58,17 @@ export const DataTableViewMini: React.FunctionComponent<IProps> = ({
             <Level className="DataTableViewMini-header pr8">
                 {closeButton || <div />}
                 <TextButton
-                    onClick={() =>
-                        onViewDetails
+                    onClick={() => {
+                        trackClick({
+                            component: ComponentType.TABLE_NAVIGATOR_SEARCH,
+                            element: ElementType.VIEW_TABLE_BUTTON,
+                        });
+                        return onViewDetails
                             ? onViewDetails(tableId)
                             : navigateWithinEnv(`/table/${tableId}/`, {
                                   isModal: true,
-                              })
-                    }
+                              });
+                    }}
                     title="View Table"
                     className="table-details-button"
                 />

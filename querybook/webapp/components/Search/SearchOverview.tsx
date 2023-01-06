@@ -1,12 +1,13 @@
 import { isEmpty } from 'lodash';
 import moment from 'moment';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import CreatableSelect from 'react-select/creatable';
 
 import { TableTagGroupSelect } from 'components/DataTableTags/TableTagGroupSelect';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import { UserSelect } from 'components/UserSelect/UserSelect';
+import { ComponentType, ElementType } from 'const/analytics';
 import {
     IBoardPreview,
     IDataDocPreview,
@@ -14,6 +15,8 @@ import {
     ITablePreview,
 } from 'const/search';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
+import { useTrackView } from 'hooks/useTrackView';
+import { trackClick, trackView } from 'lib/analytics';
 import { titleize } from 'lib/utils';
 import { getCurrentEnv } from 'lib/utils/query-string';
 import {
@@ -69,9 +72,18 @@ interface ISearchOverviewProps {
     fromBoardId?: number;
 }
 
+const SearchTypeToElementType = {
+    [SearchType.Query]: ElementType.QUERY_RESULT_ITEM,
+    [SearchType.DataDoc]: ElementType.DATADOC_RESULT_ITEM,
+    [SearchType.Table]: ElementType.TABLE_RESULT_ITEM,
+    [SearchType.Board]: ElementType.LIST_RESULT_ITEM,
+};
+
 export const SearchOverview: React.FC<ISearchOverviewProps> = ({
     fromBoardId,
 }) => {
+    useTrackView(ComponentType.SEARCH_MODAL);
+
     const {
         resultByPage,
         currentPage,
@@ -99,6 +111,18 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
 
     const results = resultByPage[currentPage] || [];
     const isLoading = !!searchRequest;
+
+    // Log search results
+    useEffect(() => {
+        if (!isLoading && searchString.length > 0 && results.length > 0) {
+            const elementType = SearchTypeToElementType[searchType];
+            trackView(ComponentType.SEARCH_MODAL, elementType, {
+                search: searchString,
+                results: results.map((r) => r.id),
+                page: currentPage,
+            });
+        }
+    }, [isLoading, searchString, results]);
 
     const dispatch = useDispatch();
     const handleUpdateSearchString = React.useCallback(
@@ -141,10 +165,12 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
             {
                 name: 'Query',
                 key: SearchType.Query,
+                elementType: ElementType.QUERY_SEARCH_TAB,
             },
             {
                 name: 'DataDoc',
                 key: SearchType.DataDoc,
+                elementType: ElementType.DATADOC_SEARCH_TAB,
             },
         ];
 
@@ -152,12 +178,14 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
             searchTabs.push({
                 name: 'Tables',
                 key: SearchType.Table,
+                elementType: ElementType.TABLE_SEARCH_TAB,
             });
         }
 
         searchTabs.push({
             name: 'List',
             key: SearchType.Board,
+            elementType: ElementType.LIST_SEARCH_TAB,
         });
 
         return searchTabs;
@@ -167,6 +195,13 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
 
     const onSearchTabSelect = React.useCallback(
         (newSearchType: string) => {
+            const elementType = searchTabs.find(
+                (t) => t.key === newSearchType
+            ).elementType;
+            trackClick({
+                component: ComponentType.SEARCH_MODAL,
+                element: elementType,
+            });
             updateSearchType(newSearchType);
         },
         [updateSearchType]
@@ -208,6 +243,23 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
     const setMaxDuration = React.useCallback(
         (value: number | null) => updateSearchFilter('maxDuration', value),
         [updateSearchFilter]
+    );
+
+    const onTrackClick = React.useCallback(
+        (pos) => {
+            const elementType = SearchTypeToElementType[searchType];
+            trackClick({
+                component: ComponentType.SEARCH_MODAL,
+                element: elementType,
+                aux: {
+                    search: searchString,
+                    results: results.map((r) => r.id),
+                    page: currentPage,
+                    pos,
+                },
+            });
+        },
+        [searchType, searchString, results, currentPage]
     );
 
     const getSearchBarDOM = () => {
@@ -339,23 +391,25 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
     const environment = getCurrentEnv();
     const resultsDOM =
         searchType === SearchType.Query
-            ? (results as IQueryPreview[]).map((result) => (
+            ? (results as IQueryPreview[]).map((result, index) => (
                   <QueryItem
                       searchString={searchString}
                       key={`${result.query_type}-${result.id}`}
                       preview={result}
                       environmentName={environment.name}
                       fromBoardId={fromBoardId}
+                      onTrackClick={() => onTrackClick(index)}
                   />
               ))
             : searchType === SearchType.DataDoc
-            ? (results as IDataDocPreview[]).map((result) => (
+            ? (results as IDataDocPreview[]).map((result, index) => (
                   <DataDocItem
                       searchString={searchString}
                       key={result.id}
                       preview={result}
                       url={`/${environment.name}/datadoc/${result.id}/`}
                       fromBoardId={fromBoardId}
+                      onTrackClick={() => onTrackClick(index)}
                   />
               ))
             : searchType === SearchType.Table
@@ -366,16 +420,19 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                       url={`/${environment.name}/table/${result.id}/`}
                       searchString={searchString}
                       fromBoardId={fromBoardId}
-                      pos={index}
+                      currentPage={currentPage}
+                      index={index}
+                      onTrackClick={() => onTrackClick(index)}
                   />
               ))
-            : (results as IBoardPreview[]).map((result) => (
+            : (results as IBoardPreview[]).map((result, index) => (
                   <BoardItem
                       key={result.id}
                       preview={result}
                       url={`/${environment.name}/list/${result.id}/`}
                       searchString={searchString}
                       fromBoardId={fromBoardId}
+                      onTrackClick={() => onTrackClick(index)}
                   />
               ));
 

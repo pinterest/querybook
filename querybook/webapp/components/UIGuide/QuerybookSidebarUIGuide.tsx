@@ -2,6 +2,8 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import Tour, { ReactourStep } from 'reactour';
 
+import { ComponentType, ElementType } from 'const/analytics';
+import { trackClick } from 'lib/analytics';
 import { getAppName } from 'lib/utils/global';
 import { getQueryString } from 'lib/utils/query-string';
 import { Button } from 'ui/Button/Button';
@@ -213,6 +215,10 @@ export const QuerybookSidebarUIGuide: React.FC = () => {
     const [showTour, setShowTour] = React.useState(false);
 
     const startTour = React.useCallback(() => {
+        trackClick({
+            component: ComponentType.LANDING_PAGE,
+            element: ElementType.TUTORIAL_BUTTON,
+        });
         setSteps((oldTour) =>
             oldTour.length ? oldTour : getQuerybookSidebarTourSteps()
         );

@@ -21,8 +21,10 @@ import { QuerySnippetInsertionModal } from 'components/QuerySnippetInsertionModa
 import { TemplatedQueryView } from 'components/TemplateQueryView/TemplatedQueryView';
 import { TranspileQueryModal } from 'components/TranspileQueryModal/TranspileQueryModal';
 import { UDFForm } from 'components/UDFForm/UDFForm';
+import { ComponentType, ElementType } from 'const/analytics';
 import { IDataQueryCellMeta, TDataDocMetaVariables } from 'const/datadoc';
 import type { IQueryEngine, IQueryTranspiler } from 'const/queryEngine';
+import { trackClick } from 'lib/analytics';
 import CodeMirror from 'lib/codemirror';
 import { createSQLLinter } from 'lib/codemirror/codemirror-lint';
 import {
@@ -102,6 +104,7 @@ interface IState {
     showQuerySnippetModal: boolean;
     showRenderedTemplateModal: boolean;
     showUDFModal: boolean;
+    hasLintError: boolean;
 
     transpilerConfig?: {
         toEngine: IQueryEngine;
@@ -125,6 +128,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             showQuerySnippetModal: false,
             showRenderedTemplateModal: false,
             showUDFModal: false,
+            hasLintError: false,
         };
     }
 
@@ -260,6 +264,13 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         }
     }
 
+    @bind
+    public onLintCompletion(hasError: boolean) {
+        this.setState({
+            hasLintError: hasError,
+        });
+    }
+
     @decorate(memoizeOne)
     public createGetLintAnnotations(
         engineId: number,
@@ -384,6 +395,13 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
     @bind
     public async onRunButtonClick() {
+        trackClick({
+            component: ComponentType.DATADOC_QUERY_CELL,
+            element: ElementType.RUN_QUERY_BUTTON,
+            aux: {
+                lintError: this.state.hasLintError,
+            },
+        });
         return runQuery(
             await this.getTransformedQuery(),
             this.engineId,
@@ -400,6 +418,11 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
     @bind
     public formatQuery(options = {}) {
+        trackClick({
+            component: ComponentType.DATADOC_QUERY_CELL,
+            element: ElementType.FORMAT_BUTTON,
+            aux: options,
+        });
         if (this.queryEditorRef.current) {
             this.queryEditorRef.current.formatQuery(options);
         }
@@ -729,6 +752,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                               )
                             : null
                     }
+                    onLintCompletion={this.onLintCompletion}
                 />
                 {openSnippetDOM}
             </div>

@@ -2,6 +2,8 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import Tour, { ReactourStep } from 'reactour';
 
+import { ComponentType, ElementType } from 'const/analytics';
+import { trackClick } from 'lib/analytics';
 import { getQueryString } from 'lib/utils/query-string';
 import { IconButton } from 'ui/Button/IconButton';
 import { Title } from 'ui/Title/Title';
@@ -143,7 +145,13 @@ export const DataDocUIGuide: React.FunctionComponent = () => {
     return (
         <div className="DataDocUIGuide flex-center">
             <IconButton
-                onClick={() => setIsOpen(true)}
+                onClick={() => {
+                    trackClick({
+                        component: ComponentType.DATADOC_PAGE,
+                        element: ElementType.DATADOC_UI_GUIDE_BUTTON,
+                    });
+                    setIsOpen(true);
+                }}
                 icon="HelpCircle"
                 tooltipPos="left"
                 tooltip="DataDoc UI Guide"

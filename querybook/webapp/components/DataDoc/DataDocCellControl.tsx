@@ -2,8 +2,10 @@ import clsx from 'clsx';
 import React, { useCallback } from 'react';
 import toast from 'react-hot-toast';
 
+import { ComponentType, ElementType } from 'const/analytics';
 import { IDataCellMeta } from 'const/datadoc';
 import { useBoundFunc } from 'hooks/useBoundFunction';
+import { trackClick } from 'lib/analytics';
 import { copy, sleep, titleize } from 'lib/utils';
 import { getShortcutSymbols, KeyMap } from 'lib/utils/keyboard';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
@@ -76,6 +78,10 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
         React.useState(false);
 
     const handleToggleDefaultCollapsed = React.useCallback(() => {
+        trackClick({
+            component: ComponentType.DATADOC_PAGE,
+            element: ElementType.COLLAPSE_CELL_BUTTON,
+        });
         setAnimateDefaultChange(true);
         Promise.all([sleep(500), toggleDefaultCollapsed()]).then(() =>
             setAnimateDefaultChange(false)
@@ -83,6 +89,10 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
     }, [toggleDefaultCollapsed]);
 
     const handleShare = useCallback(() => {
+        trackClick({
+            component: ComponentType.DATADOC_PAGE,
+            element: ElementType.SHARE_CELL_BUTTON,
+        });
         copy(shareUrl);
         toast('Url Copied!');
     }, [shareUrl]);
@@ -269,7 +279,16 @@ const InsertCellButtons: React.FC<{
     index: number;
 }> = React.memo(({ insertCellAt, index }) => {
     const handleInsertcell = useCallback(
-        (cellType: string) => insertCellAt(index, cellType, null, null),
+        (cellType: string) => {
+            trackClick({
+                component: ComponentType.DATADOC_PAGE,
+                element: ElementType.INSERT_CELL_BUTTON,
+                aux: {
+                    type: cellType,
+                },
+            });
+            return insertCellAt(index, cellType, null, null);
+        },
         [insertCellAt, index]
     );
 

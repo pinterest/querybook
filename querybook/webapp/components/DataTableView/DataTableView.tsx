@@ -14,7 +14,9 @@ import { DataTableViewQueryExamples } from 'components/DataTableViewQueryExample
 import { DataTableViewSamples } from 'components/DataTableViewSamples/DataTableViewSamples';
 import { DataTableViewSourceQuery } from 'components/DataTableViewSourceQuery/DataTableViewSourceQuery';
 import { DataTableViewWarnings } from 'components/DataTableViewWarnings/DataTableViewWarnings';
+import { ComponentType, ElementType } from 'const/analytics';
 import { IPaginatedQuerySampleFilters } from 'const/metastore';
+import { trackClick, trackView } from 'lib/analytics';
 import { setBrowserTitle } from 'lib/querybookUI';
 import history from 'lib/router-history';
 import { sanitizeUrlTitle } from 'lib/utils';
@@ -38,34 +40,42 @@ const tabDefinitions = [
     {
         name: 'Overview',
         key: 'overview',
+        elementType: ElementType.OVERVIEW_TABLE_TAB,
     },
     {
         name: 'Columns',
         key: 'columns',
+        elementType: ElementType.COLUMNS_TABLE_TAB,
     },
     {
         name: 'Row Samples',
         key: 'row_samples',
+        elementType: ElementType.ROW_SAMPLES_TABLE_TAB,
     },
     {
         name: 'Lineage',
         key: 'lineage',
+        elementType: ElementType.LINEAGE_TABLE_TAB,
     },
     {
         name: 'Source Query',
         key: 'source_query',
+        elementType: ElementType.SOURCE_QUERY_TABLE_TAB,
     },
     {
         name: 'Query Examples',
         key: 'query_examples',
+        elementType: ElementType.QUERY_EXAMPLES_TABLE_TAB,
     },
     {
         name: 'Lists',
         key: 'lists',
+        elementType: ElementType.LISTS_TABLE_TAB,
     },
     {
         name: 'Warnings',
         key: 'warnings',
+        elementType: ElementType.WARNINGS_TABLE_TAB,
     },
 ];
 
@@ -124,6 +134,13 @@ class DataTableViewComponent extends React.PureComponent<
 
     @bind
     public onTabSelected(key) {
+        const elementType = tabDefinitions.find(
+            (t) => t.key === key
+        ).elementType;
+        trackClick({
+            component: ComponentType.TABLE_DETAIL_VIEW,
+            element: elementType,
+        });
         // Temporal
         replaceQueryString({ tab: key });
         this.setState({ selectedTabKey: key });
@@ -267,6 +284,7 @@ class DataTableViewComponent extends React.PureComponent<
     }
 
     public componentDidMount() {
+        trackView(ComponentType.TABLE_DETAIL_VIEW);
         this.props.getTable(this.props.tableId);
         this.publishDataTableTitle(this.props.tableName);
     }

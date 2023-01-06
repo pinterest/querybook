@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { ComponentType, ElementType } from 'const/analytics';
+import { trackClick } from 'lib/analytics';
 import { IconButton } from 'ui/Button/IconButton';
 
 import { DataDocScheduleModal } from './DataDocScheduleModal';
@@ -19,7 +21,13 @@ export const DataDocScheduleButton: React.FunctionComponent<IProps> = ({
         <div>
             <IconButton
                 icon="Clock"
-                onClick={() => setShowModal(true)}
+                onClick={() => {
+                    trackClick({
+                        component: ComponentType.DATADOC_PAGE,
+                        element: ElementType.SCHEDULE_DATADOC_BUTTON,
+                    });
+                    setShowModal(true);
+                }}
                 tooltip="Schedule DataDoc"
                 tooltipPos="left"
                 title="Schedule"
