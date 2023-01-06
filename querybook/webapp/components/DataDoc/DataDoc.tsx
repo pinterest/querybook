@@ -341,6 +341,11 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
 
     @bind
     public async pasteCellAt(pasteIndex: number) {
+        trackClick({
+            component: ComponentType.DATADOC_PAGE,
+            element: ElementType.PASTE_CELL_BUTTON,
+        });
+
         let clipboardContent = null;
         try {
             if (navigator.clipboard.readText) {
@@ -380,6 +385,12 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
 
     @bind
     public copyCellAt(index: number, cut: boolean) {
+        trackClick({
+            component: ComponentType.DATADOC_PAGE,
+            element: cut
+                ? ElementType.CUT_CELL_BUTTON
+                : ElementType.COPY_CELL_BUTTON,
+        });
         copy(
             serializeCopyCommand({
                 cellId: this.props.dataDoc.cells[index],
@@ -401,6 +412,10 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
             if (numberOfCells > 0) {
                 const shouldConfirm = !cellIsEmpty;
                 const deleteCell = async () => {
+                    trackClick({
+                        component: ComponentType.DATADOC_PAGE,
+                        element: ElementType.DELETE_CELL_BUTTON,
+                    });
                     try {
                         await dataDocActions.deleteDataDocCell(docId, cell.id);
                     } catch (e) {

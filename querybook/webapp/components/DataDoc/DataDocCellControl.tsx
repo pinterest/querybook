@@ -96,41 +96,14 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
         copy(shareUrl);
         toast('Url Copied!');
     }, [shareUrl]);
-    const handleCopyCell = useCallback(() => {
-        trackClick({
-            component: ComponentType.DATADOC_PAGE,
-            element: ElementType.COPY_CELL_BUTTON,
-        });
-        copyCellAt(index, false);
-    }, [copyCellAt]);
-    const handleCutCell = useCallback(() => {
-        trackClick({
-            component: ComponentType.DATADOC_PAGE,
-            element: ElementType.CUT_CELL_BUTTON,
-        });
-        copyCellAt(index, true);
-    }, [copyCellAt]);
-    const handlePasteCell = useCallback(() => {
-        trackClick({
-            component: ComponentType.DATADOC_PAGE,
-            element: ElementType.PASTE_CELL_BUTTON,
-        });
-        pasteCellAt(index);
-    }, [pasteCellAt]);
-    const handleDeleteCell = useCallback(() => {
-        trackClick({
-            component: ComponentType.DATADOC_PAGE,
-            element: ElementType.DELETE_CELL_BUTTON,
-        });
-        deleteCellAt(index);
-    }, [deleteCellAt]);
-    const handleMoveCellClick = useCallback(() => {
-        trackClick({
-            component: ComponentType.DATADOC_PAGE,
-            element: ElementType.MOVE_CELL_BUTTON,
-        });
-        moveCellAt(index, isHeader ? index - 1 : index + 1);
-    }, [moveCellAt, index, isHeader]);
+    const handleCopyCell = useBoundFunc(copyCellAt, index, false);
+    const handleCutCell = useBoundFunc(copyCellAt, index, true);
+    const handlePasteCell = useBoundFunc(pasteCellAt, index);
+    const handleDeleteCell = useBoundFunc(deleteCellAt, index);
+    const handleMoveCellClick = useCallback(
+        () => moveCellAt(index, isHeader ? index - 1 : index + 1),
+        [moveCellAt, index, isHeader]
+    );
 
     const rightButtons: JSX.Element[] = [];
     const centerButtons: JSX.Element[] = [];
