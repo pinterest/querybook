@@ -1,12 +1,20 @@
 import CodeMirror from 'codemirror';
+import { TDataDocMetaVariables } from 'const/datadoc';
 
 import type { ILinterWarning } from 'lib/sql-helper/sql-lexer';
 import { TemplatedQueryResource } from 'resource/queryExecution';
 
-export function createSQLLinter(engineId: number) {
+export function createSQLLinter(
+    engineId: number,
+    templatedVariables: TDataDocMetaVariables
+) {
     return async (query: string, cm: CodeMirror.Editor) => {
         const { data: validationResults } =
-            await TemplatedQueryResource.validateQuery(query, engineId);
+            await TemplatedQueryResource.validateQuery(
+                query,
+                engineId,
+                templatedVariables
+            );
 
         return validationResults.map((validationError) => {
             const { line, ch, severity, message } = validationError;

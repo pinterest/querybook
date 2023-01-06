@@ -1,6 +1,10 @@
 from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Any, Dict, List
+from lib.query_analysis.templating import (
+    QueryTemplatingError,
+    render_templated_query,
+)
 
 
 class QueryValidationSeverity(Enum):
@@ -47,6 +51,16 @@ class BaseQueryValidator(ABC):
         engine_id: int,  # which engine they are checking against
     ) -> List[QueryValidationResult]:
         raise NotImplementedError()
+
+    def validate_with_templated_vars(
+        self, query: str, uid: int, engine_id: int, templated_vars: Dict[str, Any]
+    ):
+        try:
+            templated_query = render_templated_query(query, templated_vars, engine_id)
+        except QueryTemplatingError as e:
+            return [QueryValidationResult(0, 0, QueryValidationSeverity.ERROR, str(e))]
+
+        return self.validate(templated_query, uid, engine_id)
 
     def to_dict(self):
         return {"name": self._name, "languages": self.languages()}

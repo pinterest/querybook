@@ -157,10 +157,12 @@ const useRowLimit = (dispatch: Dispatch, environmentId: number) => {
 };
 
 const useTemplatedVariables = (dispatch: Dispatch, environmentId: number) => {
-    const templatedVariables = useSelector((state: IStoreState) => {
-        const templatedVariablesInState =
-            state.adhocQuery[environmentId]?.templatedVariables ?? [];
-
+    const reduxTemplatedVariables = useSelector(
+        (state: IStoreState) =>
+            state.adhocQuery[environmentId]?.templatedVariables
+    );
+    const templatedVariables = useMemo(() => {
+        const templatedVariablesInState = reduxTemplatedVariables ?? [];
         if (!Array.isArray(templatedVariablesInState)) {
             // This whole block is only here for legacy reason
             // In the older version, we are storing it as a dictionary
@@ -178,7 +180,8 @@ const useTemplatedVariables = (dispatch: Dispatch, environmentId: number) => {
             return newConfig;
         }
         return templatedVariablesInState;
-    });
+    }, [reduxTemplatedVariables]);
+
     const setTemplatedVariables = useCallback(
         (newVariables: IDataDocMetaVariable[]) =>
             dispatch(
@@ -286,7 +289,10 @@ function useKeyMap(
     }, [clickOnRunButton, queryEngines, setEngineId]);
 }
 
-function useQueryLint(queryEngine: IQueryEngine) {
+function useQueryLint(
+    queryEngine: IQueryEngine,
+    templatedVariables: IDataDocMetaVariable[]
+) {
     const hasQueryValidators = Boolean(queryEngine?.feature_params?.validator);
 
     const getLintAnnotations = useMemo(() => {
@@ -295,16 +301,16 @@ function useQueryLint(queryEngine: IQueryEngine) {
         }
 
         return (query: string, cm: CodeMirror.Editor) =>
-            createSQLLinter(queryEngine.id)(query, cm);
-    }, [hasQueryValidators, queryEngine?.id]);
+            createSQLLinter(queryEngine.id, templatedVariables)(query, cm);
+    }, [hasQueryValidators, queryEngine?.id, templatedVariables]);
 
     return {
+        hasQueryValidators,
         getLintAnnotations,
     };
 }
 
 function useTranspileQuery(
-    query: string,
     currentQueryEngine: IQueryEngine,
     queryEngines: IQueryEngine[],
     setEngineId: (engineId: number) => any,
@@ -405,14 +411,17 @@ const QueryComposer: React.FC = () => {
     }, []);
 
     const { queryEditorRef, handleFormatQuery } = useQueryEditorHelpers();
-    const { getLintAnnotations } = useQueryLint(engine);
+    const { getLintAnnotations, hasQueryValidators } = useQueryLint(
+        engine,
+        templatedVariables
+    );
     const {
         transpilerConfig,
         startQueryTranspile,
         clearQueryTranspile,
         handleTranspileQuery,
         transpilerOptions,
-    } = useTranspileQuery(query, engine, queryEngines, setEngineId, setQuery);
+    } = useTranspileQuery(engine, queryEngines, setEngineId, setQuery);
 
     const handleCreateDataDoc = useCallback(async () => {
         let dataDoc = null;
@@ -641,6 +650,7 @@ const QueryComposer: React.FC = () => {
                     setShowRenderedTemplateModal(false);
                     handleRunQuery();
                 }}
+                hasValidator={hasQueryValidators}
             />
         </Modal>
     );

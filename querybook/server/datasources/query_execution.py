@@ -572,7 +572,9 @@ def send_query_execution_invitation_notification(execution_id, uid, session=None
 
 
 @register("/query/validate/", methods=["POST"])
-def perform_query_syntax_check(query: str, engine_id: int):
+def perform_query_syntax_check(
+    query: str, engine_id: int, var_config: list[DataDocMetaVarConfig]
+):
     verify_query_engine_permission(engine_id)
 
     engine = admin_logic.get_query_engine_by_id(engine_id)
@@ -586,7 +588,9 @@ def perform_query_syntax_check(query: str, engine_id: int):
         "The query engine language does not equal to validator language",
     )
 
-    return validator.validate(query, current_user.id, engine_id)
+    return validator.validate_with_templated_vars(
+        query, current_user.id, engine_id, var_config_to_var_dict(var_config)
+    )
 
 
 @register("/query/transpile/", methods=["GET"])

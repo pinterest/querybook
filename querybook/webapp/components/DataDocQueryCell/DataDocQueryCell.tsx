@@ -261,8 +261,11 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @decorate(memoizeOne)
-    public createGetLintAnnotations(engineId: number) {
-        return createSQLLinter(engineId);
+    public createGetLintAnnotations(
+        engineId: number,
+        templatedVariables: TDataDocMetaVariables
+    ) {
+        return createSQLLinter(engineId, templatedVariables);
     }
 
     @bind
@@ -720,7 +723,10 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                     onFullScreen={this.props.toggleFullScreen}
                     getLintErrors={
                         this.hasQueryValidators
-                            ? this.createGetLintAnnotations(this.engineId)
+                            ? this.createGetLintAnnotations(
+                                  this.engineId,
+                                  this.props.templatedVariables
+                              )
                             : null
                     }
                 />
@@ -745,6 +751,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                     templatedVariables={templatedVariables}
                     engineId={this.engineId}
                     onRunQueryClick={this.handleRunFromRenderedTemplateModal}
+                    hasValidator={this.hasQueryValidators}
                 />
             </Modal>
         ) : null;
