@@ -9,14 +9,17 @@ import React, {
 import { useDispatch, useSelector } from 'react-redux';
 
 import { QueryEngineStatusViewer } from 'components/QueryEngineStatusViewer/QueryEngineStatusViewer';
-import { ComponentType, ElementType } from 'const/analytics';
+import {
+    ComponentType,
+    ElementType,
+    getMemoAnalyticsEvent,
+} from 'const/analytics';
 import { IQueryEngine, QueryEngineStatus } from 'const/queryEngine';
 import {
     queryEngineStatusToIconStatus,
     queryEngineStatusToMessage,
 } from 'const/queryStatusIcon';
 import { TooltipDirection } from 'const/tooltip';
-import { trackClick } from 'lib/analytics';
 import { capitalize, titleize } from 'lib/utils';
 import { fetchAllSystemStatus } from 'redux/queryEngine/action';
 import {
@@ -224,12 +227,12 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
                 <IconButton
                     className="query-engine-status-button"
                     onClick={() => {
-                        trackClick({
-                            component: ComponentType.LEFT_SIDEBAR,
-                            element: ElementType.STATUS_BUTTON,
-                        });
                         setShowPanel(true);
                     }}
+                    trackEvent={getMemoAnalyticsEvent(
+                        ComponentType.LEFT_SIDEBAR,
+                        ElementType.STATUS_BUTTON
+                    )}
                     ref={buttonRef}
                     icon={'Activity'}
                     tooltip={`Summary: ${queryEngineStatusToMessage[overallWorstQueryEngineStatus]}. Click to see details.`}

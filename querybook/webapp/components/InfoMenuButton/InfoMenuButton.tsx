@@ -1,7 +1,10 @@
 import * as React from 'react';
 
-import { ComponentType, ElementType } from 'const/analytics';
-import { trackClick } from 'lib/analytics';
+import {
+    ComponentType,
+    ElementType,
+    getMemoAnalyticsEvent,
+} from 'const/analytics';
 import localStore from 'lib/local-store';
 import { CHANGE_LOG_KEY, ChangeLogValue } from 'lib/local-store/const';
 import { navigateWithinEnv } from 'lib/utils/query-string';
@@ -108,12 +111,12 @@ export const InfoMenuButton: React.FunctionComponent = () => {
             <IconButton
                 className="InfoMenuButton-button"
                 onClick={() => {
-                    trackClick({
-                        component: ComponentType.LEFT_SIDEBAR,
-                        element: ElementType.HELP_BUTTON,
-                    });
                     setShowPanel(true);
                 }}
+                trackEvent={getMemoAnalyticsEvent(
+                    ComponentType.LEFT_SIDEBAR,
+                    ElementType.HELP_BUTTON
+                )}
                 ref={buttonRef}
                 icon={'HelpCircle'}
                 tooltip={'Logs, Tips, Shortcuts, & FAQs'}

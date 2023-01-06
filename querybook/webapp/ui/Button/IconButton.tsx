@@ -1,7 +1,9 @@
 import clsx from 'clsx';
 import React from 'react';
 
+import { TTrackEventProp } from 'const/analytics';
 import { TooltipDirection } from 'const/tooltip';
+import { useEventTrackClick } from 'hooks/analytics/useEventTrackClick';
 import { Icon, TButtonColors } from 'ui/Icon/Icon';
 import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 import { AccentText, StyledText } from 'ui/StyledText/StyledText';
@@ -29,6 +31,8 @@ export interface IIconButtonProps {
     // Bug: somehow typescript can't auto detect this field
     // after forwardRef
     children?: React.ReactNode;
+
+    trackEvent?: TTrackEventProp;
 }
 
 export const IconButton = React.forwardRef<HTMLAnchorElement, IIconButtonProps>(
@@ -49,12 +53,15 @@ export const IconButton = React.forwardRef<HTMLAnchorElement, IIconButtonProps>(
             ping,
             title,
             color,
+            trackEvent,
         },
         ref
     ) => {
+        const handleClick = useEventTrackClick(onClick, trackEvent);
+
         const IIconButtonProps = {
             ref,
-            onClick: disabled ? null : onClick,
+            onClick: disabled ? null : handleClick,
         };
 
         if (tooltip) {
