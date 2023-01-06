@@ -51,3 +51,23 @@ export interface AnalyticsEvent {
     data: EventData;
     timestamp: number;
 }
+
+const eventMemo: Record<string, EventData> = {};
+export function getMemoAnalyticsEvent(
+    component: ComponentType,
+    element: ElementType
+) {
+    const key = component + '|' + element;
+    if (!(key in eventMemo)) {
+        eventMemo[key] = {
+            component,
+            element,
+        };
+    }
+    return eventMemo[key];
+}
+export const getComponentAnalyticsEvent =
+    (component: ComponentType) => (element: ElementType) =>
+        getMemoAnalyticsEvent(component, element);
+
+export type TTrackEventProp = EventData | (() => EventData);

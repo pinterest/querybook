@@ -11,8 +11,8 @@ import {
     IQueryPreview,
     ITablePreview,
 } from 'const/search';
+import { useEventTrackClick } from 'hooks/analytics/useEventTrackClick';
 import { useUser } from 'hooks/redux/useUser';
-import { trackClick } from 'lib/analytics';
 import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { stopPropagation } from 'lib/utils/noop';
@@ -347,9 +347,18 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
         tags,
         id,
     } = preview;
-    const handleClick = React.useCallback(
-        (e) => {
-            trackClick({
+
+    const handleClick = useEventTrackClick<
+        React.MouseEvent<HTMLDivElement, MouseEvent>
+    >(
+        React.useCallback(
+            (e) => {
+                openClick(url, e);
+            },
+            [url]
+        ),
+        React.useCallback(
+            () => ({
                 component: ComponentType.LEFT_SIDEBAR,
                 element: ElementType.TABLE_RESULT_ITEM,
                 aux: {
@@ -357,10 +366,9 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
                     table: id,
                     pos,
                 },
-            });
-            openClick(url, e);
-        },
-        [url, id, pos, searchString]
+            }),
+            [id, pos, searchString]
+        )
     );
 
     const goldenIcon = golden ? (

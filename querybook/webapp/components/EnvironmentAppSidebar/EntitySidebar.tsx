@@ -7,8 +7,11 @@ import { QueryEngineStatusButton } from 'components/QueryEngineStatusButton/Quer
 import { QueryExecutionButton } from 'components/QueryExecutionButton/QueryExecutionButton';
 import { SearchContainer } from 'components/Search/SearchContainer';
 import { UserMenu } from 'components/UserMenu/UserMenu';
-import { ComponentType, ElementType } from 'const/analytics';
-import { trackClick } from 'lib/analytics';
+import {
+    ComponentType,
+    ElementType,
+    getComponentAnalyticsEvent,
+} from 'const/analytics';
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
 import { IconButton } from 'ui/Button/IconButton';
@@ -17,6 +20,8 @@ import { Link } from 'ui/Link/Link';
 import { Entity } from './types';
 
 import './EntitySidebar.scss';
+
+const getSidebarEvent = getComponentAnalyticsEvent(ComponentType.LEFT_SIDEBAR);
 
 interface IEntitySidebarProps {
     selectedEntity: Entity;
@@ -43,14 +48,9 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> =
                                             location.pathname ===
                                             `/${environment.name}/`
                                         }
-                                        onClick={() =>
-                                            trackClick({
-                                                component:
-                                                    ComponentType.LEFT_SIDEBAR,
-                                                element:
-                                                    ElementType.HOME_BUTTON,
-                                            })
-                                        }
+                                        trackEvent={getSidebarEvent(
+                                            ElementType.HOME_BUTTON
+                                        )}
                                     />
                                 </Link>
                                 <SearchContainer />
@@ -63,14 +63,9 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> =
                                             `/${environment.name}/adhoc/`
                                         )}
                                         title="Adhoc"
-                                        onClick={() =>
-                                            trackClick({
-                                                component:
-                                                    ComponentType.LEFT_SIDEBAR,
-                                                element:
-                                                    ElementType.ADHOC_BUTTON,
-                                            })
-                                        }
+                                        trackEvent={getSidebarEvent(
+                                            ElementType.ADHOC_BUTTON
+                                        )}
                                     />
                                 </Link>
                                 <Link
@@ -84,14 +79,9 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> =
                                             `/${environment.name}/doc_schedules/`
                                         )}
                                         title="Scheds"
-                                        onClick={() =>
-                                            trackClick({
-                                                component:
-                                                    ComponentType.LEFT_SIDEBAR,
-                                                element:
-                                                    ElementType.SCHEDS_BUTTON,
-                                            })
-                                        }
+                                        trackEvent={getSidebarEvent(
+                                            ElementType.SCHEDS_BUTTON
+                                        )}
                                     />
                                 </Link>
                             </>
@@ -105,12 +95,9 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> =
                         tooltipPos="right"
                         active={selectedEntity === 'datadoc'}
                         onClick={() => {
-                            trackClick({
-                                component: ComponentType.LEFT_SIDEBAR,
-                                element: ElementType.DOCS_BUTTON,
-                            });
                             onSelectEntity('datadoc');
                         }}
+                        trackEvent={getSidebarEvent(ElementType.DOCS_BUTTON)}
                         title="Docs"
                     />
                     {queryMetastores.length ? (
@@ -119,11 +106,10 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> =
                             tooltip="Tables"
                             tooltipPos="right"
                             active={selectedEntity === 'table'}
+                            trackEvent={getSidebarEvent(
+                                ElementType.TABLES_BUTTON
+                            )}
                             onClick={() => {
-                                trackClick({
-                                    component: ComponentType.LEFT_SIDEBAR,
-                                    element: ElementType.TABLES_BUTTON,
-                                });
                                 onSelectEntity('table');
                             }}
                             title="Tables"
@@ -134,23 +120,17 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> =
                         tooltip="Snippets"
                         tooltipPos="right"
                         active={selectedEntity === 'snippet'}
+                        trackEvent={getSidebarEvent(ElementType.SNIPS_BUTTON)}
                         onClick={() => {
-                            trackClick({
-                                component: ComponentType.LEFT_SIDEBAR,
-                                element: ElementType.SNIPS_BUTTON,
-                            });
                             onSelectEntity('snippet');
                         }}
                         title="Snips"
                     />
                     <QueryExecutionButton
                         onClick={() => {
-                            trackClick({
-                                component: ComponentType.LEFT_SIDEBAR,
-                                element: ElementType.EXECS_BUTTON,
-                            });
                             onSelectEntity('execution');
                         }}
+                        trackEvent={getSidebarEvent(ElementType.EXECS_BUTTON)}
                         active={selectedEntity === 'execution'}
                     />
                 </div>

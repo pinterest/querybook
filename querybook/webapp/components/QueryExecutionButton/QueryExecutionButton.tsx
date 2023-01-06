@@ -6,11 +6,11 @@ import { TooltipDirection } from 'const/tooltip';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import { fetchActiveQueryExecutionForUser } from 'redux/queryExecutions/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
-import { IconButton } from 'ui/Button/IconButton';
+import { IconButton, IIconButtonProps } from 'ui/Button/IconButton';
 
 import './QueryExecutionButton.scss';
 
-interface IQueryExecutionButtonProps {
+interface IQueryExecutionButtonProps extends Omit<IIconButtonProps, 'icon'> {
     tooltipPos?: TooltipDirection;
     onClick: () => any;
     active?: boolean;
@@ -55,7 +55,7 @@ function useActiveQueryExecutions() {
 }
 
 export const QueryExecutionButton = React.memo<IQueryExecutionButtonProps>(
-    ({ tooltipPos = 'right', onClick, active }) => {
+    ({ tooltipPos = 'right', onClick, active, ...iconButtonProps }) => {
         const { loading, activeQueryExecutions } = useActiveQueryExecutions();
 
         const buttonTitle = loading
@@ -79,6 +79,7 @@ export const QueryExecutionButton = React.memo<IQueryExecutionButtonProps>(
                                 : null
                         }
                         title="Execs"
+                        {...iconButtonProps}
                     />
                 </span>
             </>
