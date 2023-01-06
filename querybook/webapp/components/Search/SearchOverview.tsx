@@ -114,7 +114,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
 
     // Log search results
     useEffect(() => {
-        if (!isLoading && !!searchString.length && !!results.length) {
+        if (!isLoading && searchString.length > 0 && results.length > 0) {
             const elementType = SearchTypeToElementType[searchType];
             trackView(ComponentType.SEARCH_MODAL, elementType, {
                 search: searchString,
