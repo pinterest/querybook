@@ -34,6 +34,7 @@ import { IQueryEngine } from 'const/queryEngine';
 import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
 import { useDebounceState } from 'hooks/redux/useDebounceState';
 import { useBrowserTitle } from 'hooks/useBrowserTitle';
+import { useTrackView } from 'hooks/useTrackView';
 import { trackClick } from 'lib/analytics';
 import { createSQLLinter } from 'lib/codemirror/codemirror-lint';
 import { replaceStringIndices, searchText } from 'lib/data-doc/search';
@@ -244,7 +245,7 @@ function useQueryEditorHelpers() {
     const queryEditorRef = useRef<IQueryEditorHandles>(null);
     const handleFormatQuery = useCallback(() => {
         trackClick({
-            component: ComponentType.ADHOC_QUERY_CELL,
+            component: ComponentType.ADHOC_QUERY,
             element: ElementType.FORMAT_BUTTON,
         });
         if (queryEditorRef.current) {
@@ -367,6 +368,7 @@ function useTranspileQuery(
 }
 
 const QueryComposer: React.FC = () => {
+    useTrackView(ComponentType.ADHOC_QUERY);
     useBrowserTitle('Adhoc Query');
 
     const environmentId = useSelector(
@@ -424,7 +426,7 @@ const QueryComposer: React.FC = () => {
 
     const handleCreateDataDoc = useCallback(async () => {
         trackClick({
-            component: ComponentType.ADHOC_QUERY_CELL,
+            component: ComponentType.ADHOC_QUERY,
             element: ElementType.CREATE_DATADOC_BUTTON,
         });
         let dataDoc = null;
@@ -458,7 +460,7 @@ const QueryComposer: React.FC = () => {
 
     const handleRunQuery = React.useCallback(async () => {
         trackClick({
-            component: ComponentType.ADHOC_QUERY_CELL,
+            component: ComponentType.ADHOC_QUERY,
             element: ElementType.RUN_QUERY_BUTTON,
             aux: {
                 lintError: hasLintErrors,
@@ -673,7 +675,7 @@ const QueryComposer: React.FC = () => {
                 name: 'Template Config',
                 onClick: () => {
                     trackClick({
-                        component: ComponentType.ADHOC_QUERY_CELL,
+                        component: ComponentType.ADHOC_QUERY,
                         element: ElementType.TEMPLATE_CONFIG_BUTTON,
                     });
                     setShowTemplateForm(true);
@@ -686,7 +688,7 @@ const QueryComposer: React.FC = () => {
                 name: 'Render Template',
                 onClick: () => {
                     trackClick({
-                        component: ComponentType.ADHOC_QUERY_CELL,
+                        component: ComponentType.ADHOC_QUERY,
                         element: ElementType.RENDER_QUERY_BUTTON,
                     });
                     setShowRenderedTemplateModal(true);
@@ -757,7 +759,7 @@ const QueryComposer: React.FC = () => {
                             title="Clear"
                             onClick={() => {
                                 trackClick({
-                                    component: ComponentType.ADHOC_QUERY_CELL,
+                                    component: ComponentType.ADHOC_QUERY,
                                     element: ElementType.CLEAR_BUTTON,
                                 });
                                 setQuery('');

@@ -28,7 +28,7 @@ import {
 } from 'const/datadoc';
 import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
 import { DataDocContext, IDataDocContextType } from 'context/DataDoc';
-import { trackClick } from 'lib/analytics';
+import { trackClick, trackView } from 'lib/analytics';
 import {
     deserializeCopyCommand,
     serializeCopyCommand,
@@ -790,6 +790,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
     }
 
     public componentDidMount() {
+        trackView(ComponentType.DATADOC_PAGE);
         this.autoFocusCell({}, this.props);
         this.openDataDoc(this.props.docId);
         this.publishDataDocTitle(this.props.dataDoc?.title);

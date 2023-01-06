@@ -15,6 +15,7 @@ import {
     ITablePreview,
 } from 'const/search';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
+import { useTrackView } from 'hooks/useTrackView';
 import { trackClick } from 'lib/analytics';
 import { titleize } from 'lib/utils';
 import { getCurrentEnv } from 'lib/utils/query-string';
@@ -81,6 +82,8 @@ const SearchTypeToElementType = {
 export const SearchOverview: React.FC<ISearchOverviewProps> = ({
     fromBoardId,
 }) => {
+    useTrackView(ComponentType.SEARCH_MODAL);
+
     const {
         resultByPage,
         currentPage,
