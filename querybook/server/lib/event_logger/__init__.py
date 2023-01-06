@@ -13,14 +13,13 @@ class EventLogger:
         logger_name = QuerybookSettings.EVENT_LOGGER_NAME
         self.logger = get_event_logger_class(logger_name)
 
-    def log(
-        self,
-        event_type: EventType,
-        event_data: dict,
-    ):
+    def log(self, event_type: EventType, event_data: dict, timestamp: int = None):
         try:
             self.logger.log(
-                uid=current_user.id, event_type=event_type, event_data=event_data
+                uid=current_user.id,
+                event_type=event_type,
+                event_data=event_data,
+                timestamp=timestamp,
             )
         except Exception as e:
             # catch any potential exceptions to avoid event logging

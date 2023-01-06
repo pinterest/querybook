@@ -1,12 +1,19 @@
 from enum import Enum
+from typing import TypedDict
 
 
 class EventType(Enum):
     # an api request
-    API = "api"
+    API = "API"
     # websocket event
-    WEBSOCKET = "websocket"
+    WEBSOCKET = "WEBSOCKET"
     # a UI element gets viewed
-    VIEW = "view"
+    VIEW = "VIEW"
     # a UI element gets clicked
-    CLICK = "click"
+    CLICK = "CLICK"
+
+
+class FrontendEvent(TypedDict):
+    timestamp: int
+    event_data: dict
+    event_type: str  # value of EventType

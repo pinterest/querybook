@@ -75,13 +75,16 @@ class BaseEventLogger(ABC):
         return True
 
     @abstractmethod
-    def log(self, uid: int, event_type: EventType, event_data: dict) -> None:
+    def log(
+        self, uid: int, event_type: EventType, event_data: dict, timestamp: int = None
+    ) -> None:
         """Log an event to some data store
 
         Args:
             uid (int): id of the user who performed the action
             event_type (EventType): action event type, e.g. CLICK, VIEW
             event_data (dict): addtional info of the event in JSON format.
+            timestamp (int): timestamp in milliseconds
         """
         raise NotImplementedError()
 

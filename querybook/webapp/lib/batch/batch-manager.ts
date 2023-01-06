@@ -41,6 +41,14 @@ export function mergeSetFunction<T>(changes: Array<IBatchPromise<T>>) {
     };
 }
 
+export function mergeListFunction<T>(changes: Array<IBatchPromise<T>>) {
+    return {
+        data: [...changes.map((c) => c.data)],
+        onSuccess: () => changes.forEach((c) => c.onSuccess()),
+        onFailure: (e: unknown) => changes.forEach((c) => c.onFailure(e)),
+    };
+}
+
 export class BatchManager<T, M> {
     private changeVersion: number = 0;
     private processTimeout: number = null;
