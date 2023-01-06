@@ -1,3 +1,11 @@
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
+
 import { useDebounce } from 'hooks/useDebounce';
 import CodeMirror from 'lib/codemirror';
 import { getContextSensitiveWarnings } from 'lib/sql-helper/sql-context-sensitive-linter';
@@ -8,13 +16,6 @@ import {
 } from 'lib/sql-helper/sql-lexer';
 import { isQueryUsingTemplating } from 'lib/templated-query/validation';
 import { Nullable } from 'lib/typescript';
-import React, {
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from 'react';
 
 function useTableLint(getTableByName: (schema: string, name: string) => any) {
     const tablesGettingLoadedRef = useRef<Set<string>>(new Set());

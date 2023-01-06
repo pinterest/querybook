@@ -3,8 +3,10 @@ import { useDispatch } from 'react-redux';
 
 import { DataDocViewersList } from 'components/DataDocViewersList/DataDocViewersList';
 import { UserAvatarList } from 'components/UserBadge/UserAvatarList';
+import { ComponentType, ElementType } from 'const/analytics';
 import { DELETED_USER_MSG } from 'const/user';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
+import { trackClick } from 'lib/analytics';
 import { Permission } from 'lib/data-doc/datadoc-permission';
 import * as dataDocActions from 'redux/dataDoc/action';
 import * as dataDocSelectors from 'redux/dataDoc/selector';
@@ -177,7 +179,13 @@ export const DataDocViewersBadge = React.memo<IDataDocViewersBadgeProps>(
             return (
                 <div
                     className="viewers-badge-viewers"
-                    onClick={() => setShowViewsList((v) => !v)}
+                    onClick={() => {
+                        trackClick({
+                            component: ComponentType.DATADOC_PAGE,
+                            element: ElementType.SHARE_DATADOC_BUTTON,
+                        });
+                        setShowViewsList((v) => !v);
+                    }}
                 >
                     {viewersDOM}
                     {shareButtonDOM}

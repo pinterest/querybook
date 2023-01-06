@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { ComponentType, ElementType } from 'const/analytics';
+import { trackClick } from 'lib/analytics';
 import { IconButton } from 'ui/Button/IconButton';
 import { Modal } from 'ui/Modal/Modal';
 
@@ -18,7 +20,13 @@ export const DataDocDAGExporterButton: React.FunctionComponent<IProps> = ({
         <>
             <IconButton
                 icon="Network"
-                onClick={() => setShowModal(true)}
+                onClick={() => {
+                    trackClick({
+                        component: ComponentType.DATADOC_PAGE,
+                        element: ElementType.DAG_EXPORTER_BUTTON,
+                    });
+                    setShowModal(true);
+                }}
                 tooltip="DAG Exporter"
                 tooltipPos="left"
                 title="Exporter"

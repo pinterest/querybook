@@ -2,7 +2,9 @@ import React from 'react';
 import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 
+import { ComponentType, ElementType } from 'const/analytics';
 import { TooltipDirection } from 'const/tooltip';
+import { trackClick } from 'lib/analytics';
 import { sendConfirm } from 'lib/querybookUI';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import * as dataDocActions from 'redux/dataDoc/action';
@@ -27,6 +29,10 @@ export const DeleteDataDocButton: React.FunctionComponent<
                 header: 'Delete DataDoc?',
                 message: 'This action is irreversible.',
                 onConfirm: () => {
+                    trackClick({
+                        component: ComponentType.DATADOC_PAGE,
+                        element: ElementType.DELETE_DATADOC_BUTTON,
+                    });
                     toast.promise(
                         dispatch(dataDocActions.deleteDataDoc(docId)).then(() =>
                             navigateWithinEnv('/datadoc/')

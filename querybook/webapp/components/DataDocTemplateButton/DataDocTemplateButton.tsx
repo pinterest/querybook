@@ -1,7 +1,9 @@
 import React from 'react';
 
 import { DataDocTemplateVarForm } from 'components/DataDocTemplateButton/DataDocTemplateVarForm';
+import { ComponentType, ElementType } from 'const/analytics';
 import { IDataDoc, IDataDocMeta } from 'const/datadoc';
+import { trackClick } from 'lib/analytics';
 import { IconButton } from 'ui/Button/IconButton';
 import { Modal } from 'ui/Modal/Modal';
 
@@ -46,7 +48,13 @@ export const DataDocTemplateButton: React.FunctionComponent<IProps> = ({
         <div>
             <IconButton
                 icon="Code"
-                onClick={() => setShowTemplateForm(true)}
+                onClick={() => {
+                    trackClick({
+                        component: ComponentType.DATADOC_PAGE,
+                        element: ElementType.TEMPLATE_CONFIG_BUTTON,
+                    });
+                    setShowTemplateForm(true);
+                }}
                 tooltip="Set Variables"
                 tooltipPos="left"
                 title="Template"

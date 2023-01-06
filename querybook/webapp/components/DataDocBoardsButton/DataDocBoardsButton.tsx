@@ -1,8 +1,10 @@
 import React from 'react';
 
-import { IDataDoc } from 'const/datadoc';
-import { IconButton } from 'ui/Button/IconButton';
 import { DataDocBoardsModal } from 'components/DataDocBoardsModal/DataDocBoardsModal';
+import { ComponentType, ElementType } from 'const/analytics';
+import { IDataDoc } from 'const/datadoc';
+import { trackClick } from 'lib/analytics';
+import { IconButton } from 'ui/Button/IconButton';
 
 interface IProps {
     dataDoc: IDataDoc;
@@ -17,7 +19,13 @@ export const DataDocBoardsButton: React.FunctionComponent<IProps> = ({
         <div>
             <IconButton
                 icon="List"
-                onClick={() => setShowBoards(true)}
+                onClick={() => {
+                    trackClick({
+                        component: ComponentType.DATADOC_PAGE,
+                        element: ElementType.LISTS_BUTTON,
+                    });
+                    setShowBoards(true);
+                }}
                 tooltip="View Lists"
                 tooltipPos="left"
                 title="Lists"

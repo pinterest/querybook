@@ -16,6 +16,7 @@ import {
     ISearchAndReplaceHandles,
     SearchAndReplace,
 } from 'components/SearchAndReplace/SearchAndReplace';
+import { ComponentType, ElementType } from 'const/analytics';
 import {
     CELL_TYPE,
     DataCellUpdateFields,
@@ -27,6 +28,7 @@ import {
 } from 'const/datadoc';
 import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
 import { DataDocContext, IDataDocContextType } from 'context/DataDoc';
+import { trackClick } from 'lib/analytics';
 import {
     deserializeCopyCommand,
     serializeCopyCommand,
@@ -450,7 +452,11 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
             header: 'Clone DataDoc?',
             message:
                 'You will be redirected to the new Data Doc after cloning.',
-            onConfirm: () =>
+            onConfirm: () => {
+                trackClick({
+                    component: ComponentType.DATADOC_PAGE,
+                    element: ElementType.CLONE_DATADOC_BUTTON,
+                });
                 toast.promise(
                     cloneDataDoc(id).then((dataDoc) =>
                         history.push(
@@ -462,7 +468,8 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                         success: 'Clone Success!',
                         error: 'Cloning failed.',
                     }
-                ),
+                );
+            },
             cancelColor: 'default',
             confirmIcon: 'Copy',
         });
