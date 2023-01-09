@@ -161,11 +161,12 @@ export function getQueryEngineId(
 }
 
 export function arrayGroupByField<
-    T,
+    T extends Record<any, any>,
     K extends keyof PickType<T, string | number>
 >(array: T[], byField?: K): Record<T[K], T> {
+    type GroupedRecord = Record<T[K], T>;
     if (array.length === 0) {
-        return {};
+        return {} as GroupedRecord;
     }
     return array.reduce((result, item) => {
         const identifier: string = item[
@@ -173,7 +174,7 @@ export function arrayGroupByField<
         ] as any as string;
         result[identifier] = item;
         return result;
-    }, {});
+    }, {} as GroupedRecord);
 }
 
 // from https://stackoverflow.com/a/39494245

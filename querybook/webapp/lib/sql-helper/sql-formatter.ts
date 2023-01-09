@@ -1,6 +1,6 @@
 import { getQueryLinePosition, IToken, tokenize } from './sql-lexer';
 import { find, invert, uniqueId } from 'lodash';
-import sqlFormatter from 'sql-formatter';
+import { format as sqlFormat, supportedDialects } from 'sql-formatter';
 
 const skipTokenType = new Set(['TEMPLATED_TAG', 'TEMPLATED_BLOCK', 'URL']);
 
@@ -48,19 +48,23 @@ function tokensToText(tokens: IToken[]) {
     };
 }
 
+export interface ISQLFormatOptions {
+    case?: 'lower' | 'upper';
+    tabWidth?: number;
+    useTabs?: boolean;
+}
+
 export function format(
     query: string,
     language: string,
-    options?: {
-        case?: 'lower' | 'upper';
-        indent?: string;
-    }
+    options?: ISQLFormatOptions
 ) {
     options = {
         ...{
             // default options
             case: 'upper',
-            indent: '  ',
+            tabWidth: 2,
+            useTabs: false,
         },
         ...options,
     };
@@ -133,9 +137,10 @@ export function format(
                 firstKeyWord &&
                 allowedStatement.has(firstKeyWord.text.toLocaleLowerCase())
             ) {
-                formattedStatement = sqlFormatter.format(statementText, {
-                    indent: options.indent,
+                formattedStatement = sqlFormat(statementText, {
+                    tabWidth: options.tabWidth,
                     language: getLanguageForSqlFormatter(language),
+                    useTabs: options.useTabs,
                 });
             }
 
@@ -157,13 +162,19 @@ export function format(
     );
 }
 
-const SQL_FORMATTER_LANGUAGES = ['db2', 'n1ql', 'pl/sql', 'sql'] as const;
+// Override according to https://github.com/sql-formatter-org/sql-formatter/blob/master/docs/language.md
+const languageMappingOverride = {
+    presto: 'trino',
+    sparksql: 'spark',
+};
 
-type SqlFormatterLanguage = typeof SQL_FORMATTER_LANGUAGES[number];
+function getLanguageForSqlFormatter(language: string): string {
+    if (supportedDialects.includes(language)) {
+        return language;
+    }
 
-function getLanguageForSqlFormatter(language: string): SqlFormatterLanguage {
-    if ((SQL_FORMATTER_LANGUAGES as readonly string[]).includes(language)) {
-        return language as SqlFormatterLanguage;
+    if (language in languageMappingOverride) {
+        return languageMappingOverride[language];
     }
 
     return 'sql';

@@ -11,7 +11,7 @@ import {
 } from 'const/metastore';
 import { useToggleState } from 'hooks/useToggleState';
 import { format } from 'lib/sql-helper/sql-formatter';
-import { isAxiosError } from 'lib/utils/error';
+import { isAxiosErrorWithMessage } from 'lib/utils/error';
 import * as dataSourcesActions from 'redux/dataSources/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import { TableSamplesResource } from 'resource/table';
@@ -93,7 +93,7 @@ export const DataTableViewSamples: React.FunctionComponent<
                 );
                 setRawSamplesQuery(format(query, language));
             } catch (error) {
-                if (isAxiosError(error)) {
+                if (isAxiosErrorWithMessage(error)) {
                     const possibleErrorMessage = error?.response?.data?.error;
                     if (possibleErrorMessage) {
                         toast.error(

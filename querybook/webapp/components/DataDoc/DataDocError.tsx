@@ -1,14 +1,14 @@
-import { AxiosError } from 'axios';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { AccessRequestButton } from 'components/AccessRequestButton/AccessRequestButton';
+import { AxiosErrorWithMessage } from 'lib/utils/error';
 import * as dataDocActions from 'redux/dataDoc/action';
 import { Dispatch } from 'redux/store/types';
 import { ErrorPage } from 'ui/ErrorPage/ErrorPage';
 
 export const DataDocError: React.FunctionComponent<{
-    errorObj: AxiosError;
+    errorObj: AxiosErrorWithMessage;
     docId: number;
 }> = React.memo(({ docId, errorObj }) => {
     let errorTitle: string;

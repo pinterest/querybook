@@ -36,7 +36,7 @@ export const TableSamplesResource = {
         ds.fetch<IDataTableSamples>(
             {
                 url: `/table/${tableId}/samples/`,
-                transformResponse: [JSONBig.parse],
+                transformResponse: [(data) => JSONBig.parse(data)],
             },
             {
                 environment_id: environmentId,
@@ -52,7 +52,7 @@ export const TableSamplesResource = {
         ds.save<number>(
             {
                 url: `/table/${tableId}/samples/`,
-                transformResponse: [JSONBig.parse],
+                transformResponse: [(data) => JSONBig.parse(data)],
             },
             {
                 environment_id: environmentId,
