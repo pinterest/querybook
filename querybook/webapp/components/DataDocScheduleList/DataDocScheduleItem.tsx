@@ -38,7 +38,12 @@ export const DataDocScheduleItem: React.FC<IDataDocScheduleItemProps> = ({
                         Runs <HumanReadableCronSchedule cron={schedule.cron} />
                     </StyledText>
                     <StyledText color="light" className="mt4">
-                        Next Run: <NextRun cron={schedule.cron} />
+                        Next Run:{' '}
+                        {schedule.enabled ? (
+                            <NextRun cron={schedule.cron} />
+                        ) : (
+                            'Disabled'
+                        )}
                     </StyledText>
                 </div>
                 {lastRecord && (
@@ -99,7 +104,11 @@ export const DataDocScheduleItem: React.FC<IDataDocScheduleItemProps> = ({
                 <div className="flex-row">
                     <Link to={getWithinEnvUrl(`/datadoc/${doc.id}/`)}>
                         {doc.title ? (
-                            <AccentText weight="bold" size="med">
+                            <AccentText
+                                weight="bold"
+                                size="med"
+                                color={schedule.enabled ? 'text' : 'lightest'}
+                            >
                                 {doc.title}
                             </AccentText>
                         ) : (
