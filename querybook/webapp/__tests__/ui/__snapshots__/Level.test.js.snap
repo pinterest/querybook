@@ -2,7 +2,7 @@
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
 <div
-  className="Level-qauoxs-0 jimMja Level horizontal-space-between "
+  className="Level-qauoxs-0 isoeeI Level horizontal-space-between "
 >
   <Level__LevelItem />
 </div>
@@ -10,7 +10,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <div
-  className="Level-qauoxs-0 jimMja Level horizontal-space-between "
+  className="Level-qauoxs-0 isoeeI Level horizontal-space-between "
 >
   <div
     className="Level__LevelItem-qauoxs-1 LevelItem  flex-row"

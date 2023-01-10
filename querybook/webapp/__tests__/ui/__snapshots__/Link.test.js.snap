@@ -11,7 +11,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <a
-  className="Link__StyledLink-sc-1k0sviq-0 gVoECW"
+  className="Link__StyledLink-sc-1k0sviq-0 ewXLHc"
   href="https://test.com"
   onClick={[Function]}
   rel="noopener noreferrer"
