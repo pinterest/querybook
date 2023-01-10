@@ -57,6 +57,7 @@ const initialArrowStyle: React.CSSProperties = {
 const initialWrapperStyle: React.CSSProperties = {
     top: 0,
     left: 0,
+    zIndex: 9999,
 };
 
 const defaultLayout = ['right', 'right'];

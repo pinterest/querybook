@@ -12,6 +12,7 @@ from const.db import (
 )
 from const.schedule import TaskRunStatus
 from lib.sqlalchemy import CRUDMixin, TruncateString
+from models.regex_string import RegexString
 
 Base = db.Base
 
@@ -51,8 +52,7 @@ class TaskSchedule(CRUDMixin, Base):
     # for the name of the task, ex: celery.backend_cleanup
     task = sql.Column(sql.String(length=name_length), nullable=False)
 
-    # schedule time setting
-    cron = sql.Column(sql.String(length=name_length), default="* * * * *")
+    cron = sql.Column(RegexString(length=name_length), default="* * * * *")
     start_time = sql.Column(sql.DateTime, nullable=True)
 
     args = sql.Column(sql.JSON, default=[])

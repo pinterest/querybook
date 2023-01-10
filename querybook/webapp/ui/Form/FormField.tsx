@@ -89,7 +89,7 @@ export const FormField: React.FunctionComponent<IFormFieldProps> = ({
     );
 };
 
-const FormFieldLabelSection: React.FunctionComponent<
+export const FormFieldLabelSection: React.FunctionComponent<
     IFormFieldSectionProps
 > = ({ children, className = '' }) => (
     <AccentText

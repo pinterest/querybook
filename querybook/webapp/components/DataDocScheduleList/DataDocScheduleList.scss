@@ -1,3 +1,7 @@
 .DataDocScheduleList {
     padding: 36px 24px;
+
+    &_select-wrapper {
+        min-width: 300px;
+    }
 }
