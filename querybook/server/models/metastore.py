@@ -9,6 +9,7 @@ from const.db import (
     description_length,
     url_length,
     mediumtext_length,
+    type_length,
 )
 from const.metastore import DataTableWarningSeverity
 from lib.sqlalchemy import CRUDMixin, TruncateString
@@ -283,7 +284,7 @@ class DataTableColumn(TruncateString("name", "type", "comment"), Base):
     updated_at = sql.Column(sql.DateTime, default=now)
 
     name = sql.Column(sql.String(length=name_length), index=True)
-    type = sql.Column(sql.String(length=name_length))
+    type = sql.Column(sql.String(length=type_length))
 
     comment = sql.Column(sql.String(length=description_length))
     description = sql.Column(sql.Text(length=mediumtext_length))
