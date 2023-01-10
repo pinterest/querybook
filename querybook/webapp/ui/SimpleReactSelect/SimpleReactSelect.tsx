@@ -5,6 +5,7 @@ import Creatable from 'react-select/creatable';
 import { makeReactSelectStyle } from 'lib/utils/react-select';
 import { overlayRoot } from 'ui/Overlay/Overlay';
 import { AccentText } from 'ui/StyledText/StyledText';
+import { IOption } from 'lib/utils/react-select';
 
 export interface ISelectOption<T> {
     value: T;
@@ -19,6 +20,11 @@ export interface ISimpleReactSelectProps<T> {
     isDisabled?: boolean;
     creatable?: boolean;
     selectProps?: Partial<ReactSelectProps<T>>;
+    closeMenuOnSelect?: boolean;
+    hideSelectedOptions?: boolean;
+    isMulti?: boolean;
+    optionSelector?: (o: ISelectOption<T>) => any;
+    defaultValue?: any;
 
     // Clear selection user picks value
     clearAfterSelect?: boolean;
@@ -36,6 +42,8 @@ export function SimpleReactSelect<T>({
     selectProps = {},
     withDeselect = false,
     clearAfterSelect = false,
+    optionSelector = (val) => val?.value,
+    ...otherParams
 }: ISimpleReactSelectProps<T>) {
     const overrideSelectProps = useMemo(() => {
         const override: Partial<ReactSelectProps<T>> = {};
@@ -65,7 +73,7 @@ export function SimpleReactSelect<T>({
     );
 
     const onSelectChange = useCallback(
-        (val: ISelectOption<T>) => onChange(val?.value),
+        (val: ISelectOption<T>) => onChange(optionSelector(val)),
         [onChange]
     );
 
@@ -88,7 +96,7 @@ export function SimpleReactSelect<T>({
             {creatable ? (
                 <Creatable {...componentProps} />
             ) : (
-                <Select {...componentProps} />
+                <Select {...componentProps} {...otherParams} />
             )}
         </AccentText>
     );

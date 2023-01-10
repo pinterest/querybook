@@ -18,7 +18,7 @@ import dataDocSocket from 'lib/data-doc/datadoc-socketio';
 import ds from 'lib/datasource';
 import {
     IScheduledDoc,
-    IScheduledDocFilters,
+    ITransformedScheduledDocFilters,
 } from 'redux/scheduledDataDoc/types';
 
 export const DataDocResource = {
@@ -188,7 +188,7 @@ export const DataDocScheduleResource = {
         envId: number;
         limit: number;
         offset: number;
-        filters: IScheduledDocFilters;
+        filters: ITransformedScheduledDocFilters;
     }) =>
         ds.fetch<{ docs: IScheduledDoc[]; count: number }>(
             '/datadoc/scheduled/',

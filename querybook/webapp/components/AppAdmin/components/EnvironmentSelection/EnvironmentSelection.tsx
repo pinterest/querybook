@@ -2,12 +2,7 @@ import { useField, useFormikContext } from 'formik';
 import React, { useMemo } from 'react';
 
 import { SimpleField } from 'ui/FormikField/SimpleField';
-
-interface OptionsType {
-    value: string;
-    key: string;
-    hidden?: boolean;
-}
+import { OptionsType } from 'const/options';
 
 export const EnvironmentSelection = ({
     options = [],

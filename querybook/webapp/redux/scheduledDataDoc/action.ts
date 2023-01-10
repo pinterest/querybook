@@ -1,6 +1,24 @@
 import { DataDocScheduleResource } from 'resource/dataDoc';
+import { IOption } from 'lib/utils/react-select';
 
 import { IScheduledDoc, IScheduledDocFilters, ThunkResult } from './types';
+import { StatusType } from 'const/schedFiltersType';
+
+function reformatBoardIds(boardIds: IOption<number>[]): number[] | null {
+    if (boardIds.length) {
+        return boardIds.map((board) => board.value);
+    }
+
+    return null;
+}
+
+function reformatStatus(status: StatusType): boolean | null {
+    if (status === 'all') {
+        return null;
+    }
+
+    return status === 'enabled';
+}
 
 export function getScheduledDocs({
     paginationPage,
@@ -25,7 +43,11 @@ export function getScheduledDocs({
             envId,
             limit: pageSize,
             offset: page * pageSize,
-            filters,
+            filters: {
+                ...filters,
+                status: reformatStatus(filters.status),
+                board_ids: reformatBoardIds(filters.board_ids),
+            },
         });
 
         dispatch({
