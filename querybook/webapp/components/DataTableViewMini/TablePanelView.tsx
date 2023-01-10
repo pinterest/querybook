@@ -1,11 +1,14 @@
 import { ContentState } from 'draft-js';
-import React from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 
 import { DataTableTags } from 'components/DataTableTags/DataTableTags';
 import { useDataTable } from 'hooks/redux/useDataTable';
+import { ComplexType, parseType } from 'lib/utils/complex-types';
 import { generateFormattedDate } from 'lib/utils/datetime';
+import { stopPropagationAndDefault } from 'lib/utils/noop';
 import { getHumanReadableByteSize } from 'lib/utils/number';
+import { IconButton } from 'ui/Button/IconButton';
 import { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 import { Loader } from 'ui/Loader/Loader';
 
@@ -111,6 +114,7 @@ export const TablePanelView: React.FunctionComponent<ITablePanelViewProps> = ({
 };
 
 interface IStyledColumnRowProps {
+    indent?: number;
     selected?: boolean;
 }
 const StyledColumnRow = styled.div<IStyledColumnRowProps>`
@@ -147,6 +151,13 @@ const StyledColumnRow = styled.div<IStyledColumnRowProps>`
         max-width: 50%;
     }
 
+    .column-row-expand-icon {
+        margin-left: -16px;
+        padding-right: 4px;
+    }
+
+    ${({ indent }) => indent && `margin-left: ${indent * 16}px`};
+
     ${({ selected }) =>
         selected
             ? `
@@ -164,21 +175,65 @@ const StyledColumnRow = styled.div<IStyledColumnRowProps>`
 const ColumnRow: React.FunctionComponent<{
     name: string;
     type: string;
+    typeChildren?: ComplexType[];
     onClick: () => any;
     selected?: boolean;
     icon?: AllLucideIconNames;
-}> = ({ name, type, onClick, selected, icon }) => (
-    <StyledColumnRow onClick={onClick} selected={selected}>
-        <span className="column-row-name">{name}</span>
-        <span>
-            {icon && (
-                <ColumnIcon
-                    name={icon}
-                    tooltip={'Partition key'}
-                    fill={false}
-                />
-            )}
-        </span>
-        <span className="column-row-type">{type}</span>
-    </StyledColumnRow>
-);
+    indent?: number;
+}> = ({ name, type, typeChildren, onClick, selected, icon, indent = 0 }) => {
+    const [expanded, setExpanded] = React.useState(false);
+    const effectiveTypeChildren = useMemo(
+        () =>
+            typeChildren ? typeChildren : parseType('', type).children ?? [],
+        [type, typeChildren]
+    );
+    const hasChildren = effectiveTypeChildren.length > 0;
+
+    return (
+        <>
+            <StyledColumnRow
+                onClick={onClick}
+                indent={indent}
+                selected={selected}
+            >
+                {hasChildren && (
+                    <IconButton
+                        icon={expanded ? 'Minus' : 'Plus'}
+                        noPadding={true}
+                        size="12"
+                        className="column-row-expand-icon"
+                        onClick={(e) => {
+                            stopPropagationAndDefault(e);
+                            setExpanded(!expanded);
+                        }}
+                    />
+                )}
+                <span className="column-row-name">
+                    {name.startsWith('<') ? <em>{name}</em> : name}
+                </span>
+                <span>
+                    {icon && (
+                        <ColumnIcon
+                            name={icon}
+                            tooltip={'Partition key'}
+                            fill={false}
+                        />
+                    )}
+                </span>
+                <span className="column-row-type">{type}</span>
+            </StyledColumnRow>
+            {hasChildren &&
+                expanded &&
+                effectiveTypeChildren?.map((child) => (
+                    <ColumnRow
+                        key={child.key}
+                        name={child.key}
+                        type={child.type}
+                        typeChildren={child.children}
+                        onClick={onClick}
+                        indent={indent + 1}
+                    />
+                ))}
+        </>
+    );
+};

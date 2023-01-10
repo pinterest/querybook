@@ -87,6 +87,11 @@
     background-color: transparent;
 }
 
+.preformatted {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
 /* force scrollbar to appear on Mac & -webkit (Chrome, Safari) despite user 'hide' preference */
 .force-scrollbar-x {
     overflow-x: scroll !important;

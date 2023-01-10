@@ -29,3 +29,20 @@
         }
     }
 }
+
+.DataTableColumnCardNestedType {
+
+    .column-type {
+        min-width: 80px;
+        word-break: break-all;
+    }
+
+    .nested-indent {
+        margin-left: 32px;
+    }
+
+    .expand-icon {
+        margin-left: -32px;
+        padding: 0 8px;
+    }
+}
