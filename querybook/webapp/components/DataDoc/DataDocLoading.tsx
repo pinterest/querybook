@@ -1,11 +1,12 @@
 import { sample } from 'lodash';
 import React from 'react';
 
+import loadingHintsConfig from 'config/loading_hints.yaml';
 import { Icon } from 'ui/Icon/Icon';
 import { LoadingIcon } from 'ui/Loading/Loading';
 import { Subtitle, Title } from 'ui/Title/Title';
 
-const loadingHints: string[] = require('config/loading_hints.yaml').hints;
+const loadingHints = loadingHintsConfig.hints;
 
 export const DataDocLoading: React.FC = () => {
     const hint = sample(loadingHints);

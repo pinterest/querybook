@@ -7,4 +7,8 @@ module.exports = {
     core: {
         builder: 'webpack5',
     },
+    // https://github.com/pmmmwh/react-refresh-webpack-plugin/issues/176#issuecomment-768238380
+    reactOptions: {
+        fastRefresh: true,
+    },
 };

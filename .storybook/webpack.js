@@ -41,7 +41,7 @@ module.exports = async (config) => {
     config.module.rules.push({
         test: /\.ya?ml$/,
         include: path.resolve(__dirname, 'querybook/config'),
-        use: ['json-loader', 'yaml-loader'],
+        use: 'yaml-loader',
     });
     config.module.rules.push({
         test: /\.(ts|tsx)$/,

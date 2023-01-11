@@ -1,12 +1,13 @@
 import * as React from 'react';
 
+import faqsConfig from 'config/faqs.yaml';
 import { Content } from 'ui/Content/Content';
 import { Markdown } from 'ui/Markdown/Markdown';
 import { Subtitle } from 'ui/Title/Title';
 
 import './FAQ.scss';
 
-const faqs: Array<{ q: string; a: string }> = require('config/faqs.yaml').faqs;
+const faqs = faqsConfig.faqs;
 
 export const FAQ: React.FunctionComponent = () => (
     <div className="FAQ">

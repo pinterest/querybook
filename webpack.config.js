@@ -205,7 +205,7 @@ module.exports = (env, options) => {
                 {
                     test: /\.ya?ml$/,
                     include: path.resolve(__dirname, 'querybook/config'),
-                    use: ['json-loader', 'yaml-loader'],
+                    use: 'yaml-loader',
                 },
                 {
                     test: /\.md$/i,

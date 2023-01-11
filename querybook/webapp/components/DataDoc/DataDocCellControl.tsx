@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import React, { useCallback } from 'react';
 import toast from 'react-hot-toast';
 
+import DatadocConfig from 'config/datadoc.yaml';
 import { ComponentType, ElementType } from 'const/analytics';
 import { IDataCellMeta } from 'const/datadoc';
 import { useBoundFunc } from 'hooks/useBoundFunction';
@@ -16,16 +17,7 @@ import { IListMenuItem, ListMenu } from 'ui/Menu/ListMenu';
 const COPY_CELL_SHORTCUT = getShortcutSymbols(KeyMap.dataDoc.copyCell.key);
 const PASTE_CELL_SHORTCUT = getShortcutSymbols(KeyMap.dataDoc.pasteCell.key);
 
-const cellTypes: Record<
-    string,
-    {
-        key: string;
-        icon: string;
-        name?: string;
-        meta: Record<string, unknown>;
-        meta_default: Record<string, unknown>;
-    }
-> = require('config/datadoc.yaml').cell_types;
+const cellTypes = DatadocConfig.cell_types;
 
 interface IProps {
     index?: number;

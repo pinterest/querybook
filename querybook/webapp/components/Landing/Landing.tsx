@@ -3,6 +3,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { QuerybookSidebarUIGuide } from 'components/UIGuide/QuerybookSidebarUIGuide';
+import loadingHintsConfig from 'config/loading_hints.yaml';
 import { ComponentType, ElementType } from 'const/analytics';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import { useBrowserTitle } from 'hooks/useBrowserTitle';
@@ -21,7 +22,7 @@ import { Column, Columns } from 'ui/Column/Column';
 
 import './Landing.scss';
 
-const querybookHints: string[] = require('config/loading_hints.yaml').hints;
+const querybookHints = loadingHintsConfig.hints;
 
 const DefaultLanding: React.FC = ({ children }) => {
     const { userInfo, recentDataDocs, favoriteDataDocs, environment } =
