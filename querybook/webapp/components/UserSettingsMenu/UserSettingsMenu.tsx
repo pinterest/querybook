@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { UserSettingsTab } from 'components/EnvironmentAppRouter/modalRoute/UserSettingsMenuRoute';
+import userSettingConfig from 'config/user_setting.yaml';
 import { titleize } from 'lib/utils';
 import { availableEnvironmentsSelector } from 'redux/environment/selector';
 import { notificationServiceSelector } from 'redux/notificationService/selector';
@@ -11,23 +12,6 @@ import * as userActions from 'redux/user/action';
 import { makeSelectOptions, Select } from 'ui/Select/Select';
 
 import './UserSettingsMenu.scss';
-
-const userSettingConfig: Record<
-    string,
-    {
-        options: Array<
-            | string
-            | {
-                  value: string;
-                  key: string;
-              }
-        >;
-        default: string;
-        helper: string;
-        tab: UserSettingsTab;
-        per_env?: boolean;
-    }
-> = require('config/user_setting.yaml');
 
 export const UserSettingsMenu: React.FC<{ tab: UserSettingsTab }> = ({
     tab,

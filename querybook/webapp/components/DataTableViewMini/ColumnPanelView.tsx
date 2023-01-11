@@ -2,12 +2,11 @@ import { ContentState } from 'draft-js';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
+import hiveTypeInfo from 'config/type_info.yaml';
 import { prettyPrintType } from 'lib/utils/complex-types';
 import { IStoreState } from 'redux/store/types';
 
 import { PanelSection, SubPanelSection } from './PanelSection';
-
-const hiveTypeInfo: Record<string, string> = require('config/type_info.yaml');
 
 interface IColumnPanelViewProps {
     columnId: number;
