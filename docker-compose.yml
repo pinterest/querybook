@@ -16,7 +16,6 @@ x-querybook-volumes: &querybook-volumes
     - /opt/querybook/node_modules/
     # Make sure the build files don't leak back
     - /opt/querybook/dist/
-    - /opt/querybook/querybook/static/changelog/
     - $PWD/containers/bundled_querybook_config.yaml:/opt/querybook/querybook/config/querybook_config.yaml
     # - file:/opt/store/
 
