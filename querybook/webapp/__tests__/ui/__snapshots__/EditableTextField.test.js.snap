@@ -7,7 +7,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
   <div
     className="editor-wrapper"
   >
-    <RichTextEditor
+    <ForwardRef
       readOnly={true}
       value="test"
     />
