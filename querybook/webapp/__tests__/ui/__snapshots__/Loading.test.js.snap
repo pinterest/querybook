@@ -10,7 +10,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <div
-  className="Loading__StyledLoading-sc-1xendm7-0 ipdtYO Loading flex-center "
+  className="Loading__StyledLoading-sc-1xendm7-0 otEVA Loading flex-center "
 >
   <div
     className="flex-center"

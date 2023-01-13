@@ -42,7 +42,7 @@ import { replaceDataDoc, searchDataDocCells } from 'lib/data-doc/search';
 import { sendConfirm, setBrowserTitle } from 'lib/querybookUI';
 import history from 'lib/router-history';
 import { copy, sanitizeUrlTitle } from 'lib/utils';
-import { formatError, isAxiosError } from 'lib/utils/error';
+import { formatError, isAxiosErrorWithMessage } from 'lib/utils/error';
 import { KeyMap, matchKeyMap } from 'lib/utils/keyboard';
 import { getQueryString } from 'lib/utils/query-string';
 import * as dataDocActions from 'redux/dataDoc/action';
@@ -882,7 +882,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
         const { dataDoc } = this.props;
         const { errorObj } = this.state;
 
-        if (isAxiosError(errorObj)) {
+        if (isAxiosErrorWithMessage(errorObj)) {
             return (
                 <DataDocError docId={this.props.docId} errorObj={errorObj} />
             );

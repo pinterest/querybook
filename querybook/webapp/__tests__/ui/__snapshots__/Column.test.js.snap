@@ -2,7 +2,7 @@
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
 <div
-  className="Column__Columns-sl2jp4-0 gOWWVh Columns"
+  className="Column__Columns-sl2jp4-0 eLaonr Columns"
 >
   <Column>
     Test
@@ -15,15 +15,15 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <div
-  className="Column__Columns-sl2jp4-0 gOWWVh Columns"
+  className="Column__Columns-sl2jp4-0 eLaonr Columns"
 >
   <div
-    className="Column-sl2jp4-1 gozZXJ Column"
+    className="Column-sl2jp4-1 jSJrkP Column"
   >
     Test
   </div>
   <div
-    className="Column-sl2jp4-1 gozZXJ Column"
+    className="Column-sl2jp4-1 jSJrkP Column"
   >
     Test
   </div>

@@ -1,14 +1,14 @@
-import type { AxiosError } from 'axios';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { AccessRequestButton } from 'components/AccessRequestButton/AccessRequestButton';
+import { AxiosErrorWithMessage } from 'lib/utils/error';
 import { addBoardAccessRequest } from 'redux/board/action';
 import { Dispatch } from 'redux/store/types';
 import { ErrorPage } from 'ui/ErrorPage/ErrorPage';
 
 export const BoardError: React.FunctionComponent<{
-    errorObj: AxiosError;
+    errorObj: AxiosErrorWithMessage;
     boardId: number;
 }> = React.memo(({ boardId, errorObj }) => {
     const dispatch: Dispatch = useDispatch();

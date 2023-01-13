@@ -26,7 +26,7 @@ import {
     AutoCompleteType,
     ExcludedTriggerKeys,
 } from 'lib/sql-helper/sql-autocompleter';
-import { format } from 'lib/sql-helper/sql-formatter';
+import { format, ISQLFormatOptions } from 'lib/sql-helper/sql-formatter';
 import {
     ILinterWarning,
     IRange,
@@ -232,20 +232,18 @@ export const QueryEditor: React.FC<
         );
 
         const formatQuery = useCallback(
-            (
-                options: {
-                    case?: 'lower' | 'upper';
-                    indent?: string;
-                } = {}
-            ) => {
+            (options: ISQLFormatOptions = {}) => {
                 if (editorRef.current) {
                     const indentWithTabs =
                         editorRef.current.getOption('indentWithTabs');
                     const indentUnit =
                         editorRef.current.getOption('indentUnit');
-                    options['indent'] = indentWithTabs
-                        ? '\t'
-                        : ' '.repeat(indentUnit);
+
+                    if (indentWithTabs) {
+                        options.useTabs = true;
+                    } else {
+                        options.tabWidth = indentUnit;
+                    }
                 }
 
                 const formattedQuery = format(

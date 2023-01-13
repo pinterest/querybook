@@ -12,7 +12,7 @@ FROM
     );
     expect(format('select ARRAY [1] || ARRAY [2];', 'presto')).toBe(
         `SELECT
-  ARRAY [1] || ARRAY [2];`
+  ARRAY[1] || ARRAY[2];`
     );
 });
 test('Simple formatting with templating case', () => {
@@ -58,7 +58,7 @@ from
 });
 
 test('Simple formatting tab indent', () => {
-    expect(format('select * from test;', 'presto', { indent: '\t' })).toBe(
+    expect(format('select * from test;', 'presto', { useTabs: true })).toBe(
         `SELECT
 \t*
 FROM
@@ -67,7 +67,7 @@ FROM
 });
 
 test('Simple formatting four space indent', () => {
-    expect(format('select * from test;', 'presto', { indent: '    ' })).toBe(
+    expect(format('select * from test;', 'presto', { tabWidth: 4 })).toBe(
         `SELECT
     *
 FROM

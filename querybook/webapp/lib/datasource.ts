@@ -45,7 +45,7 @@ function syncDatasource<T>(
     if (data) {
         if (method === 'GET') {
             defaultConfig.params = {
-                params: data,
+                params: JSON.stringify(data),
             };
         } else {
             defaultConfig.data = data;

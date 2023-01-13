@@ -8,7 +8,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <span
-  className="KeyboardKey__StyledKeyboardKey-sc-1o6e5rh-0 fCjCIz KeyboardKey mr4"
+  className="KeyboardKey__StyledKeyboardKey-sc-1o6e5rh-0 jsijyx KeyboardKey mr4"
 >
   test
 </span>

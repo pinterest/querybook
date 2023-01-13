@@ -2,7 +2,7 @@
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
 <div
-  className="FullHeight-p6umsy-0 kFdkFT TestFullHeight"
+  className="FullHeight-p6umsy-0 ipLfZZ TestFullHeight"
 >
   Test
 </div>
@@ -10,7 +10,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <div
-  className="FullHeight-p6umsy-0 kFdkFT TestFullHeight"
+  className="FullHeight-p6umsy-0 ipLfZZ TestFullHeight"
 >
   Test
 </div>
