@@ -1,6 +1,6 @@
 {
     "name": "querybook",
-    "version": "3.16.0",
+    "version": "3.16.1",
     "description": "A Big Data Webapp",
     "private": true,
     "scripts": {
@@ -129,7 +129,7 @@
         "@types/lodash": "4.14.116",
         "@types/markdown-to-jsx": "^6.11.3",
         "@types/memoize-one": "3.1.1",
-        "@types/qs": "^6.5.1",
+        "@types/qs": "^6.9.7",
         "@types/rc-time-picker": "^3.4.1",
         "@types/react": "17.0.15",
         "@types/react-dom": "17.0.9",
