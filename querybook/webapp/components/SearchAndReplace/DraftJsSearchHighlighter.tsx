@@ -5,13 +5,13 @@ import scrollIntoView from 'smooth-scroll-into-view-if-needed';
 import { makeSearchHighlightDecorator } from 'components/SearchAndReplace/SearchHighlightDecorator';
 import { ISearchAndReplaceContextType } from 'context/searchAndReplace';
 import { LinkDecorator } from 'lib/richtext';
-import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
+import type { IRichTextEditorHandles } from 'ui/RichTextEditor/RichTextEditor';
 
 export const DraftJsSearchHighlighter: React.FC<{
-    editor: RichTextEditor;
+    editorRef: React.MutableRefObject<IRichTextEditorHandles>;
     cellId: number;
     searchContext: ISearchAndReplaceContextType;
-}> = ({ editor, cellId, searchContext }) => {
+}> = ({ editorRef, cellId, searchContext }) => {
     const {
         searchState: {
             searchResults,
@@ -23,11 +23,12 @@ export const DraftJsSearchHighlighter: React.FC<{
     } = searchContext;
 
     const shouldHighlight = useMemo(
-        () => editor && searchResults.some((r) => r.cellId === cellId),
-        [searchResults, cellId, editor]
+        () =>
+            editorRef.current && searchResults.some((r) => r.cellId === cellId),
+        [searchResults, cellId, editorRef]
     );
     useEffect(() => {
-        if (editor) {
+        if (editorRef.current) {
             const decorators = [LinkDecorator];
             if (shouldHighlight) {
                 decorators.push(
@@ -35,11 +36,13 @@ export const DraftJsSearchHighlighter: React.FC<{
                 );
             }
 
-            editor.editorState = DraftJs.EditorState.set(editor.editorState, {
-                decorator: new DraftJs.CompositeDecorator(decorators),
-            });
+            editorRef.current.setEditorState(
+                DraftJs.EditorState.set(editorRef.current.getEditorState(), {
+                    decorator: new DraftJs.CompositeDecorator(decorators),
+                })
+            );
         }
-    }, [shouldHighlight, editor, searchString, searchOptions]);
+    }, [shouldHighlight, editorRef, searchString, searchOptions]);
 
     // jump to item
     const currentSearchItem = useMemo(() => {
@@ -51,7 +54,7 @@ export const DraftJsSearchHighlighter: React.FC<{
     }, [currentSearchResultIndex, cellId, searchResults]);
 
     useEffect(() => {
-        if (currentSearchItem && editor) {
+        if (currentSearchItem && editorRef.current) {
             // editor.focus();
             const selectionState: DraftJs.SelectionState =
                 new DraftJs.SelectionState({
@@ -62,9 +65,11 @@ export const DraftJsSearchHighlighter: React.FC<{
                     hasFocus: false,
                     isBackward: false,
                 });
-            editor.editorState = DraftJs.EditorState.forceSelection(
-                editor.editorState,
-                selectionState
+            editorRef.current.setEditorState(
+                DraftJs.EditorState.forceSelection(
+                    editorRef.current.getEditorState(),
+                    selectionState
+                )
             );
             setTimeout(() => {
                 // Known issues: Pressing enter too fast
@@ -72,7 +77,7 @@ export const DraftJsSearchHighlighter: React.FC<{
                 // rich text editor, so setting a force blur after 50ms
                 // to prevent the editor to be accidentally edited
                 const element = window.getSelection().focusNode.parentElement;
-                editor.draftJSEditor?.blur();
+                editorRef.current.getDraftJsEditor()?.blur();
 
                 setTimeout(() => {
                     // The DataDoc scrolls to the cell (sometimes its lazy loaded)

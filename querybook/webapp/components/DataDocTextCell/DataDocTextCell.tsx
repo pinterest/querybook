@@ -13,7 +13,10 @@ import { IDataCellMetaBase } from 'const/datadoc';
 import { SearchAndReplaceContext } from 'context/searchAndReplace';
 import { useDebounceState } from 'hooks/redux/useDebounceState';
 import { KeyMap, matchKeyMap } from 'lib/utils/keyboard';
-import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
+import {
+    IRichTextEditorHandles,
+    RichTextEditor,
+} from 'ui/RichTextEditor/RichTextEditor';
 
 import './DataDocTextCell.scss';
 
@@ -51,7 +54,7 @@ export const DataDocTextCell = React.memo<IProps>(
     }) => {
         const searchContext = useContext(SearchAndReplaceContext);
         const [focused, setFocused] = useState(false);
-        const editorRef = useRef<RichTextEditor>(null);
+        const editorRef = useRef<IRichTextEditorHandles>(null);
 
         const onChangeContext = useCallback(
             (newContext: DraftJs.ContentState) => {
@@ -168,7 +171,7 @@ export const DataDocTextCell = React.memo<IProps>(
                 />
                 <DraftJsSearchHighlighter
                     searchContext={searchContext}
-                    editor={editorRef.current}
+                    editorRef={editorRef}
                     cellId={cellId}
                 />
             </div>

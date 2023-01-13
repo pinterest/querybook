@@ -16,9 +16,15 @@ export function useStateWithRef<T>(initialVal: T | (() => T)) {
     const [state, _setState] = useState<T>(initialVal);
     const ref = useRef(state);
 
-    const setState = useCallback((newState: T) => {
-        _setState(newState);
-        ref.current = newState;
+    const setState = useCallback((newState: T | ((old: T) => T)) => {
+        _setState((old) => {
+            const newVal =
+                typeof newState === 'function'
+                    ? (newState as (old: T) => T)(old)
+                    : newState;
+            ref.current = newVal;
+            return newVal;
+        });
     }, []);
 
     return [state, setState, ref] as const;
