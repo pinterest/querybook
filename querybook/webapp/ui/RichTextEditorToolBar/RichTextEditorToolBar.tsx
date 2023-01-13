@@ -1,8 +1,13 @@
 import { EditorState, RichUtils } from 'draft-js';
-import { bind } from 'lodash-decorators';
-import React from 'react';
+import React, {
+    useCallback,
+    useImperativeHandle,
+    useRef,
+    useState,
+} from 'react';
 
 import { getSelectionRect } from 'lib/utils';
+import { stopPropagationAndDefault } from 'lib/utils/noop';
 import { Popover } from 'ui/Popover/Popover';
 
 import { LinkInput } from './LinkInput';
@@ -20,98 +25,94 @@ export interface IRichTextEditorToolBarProps {
     onChange: (editorState: EditorState) => any;
     focusEditor: () => any;
 }
-
-export interface IRichTextEditorToolBarState {
-    showLinkInput: boolean;
+export interface IRichTextEditorToolBarHandles {
+    getContainer: () => HTMLDivElement;
+    showLinkInput: () => void;
 }
 
-export class RichTextEditorToolBar extends React.PureComponent<
-    IRichTextEditorToolBarProps,
-    IRichTextEditorToolBarState
-> {
-    public readonly state = {
-        showLinkInput: false,
-    };
+export const RichTextEditorToolBar = React.forwardRef<
+    IRichTextEditorToolBarHandles,
+    IRichTextEditorToolBarProps
+>(({ editorState, onChange, focusEditor }, ref) => {
+    const [showLinkInput, setShowLinkInput] = useState(false);
+    const hideLinkInput = useCallback(() => setShowLinkInput(false), []);
 
-    public selfRef = React.createRef<HTMLDivElement>();
-    private lastSelectionRect: ClientRect = null;
+    const selfRef = useRef<HTMLDivElement>();
+    const lastSelectionRectRef = useRef<ClientRect>();
 
-    @bind
-    public addUrlToEditor(url: string) {
-        const { editorState, onChange } = this.props;
-        const contentState = editorState.getCurrentContent();
-        const contentStateWithEntity = contentState.createEntity(
-            'LINK',
-            'MUTABLE',
-            { url }
-        );
-        const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
-        const newEditorState = EditorState.push(
-            editorState,
-            contentStateWithEntity,
-            'apply-entity'
-        );
+    const focusEditorAfterWait = useCallback(() => {
+        setTimeout(() => {
+            focusEditor();
+        }, 50);
+    }, [focusEditor]);
 
-        onChange(
-            RichUtils.toggleLink(
-                newEditorState,
-                newEditorState.getSelection(),
-                entityKey
-            )
-        );
-        this.focusEditor();
-    }
+    const addUrlToEditor = useCallback(
+        (url: string) => {
+            const contentState = editorState.getCurrentContent();
+            const contentStateWithEntity = contentState.createEntity(
+                'LINK',
+                'MUTABLE',
+                { url }
+            );
+            const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
+            const newEditorState = EditorState.push(
+                editorState,
+                contentStateWithEntity,
+                'apply-entity'
+            );
 
-    @bind
-    public onShowLinkInput(mouseEvent: React.MouseEvent) {
-        mouseEvent.preventDefault();
-        mouseEvent.stopPropagation();
+            onChange(
+                RichUtils.toggleLink(
+                    newEditorState,
+                    newEditorState.getSelection(),
+                    entityKey
+                )
+            );
+            focusEditorAfterWait();
+        },
+        [editorState, onChange, focusEditorAfterWait]
+    );
 
-        this.showLinkInput();
-    }
+    const handleShowLinkInput = useCallback((mouseEvent: React.MouseEvent) => {
+        stopPropagationAndDefault(mouseEvent);
+        setShowLinkInput(true);
+    }, []);
 
-    @bind
-    public showLinkInput() {
-        this.setState({ showLinkInput: true });
-    }
+    const toggleStyle = useCallback(
+        (inlineStyle: string, mouseEvent: React.MouseEvent) => {
+            stopPropagationAndDefault(mouseEvent);
+            onChange(RichUtils.toggleInlineStyle(editorState, inlineStyle));
+        },
+        [onChange, editorState]
+    );
 
-    @bind
-    public hideLinkInput() {
-        this.setState({ showLinkInput: false });
-    }
+    const toggleBlock = useCallback(
+        (blockType, mouseEvent: React.MouseEvent) => {
+            stopPropagationAndDefault(mouseEvent);
+            onChange(RichUtils.toggleBlockType(editorState, blockType));
+        },
+        [onChange, editorState]
+    );
 
-    @bind
-    public toggleStyle(inlineStyle, mouseEvent) {
-        const { onChange, editorState } = this.props;
+    useImperativeHandle(
+        ref,
+        () => ({
+            getContainer: () => selfRef.current,
+            showLinkInput: () => setShowLinkInput(true),
+        }),
+        []
+    );
 
-        mouseEvent.preventDefault();
-        mouseEvent.stopPropagation();
-
-        onChange(RichUtils.toggleInlineStyle(editorState, inlineStyle));
-    }
-
-    @bind
-    public toggleBlock(blockType, mouseEvent) {
-        const { onChange, editorState } = this.props;
-
-        mouseEvent.preventDefault();
-        mouseEvent.stopPropagation();
-
-        onChange(RichUtils.toggleBlockType(editorState, blockType));
-    }
-
-    public renderButtons() {
+    const renderButtons = () => {
         let numberOfButtons = 0;
-        const { editorState } = this.props;
         const currentStyle = editorState.getCurrentInlineStyle();
-
         const styleButtons = styleButtonsConfig.map((config, index) => (
             <ToolBarButton
                 key={index}
                 active={currentStyle.has(config.style)}
                 icon={config.icon}
                 tooltip={config.tooltip}
-                onClick={this.toggleStyle.bind(null, config.style)}
+                onClick={toggleStyle.bind(null, config.style)}
             />
         ));
         numberOfButtons += styleButtons.length;
@@ -129,14 +130,13 @@ export class RichTextEditorToolBar extends React.PureComponent<
                 title={config.label}
                 icon={config.icon}
                 tooltip={config.tooltip}
-                onClick={this.toggleBlock.bind(null, config.style)}
+                onClick={toggleBlock.bind(null, config.style)}
             />
         ));
         numberOfButtons += blockButtons.length;
 
         const entityButtons = entityButtonsConfig.map((config, index) => {
-            const onClick =
-                config.type === 'link' ? this.onShowLinkInput : null;
+            const onClick = config.type === 'link' ? handleShowLinkInput : null;
             return (
                 <ToolBarButton
                     key={index + numberOfButtons}
@@ -169,46 +169,35 @@ export class RichTextEditorToolBar extends React.PureComponent<
                 entityButtons,
             ]
         );
-    }
+    };
 
-    public render() {
-        const { showLinkInput } = this.state;
-
-        let contentDOM = null;
-        const selectionRect = getSelectionRect() ?? this.lastSelectionRect;
-
+    let contentDOM = null;
+    if (showLinkInput) {
+        const selectionRect =
+            getSelectionRect() ?? lastSelectionRectRef.current;
         if (selectionRect != null) {
-            if (showLinkInput) {
-                this.lastSelectionRect = selectionRect;
-                const linkInput = (
-                    <Popover
-                        anchorBox={selectionRect}
-                        layout={['bottom']}
-                        onHide={this.hideLinkInput}
-                    >
-                        <LinkInput
-                            onDismiss={this.hideLinkInput}
-                            onSubmit={this.addUrlToEditor}
-                        />
-                    </Popover>
-                );
-                contentDOM = linkInput;
-            } else {
-                contentDOM = this.renderButtons();
-            }
+            lastSelectionRectRef.current = selectionRect;
+            const linkInput = (
+                <Popover
+                    anchorBox={selectionRect}
+                    layout={['bottom']}
+                    onHide={hideLinkInput}
+                >
+                    <LinkInput
+                        onDismiss={hideLinkInput}
+                        onSubmit={addUrlToEditor}
+                    />
+                </Popover>
+            );
+            contentDOM = linkInput;
         }
-
-        return (
-            <div className={'RichTextEditorToolBar '} ref={this.selfRef}>
-                {contentDOM}
-            </div>
-        );
+    } else {
+        contentDOM = renderButtons();
     }
 
-    public focusEditor() {
-        // Make sure we focus later to avoid onChange race condition
-        setTimeout(() => {
-            this.props.focusEditor();
-        }, 50);
-    }
-}
+    return (
+        <div className={'RichTextEditorToolBar '} ref={selfRef}>
+            {contentDOM}
+        </div>
+    );
+});

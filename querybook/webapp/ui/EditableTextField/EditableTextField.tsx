@@ -4,7 +4,10 @@ import React, { useCallback } from 'react';
 
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Button, TextButton } from 'ui/Button/Button';
-import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
+import {
+    IRichTextEditorHandles,
+    RichTextEditor,
+} from 'ui/RichTextEditor/RichTextEditor';
 
 import './EditableTextField.scss';
 
@@ -20,7 +23,7 @@ export const EditableTextField: React.FunctionComponent<
     IEditableTextFieldProps
 > = ({ value, onSave, className, placeholder, readonly = false }) => {
     const [editMode, setEditMode] = React.useState(false);
-    const editorRef = React.useRef<RichTextEditor>(null);
+    const editorRef = React.useRef<IRichTextEditorHandles>(null);
 
     const toggleEditMode = useCallback(
         () =>
