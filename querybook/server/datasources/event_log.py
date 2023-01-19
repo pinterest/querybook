@@ -3,7 +3,7 @@ from const.event_log import EventType, FrontendEvent
 from lib.event_logger import event_logger
 
 
-@register("/event_log/", methods=["POST"], api_logging=False)
+@register("/context_log/", methods=["POST"], api_logging=False)
 def log_frontend_event(events: list[FrontendEvent]):
     """Log a list of frontend events.
 
