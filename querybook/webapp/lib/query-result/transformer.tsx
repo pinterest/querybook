@@ -1,4 +1,5 @@
 import JSONBig from 'json-bigint';
+import { cloneDeep } from 'lodash';
 import React from 'react';
 import ReactJson, { ThemeObject } from 'react-json-view';
 
@@ -107,7 +108,7 @@ const queryResultTransformers: IColumnTransformer[] = [
 
                 // This is a workaround for https://github.com/sidorares/json-bigint/issues/38
                 // to make sure it is of `Object` prototype when passed over to <ReactJson />
-                const jsonSrc = { ...json };
+                const jsonSrc = cloneDeep(json);
 
                 return (
                     <ReactJson
