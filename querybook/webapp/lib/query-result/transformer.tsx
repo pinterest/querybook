@@ -107,7 +107,7 @@ const queryResultTransformers: IColumnTransformer[] = [
 
                 // This is a workaround for https://github.com/sidorares/json-bigint/issues/38
                 // to make sure it is of `Object` prototype when passed over to <ReactJson />
-                const jsonSrc = { ...json };
+                const jsonSrc = JSON.parse(JSON.stringify(json));
 
                 return (
                     <ReactJson
