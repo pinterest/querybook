@@ -85,7 +85,7 @@
         "react-redux": "7.2.4",
         "react-router-dom": "5.1.2",
         "react-select": "4.3.1",
-        "react-table": "^6.8.6",
+        "react-table": "6.8.6",
         "react-virtualized": "9.22.3",
         "reactflow": "^11.3.0",
         "reactour": "^1.18.6",
