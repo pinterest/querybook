@@ -41,6 +41,7 @@ import { navigateWithinEnv } from 'lib/utils/query-string';
 import { doesLanguageSupportUDF } from 'lib/utils/udf';
 import * as adhocQueryActions from 'redux/adhocQuery/action';
 import * as dataDocActions from 'redux/dataDoc/action';
+import { removeSelectedExecution } from 'redux/adhocQuery/action';
 import {
     queryEngineByIdEnvSelector,
     queryEngineSelector,
@@ -356,6 +357,12 @@ const QueryComposer: React.FC = () => {
         dispatch,
         environmentId
     );
+
+    useEffect(() => {
+        return () => {
+            dispatch(removeSelectedExecution(environmentId));
+        };
+    }, []);
     const { rowLimit, setRowLimit } = useRowLimit(dispatch, environmentId);
 
     const [resultsCollapsed, setResultsCollapsed] = useState(false);

@@ -4,4 +4,5 @@ export interface IAdhocQuery {
     engineId?: number;
     executionId?: number;
     rowLimit?: number;
+    selectedExec?: number;
 }
