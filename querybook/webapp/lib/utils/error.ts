@@ -1,4 +1,5 @@
 import { AxiosError } from 'axios';
+import { isObject } from 'lodash';
 import moment from 'moment';
 
 import { formatDuration, generateFormattedDate } from './datetime';
@@ -9,10 +10,7 @@ export function formatError(error: any): string {
         return error;
     }
 
-    const isErrorObject =
-        error != null &&
-        typeof error === 'object' &&
-        error.constructor === Error;
+    const isErrorObject = isObject(error);
     if (isErrorObject) {
         if (isAxiosError(error)) {
             if (isAxiosErrorWithMessage(error)) {
