@@ -20,6 +20,7 @@ import type {
     ITopQueryConcurrences,
     ITopQueryUser,
     IUpdateTableParams,
+    MetadataType,
 } from 'const/metastore';
 import type { ITag } from 'const/tag';
 import ds from 'lib/datasource';
@@ -130,6 +131,20 @@ export const TableResource = {
         ds.fetch<IDataTable>(`/table_name/${schemaName}/${tableName}/`, {
             metastore_id: metastoreId,
         }),
+
+    getMetastoreLink: (
+        metastoreId: number,
+        schemaName: string,
+        tableName: string,
+        metadataType: MetadataType
+    ) =>
+        ds.fetch<string>(
+            `/table_name/${schemaName}/${tableName}/metastore_link/`,
+            {
+                metastore_id: metastoreId,
+                metadata_type: metadataType,
+            }
+        ),
 
     checkIfExists: (
         metastoreId: number,

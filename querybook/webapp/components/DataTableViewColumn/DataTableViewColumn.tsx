@@ -15,6 +15,7 @@ export interface IDataTableViewColumnProps {
         columnId: number,
         description: ContentState
     ) => any;
+    onEditMetadata: () => void;
 }
 
 export const DataTableViewColumn: React.FunctionComponent<
@@ -24,6 +25,7 @@ export const DataTableViewColumn: React.FunctionComponent<
     table = null,
     tableColumns = [],
     numberOfRows = null,
+    onEditMetadata,
 }) => {
     const [filterString, setFilterString] = React.useState('');
 
@@ -60,6 +62,7 @@ export const DataTableViewColumn: React.FunctionComponent<
             column={col}
             updateDataColumnDescription={updateDataColumnDescription}
             key={col.id}
+            onEdit={onEditMetadata}
         />
     ));
 

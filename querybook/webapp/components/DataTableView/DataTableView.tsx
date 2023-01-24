@@ -15,7 +15,11 @@ import { DataTableViewSamples } from 'components/DataTableViewSamples/DataTableV
 import { DataTableViewSourceQuery } from 'components/DataTableViewSourceQuery/DataTableViewSourceQuery';
 import { DataTableViewWarnings } from 'components/DataTableViewWarnings/DataTableViewWarnings';
 import { ComponentType, ElementType } from 'const/analytics';
-import { IPaginatedQuerySampleFilters } from 'const/metastore';
+import {
+    IPaginatedQuerySampleFilters,
+    MetadataMode,
+    MetadataType,
+} from 'const/metastore';
 import { trackClick, trackView } from 'lib/analytics';
 import { setBrowserTitle } from 'lib/querybookUI';
 import history from 'lib/router-history';
@@ -26,6 +30,7 @@ import { getQueryString, replaceQueryString } from 'lib/utils/query-string';
 import * as dataSourcesActions from 'redux/dataSources/action';
 import { fullTableSelector } from 'redux/dataSources/selector';
 import { Dispatch, IStoreState } from 'redux/store/types';
+import { TableResource } from 'resource/table';
 import { Container } from 'ui/Container/Container';
 import { ErrorPage } from 'ui/ErrorPage/ErrorPage';
 import { FourOhFour } from 'ui/ErrorPage/FourOhFour';
@@ -133,6 +138,24 @@ class DataTableViewComponent extends React.PureComponent<
     }
 
     @bind
+    public getOnEditMetadata(metadataType: MetadataType) {
+        const { table, schema, metastore } = this.props;
+        const onEditMetadata = async () => {
+            const { data: link } = await TableResource.getMetastoreLink(
+                metastore.id,
+                schema.name,
+                table.name,
+                metadataType
+            );
+            window.open(link, '_blank');
+        };
+
+        return metastore.config[metadataType] === MetadataMode.READ_ONLY
+            ? onEditMetadata
+            : undefined;
+    }
+
+    @bind
     public onTabSelected(key) {
         const elementType = tabDefinitions.find(
             (t) => t.key === key
@@ -158,6 +181,7 @@ class DataTableViewComponent extends React.PureComponent<
     @bind
     public makeOverviewDOM() {
         const { table, tableName, tableColumns, tableWarnings } = this.props;
+        console.log(this.props);
 
         return (
             <DataTableViewOverview
@@ -168,6 +192,9 @@ class DataTableViewComponent extends React.PureComponent<
                 onTabSelected={this.onTabSelected}
                 updateDataTableDescription={this.updateDataTableDescription}
                 onExampleFilter={this.handleExampleFilter}
+                onEditMetadata={this.getOnEditMetadata(
+                    MetadataType.TABLE_DESCRIPTION
+                )}
             />
         );
     }
@@ -182,6 +209,9 @@ class DataTableViewComponent extends React.PureComponent<
                 tableColumns={tableColumns}
                 numberOfRows={numberOfRows}
                 updateDataColumnDescription={updateDataColumnDescription}
+                onEditMetadata={this.getOnEditMetadata(
+                    MetadataType.COLUMN_DESCRIPTION
+                )}
             />
         );
     }
@@ -381,7 +411,7 @@ function mapStateToProps(state: IStoreState, ownProps) {
 
     const { tableId } = ownProps;
 
-    const { table, schema, tableName, tableColumns, tableWarnings } =
+    const { table, schema, tableName, tableColumns, tableWarnings, metastore } =
         fullTableSelector(state, tableId);
 
     return {
@@ -395,6 +425,7 @@ function mapStateToProps(state: IStoreState, ownProps) {
         dataJobMetadataById,
         dataSchemasById,
         tableWarnings,
+        metastore,
 
         userInfo: state.user.myUserInfo,
     };

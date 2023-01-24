@@ -17,6 +17,7 @@ import './DataTableColumnCard.scss';
 
 interface IProps {
     column: IDataColumn;
+    onEdit: () => void;
     updateDataColumnDescription: (
         columnId: number,
         description: ContentState
@@ -25,6 +26,7 @@ interface IProps {
 
 export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
     column,
+    onEdit,
     updateDataColumnDescription,
 }) => {
     const [expanded, , toggleExpanded] = useToggleState(false);
@@ -35,6 +37,7 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
             value={column.description as ContentState}
             onSave={updateDataColumnDescription.bind(null, column.id)}
             placeholder="No user comments yet for column."
+            onEdit={onEdit}
         />
     );
     return (

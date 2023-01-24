@@ -86,6 +86,7 @@ export interface IQuerybookTableViewOverviewProps {
     tableColumns: IDataColumn[];
     tableWarnings: IDataTableWarning[];
 
+    onEditMetadata: () => void;
     onTabSelected: (key: string) => any;
     updateDataTableDescription: (
         tableId: number,
@@ -102,6 +103,7 @@ export const DataTableViewOverview: React.FC<
     tableWarnings,
     onExampleFilter,
     updateDataTableDescription,
+    onEditMetadata,
 }) => {
     const onDescriptionSave = useCallback(
         (description: DraftJs.ContentState) =>
@@ -116,6 +118,7 @@ export const DataTableViewOverview: React.FC<
             value={table.description as DraftJs.ContentState}
             onSave={onDescriptionSave}
             placeholder="No description for this table yet."
+            onEdit={onEditMetadata}
         />
     ) : null;
 
