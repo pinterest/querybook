@@ -5,7 +5,6 @@ from lib.query_analysis.validation.base_query_validator import (
     QueryValidationResult,
     QueryValidationSeverity,
 )
-from lib.utils.utils import Timeout
 from lib.utils.execute_query import ExecuteQuery
 from lib.query_executor.executors.presto import get_presto_error_dict
 from lib.query_analysis.statements import split_query_to_statements_with_start_location
@@ -79,26 +78,26 @@ class PrestoExplainValidator(BaseQueryValidator):
             validation_statements,
             statement_start_locations,
         ) = self._convert_query_to_explains(query)
-        statement_idx = 0
-        with Timeout(5, "Query validation took too long to finish"):
-            while statement_idx < len(validation_statements):
-                try:
-                    self._run_validation_statement(
-                        validation_statements[statement_idx], engine_id, uid
-                    )
-                except PyHiveError as exc:
-                    presto_syntax_error = self._get_semantic_error_from_exc(exc)
-                    if presto_syntax_error:
-                        error_line, error_ch, error_msg = presto_syntax_error
-                        validation_errors.append(
-                            self._map_statement_error_to_query(
-                                statement_idx,
-                                statement_start_locations,
-                                error_line,
-                                error_ch,
-                                error_msg,
-                            )
-                        )
 
-                statement_idx += 1
+        statement_idx = 0
+        while statement_idx < len(validation_statements):
+            try:
+                self._run_validation_statement(
+                    validation_statements[statement_idx], engine_id, uid
+                )
+            except PyHiveError as exc:
+                presto_syntax_error = self._get_semantic_error_from_exc(exc)
+                if presto_syntax_error:
+                    error_line, error_ch, error_msg = presto_syntax_error
+                    validation_errors.append(
+                        self._map_statement_error_to_query(
+                            statement_idx,
+                            statement_start_locations,
+                            error_line,
+                            error_ch,
+                            error_msg,
+                        )
+                    )
+
+            statement_idx += 1
         return validation_errors
