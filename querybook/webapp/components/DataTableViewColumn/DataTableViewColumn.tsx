@@ -2,6 +2,7 @@ import { ContentState } from 'draft-js';
 import React from 'react';
 
 import { IDataColumn, IDataTable } from 'const/metastore';
+import { Nullable } from 'lib/typescript';
 import { Loading } from 'ui/Loading/Loading';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 
@@ -15,7 +16,7 @@ export interface IDataTableViewColumnProps {
         columnId: number,
         description: ContentState
     ) => any;
-    onEditMetadata: () => void;
+    onEditColumnDescription?: Nullable<() => Promise<void>>;
 }
 
 export const DataTableViewColumn: React.FunctionComponent<
@@ -25,7 +26,7 @@ export const DataTableViewColumn: React.FunctionComponent<
     table = null,
     tableColumns = [],
     numberOfRows = null,
-    onEditMetadata,
+    onEditColumnDescription,
 }) => {
     const [filterString, setFilterString] = React.useState('');
 
@@ -62,7 +63,7 @@ export const DataTableViewColumn: React.FunctionComponent<
             column={col}
             updateDataColumnDescription={updateDataColumnDescription}
             key={col.id}
-            onEdit={onEditMetadata}
+            onEditColumnDescription={onEditColumnDescription}
         />
     ));
 

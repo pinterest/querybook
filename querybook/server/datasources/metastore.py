@@ -82,6 +82,26 @@ def get_table(table_id, with_schema=True, with_column=True, with_warnings=True):
         return result
 
 
+@register("/table/<int:table_id>/metastore_link/", methods=["GET"])
+def get_table_metastore_link(
+    table_id,
+    metadata_type,
+):
+    with DBSession() as session:
+        verify_data_table_permission(table_id, session=session)
+
+        table = logic.get_table_by_id(table_id, session=session)
+        schema = table.data_schema
+        metastore_id = schema.metastore_id
+        metastore_loader = get_metastore_loader(metastore_id, session=session)
+
+        return metastore_loader.get_metastore_link(
+            metadata_type=MetadataType(metadata_type),
+            schema_name=schema.name,
+            table_name=table.name,
+        )
+
+
 @register("/table_name/<schema_name>/<table_name>/", methods=["GET"])
 def get_table_by_name(
     schema_name,
@@ -100,23 +120,6 @@ def get_table_by_name(
         table_dict = table.to_dict(with_schema, with_column, with_warnings)
 
     return table_dict
-
-
-@register("/table_name/<schema_name>/<table_name>/metastore_link/", methods=["GET"])
-def get_table_metastore_link(
-    schema_name,
-    table_name,
-    metastore_id,
-    metadata_type,
-):
-    verify_metastore_permission(metastore_id)
-    metastore_loader = get_metastore_loader(metastore_id)
-
-    return metastore_loader.get_metastore_link(
-        metadata_type=MetadataType(metadata_type),
-        schema_name=schema_name,
-        table_name=table_name,
-    )
 
 
 @register("/table_name/<schema_name>/<table_name>/exists/", methods=["GET"])

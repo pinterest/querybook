@@ -5,7 +5,7 @@ from typing import NamedTuple, List, Dict, Tuple, Optional
 import traceback
 
 from app.db import DBSession, with_session
-from const.metastore import MetadataType, MetastoreLoaderConfig
+from const.metastore import MetadataMode, MetadataType, MetastoreLoaderConfig
 from lib.logger import get_logger
 
 from lib.form import AllFormField
@@ -78,7 +78,7 @@ class DataColumn(NamedTuple):
 
 
 class BaseMetastoreLoader(metaclass=ABCMeta):
-    loader_config: MetastoreLoaderConfig = {}
+    loader_config: MetastoreLoaderConfig = MetastoreLoaderConfig({})
 
     def __init__(self, metastore_dict: Dict):
         self.metastore_id = metastore_dict["id"]

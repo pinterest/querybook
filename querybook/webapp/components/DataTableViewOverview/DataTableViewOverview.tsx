@@ -24,6 +24,7 @@ import {
     IPaginatedQuerySampleFilters,
 } from 'const/metastore';
 import { useMounted } from 'hooks/useMounted';
+import { Nullable } from 'lib/typescript';
 import { titleize } from 'lib/utils';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { getAppName } from 'lib/utils/global';
@@ -86,7 +87,7 @@ export interface IQuerybookTableViewOverviewProps {
     tableColumns: IDataColumn[];
     tableWarnings: IDataTableWarning[];
 
-    onEditMetadata: () => void;
+    onEditTableDescription?: Nullable<() => Promise<void>>;
     onTabSelected: (key: string) => any;
     updateDataTableDescription: (
         tableId: number,
@@ -103,7 +104,7 @@ export const DataTableViewOverview: React.FC<
     tableWarnings,
     onExampleFilter,
     updateDataTableDescription,
-    onEditMetadata,
+    onEditTableDescription,
 }) => {
     const onDescriptionSave = useCallback(
         (description: DraftJs.ContentState) =>
@@ -118,7 +119,7 @@ export const DataTableViewOverview: React.FC<
             value={table.description as DraftJs.ContentState}
             onSave={onDescriptionSave}
             placeholder="No description for this table yet."
-            onEdit={onEditMetadata}
+            onEdit={onEditTableDescription}
         />
     ) : null;
 

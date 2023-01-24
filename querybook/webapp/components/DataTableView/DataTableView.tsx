@@ -138,20 +138,20 @@ class DataTableViewComponent extends React.PureComponent<
     }
 
     @bind
-    public getOnEditMetadata(metadataType: MetadataType) {
-        const { table, schema, metastore } = this.props;
-        const onEditMetadata = async () => {
-            const { data: link } = await TableResource.getMetastoreLink(
-                metastore.id,
-                schema.name,
-                table.name,
-                metadataType
-            );
-            window.open(link, '_blank');
-        };
+    public async onEditMetadata(metadataType: MetadataType) {
+        const { table } = this.props;
+        const { data: link } = await TableResource.getMetastoreLink(
+            table.id,
+            metadataType
+        );
+        window.open(link, '_blank');
+    }
 
+    @bind
+    public getOnEditMetadata(metadataType: MetadataType) {
+        const { metastore } = this.props;
         return metastore.config[metadataType] === MetadataMode.READ_ONLY
-            ? onEditMetadata
+            ? this.onEditMetadata.bind(this, metadataType)
             : undefined;
     }
 
@@ -181,7 +181,6 @@ class DataTableViewComponent extends React.PureComponent<
     @bind
     public makeOverviewDOM() {
         const { table, tableName, tableColumns, tableWarnings } = this.props;
-        console.log(this.props);
 
         return (
             <DataTableViewOverview
@@ -192,7 +191,7 @@ class DataTableViewComponent extends React.PureComponent<
                 onTabSelected={this.onTabSelected}
                 updateDataTableDescription={this.updateDataTableDescription}
                 onExampleFilter={this.handleExampleFilter}
-                onEditMetadata={this.getOnEditMetadata(
+                onEditTableDescription={this.getOnEditMetadata(
                     MetadataType.TABLE_DESCRIPTION
                 )}
             />
@@ -209,7 +208,7 @@ class DataTableViewComponent extends React.PureComponent<
                 tableColumns={tableColumns}
                 numberOfRows={numberOfRows}
                 updateDataColumnDescription={updateDataColumnDescription}
-                onEditMetadata={this.getOnEditMetadata(
+                onEditColumnDescription={this.getOnEditMetadata(
                     MetadataType.COLUMN_DESCRIPTION
                 )}
             />

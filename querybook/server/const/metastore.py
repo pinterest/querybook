@@ -15,15 +15,18 @@ class MetadataType(Enum):
 
 
 class MetadataMode(Enum):
-    READ_ONLY = "read_only"  # metadata will be read-only on Querybook UI
-    WRITE_BACK = "write_back"  # metadata will be written back to metastore on saving
+    # Metadata will be read-only on Querybook UI and it will redirect to the metastore link for editing.
+    READ_ONLY = "read_only"
+
+    # On saving, metadata will only be written back querybook db. This is the default mode if not specified.
+    WRITE_BACK = "write_back"
+
+    # On saving, metadata will be written back to metastore, as well as querybook db
+    WRITE_THROUGH = "write_through"
 
 
 class MetastoreLoaderConfig:
-    """Config to control if the metadata can be edited or written back to metastore.
-    The default behavior of a metadata type (not specifed in the config) is that
-    it will be editable and only saved in qurybook db.
-    """
+    """Config to set the read/write mode (MetadataMode) for each metadata."""
 
     def __init__(self, config: dict[MetadataType, MetadataMode]):
         self._config = config

@@ -132,19 +132,10 @@ export const TableResource = {
             metastore_id: metastoreId,
         }),
 
-    getMetastoreLink: (
-        metastoreId: number,
-        schemaName: string,
-        tableName: string,
-        metadataType: MetadataType
-    ) =>
-        ds.fetch<string>(
-            `/table_name/${schemaName}/${tableName}/metastore_link/`,
-            {
-                metastore_id: metastoreId,
-                metadata_type: metadataType,
-            }
-        ),
+    getMetastoreLink: (tableId: number, metadataType: MetadataType) =>
+        ds.fetch<string>(`/table/${tableId}/metastore_link/`, {
+            metadata_type: metadataType,
+        }),
 
     checkIfExists: (
         metastoreId: number,

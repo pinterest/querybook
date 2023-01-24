@@ -13,11 +13,12 @@ export enum MetadataType {
 export enum MetadataMode {
     READ_ONLY = 'read_only',
     WRITE_BACK = 'write_back',
+    WRITE_THROUGH = 'write_through',
 }
 export interface IQueryMetastore {
     id: number;
     name: string;
-    config: { [key in MetadataType]: MetadataMode };
+    config: Record<MetadataType, MetadataMode>;
 }
 
 export interface IDataSchema {
