@@ -416,13 +416,17 @@ const ColumnToggleMenuButton: React.FC<{
 
     const getPopoverContent = () => (
         <div className="StatementResult-column-toggle-menu">
-            <div key="hide-column-search" onClick={stopPropagation}>
+            <div
+                className="hide-column-search-bar-wrapper"
+                onClick={stopPropagation}
+            >
                 <SearchBar
                     value={keyword}
                     onSearch={updateKeyword}
                     placeholder="Search"
                     transparent
                     delayMethod="throttle"
+                    hasClearSearch={true}
                 />
             </div>
             <div key="all">
