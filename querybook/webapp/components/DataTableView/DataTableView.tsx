@@ -191,7 +191,7 @@ class DataTableViewComponent extends React.PureComponent<
                 onTabSelected={this.onTabSelected}
                 updateDataTableDescription={this.updateDataTableDescription}
                 onExampleFilter={this.handleExampleFilter}
-                onEditTableDescription={this.getOnEditMetadata(
+                onEditTableDescriptionRedirect={this.getOnEditMetadata(
                     MetadataType.TABLE_DESCRIPTION
                 )}
             />
@@ -201,14 +201,13 @@ class DataTableViewComponent extends React.PureComponent<
     @bind
     public makeColumnsDOM(numberOfRows = null) {
         const { table, tableColumns, updateDataColumnDescription } = this.props;
-
         return (
             <DataTableViewColumn
                 table={table}
                 tableColumns={tableColumns}
                 numberOfRows={numberOfRows}
                 updateDataColumnDescription={updateDataColumnDescription}
-                onEditColumnDescription={this.getOnEditMetadata(
+                onEditColumnDescriptionRedirect={this.getOnEditMetadata(
                     MetadataType.COLUMN_DESCRIPTION
                 )}
             />

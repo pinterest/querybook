@@ -5,7 +5,7 @@ from typing import NamedTuple, List, Dict, Tuple, Optional
 import traceback
 
 from app.db import DBSession, with_session
-from const.metastore import MetadataMode, MetadataType, MetastoreLoaderConfig
+from const.metastore import MetadataType, MetastoreLoaderConfig
 from lib.logger import get_logger
 
 from lib.form import AllFormField

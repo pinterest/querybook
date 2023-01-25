@@ -12,8 +12,8 @@ export enum MetadataType {
 // Keep it in sync with MetadataMode in server/const/metastore.py
 export enum MetadataMode {
     READ_ONLY = 'read_only',
+    WRITE_LOCAL = 'write_local',
     WRITE_BACK = 'write_back',
-    WRITE_THROUGH = 'write_through',
 }
 export interface IQueryMetastore {
     id: number;
