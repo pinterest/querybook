@@ -87,19 +87,18 @@ def get_table_metastore_link(
     table_id,
     metadata_type,
 ):
-    with DBSession() as session:
-        verify_data_table_permission(table_id, session=session)
+    verify_data_table_permission(table_id)
 
-        table = logic.get_table_by_id(table_id, session=session)
-        schema = table.data_schema
-        metastore_id = schema.metastore_id
-        metastore_loader = get_metastore_loader(metastore_id, session=session)
+    table = logic.get_table_by_id(table_id)
+    schema = table.data_schema
+    metastore_id = schema.metastore_id
+    metastore_loader = get_metastore_loader(metastore_id)
 
-        return metastore_loader.get_metastore_link(
-            metadata_type=MetadataType(metadata_type),
-            schema_name=schema.name,
-            table_name=table.name,
-        )
+    return metastore_loader.get_metastore_link(
+        metadata_type=MetadataType(metadata_type),
+        schema_name=schema.name,
+        table_name=table.name,
+    )
 
 
 @register("/table_name/<schema_name>/<table_name>/", methods=["GET"])
