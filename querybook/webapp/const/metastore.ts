@@ -1,8 +1,24 @@
 import type { ContentState } from 'draft-js';
 
+// Keep it in sync with MetadataType in server/const/metastore.py
+export enum MetadataType {
+    TABLE_DESCRIPTION = 'table_description',
+    COLUMN_DESCRIPTION = 'column_description',
+    OWNER = 'owner',
+    TAG = 'tag',
+    DOMAIN = 'domain',
+}
+
+// Keep it in sync with MetadataMode in server/const/metastore.py
+export enum MetadataMode {
+    READ_ONLY = 'read_only',
+    WRITE_LOCAL = 'write_local',
+    WRITE_BACK = 'write_back',
+}
 export interface IQueryMetastore {
     id: number;
     name: string;
+    config: Record<MetadataType, MetadataMode>;
 }
 
 export interface IDataSchema {

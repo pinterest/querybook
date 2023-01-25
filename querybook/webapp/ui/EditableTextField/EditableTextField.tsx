@@ -17,11 +17,19 @@ export interface IEditableTextFieldProps {
     className?: string;
     readonly?: boolean;
     placeholder?: string;
+    onEditRedirect?: () => void;
 }
 
 export const EditableTextField: React.FunctionComponent<
     IEditableTextFieldProps
-> = ({ value, onSave, className, placeholder, readonly = false }) => {
+> = ({
+    value,
+    onSave,
+    className,
+    placeholder,
+    readonly = false,
+    onEditRedirect,
+}) => {
     const [editMode, setEditMode] = React.useState(false);
     const editorRef = React.useRef<IRichTextEditorHandles>(null);
 
@@ -66,7 +74,7 @@ export const EditableTextField: React.FunctionComponent<
             <TextButton
                 icon="Edit"
                 title="Edit"
-                onClick={toggleEditMode}
+                onClick={onEditRedirect ?? toggleEditMode}
                 className="edit-mode-button"
             />
         ) : null;

@@ -5,6 +5,7 @@ from typing import NamedTuple, List, Dict, Tuple, Optional
 import traceback
 
 from app.db import DBSession, with_session
+from const.metastore import MetadataType, MetastoreLoaderConfig
 from lib.logger import get_logger
 
 from lib.form import AllFormField
@@ -77,9 +78,27 @@ class DataColumn(NamedTuple):
 
 
 class BaseMetastoreLoader(metaclass=ABCMeta):
+    loader_config: MetastoreLoaderConfig = MetastoreLoaderConfig({})
+
     def __init__(self, metastore_dict: Dict):
         self.metastore_id = metastore_dict["id"]
         self.acl_checker = MetastoreTableACLChecker(metastore_dict["acl_control"])
+
+    @classmethod
+    def get_metastore_link(
+        cls, metadata_type: MetadataType, schema_name: str, table_name: str
+    ) -> str:
+        """Return the external metastore link of the table metadata if it has an accessible page for the given type.
+
+        Args:
+            metadata_type (MetadataType): metadata type
+            schema_name (str): table schema name
+            table_name (str): table name
+
+        Returns:
+            str: external metastore link of the table metadata.
+        """
+        return None
 
     @with_session
     def sync_table(

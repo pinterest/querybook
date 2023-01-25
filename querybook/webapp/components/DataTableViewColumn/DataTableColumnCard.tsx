@@ -4,6 +4,7 @@ import React, { useMemo } from 'react';
 import { DataTableColumnStats } from 'components/DataTableStats/DataTableColumnStats';
 import { IDataColumn } from 'const/metastore';
 import { useToggleState } from 'hooks/useToggleState';
+import { Nullable } from 'lib/typescript';
 import { parseType } from 'lib/utils/complex-types';
 import { Card } from 'ui/Card/Card';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
@@ -17,6 +18,7 @@ import './DataTableColumnCard.scss';
 
 interface IProps {
     column: IDataColumn;
+    onEditColumnDescriptionRedirect?: Nullable<() => Promise<void>>;
     updateDataColumnDescription: (
         columnId: number,
         description: ContentState
@@ -25,6 +27,7 @@ interface IProps {
 
 export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
     column,
+    onEditColumnDescriptionRedirect,
     updateDataColumnDescription,
 }) => {
     const [expanded, , toggleExpanded] = useToggleState(false);
@@ -35,6 +38,7 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
             value={column.description as ContentState}
             onSave={updateDataColumnDescription.bind(null, column.id)}
             placeholder="No user comments yet for column."
+            onEditRedirect={onEditColumnDescriptionRedirect}
         />
     );
     return (

@@ -13,7 +13,7 @@ from app.db import DBSession
 from app.datasource import register, api_assert, with_impression, admin_only
 from app.flask_app import cache, limiter
 from const.impression import ImpressionItemType
-from const.metastore import DataTableWarningSeverity
+from const.metastore import DataTableWarningSeverity, MetadataType
 from const.time import seconds_in_a_day
 from lib.lineage.utils import lineage
 from lib.metastore.utils import DataTableFinder
@@ -80,6 +80,25 @@ def get_table(table_id, with_schema=True, with_column=True, with_warnings=True):
         verify_data_schema_permission(table.schema_id, session=session)
         result = table.to_dict(with_schema, with_column, with_warnings)
         return result
+
+
+@register("/table/<int:table_id>/metastore_link/", methods=["GET"])
+def get_table_metastore_link(
+    table_id,
+    metadata_type,
+):
+    verify_data_table_permission(table_id)
+
+    table = logic.get_table_by_id(table_id)
+    schema = table.data_schema
+    metastore_id = schema.metastore_id
+    metastore_loader = get_metastore_loader(metastore_id)
+
+    return metastore_loader.get_metastore_link(
+        metadata_type=MetadataType(metadata_type),
+        schema_name=schema.name,
+        table_name=table.name,
+    )
 
 
 @register("/table_name/<schema_name>/<table_name>/", methods=["GET"])

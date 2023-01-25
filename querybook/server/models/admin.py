@@ -157,7 +157,14 @@ class QueryMetastore(CRUDMixin, Base):
     acl_control = sql.Column(sql.JSON, default={}, nullable=False)
 
     def to_dict(self):
-        return {"id": self.id, "name": self.name}
+        from lib.metastore import get_metastore_loader_class_by_name
+
+        loader_class = get_metastore_loader_class_by_name(self.loader)
+        return {
+            "id": self.id,
+            "name": self.name,
+            "config": loader_class.loader_config.to_dict(),
+        }
 
     def to_dict_admin(self):
         return {

@@ -34,11 +34,13 @@ export const fullTableSelector = createSelector(
     (state: IStoreState) => state.dataSources.dataSchemasById,
     (state: IStoreState) => state.dataSources.dataColumnsById,
     (state: IStoreState) => state.dataSources.dataTableWarningById,
+    (state: IStoreState) => state.dataSources.queryMetastoreById,
     (
         tableFromState,
         dataSchemasById,
         dataColumnsById,
-        dataTableWarningById
+        dataTableWarningById,
+        queryMetastoreById
     ) => {
         const schemaFromState = tableFromState
             ? dataSchemasById[tableFromState.schema]
@@ -64,6 +66,7 @@ export const fullTableSelector = createSelector(
             tableWarnings: (tableFromState?.warnings ?? [])
                 .map((id) => dataTableWarningById[id])
                 .filter((warning) => warning),
+            metastore: queryMetastoreById[schemaFromState.metastore_id],
         };
     }
 );
