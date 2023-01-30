@@ -35,7 +35,7 @@ export const DeleteDataDocButton: React.FunctionComponent<
                     });
                     toast.promise(
                         dispatch(dataDocActions.deleteDataDoc(docId)).then(() =>
-                            navigateWithinEnv('/datadoc/')
+                            navigateWithinEnv('/')
                         ),
                         {
                             loading: 'Deleting DataDoc...',
