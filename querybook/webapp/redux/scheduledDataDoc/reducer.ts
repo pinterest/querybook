@@ -8,6 +8,7 @@ const initialState: Readonly<IScheduledDataDocState> = {
     pageSize: 20,
     numberOfResults: 0,
     filters: {
+        status: 'all',
         scheduled_only: true,
     },
 };

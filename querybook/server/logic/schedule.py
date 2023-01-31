@@ -11,6 +11,7 @@ from models.schedule import (
     TaskRunRecord,
 )
 from models.datadoc import DataDoc
+from models.board import BoardItem
 
 DATADOC_SCHEDULE_PREFIX = "run_data_doc_"
 
@@ -193,6 +194,14 @@ def get_scheduled_data_docs_by_user(
 
     if "name" in filters:
         query = query.filter(DataDoc.title.contains(filters.get("name")))
+
+    if filters.get("status") is not None:
+        query = query.filter(TaskSchedule.enabled == filters.get("status"))
+
+    if filters.get("board_ids"):
+        query = query.join(BoardItem, BoardItem.data_doc_id == DataDoc.id).filter(
+            BoardItem.parent_board_id.in_(filters.get("board_ids"))
+        )
 
     count = query.count()
     docs_with_schedules = query.offset(offset).limit(limit).all()

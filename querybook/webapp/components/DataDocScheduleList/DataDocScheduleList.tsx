@@ -1,17 +1,25 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-
+import React, {
+    useEffect,
+    useMemo,
+    useState,
+    useRef,
+    useCallback,
+} from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { getScheduledDocs } from 'redux/scheduledDataDoc/action';
 import { IScheduledDocFilters } from 'redux/scheduledDataDoc/types';
-import { Dispatch, IStoreState } from 'redux/store/types';
 import { Checkbox } from 'ui/Checkbox/Checkbox';
 import { Container } from 'ui/Container/Container';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { Pagination } from 'ui/Pagination/Pagination';
 import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
 import { AccentText, EmptyText } from 'ui/StyledText/StyledText';
+import { IconButton } from 'ui/Button/IconButton';
 
 import { DataDocScheduleItem } from './DataDocScheduleItem';
+import { DataDocSchedsFilters } from './DataDocSchedsFilters';
+import { UpdateFiltersType } from 'const/schedFiltersType';
 
 import './DataDocScheduleList.scss';
 
@@ -24,20 +32,40 @@ function useDataDocScheduleFiltersAndPagination() {
     } = useSelector((state: IStoreState) => state.scheduledDocs);
 
     const [docName, setDocName] = useState(initFilters.name ?? '');
-    const [scheduledOnly, setScheduledOnly] = useState(
-        initFilters.scheduled_only ?? false
-    );
+
+    const [extraFilters, setExtraFilters] = useState<IScheduledDocFilters>({
+        status: initFilters.status ?? null,
+        board_ids: initFilters.board_ids ?? [],
+        scheduled_only: initFilters.scheduled_only ?? false,
+    });
+
+    const updateFilters = useCallback(({ key, value }: UpdateFiltersType) => {
+        setExtraFilters((state) => ({
+            ...state,
+            [key]: value,
+        }));
+    }, []);
 
     const filters: IScheduledDocFilters = useMemo(() => {
         const _filters: IScheduledDocFilters = {};
         if (docName) {
             _filters.name = docName;
         }
-        if (scheduledOnly) {
+
+        if (extraFilters.scheduled_only) {
             _filters.scheduled_only = true;
         }
+
+        if (extraFilters.status !== null) {
+            _filters.status = extraFilters.status;
+        }
+
+        if (extraFilters.board_ids) {
+            _filters.board_ids = extraFilters.board_ids;
+        }
+
         return _filters;
-    }, [docName, scheduledOnly]);
+    }, [docName, extraFilters]);
 
     const [page, setPage] = useState(initPage);
     const [pageSize, setPageSize] = useState(initPageSize);
@@ -45,13 +73,13 @@ function useDataDocScheduleFiltersAndPagination() {
     return {
         filters,
         setDocName,
-        setScheduledOnly,
 
         numberOfResults,
         page,
         setPage,
         pageSize,
         setPageSize,
+        updateFilters,
     };
 }
 
@@ -92,7 +120,7 @@ const DataDocScheduleList: React.FC = () => {
 
         filters,
         setDocName,
-        setScheduledOnly,
+        updateFilters,
     } = useDataDocScheduleFiltersAndPagination();
 
     const dataDocsWithSchedule = useDataDocWithSchedules(
@@ -102,6 +130,24 @@ const DataDocScheduleList: React.FC = () => {
     );
 
     const totalPages = Math.ceil(numberOfResults / pageSize);
+    const [showSearchFilter, setShowSearchFilter] = useState(false);
+    const filterButtonRef = useRef<HTMLAnchorElement>();
+
+    const handleUpdateScheduledOnly = React.useCallback((value: boolean) => {
+        updateFilters({
+            key: 'scheduled_only',
+            value,
+        });
+    }, []);
+
+    const searchFiltersPickerDOM = showSearchFilter && (
+        <DataDocSchedsFilters
+            filters={filters}
+            updateFilters={updateFilters}
+            setShowSearchFilter={setShowSearchFilter}
+            filterButton={filterButtonRef?.current}
+        />
+    );
 
     return (
         <Container>
@@ -116,11 +162,23 @@ const DataDocScheduleList: React.FC = () => {
                             }}
                         />
                     </div>
+
+                    <IconButton
+                        ref={filterButtonRef}
+                        className="mr8"
+                        size={'18px'}
+                        noPadding
+                        onClick={() => {
+                            setShowSearchFilter(true);
+                        }}
+                        icon="Sliders"
+                    />
+                    {searchFiltersPickerDOM}
                     <div>
                         <Checkbox
                             title="Scheduled DataDocs Only"
                             value={filters.scheduled_only}
-                            onChange={setScheduledOnly}
+                            onChange={handleUpdateScheduledOnly}
                         />
                     </div>
                 </div>
