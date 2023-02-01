@@ -12,6 +12,7 @@ import { useImmer } from 'hooks/useImmer';
 import { useToggleState } from 'hooks/useToggleState';
 import { getSelectStatementLimit } from 'lib/sql-helper/sql-limiter';
 import { formatNumber } from 'lib/utils/number';
+import { stopPropagation } from 'lib/utils/noop';
 import { IStoreState } from 'redux/store/types';
 import { TextButton } from 'ui/Button/Button';
 import { InfoButton } from 'ui/Button/InfoButton';
@@ -21,6 +22,7 @@ import { Loading } from 'ui/Loading/Loading';
 import { Message } from 'ui/Message/Message';
 import { Popover } from 'ui/Popover/Popover';
 import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
+import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { IOptions, makeSelectOptions, Select } from 'ui/Select/Select';
 import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 import { AccentText } from 'ui/StyledText/StyledText';
@@ -397,6 +399,14 @@ const ColumnToggleMenuButton: React.FC<{
 }> = ({ columnNames, columnVisibility, toggleVisibility }) => {
     const buttonRef = React.useRef<HTMLAnchorElement>();
     const [showPopover, _, toggleShowPopover] = useToggleState(false);
+    const [keyword, setKeyword] = useState('');
+    const filteredColumnNames = useMemo(
+        () =>
+            columnNames.filter((names) =>
+                names.toLowerCase().includes(keyword.toLowerCase())
+            ),
+        [columnNames, keyword]
+    );
     const isAllSelected = useMemo(
         () => columnNames.every((columnName) => columnVisibility[columnName]),
         [columnNames, columnVisibility]
@@ -404,22 +414,37 @@ const ColumnToggleMenuButton: React.FC<{
 
     const getPopoverContent = () => (
         <div className="StatementResult-column-toggle-menu">
+            <div onClick={stopPropagation}>
+                <SearchBar
+                    value={keyword}
+                    onSearch={setKeyword}
+                    placeholder="Search"
+                    transparent
+                    delayMethod="throttle"
+                    hasClearSearch={true}
+                />
+            </div>
             <div key="all">
                 <Checkbox
-                    title={isAllSelected ? 'Hide All' : 'Select All'}
+                    title={
+                        (isAllSelected ? 'Hide All' : 'Select All') +
+                        (keyword === '' ? '' : ' Visible')
+                    }
                     value={isAllSelected}
                     onChange={() => {
                         if (isAllSelected) {
-                            columnNames.map((col) => toggleVisibility(col));
+                            filteredColumnNames.map((col) =>
+                                toggleVisibility(col)
+                            );
                         } else {
-                            columnNames
+                            filteredColumnNames
                                 .filter((col) => !columnVisibility[col])
                                 .map((column) => toggleVisibility(column));
                         }
                     }}
                 />
             </div>
-            {columnNames.map((columnName) => (
+            {filteredColumnNames.map((columnName) => (
                 <div key={columnName}>
                     <Checkbox
                         title={columnName}
