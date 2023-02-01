@@ -160,7 +160,9 @@ export const TemplatedQueryResource = {
                 var_config: varConfig,
                 engine_id: engineId,
             },
-            false
+            {
+                notifyOnError: false,
+            }
         ),
 
     validateQuery: (
@@ -168,11 +170,18 @@ export const TemplatedQueryResource = {
         engineId: number,
         templatedVariables: TDataDocMetaVariables
     ) =>
-        ds.save<IQueryValidationResult[]>('/query/validate/', {
-            query,
-            var_config: templatedVariables,
-            engine_id: engineId,
-        }),
+        ds.save<IQueryValidationResult[]>(
+            '/query/validate/',
+            {
+                query,
+                var_config: templatedVariables,
+                engine_id: engineId,
+            },
+            {
+                notifyOnError: true,
+                timeout: 5000, // timeouts in 5s
+            }
+        ),
 
     getAllQueryTranspilers: () =>
         ds.fetch<IQueryTranspiler[]>('/query/transpile/'),

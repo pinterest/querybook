@@ -26,6 +26,10 @@ export function formatError(error: any): string {
                     return formatRateLimitError(error.response.headers);
                 }
             }
+
+            if (error.message) {
+                return error.message;
+            }
         } else {
             // unknown error, maybe syntax?
         }

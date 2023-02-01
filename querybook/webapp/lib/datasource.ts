@@ -9,8 +9,14 @@ export interface ICancelablePromise<T> extends Promise<T> {
 }
 
 type UrlOrOptions = string | AxiosRequestConfig;
+interface DatasourceOptions {
+    notifyOnError?: boolean;
+    timeout?: number;
+}
 
 function handleRequestException(error: any, notifyOnError?: boolean) {
+    console.error(error);
+
     if (notifyOnError) {
         toast.error(formatError(error));
     }
@@ -26,10 +32,11 @@ function syncDatasource<T>(
     method: Method,
     urlOrOptions: UrlOrOptions,
     data?: Record<string, unknown>,
-    notifyOnError?: boolean
+    options: DatasourceOptions = {}
 ): ICancelablePromise<{ data: T }> {
     const url =
         typeof urlOrOptions === 'string' ? urlOrOptions : urlOrOptions['url'];
+    const { notifyOnError = false, timeout = 0 } = options;
 
     let cancel: Canceler;
     const defaultConfig: AxiosRequestConfig = {
@@ -40,6 +47,7 @@ function syncDatasource<T>(
         },
         method,
         cancelToken: new axios.CancelToken((c) => (cancel = c)),
+        timeout, // 0 is the default value which means no timeout
     };
 
     if (data) {
@@ -79,39 +87,49 @@ function syncDatasource<T>(
 function fetchDatasource<T>(
     urlOrOptions: UrlOrOptions,
     data?: Record<string, unknown>,
-    notifyOnError = false
+    options: DatasourceOptions = {
+        notifyOnError: false,
+    }
 ) {
-    return syncDatasource<T>('GET', urlOrOptions, data, notifyOnError);
+    return syncDatasource<T>('GET', urlOrOptions, data, options);
 }
 
 function saveDatasource<T>(
     urlOrOptions: UrlOrOptions,
     data?: Record<string, unknown>,
-    notifyOnError = true
+    options: DatasourceOptions = {
+        notifyOnError: true,
+    }
 ) {
-    return syncDatasource<T>('POST', urlOrOptions, data, notifyOnError);
+    return syncDatasource<T>('POST', urlOrOptions, data, options);
 }
 
 function updateDatasource<T>(
     urlOrOptions: UrlOrOptions,
     data?: Record<string, unknown>,
-    notifyOnError = true
+    options: DatasourceOptions = {
+        notifyOnError: true,
+    }
 ) {
-    return syncDatasource<T>('PUT', urlOrOptions, data, notifyOnError);
+    return syncDatasource<T>('PUT', urlOrOptions, data, options);
 }
 
 function deleteDatasource<T = null>(
     urlOrOptions: UrlOrOptions,
     data?: Record<string, unknown>,
-    notifyOnError = true
+    options: DatasourceOptions = {
+        notifyOnError: true,
+    }
 ) {
-    return syncDatasource<T>('DELETE', urlOrOptions, data, notifyOnError);
+    return syncDatasource<T>('DELETE', urlOrOptions, data, options);
 }
 
 export function uploadDatasource<T = null>(
     url: string,
     data: Record<string, any>,
-    notifyOnError = true
+    options: DatasourceOptions = {
+        notifyOnError: true,
+    }
 ) {
     const formData = new FormData();
     for (const [key, value] of Object.entries(data)) {
@@ -135,7 +153,7 @@ export function uploadDatasource<T = null>(
         },
         data: formData,
     };
-    return syncDatasource<T>('POST', urlOptions, null, notifyOnError);
+    return syncDatasource<T>('POST', urlOptions, null, options);
 }
 
 export default {
