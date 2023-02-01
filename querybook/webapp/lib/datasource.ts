@@ -9,6 +9,10 @@ export interface ICancelablePromise<T> extends Promise<T> {
 }
 
 type UrlOrOptions = string | AxiosRequestConfig;
+interface DatasourceOptions {
+    notifyOnError?: boolean;
+    timeout?: number;
+}
 
 function handleRequestException(error: any, notifyOnError?: boolean) {
     console.error(error);
@@ -28,11 +32,11 @@ function syncDatasource<T>(
     method: Method,
     urlOrOptions: UrlOrOptions,
     data?: Record<string, unknown>,
-    notifyOnError?: boolean,
-    timeout: number = 0 // timeout in milliseconds
+    options: DatasourceOptions = {}
 ): ICancelablePromise<{ data: T }> {
     const url =
         typeof urlOrOptions === 'string' ? urlOrOptions : urlOrOptions['url'];
+    const { notifyOnError = false, timeout = 0 } = options;
 
     let cancel: Canceler;
     const defaultConfig: AxiosRequestConfig = {
@@ -83,56 +87,49 @@ function syncDatasource<T>(
 function fetchDatasource<T>(
     urlOrOptions: UrlOrOptions,
     data?: Record<string, unknown>,
-    notifyOnError = false,
-    timeout?: number
+    options: DatasourceOptions = {
+        notifyOnError: false,
+    }
 ) {
-    return syncDatasource<T>('GET', urlOrOptions, data, notifyOnError, timeout);
+    return syncDatasource<T>('GET', urlOrOptions, data, options);
 }
 
 function saveDatasource<T>(
     urlOrOptions: UrlOrOptions,
     data?: Record<string, unknown>,
-    notifyOnError = true,
-    timeout?: number
+    options: DatasourceOptions = {
+        notifyOnError: true,
+    }
 ) {
-    return syncDatasource<T>(
-        'POST',
-        urlOrOptions,
-        data,
-        notifyOnError,
-        timeout
-    );
+    return syncDatasource<T>('POST', urlOrOptions, data, options);
 }
 
 function updateDatasource<T>(
     urlOrOptions: UrlOrOptions,
     data?: Record<string, unknown>,
-    notifyOnError = true,
-    timeout?: number
+    options: DatasourceOptions = {
+        notifyOnError: true,
+    }
 ) {
-    return syncDatasource<T>('PUT', urlOrOptions, data, notifyOnError, timeout);
+    return syncDatasource<T>('PUT', urlOrOptions, data, options);
 }
 
 function deleteDatasource<T = null>(
     urlOrOptions: UrlOrOptions,
     data?: Record<string, unknown>,
-    notifyOnError = true,
-    timeout?: number
+    options: DatasourceOptions = {
+        notifyOnError: true,
+    }
 ) {
-    return syncDatasource<T>(
-        'DELETE',
-        urlOrOptions,
-        data,
-        notifyOnError,
-        timeout
-    );
+    return syncDatasource<T>('DELETE', urlOrOptions, data, options);
 }
 
 export function uploadDatasource<T = null>(
     url: string,
     data: Record<string, any>,
-    notifyOnError = true,
-    timeout?: number
+    options: DatasourceOptions = {
+        notifyOnError: true,
+    }
 ) {
     const formData = new FormData();
     for (const [key, value] of Object.entries(data)) {
@@ -156,7 +153,7 @@ export function uploadDatasource<T = null>(
         },
         data: formData,
     };
-    return syncDatasource<T>('POST', urlOptions, null, notifyOnError, timeout);
+    return syncDatasource<T>('POST', urlOptions, null, options);
 }
 
 export default {

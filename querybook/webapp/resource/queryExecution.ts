@@ -160,7 +160,9 @@ export const TemplatedQueryResource = {
                 var_config: varConfig,
                 engine_id: engineId,
             },
-            false
+            {
+                notifyOnError: false,
+            }
         ),
 
     validateQuery: (
@@ -175,8 +177,10 @@ export const TemplatedQueryResource = {
                 var_config: templatedVariables,
                 engine_id: engineId,
             },
-            true,
-            5000 // timeouts in 5s
+            {
+                notifyOnError: true,
+                timeout: 5000, // timeouts in 5s
+            }
         ),
 
     getAllQueryTranspilers: () =>
