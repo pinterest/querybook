@@ -1,8 +1,9 @@
-import { bind, debounce } from 'lodash-decorators';
-import React from 'react';
-import { connect } from 'react-redux';
+import { debounce } from 'lodash';
+import React, { useCallback, useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 
 import { IQueryExecution, QueryExecutionStatus } from 'const/queryExecution';
+import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import {
     queryEngineByIdEnvSelector,
     queryEngineSelector,
@@ -10,7 +11,7 @@ import {
 import * as queryExecutionsActions from 'redux/queryExecutions/action';
 import * as queryViewActions from 'redux/queryView/action';
 import { queryExecutionResultSelector } from 'redux/queryView/selector';
-import { Dispatch, IStoreState } from 'redux/store/types';
+import { IStoreState } from 'redux/store/types';
 import { Icon } from 'ui/Icon/Icon';
 import { AccentText } from 'ui/StyledText/StyledText';
 
@@ -19,148 +20,138 @@ import { QueryViewFilter } from './QueryViewFilter';
 
 import './QueryViewNavigator.scss';
 
-type StateProps = ReturnType<typeof mapStateToProps>;
-type DispatchProps = ReturnType<typeof mapDispatchToProps>;
+export const QueryViewNavigator: React.FC = () => {
+    const {
+        queryResults,
+        isLoadingQueries,
+        queryViewFilters,
+        queryEngines,
+        queryEngineById,
+    } = useShallowSelector((state: IStoreState) => ({
+        queryResults: queryExecutionResultSelector(state),
+        isLoadingQueries: state.queryView.isLoading,
+        queryViewFilters: state.queryView.filters,
+        queryEngines: queryEngineSelector(state),
+        queryEngineById: queryEngineByIdEnvSelector(state),
+    }));
 
-export type IProps = StateProps & DispatchProps;
+    const dispatch = useDispatch();
+    const updateFilter = useCallback(
+        (filterKey: string, filterValue: any) => {
+            dispatch(queryViewActions.updateFilter(filterKey, filterValue));
+        },
+        [dispatch]
+    );
 
-class QueryViewNavigatorComponent extends React.PureComponent<IProps> {
-    private navigatorScrollRef = React.createRef<HTMLDivElement>();
+    const initializeFromQueryParam = useCallback(
+        () => dispatch(queryViewActions.mapQueryParamToState()),
+        [dispatch]
+    );
 
-    public constructor(props) {
-        super(props);
+    const loadQueries = useCallback(
+        () => dispatch(queryViewActions.searchQueries()),
+        [dispatch]
+    );
 
-        this.state = {
-            showQueryViewModalForId: null,
-        };
-    }
+    const pollQueryExecution = useCallback(
+        (queryExecutionId: number) => {
+            dispatch(
+                queryExecutionsActions.pollQueryExecution(queryExecutionId)
+            );
+        },
+        [dispatch]
+    );
 
-    @bind
-    public setupPolling(queryExecutions: IQueryExecution[]) {
-        for (const queryExecution of queryExecutions) {
-            if (queryExecution.status < QueryExecutionStatus.DONE) {
-                this.props.pollQueryExecution(queryExecution.id);
+    const navigatorScrollRef = useRef<HTMLDivElement>();
+
+    const setupPolling = useCallback(
+        (queryExecutions: IQueryExecution[]) => {
+            for (const queryExecution of queryExecutions) {
+                if (queryExecution.status < QueryExecutionStatus.DONE) {
+                    pollQueryExecution(queryExecution.id);
+                }
             }
-        }
-    }
+        },
+        [pollQueryExecution]
+    );
 
-    @bind
-    public onNavigatorScroll(event) {
-        if (event.target === this.navigatorScrollRef.current) {
-            this.loadMoreIfScrolledToBottom();
-        }
-    }
-
-    @bind
-    @debounce(500)
-    public loadMoreIfScrolledToBottom() {
-        const { isLoadingQueries, loadQueries } = this.props;
-
-        if (!isLoadingQueries && this.navigatorScrollRef) {
-            const el = this.navigatorScrollRef.current;
-            if (el.scrollHeight - el.scrollTop === el.clientHeight) {
-                // Scrolled to bottom
-                loadQueries();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const loadMoreIfScrolledToBottom = useCallback(
+        debounce(() => {
+            if (!isLoadingQueries && navigatorScrollRef) {
+                const el = navigatorScrollRef.current;
+                if (el.scrollHeight - el.scrollTop === el.clientHeight) {
+                    // Scrolled to bottom
+                    loadQueries();
+                }
             }
-        }
-    }
+        }, 500),
+        [loadQueries, isLoadingQueries]
+    );
 
-    public componentDidMount() {
-        this.props.initializeFromQueryParam();
-        this.setupPolling(this.props.queryResults);
-    }
+    const handleNavigatorScroll = useCallback(
+        (event) => {
+            if (event.target === navigatorScrollRef.current) {
+                loadMoreIfScrolledToBottom();
+            }
+        },
+        [loadMoreIfScrolledToBottom]
+    );
 
-    public componentDidUpdate(prevProps) {
-        if (this.props.queryResults !== prevProps.queryResults) {
-            this.setupPolling(this.props.queryResults);
-        }
-    }
+    useEffect(() => {
+        initializeFromQueryParam();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-    public render() {
-        const {
-            queryResults,
-            isLoadingQueries,
-            queryViewFilters,
-            queryEngines,
-            queryEngineById,
+    useEffect(() => {
+        setupPolling(queryResults);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [queryResults]);
 
-            initializeFromQueryParam,
-            updateFilter,
-        } = this.props;
+    const queryViewFilterDOM = (
+        <QueryViewFilter
+            filters={queryViewFilters}
+            updateFilter={updateFilter}
+            onRefresh={initializeFromQueryParam}
+            queryEngines={queryEngines}
+            queryEngineById={queryEngineById}
+        />
+    );
 
-        const queryViewFilterDOM = (
-            <QueryViewFilter
-                filters={queryViewFilters}
-                updateFilter={updateFilter}
-                onRefresh={initializeFromQueryParam}
-                queryEngines={queryEngines}
-                queryEngineById={queryEngineById}
-            />
-        );
+    const queryResultsListDOM = queryResults.map((queryResult) => (
+        <QueryResult
+            key={queryResult.id}
+            queryExecution={queryResult}
+            queryEngineById={queryEngineById}
+        />
+    ));
 
-        const queryResultsListDOM = queryResults.map((queryResult) => (
-            <QueryResult
-                key={queryResult.id}
-                queryExecution={queryResult}
-                queryEngineById={queryEngineById}
-            />
-        ));
+    const loadingDOM = isLoadingQueries ? (
+        <div className="flex-column m24">
+            <Icon name="Loading" className="mb16" />
+            <AccentText color="light" weight="bold">
+                Loading Executions
+            </AccentText>
+        </div>
+    ) : null;
 
-        const loadingDOM = isLoadingQueries ? (
-            <div className="flex-column m24">
-                <Icon name="Loading" className="mb16" />
-                <AccentText color="light" weight="bold">
-                    Loading Executions
-                </AccentText>
-            </div>
+    const noResultDOM =
+        queryResults.length === 0 && !loadingDOM ? (
+            <div className="empty-section-message">No Executions</div>
         ) : null;
 
-        const noResultDOM =
-            queryResults.length === 0 && !loadingDOM ? (
-                <div className="empty-section-message">No Executions</div>
-            ) : null;
-
-        return (
-            <div className="QueryViewNavigator SidebarNavigator">
-                <div className="list-header">{queryViewFilterDOM}</div>
-                <div
-                    ref={this.navigatorScrollRef}
-                    className="list-content scroll-wrapper"
-                    onScroll={this.onNavigatorScroll}
-                >
-                    {queryResultsListDOM}
-                    {loadingDOM}
-                    {noResultDOM}
-                </div>
+    return (
+        <div className="QueryViewNavigator SidebarNavigator">
+            <div className="list-header">{queryViewFilterDOM}</div>
+            <div
+                ref={navigatorScrollRef}
+                className="list-content scroll-wrapper"
+                onScroll={handleNavigatorScroll}
+            >
+                {queryResultsListDOM}
+                {loadingDOM}
+                {noResultDOM}
             </div>
-        );
-    }
-}
-
-const mapStateToProps = (state: IStoreState) => ({
-    queryResults: queryExecutionResultSelector(state),
-    isLoadingQueries: state.queryView.isLoading,
-    queryViewFilters: state.queryView.filters,
-    queryEngines: queryEngineSelector(state),
-    queryEngineById: queryEngineByIdEnvSelector(state),
-});
-
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-    updateFilter: (filterKey: string, filterValue: any) => {
-        dispatch(queryViewActions.updateFilter(filterKey, filterValue));
-    },
-
-    initializeFromQueryParam: () =>
-        dispatch(queryViewActions.mapQueryParamToState()),
-
-    loadQueries: () => dispatch(queryViewActions.searchQueries()),
-
-    pollQueryExecution: (queryExecutionId) => {
-        dispatch(queryExecutionsActions.pollQueryExecution(queryExecutionId));
-    },
-});
-
-export const QueryViewNavigator = connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(QueryViewNavigatorComponent);
+        </div>
+    );
+};
