@@ -35,21 +35,6 @@
         .engine-selector-wrapper {
             max-height: 50vh;
             overflow-y: auto;
-            .engine-selector-search-bar-wrapper {
-                .SearchBar {
-                    display: flex;
-                    flex-direction: row;
-                    .DebouncedInput {
-                        flex: 9;
-                    }
-                    .SearchIcon {
-                        flex: 1;
-                    }
-                    .Button{
-                        flex: 1;
-                    }
-                }
-            }
         }
     }
 

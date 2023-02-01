@@ -171,10 +171,6 @@ export const QueryEngineSelector: React.FC<IQueryEngineSelectorProps> = ({
             tooltip: engineInfo.description,
         }));
 
-    const updateKeyword = (keyword: string) => {
-        setKeyword(keyword);
-    };
-
     const engineButtonDOM = (
         <Dropdown
             customButtonRenderer={getEngineSelectorButtonDOM}
@@ -183,13 +179,10 @@ export const QueryEngineSelector: React.FC<IQueryEngineSelectorProps> = ({
         >
             <div className="engine-selector-wrapper">
                 {queryEngines.length > 3 && (
-                    <div
-                        className="engine-selector-search-bar-wrapper"
-                        onClick={stopPropagation}
-                    >
+                    <div onClick={stopPropagation}>
                         <SearchBar
                             value={keyword}
-                            onSearch={updateKeyword}
+                            onSearch={setKeyword}
                             placeholder="Search"
                             transparent
                             delayMethod="throttle"
