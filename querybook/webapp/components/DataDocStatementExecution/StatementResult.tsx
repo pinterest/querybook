@@ -399,30 +399,25 @@ const ColumnToggleMenuButton: React.FC<{
 }> = ({ columnNames, columnVisibility, toggleVisibility }) => {
     const buttonRef = React.useRef<HTMLAnchorElement>();
     const [showPopover, _, toggleShowPopover] = useToggleState(false);
-    const [filteredColumnNames, setFilteredColumnNames] = useState(columnNames);
     const [keyword, setKeyword] = useState('');
+    const filteredColumnNames = useMemo(
+        () =>
+            columnNames.filter((names) =>
+                names.toLowerCase().includes(keyword.toLowerCase())
+            ),
+        [columnNames, keyword]
+    );
     const isAllSelected = useMemo(
         () => columnNames.every((columnName) => columnVisibility[columnName]),
         [columnNames, columnVisibility]
     );
 
-    const updateKeyword = (keyword: string) => {
-        const filtered = columnNames.filter((names) => {
-            return `${names.toLowerCase()}`.includes(keyword.toLowerCase());
-        });
-        setKeyword(keyword);
-        setFilteredColumnNames(filtered);
-    };
-
     const getPopoverContent = () => (
         <div className="StatementResult-column-toggle-menu">
-            <div
-                className="hide-column-search-bar-wrapper"
-                onClick={stopPropagation}
-            >
+            <div onClick={stopPropagation}>
                 <SearchBar
                     value={keyword}
-                    onSearch={updateKeyword}
+                    onSearch={setKeyword}
                     placeholder="Search"
                     transparent
                     delayMethod="throttle"

@@ -24,4 +24,16 @@
         border-left: var(--border);
         height: 20px;
     }
+
+    &.clear-search {
+        .DebouncedInput {
+            flex: 9;
+        }
+        .SearchIcon {
+            flex: 1;
+        }
+        .Button{
+            flex: 1;
+        }
+    }
 }

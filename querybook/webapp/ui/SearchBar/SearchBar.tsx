@@ -74,6 +74,7 @@ export const SearchBar: React.FunctionComponent<ISearchBarProps> = ({
         SearchBar: true,
         [className]: Boolean(className),
         transparent,
+        'clear-search': hasClearSearch,
     });
 
     const clearSearchButton =

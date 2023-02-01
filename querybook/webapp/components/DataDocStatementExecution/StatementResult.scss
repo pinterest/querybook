@@ -61,19 +61,4 @@
 .StatementResult-column-toggle-menu {
     max-height: 200px;
     overflow-y: auto;
-    .hide-column-search-bar-wrapper {
-        .SearchBar {
-            display: flex;
-            flex-direction: row;
-            .DebouncedInput {
-                flex: 9;
-            }
-            .SearchIcon {
-                flex: 1;
-            }
-            .Button{
-                flex: 1;
-            }
-        }
-    }
 }
