@@ -11,6 +11,8 @@ export interface ICancelablePromise<T> extends Promise<T> {
 type UrlOrOptions = string | AxiosRequestConfig;
 
 function handleRequestException(error: any, notifyOnError?: boolean) {
+    console.error(error);
+
     if (notifyOnError) {
         toast.error(formatError(error));
     }
@@ -26,7 +28,8 @@ function syncDatasource<T>(
     method: Method,
     urlOrOptions: UrlOrOptions,
     data?: Record<string, unknown>,
-    notifyOnError?: boolean
+    notifyOnError?: boolean,
+    timeout: number = 0 // timeout in milliseconds
 ): ICancelablePromise<{ data: T }> {
     const url =
         typeof urlOrOptions === 'string' ? urlOrOptions : urlOrOptions['url'];
@@ -40,6 +43,7 @@ function syncDatasource<T>(
         },
         method,
         cancelToken: new axios.CancelToken((c) => (cancel = c)),
+        timeout, // 0 is the default value which means no timeout
     };
 
     if (data) {
@@ -79,39 +83,56 @@ function syncDatasource<T>(
 function fetchDatasource<T>(
     urlOrOptions: UrlOrOptions,
     data?: Record<string, unknown>,
-    notifyOnError = false
+    notifyOnError = false,
+    timeout?: number
 ) {
-    return syncDatasource<T>('GET', urlOrOptions, data, notifyOnError);
+    return syncDatasource<T>('GET', urlOrOptions, data, notifyOnError, timeout);
 }
 
 function saveDatasource<T>(
     urlOrOptions: UrlOrOptions,
     data?: Record<string, unknown>,
-    notifyOnError = true
+    notifyOnError = true,
+    timeout?: number
 ) {
-    return syncDatasource<T>('POST', urlOrOptions, data, notifyOnError);
+    return syncDatasource<T>(
+        'POST',
+        urlOrOptions,
+        data,
+        notifyOnError,
+        timeout
+    );
 }
 
 function updateDatasource<T>(
     urlOrOptions: UrlOrOptions,
     data?: Record<string, unknown>,
-    notifyOnError = true
+    notifyOnError = true,
+    timeout?: number
 ) {
-    return syncDatasource<T>('PUT', urlOrOptions, data, notifyOnError);
+    return syncDatasource<T>('PUT', urlOrOptions, data, notifyOnError, timeout);
 }
 
 function deleteDatasource<T = null>(
     urlOrOptions: UrlOrOptions,
     data?: Record<string, unknown>,
-    notifyOnError = true
+    notifyOnError = true,
+    timeout?: number
 ) {
-    return syncDatasource<T>('DELETE', urlOrOptions, data, notifyOnError);
+    return syncDatasource<T>(
+        'DELETE',
+        urlOrOptions,
+        data,
+        notifyOnError,
+        timeout
+    );
 }
 
 export function uploadDatasource<T = null>(
     url: string,
     data: Record<string, any>,
-    notifyOnError = true
+    notifyOnError = true,
+    timeout?: number
 ) {
     const formData = new FormData();
     for (const [key, value] of Object.entries(data)) {
@@ -135,7 +156,7 @@ export function uploadDatasource<T = null>(
         },
         data: formData,
     };
-    return syncDatasource<T>('POST', urlOptions, null, notifyOnError);
+    return syncDatasource<T>('POST', urlOptions, null, notifyOnError, timeout);
 }
 
 export default {
