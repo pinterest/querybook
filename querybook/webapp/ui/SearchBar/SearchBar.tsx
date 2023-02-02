@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import React from 'react';
 
 import { matchKeyPress } from 'lib/utils/keyboard';
-import { Button } from 'ui/Button/Button';
+import { IconButton } from 'ui/Button/IconButton';
 import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { Icon } from 'ui/Icon/Icon';
 
@@ -74,20 +74,16 @@ export const SearchBar: React.FunctionComponent<ISearchBarProps> = ({
         SearchBar: true,
         [className]: Boolean(className),
         transparent,
-        'clear-search': hasClearSearch,
     });
 
     const clearSearchButton =
         !searchIcon && hasClearSearch && value ? (
-            <>
-                <span className="search-bar-clear-sep" />
-                <Button
-                    theme="text"
-                    pushable
-                    onClick={() => onSearch('')}
-                    title="Clear"
-                />
-            </>
+            <IconButton
+                icon="X"
+                onClick={() => onSearch('')}
+                className="SearchIcon"
+                noPadding
+            />
         ) : null;
 
     return (

@@ -35,6 +35,13 @@
         .engine-selector-wrapper {
             max-height: 50vh;
             overflow-y: auto;
+
+            .SearchBar input {
+                background-color: var(--bg);
+                &:hover {
+                    background-color: var(--bg-hover);
+                }
+            }
         }
     }
 

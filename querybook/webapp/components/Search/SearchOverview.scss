@@ -22,9 +22,9 @@
     }
 
     .search-bar-wrapper {
+        padding: 0px var(--padding) 4px;
         .SearchBar {
             flex-grow: 1;
-            padding: 0px var(--padding) 4px;
             .DebouncedInput {
                 input {
                     padding: var(--padding);

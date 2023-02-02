@@ -11,8 +11,8 @@ import { StatementExecutionResultSizes } from 'const/queryResultLimit';
 import { useImmer } from 'hooks/useImmer';
 import { useToggleState } from 'hooks/useToggleState';
 import { getSelectStatementLimit } from 'lib/sql-helper/sql-limiter';
-import { formatNumber } from 'lib/utils/number';
 import { stopPropagation } from 'lib/utils/noop';
+import { formatNumber } from 'lib/utils/number';
 import { IStoreState } from 'redux/store/types';
 import { TextButton } from 'ui/Button/Button';
 import { InfoButton } from 'ui/Button/InfoButton';
@@ -402,9 +402,11 @@ const ColumnToggleMenuButton: React.FC<{
     const [keyword, setKeyword] = useState('');
     const filteredColumnNames = useMemo(
         () =>
-            columnNames.filter((names) =>
-                names.toLowerCase().includes(keyword.toLowerCase())
-            ),
+            keyword === ''
+                ? columnNames
+                : columnNames.filter((names) =>
+                      names.toLowerCase().includes(keyword.toLowerCase())
+                  ),
         [columnNames, keyword]
     );
     const isAllSelected = useMemo(
@@ -414,16 +416,19 @@ const ColumnToggleMenuButton: React.FC<{
 
     const getPopoverContent = () => (
         <div className="StatementResult-column-toggle-menu">
-            <div onClick={stopPropagation}>
-                <SearchBar
-                    value={keyword}
-                    onSearch={setKeyword}
-                    placeholder="Search"
-                    transparent
-                    delayMethod="throttle"
-                    hasClearSearch={true}
-                />
-            </div>
+            {columnNames.length >= 5 && (
+                <div onClick={stopPropagation}>
+                    <SearchBar
+                        value={keyword}
+                        onSearch={setKeyword}
+                        placeholder="Search"
+                        transparent
+                        delayMethod="throttle"
+                        hasClearSearch={true}
+                    />
+                </div>
+            )}
+
             <div key="all">
                 <Checkbox
                     title={
