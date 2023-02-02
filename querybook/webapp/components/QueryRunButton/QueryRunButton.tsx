@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import { IQueryEngine, QueryEngineStatus } from 'const/queryEngine';
 import { queryEngineStatusToIconStatus } from 'const/queryStatusIcon';
 import { TooltipDirection } from 'const/tooltip';
+import { MIN_ENGINE_TO_SHOW_FILTER } from 'const/uiConfig';
 import {
     ALLOW_UNLIMITED_QUERY,
     DEFAULT_ROW_LIMIT,
@@ -178,7 +179,7 @@ export const QueryEngineSelector: React.FC<IQueryEngineSelectorProps> = ({
             className="engine-selector-dropdown"
         >
             <div className="engine-selector-wrapper">
-                {queryEngines.length >= 4 && (
+                {queryEngines.length >= MIN_ENGINE_TO_SHOW_FILTER && (
                     <div onClick={stopPropagation}>
                         <SearchBar
                             value={keyword}

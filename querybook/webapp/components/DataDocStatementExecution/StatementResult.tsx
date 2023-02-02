@@ -8,6 +8,7 @@ import {
 } from 'components/StatementResultTable/StatementResultTable';
 import { IStatementExecution, IStatementResult } from 'const/queryExecution';
 import { StatementExecutionResultSizes } from 'const/queryResultLimit';
+import { MIN_COLUMN_TO_SHOW_FILTER } from 'const/uiConfig';
 import { useImmer } from 'hooks/useImmer';
 import { useToggleState } from 'hooks/useToggleState';
 import { getSelectStatementLimit } from 'lib/sql-helper/sql-limiter';
@@ -416,7 +417,7 @@ const ColumnToggleMenuButton: React.FC<{
 
     const getPopoverContent = () => (
         <div className="StatementResult-column-toggle-menu">
-            {columnNames.length >= 5 && (
+            {columnNames.length >= MIN_COLUMN_TO_SHOW_FILTER && (
                 <div onClick={stopPropagation}>
                     <SearchBar
                         value={keyword}
