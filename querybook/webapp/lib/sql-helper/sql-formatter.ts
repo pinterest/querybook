@@ -52,23 +52,26 @@ export interface ISQLFormatOptions {
     case?: 'lower' | 'upper';
     tabWidth?: number;
     useTabs?: boolean;
+
+    /**
+     * whether or not to thrown error when encoutering a parsing
+     * error, defaults to true
+     */
+    silent?: boolean;
 }
 
-export function format(
+interface IProcessedStatement {
+    statementText: string;
+    idToTemplateTag: Record<string, string>;
+    firstKeyWord: IToken;
+    originalStatementText: string;
+}
+
+function tokenizeAndFormatQuery(
     query: string,
     language: string,
-    options?: ISQLFormatOptions
+    options: ISQLFormatOptions
 ) {
-    options = {
-        ...{
-            // default options
-            case: 'upper',
-            tabWidth: 2,
-            useTabs: false,
-        },
-        ...options,
-    };
-
     const tokens = tokenize(query, { language, includeUnknown: true });
     const statements: IToken[][] = [];
     tokens.reduce((statement, token, index) => {
@@ -92,56 +95,102 @@ export function format(
         return statement;
     }, [] as IToken[]);
 
+    return statements;
+}
+
+function processStatements(
+    query: string,
+    language: string,
+    options: ISQLFormatOptions
+) {
+    const statements = tokenizeAndFormatQuery(query, language, options);
     const queryLineLength = getQueryLinePosition(query);
     const newLineBetweenStatement = new Array(statements.length).fill(0);
     let lastStatementRange = null;
 
-    const processedStatements = statements.map((statement, index) => {
-        // This part of code calculates the number of new lines
-        // between 2 statements
-        const firstToken = statement[0];
-        const lastToken = statement[statement.length - 1];
-        const statementRange = [
-            queryLineLength[firstToken.line] + firstToken.start,
-            queryLineLength[lastToken.line] + lastToken.end,
-        ];
-        if (lastStatementRange) {
-            const inbetweenString = query.slice(
-                lastStatementRange[1],
-                statementRange[0]
+    const processedStatements: IProcessedStatement[] = statements.map(
+        (statement, index) => {
+            // This part of code calculates the number of new lines
+            // between 2 statements
+            const firstToken = statement[0];
+            const lastToken = statement[statement.length - 1];
+            const statementRange = [
+                queryLineLength[firstToken.line] + firstToken.start,
+                queryLineLength[lastToken.line] + lastToken.end,
+            ];
+            if (lastStatementRange) {
+                const inbetweenString = query.slice(
+                    lastStatementRange[1],
+                    statementRange[0]
+                );
+                const numberOfNewLine = inbetweenString.split('\n').length - 1;
+                newLineBetweenStatement[index] = Math.max(1, numberOfNewLine);
+            }
+            lastStatementRange = statementRange;
+
+            // This part of code formats the query
+            const firstKeyWord = find(
+                statement,
+                (token) => token.type === 'KEYWORD'
             );
-            const numberOfNewLine = inbetweenString.split('\n').length - 1;
-            newLineBetweenStatement[index] = Math.max(1, numberOfNewLine);
+            const { statementText, idToTemplateTag } = tokensToText(statement);
+
+            return {
+                statementText,
+                idToTemplateTag,
+                firstKeyWord,
+                originalStatementText: query.slice(
+                    statementRange[0],
+                    statementRange[1] + 1
+                ),
+            };
         }
-        lastStatementRange = statementRange;
+    );
 
-        // This part of code formats the query
-        const firstKeyWord = find(
-            statement,
-            (token) => token.type === 'KEYWORD'
-        );
-        const { statementText, idToTemplateTag } = tokensToText(statement);
+    return {
+        newLineBetweenStatement,
+        processedStatements,
+    };
+}
 
-        return {
+function formatEachStatement(
+    statements: IProcessedStatement[],
+    language: string,
+    options: ISQLFormatOptions
+) {
+    const safeSQLFormat = (text: string, unformattedText: string) => {
+        try {
+            return sqlFormat(text, {
+                tabWidth: options.tabWidth,
+                language: getLanguageForSqlFormatter(language),
+                useTabs: options.useTabs,
+            });
+        } catch (e) {
+            if (options.silent) {
+                return unformattedText;
+            } else {
+                throw e;
+            }
+        }
+    };
+
+    const formattedStatements: string[] = statements.map(
+        ({
+            firstKeyWord,
             statementText,
             idToTemplateTag,
-            firstKeyWord,
-        };
-    });
-
-    const formattedStatements: string[] = processedStatements.map(
-        ({ firstKeyWord, statementText, idToTemplateTag }) => {
+            originalStatementText,
+        }) => {
             // Use standard formatter to format
-            let formattedStatement = statementText;
+            let formattedStatement = originalStatementText;
             if (
                 firstKeyWord &&
                 allowedStatement.has(firstKeyWord.text.toLocaleLowerCase())
             ) {
-                formattedStatement = sqlFormat(statementText, {
-                    tabWidth: options.tabWidth,
-                    language: getLanguageForSqlFormatter(language),
-                    useTabs: options.useTabs,
-                });
+                formattedStatement = safeSQLFormat(
+                    statementText,
+                    originalStatementText
+                );
             }
 
             for (const [id, templateTag] of Object.entries(idToTemplateTag)) {
@@ -153,6 +202,36 @@ export function format(
 
             return formattedStatement;
         }
+    );
+
+    return formattedStatements;
+}
+
+export function format(
+    query: string,
+    language: string,
+    options?: ISQLFormatOptions
+) {
+    options = {
+        ...{
+            // default options
+            case: 'upper',
+            tabWidth: 2,
+            useTabs: false,
+            silent: true,
+        },
+        ...options,
+    };
+
+    const { processedStatements, newLineBetweenStatement } = processStatements(
+        query,
+        language,
+        options
+    );
+    const formattedStatements = formatEachStatement(
+        processedStatements,
+        language,
+        options
     );
 
     return formattedStatements.reduce(

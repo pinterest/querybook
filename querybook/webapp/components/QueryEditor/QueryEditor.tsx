@@ -9,6 +9,7 @@ import React, {
     useState,
 } from 'react';
 import { Controlled as ReactCodeMirror } from 'react-codemirror2';
+import toast from 'react-hot-toast';
 
 import { showTooltipFor } from 'components/CodeMirrorTooltip';
 import { ICodeMirrorTooltipProps } from 'components/CodeMirrorTooltip/CodeMirrorTooltip';
@@ -232,7 +233,11 @@ export const QueryEditor: React.FC<
         );
 
         const formatQuery = useCallback(
-            (options: ISQLFormatOptions = {}) => {
+            (
+                options: ISQLFormatOptions = {
+                    silent: false,
+                }
+            ) => {
                 if (editorRef.current) {
                     const indentWithTabs =
                         editorRef.current.getOption('indentWithTabs');
@@ -246,12 +251,16 @@ export const QueryEditor: React.FC<
                     }
                 }
 
-                const formattedQuery = format(
-                    editorRef.current.getValue(),
-                    language,
-                    options
-                );
-                editorRef.current?.setValue(formattedQuery);
+                try {
+                    const formattedQuery = format(
+                        editorRef.current.getValue(),
+                        language,
+                        options
+                    );
+                    editorRef.current?.setValue(formattedQuery);
+                } catch (e) {
+                    toast.error('Failed to format query.');
+                }
             },
             [language]
         );
