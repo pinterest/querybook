@@ -1,27 +1,28 @@
 import clsx from 'clsx';
 import * as React from 'react';
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { IQueryEngine, QueryEngineStatus } from 'const/queryEngine';
 import { queryEngineStatusToIconStatus } from 'const/queryStatusIcon';
 import { TooltipDirection } from 'const/tooltip';
+import { MIN_ENGINE_TO_SHOW_FILTER } from 'const/uiConfig';
 import {
     ALLOW_UNLIMITED_QUERY,
     DEFAULT_ROW_LIMIT,
     ROW_LIMIT_SCALE,
 } from 'lib/sql-helper/sql-limiter';
 import { getShortcutSymbols, KeyMap } from 'lib/utils/keyboard';
-import { formatNumber } from 'lib/utils/number';
 import { stopPropagation } from 'lib/utils/noop';
+import { formatNumber } from 'lib/utils/number';
 import { queryEngineStatusByIdEnvSelector } from 'redux/queryEngine/selector';
 import { AsyncButton, IAsyncButtonHandles } from 'ui/AsyncButton/AsyncButton';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Icon } from 'ui/Icon/Icon';
 import { ListMenu } from 'ui/Menu/ListMenu';
+import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 import { Tag } from 'ui/Tag/Tag';
-import { SearchBar } from 'ui/SearchBar/SearchBar';
 
 import './QueryRunButton.scss';
 
@@ -178,13 +179,12 @@ export const QueryEngineSelector: React.FC<IQueryEngineSelectorProps> = ({
             className="engine-selector-dropdown"
         >
             <div className="engine-selector-wrapper">
-                {queryEngines.length > 3 && (
+                {queryEngines.length >= MIN_ENGINE_TO_SHOW_FILTER && (
                     <div onClick={stopPropagation}>
                         <SearchBar
                             value={keyword}
                             onSearch={setKeyword}
                             placeholder="Search"
-                            transparent
                             delayMethod="throttle"
                             hasClearSearch={true}
                         />
