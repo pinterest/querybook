@@ -1,4 +1,5 @@
 from typing import Any, Dict, List, Optional
+from itertools import islice
 
 import trino
 from lib.query_executor.base_client import ClientBaseClass, CursorBaseClass
@@ -10,25 +11,44 @@ class TrinoCursor(PrestoCursorMixin[trino.dbapi.Cursor, List[Any]], CursorBaseCl
     def __init__(self, cursor: trino.dbapi.Cursor) -> None:
         self._cursor = cursor
         self.rows = []
+        self.paging_num = 0  # not thread-safe, but this cursor will be used only on the single thread synchronously
         self._init_query_state_vars()
         self._request = cursor._request
 
     def _init_query_state_vars(self) -> None:
         self.rows = []
+        self.paging_num = 0
         self._tracking_url = None
         self._percent_complete = 0
 
     def poll(self) -> bool:
         # this needs to be take care
-        self.rows.extend(self._cursor._query.fetch())
-        self._cursor._iterator = iter(self.rows)
+        fetched = self._cursor._query.fetch()
+        # this method doesn't ensure returning all the current fetched results synchronously at query start
+
         poll_result = self._cursor.stats
-        completed = self._cursor._query._finished
         if poll_result:
             self._update_percent_complete(poll_result)
             self._update_tracking_url(poll_result)
 
-        return completed
+        self.rows = self._cursor._query._result._rows  # accumulated
+        if fetched:
+            self.rows.extend(fetched)
+
+        self._cursor._iterator = iter(self.rows)
+
+        return self._cursor._query._finished
+
+    def get_n_rows(self, n: int) -> List[List[Any]]:
+        """override PrestoCursorMixin method to use self.rows attribute"""
+        presto_types = self.presto_types
+        try:
+            return [
+                self.transform_row(row, presto_types)
+                for row in islice(self.rows, self.paging_num, self.paging_num + n)
+            ]
+        finally:
+            self.paging_num += n
 
     def _update_tracking_url(self, poll_result: Dict[str, Any]) -> None:
         if self._tracking_url is None:
