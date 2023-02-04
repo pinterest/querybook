@@ -1,0 +1,9 @@
+.UserGroupCard {
+    max-width: 400px;
+
+    .members-container {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+}

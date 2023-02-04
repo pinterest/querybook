@@ -53,6 +53,11 @@ def get_user_by_name(username, case_sensitive=True, session=None):
 
 
 @with_session
+def get_user_group_members(id, session=None):
+    return User.get(id=id, session=session).group_members
+
+
+@with_session
 def create_user(
     username,
     password=None,

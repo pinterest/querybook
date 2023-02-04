@@ -35,6 +35,8 @@ export const UserResource = {
             [visibleEnvironments: IEnvironment[], userEnvironmentIds: number[]]
         >('/user/environment/'),
     getNotifiers: () => ds.fetch<INotifier[]>('/user/notifiers/'),
+    getUserGroupMembers: (id: number) =>
+        ds.fetch<IUserInfo[]>(`/user/${id}/group_members/`),
 };
 
 export const UserSettingResource = {
