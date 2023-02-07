@@ -43,7 +43,8 @@
             "developer_guide/developer_setup",
             "developer_guide/reinitialize_es",
             "developer_guide/run_db_migration",
-            "developer_guide/storybook"
+            "developer_guide/storybook",
+            "developer_guide/users_and_groups"
         ],
 
         "User Guide": ["user_guide/api_token", "user_guide/faq"],

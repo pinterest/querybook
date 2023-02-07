@@ -31,11 +31,19 @@ class User(CRUDMixin, Base):
     email = sql.Column(sql.String(length=name_length))
     profile_img = sql.Column(sql.String(length=url_length))
     deleted = sql.Column(sql.Boolean, default=False)
+    is_group = sql.Column(sql.Boolean, default=False)
 
     properties = sql.Column(sql.JSON, default={})
 
     settings = relationship("UserSetting", cascade="all, delete", passive_deletes=True)
     roles = relationship("UserRole", cascade="all, delete", passive_deletes=True)
+    group_members = relationship(
+        "User",
+        secondary="user_group_member",
+        primaryjoin="User.id == UserGroupMember.gid",
+        secondaryjoin="User.id == UserGroupMember.uid",
+        backref="user_groups",
+    )
 
     @hybrid_property
     def password(self):
@@ -66,6 +74,8 @@ class User(CRUDMixin, Base):
             "profile_img": self.profile_img,
             "email": self.email,
             "deleted": self.deleted,
+            "is_group": self.is_group,
+            "properties": self.properties.get("public_info", {}),
         }
 
         if with_roles:
@@ -107,3 +117,12 @@ class UserRole(db.Base):
             "role": self.role.value,
             "created_at": self.created_at,
         }
+
+
+class UserGroupMember(Base):
+    __tablename__ = "user_group_member"
+
+    id = sql.Column(sql.Integer, primary_key=True)
+    gid = sql.Column(sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"))
+    uid = sql.Column(sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"))
+    created_at = sql.Column(sql.DateTime, default=now)

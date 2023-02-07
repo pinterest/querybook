@@ -1,8 +1,11 @@
 import clsx from 'clsx';
 import React, { useMemo } from 'react';
 
+import { UserGroupCard } from 'components/UserGroupCard/UserGroupCard';
 import { DELETED_USER_MSG } from 'const/user';
 import { useUser } from 'hooks/redux/useUser';
+import { Popover } from 'ui/Popover/Popover';
+import { PopoverHoverWrapper } from 'ui/Popover/PopoverHoverWrapper';
 import { AccentText } from 'ui/StyledText/StyledText';
 
 import { ICommonUserLoaderProps } from './types';
@@ -15,6 +18,7 @@ type IProps = {
     isOnline?: boolean;
     mini?: boolean;
     cardStyle?: boolean;
+    groupPopover?: boolean;
 } & ICommonUserLoaderProps;
 
 export const UserBadge: React.FunctionComponent<IProps> = ({
@@ -23,6 +27,7 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
     isOnline,
     mini,
     cardStyle,
+    groupPopover = true,
 }) => {
     const { loading, userInfo } = useUser({ uid, name });
 
@@ -46,24 +51,20 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
 
     const deletedText = userInfo?.deleted ? DELETED_USER_MSG : '';
 
-    if (mini) {
-        return (
-            <span
-                className={clsx({
-                    UserBadge: true,
-                    mini: true,
-                    'card-style': cardStyle,
-                })}
-            >
-                <figure>{avatarDOM}</figure>
-                <AccentText className="username" weight="bold">
-                    {userInfo?.fullname ?? userName} {deletedText}
-                </AccentText>
-            </span>
-        );
-    }
-
-    return (
+    const badgeDOM = mini ? (
+        <span
+            className={clsx({
+                UserBadge: true,
+                mini: true,
+                'card-style': cardStyle,
+            })}
+        >
+            <figure>{avatarDOM}</figure>
+            <AccentText className="username" weight="bold">
+                {userInfo?.fullname ?? userName} {deletedText}
+            </AccentText>
+        </span>
+    ) : (
         <div
             className={clsx({
                 UserBadge: true,
@@ -88,5 +89,27 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
                 </AccentText>
             </div>
         </div>
+    );
+
+    return groupPopover && userInfo?.is_group ? (
+        <PopoverHoverWrapper>
+            {(showPopover, anchorElement) => (
+                <>
+                    {badgeDOM}
+
+                    {showPopover && (
+                        <Popover
+                            onHide={() => null}
+                            anchor={anchorElement}
+                            layout={['right', 'top']}
+                        >
+                            <UserGroupCard userGroup={userInfo} />
+                        </Popover>
+                    )}
+                </>
+            )}
+        </PopoverHoverWrapper>
+    ) : (
+        badgeDOM
     );
 };
