@@ -97,6 +97,7 @@ export const DataDocScheduleItem: React.FC<IDataDocScheduleItemProps> = ({
     };
 
     const { doc, schedule, last_record: lastRecord } = docWithSchedule;
+    const isScheduleDisabled = schedule?.enabled === false;
 
     return (
         <div className="DataDocScheduleItem mb12">
@@ -107,7 +108,7 @@ export const DataDocScheduleItem: React.FC<IDataDocScheduleItemProps> = ({
                             <AccentText
                                 weight="bold"
                                 size="med"
-                                color={schedule.enabled ? 'text' : 'lightest'}
+                                color={isScheduleDisabled ? 'lightest' : 'text'}
                             >
                                 {doc.title}
                             </AccentText>
