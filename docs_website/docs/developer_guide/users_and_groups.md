@@ -28,6 +28,6 @@ For the detailed DB schema and table relationships, please check the model file 
 ## Create/Load Users and Group
 For users
   - default user/password authentication: people can sign up as a new user on UI.
-  - auth/ldap authentication: they both support auto-creation of users.
+  - oauth/ldap authentication: they both support auto-creation of users.
 
 For user groups, they can only be sync'ed now and can not be created on UI. You can have a scheduled task for your organization to sync them from either ldap, metastore or any other system which contains user groups.
