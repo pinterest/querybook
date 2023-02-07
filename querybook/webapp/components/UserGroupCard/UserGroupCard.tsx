@@ -59,7 +59,7 @@ export const UserGroupCard = ({ userGroup }: IProps) => {
                     Description
                 </AccentText>
                 <AccentText color="light" size="xsmall">
-                    {userGroup.properties?.description}
+                    {userGroup.properties.description}
                 </AccentText>
             </div>
             <div className="mt8">

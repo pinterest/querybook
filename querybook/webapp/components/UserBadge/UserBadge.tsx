@@ -97,7 +97,7 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
                 <>
                     {badgeDOM}
 
-                    {!showPopover && (
+                    {showPopover && (
                         <Popover
                             onHide={() => null}
                             anchor={anchorElement}

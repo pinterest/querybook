@@ -23,6 +23,7 @@ def upgrade():
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("gid", sa.Integer(), nullable=False),
         sa.Column("uid", sa.Integer(), nullable=False),
+        sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.ForeignKeyConstraint(["gid"], ["user.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["uid"], ["user.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),

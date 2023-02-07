@@ -16,4 +16,4 @@ export const MIN_COLUMN_TO_SHOW_FILTER = 5;
  * this constant controls the maximum number
  * of members to show in the user group popover
  */
-export const MAX_USER_GROUP_MEMBERS_TO_SHOW = 1;
+export const MAX_USER_GROUP_MEMBERS_TO_SHOW = 10;

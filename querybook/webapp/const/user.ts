@@ -14,8 +14,7 @@ export interface IUserInfo {
 
     roles?: number[];
 
-    // Properties below are only available when is_group is true
-    properties?: {
+    properties: {
         description?: string;
     };
 }
