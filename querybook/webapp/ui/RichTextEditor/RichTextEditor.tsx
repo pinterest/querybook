@@ -146,7 +146,7 @@ export const RichTextEditor = React.forwardRef<
         const selfRef = useRef<HTMLDivElement>();
 
         const focus = useCallback(() => {
-            if (editorRef.current) {
+            if (editorRef.current && toolBarRef.current) {
                 editorRef.current.focus();
                 setToolBarStyle(
                     calculateToolBarStyle(
