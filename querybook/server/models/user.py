@@ -75,10 +75,8 @@ class User(CRUDMixin, Base):
             "email": self.email,
             "deleted": self.deleted,
             "is_group": self.is_group,
+            "properties": self.properties.get("public_info", {}),
         }
-
-        if self.is_group:
-            user_dict["properties"] = self.properties
 
         if with_roles:
             user_dict["roles"] = [role.role.value for role in self.roles]

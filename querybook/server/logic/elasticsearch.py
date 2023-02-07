@@ -705,7 +705,9 @@ def _bulk_insert_users():
     index_name = ES_CONFIG["users"]["index_name"]
 
     for user in get_users_iter():
-        _insert(index_name, user["id"], user)
+        # skip indexing user groups before having the correct permission setup for it.
+        if not user.is_group:
+            _insert(index_name, user["id"], user)
 
 
 def _bulk_update_users(fields: Set[str] = None):
