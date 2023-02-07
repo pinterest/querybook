@@ -13,6 +13,8 @@ export interface IUserInfo {
     is_group: boolean;
 
     roles?: number[];
+
+    // Properties below are only available when is_group is true
     properties?: {
         description?: string;
     };

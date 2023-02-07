@@ -127,3 +127,4 @@ class UserGroupMember(Base):
     id = sql.Column(sql.Integer, primary_key=True)
     gid = sql.Column(sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"))
     uid = sql.Column(sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"))
+    created_at = sql.Column(sql.DateTime, default=now)

@@ -27,7 +27,7 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
     isOnline,
     mini,
     cardStyle,
-    groupPopover,
+    groupPopover = true,
 }) => {
     const { loading, userInfo } = useUser({ uid, name });
 
@@ -97,7 +97,7 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
                 <>
                     {badgeDOM}
 
-                    {showPopover && (
+                    {!showPopover && (
                         <Popover
                             onHide={() => null}
                             anchor={anchorElement}
