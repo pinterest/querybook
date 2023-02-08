@@ -153,23 +153,7 @@ function formatEachStatement(
     language: string,
     options: ISQLFormatOptions
 ) {
-    const safeSQLFormat = (text: string) => {
-        try {
-            return sqlFormat(text, {
-                tabWidth: options.tabWidth,
-                language: getLanguageForSqlFormatter(language),
-                useTabs: options.useTabs,
-            });
-        } catch (e) {
-            if (options.silent) {
-                return text;
-            } else {
-                throw e;
-            }
-        }
-    };
-
-    const formattedStatements: string[] = statements.map(
+    return statements.map(
         ({ firstKeyWord, statementText, idToTemplateTag }) => {
             // Use standard formatter to format
             let formattedStatement = statementText;
@@ -177,7 +161,11 @@ function formatEachStatement(
                 firstKeyWord &&
                 allowedStatement.has(firstKeyWord.text.toLocaleLowerCase())
             ) {
-                formattedStatement = safeSQLFormat(statementText);
+                formattedStatement = sqlFormat(statementText, {
+                    tabWidth: options.tabWidth,
+                    language: getLanguageForSqlFormatter(language),
+                    useTabs: options.useTabs,
+                });
             }
 
             for (const [id, templateTag] of Object.entries(idToTemplateTag)) {
@@ -190,8 +178,6 @@ function formatEachStatement(
             return formattedStatement;
         }
     );
-
-    return formattedStatements;
 }
 
 export function format(
@@ -210,22 +196,27 @@ export function format(
         ...options,
     };
 
-    const { processedStatements, newLineBetweenStatement } = processStatements(
-        query,
-        language,
-        options
-    );
-    const formattedStatements = formatEachStatement(
-        processedStatements,
-        language,
-        options
-    );
+    try {
+        const { processedStatements, newLineBetweenStatement } =
+            processStatements(query, language, options);
+        const formattedStatements = formatEachStatement(
+            processedStatements,
+            language,
+            options
+        );
 
-    return formattedStatements.reduce(
-        (acc, statement, index) =>
-            acc + '\n'.repeat(newLineBetweenStatement[index]) + statement,
-        ''
-    );
+        return formattedStatements.reduce(
+            (acc, statement, index) =>
+                acc + '\n'.repeat(newLineBetweenStatement[index]) + statement,
+            ''
+        );
+    } catch (e) {
+        if (options.silent) {
+            return query;
+        } else {
+            throw e;
+        }
+    }
 }
 
 // Override according to https://github.com/sql-formatter-org/sql-formatter/blob/master/docs/language.md
