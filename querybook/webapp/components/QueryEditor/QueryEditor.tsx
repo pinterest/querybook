@@ -233,11 +233,11 @@ export const QueryEditor: React.FC<
         );
 
         const formatQuery = useCallback(
-            (
-                options: ISQLFormatOptions = {
-                    silent: false,
-                }
-            ) => {
+            (options: ISQLFormatOptions) => {
+                options = {
+                    silent: false, // default false to throw format errors
+                    ...options,
+                };
                 if (editorRef.current) {
                     const indentWithTabs =
                         editorRef.current.getOption('indentWithTabs');
