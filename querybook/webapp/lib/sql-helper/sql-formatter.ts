@@ -182,7 +182,7 @@ function formatEachStatement(
             originalStatementText,
         }) => {
             // Use standard formatter to format
-            let formattedStatement = originalStatementText;
+            let formattedStatement = statementText;
             if (
                 firstKeyWord &&
                 allowedStatement.has(firstKeyWord.text.toLocaleLowerCase())
