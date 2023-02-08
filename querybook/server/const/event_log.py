@@ -11,6 +11,8 @@ class EventType(Enum):
     VIEW = "VIEW"
     # a UI element gets clicked
     CLICK = "CLICK"
+    # query/statement execution events
+    EXECUTION = "EXECUTION"
 
 
 class FrontendEvent(TypedDict):

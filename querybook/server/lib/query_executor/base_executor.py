@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractclassmethod
 import datetime
+import math
 import time
 from typing import Union, List
 
@@ -8,6 +9,7 @@ from app.flask_app import socketio
 
 
 from const.db import description_length
+from const.event_log import EventType
 from const.query_execution import (
     QueryExecutionStatus,
     StatementExecutionStatus,
@@ -15,6 +17,7 @@ from const.query_execution import (
 )
 
 from lib.form import AllFormField
+from lib.event_logger import event_logger
 from lib.logger import get_logger
 from lib.query_executor.base_client import ClientBaseClass
 from lib.query_executor.utils import (
@@ -40,7 +43,15 @@ class QueryExecutorLogger(object):
         [type] -- [description]
     """
 
-    def __init__(self, query_execution_id, celery_task, query, statement_ranges):
+    def __init__(
+        self,
+        query_execution_id,
+        celery_task,
+        query,
+        statement_ranges,
+        executor_name=None,
+    ):
+        self._executor_name = executor_name
         self._query_execution_id = query_execution_id
 
         self._celery_task = celery_task
@@ -57,6 +68,8 @@ class QueryExecutorLogger(object):
         self._meta_info = None  # statement_urls
         self._percent_complete = 0  # percent_complete
         self._statement_progress = {}
+        self._start_time = time.time()  # statement start time
+        self._elapsed_mins = 0  # elapsed time in mins since the statement start
 
         # Connect to mysql db
         with DBSession() as session:
@@ -113,6 +126,8 @@ class QueryExecutorLogger(object):
         self._log_cache = ""  # [statement_logs]
         self._meta_info = ""  # statement_urls
         self._percent_complete = None  # percent_complete
+        self._start_time = time.time()
+        self._elapsed_mins = 0
 
     def on_statement_start(self, statement_index):
         self.reset_logging_variables()
@@ -190,6 +205,21 @@ class QueryExecutorLogger(object):
                 namespace=QUERY_EXECUTION_NAMESPACE,
                 room=self._query_execution_id,
             )
+
+            # log the statement execution progress every min to event logging
+            elapsed_mins = math.floor((time.time() - self._start_time) / 60)
+            if elapsed_mins > self._elapsed_mins:
+                event_logger.log(
+                    event_type=EventType.EXECUTION,
+                    event_data={
+                        "executor_name": self._executor_name,
+                        "execution_id": self._query_execution_id,
+                        "statement_id": statement_execution_id,
+                        "progress": self._percent_complete,
+                        "elapsed": elapsed_mins,
+                    },
+                )
+                self._elapsed_mins = elapsed_mins
 
     def on_statement_end(self, cursor):
         statement_execution_id = self.statement_execution_ids[-1]
@@ -512,6 +542,7 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
             celery_task,
             self._query,
             self._statement_ranges,
+            executor_name=self.EXECUTOR_NAME,
         )
 
         # Initialize cursor once poll loop is setup
