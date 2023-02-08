@@ -124,20 +124,7 @@ def _start_query_execution_task(
 ):
     previous_query_status, previous_query_execution_id = previous_query_result
     if previous_query_status != QueryExecutionStatus.DONE.value:
-        with DBSession() as session:
-            previous_query_error_meta = get_query_error_meta_by_query_execution_id(
-                previous_query_execution_id, session=session
-            )
-
-        raise Exception(
-            create_datadoc_error_message(
-                previous_query_error_meta.get("data_cell_name"),
-                previous_query_error_meta.get("query_execution_error_message")
-                if previous_query_error_meta.get("query_execution_error_message")
-                is not None
-                else GENERIC_QUERY_FAILURE_MSG,
-            )
-        )
+        raise Exception(get_datadoc_error_message(previous_query_execution_id))
 
     with DBSession() as session:
         query_execution = qe_logic.create_query_execution(
@@ -163,24 +150,27 @@ def _start_query_execution_task(
         return query_execution.id
 
 
-def get_query_error_meta_by_query_execution_id(query_execution_id, session=None):
-    _, data_cell_id = qe_logic.get_datadoc_id_from_query_execution_id(
-        query_execution_id, session=session
-    )[0]
-    data_cell_name = datadoc_logic.get_data_cell_by_id(
-        data_cell_id, session=session
-    ).meta.get("title")
-    query_execution_error_message = qe_logic.get_query_execution_by_id(
-        query_execution_id, session=session
-    ).error.error_message
-    return {
-        "data_cell_name": data_cell_name,
-        "query_execution_error_message": query_execution_error_message,
-    }
+def get_datadoc_error_message(query_execution_id):
+    with DBSession() as session:
+        _, data_cell_id = qe_logic.get_datadoc_id_from_query_execution_id(
+            query_execution_id, session=session
+        )[0]
+        data_cell_name = datadoc_logic.get_data_cell_by_id(
+            data_cell_id, session=session
+        ).meta.get("title")
+        query_execution_error = qe_logic.get_query_execution_by_id(
+            query_execution_id, session=session
+        ).error
+        query_execution_error_message = (
+            query_execution_error.error_message if query_execution_error else None
+        )
 
-
-def create_datadoc_error_message(cell_name, error_msg):
-    return f'Failure in "{cell_name}": {error_msg}'
+    error_msg = (
+        f'Failure in "{data_cell_name}": {query_execution_error_message}'
+        if query_execution_error_message is not None
+        else GENERIC_QUERY_FAILURE_MSG
+    )
+    return error_msg
 
 
 @celery.task
@@ -191,21 +181,9 @@ def on_datadoc_run_success(
 ):
     last_query_status, last_query_execution_id = last_query_result
 
-    with DBSession() as session:
-        last_query_result_meta = get_query_error_meta_by_query_execution_id(
-            last_query_execution_id, session=session
-        )
-
     is_success = last_query_status == QueryExecutionStatus.DONE.value
     error_msg = (
-        None
-        if is_success
-        else create_datadoc_error_message(
-            last_query_result_meta.get("data_cell_name"),
-            last_query_result_meta.get("query_execution_error_message")
-            if last_query_result_meta.get("query_execution_error_message") is not None
-            else GENERIC_QUERY_FAILURE_MSG,
-        )
+        None if is_success else get_datadoc_error_message(last_query_execution_id)
     )
 
     return on_datadoc_completion(
