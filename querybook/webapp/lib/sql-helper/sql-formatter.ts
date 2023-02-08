@@ -64,7 +64,6 @@ interface IProcessedStatement {
     statementText: string;
     idToTemplateTag: Record<string, string>;
     firstKeyWord: IToken;
-    originalStatementText: string;
 }
 
 function tokenizeAndFormatQuery(
@@ -139,10 +138,6 @@ function processStatements(
                 statementText,
                 idToTemplateTag,
                 firstKeyWord,
-                originalStatementText: query.slice(
-                    statementRange[0],
-                    statementRange[1] + 1
-                ),
             };
         }
     );
@@ -158,7 +153,7 @@ function formatEachStatement(
     language: string,
     options: ISQLFormatOptions
 ) {
-    const safeSQLFormat = (text: string, unformattedText: string) => {
+    const safeSQLFormat = (text: string) => {
         try {
             return sqlFormat(text, {
                 tabWidth: options.tabWidth,
@@ -167,7 +162,7 @@ function formatEachStatement(
             });
         } catch (e) {
             if (options.silent) {
-                return unformattedText;
+                return text;
             } else {
                 throw e;
             }
@@ -175,22 +170,14 @@ function formatEachStatement(
     };
 
     const formattedStatements: string[] = statements.map(
-        ({
-            firstKeyWord,
-            statementText,
-            idToTemplateTag,
-            originalStatementText,
-        }) => {
+        ({ firstKeyWord, statementText, idToTemplateTag }) => {
             // Use standard formatter to format
             let formattedStatement = statementText;
             if (
                 firstKeyWord &&
                 allowedStatement.has(firstKeyWord.text.toLocaleLowerCase())
             ) {
-                formattedStatement = safeSQLFormat(
-                    statementText,
-                    originalStatementText
-                );
+                formattedStatement = safeSQLFormat(statementText);
             }
 
             for (const [id, templateTag] of Object.entries(idToTemplateTag)) {
