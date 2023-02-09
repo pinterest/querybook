@@ -10,6 +10,7 @@ import React, {
 } from 'react';
 import { Controlled as ReactCodeMirror } from 'react-codemirror2';
 import toast from 'react-hot-toast';
+import styled from 'styled-components';
 
 import { showTooltipFor } from 'components/CodeMirrorTooltip';
 import { ICodeMirrorTooltipProps } from 'components/CodeMirrorTooltip/CodeMirrorTooltip';
@@ -88,6 +89,15 @@ export interface IQueryEditorHandles {
     getEditorSelection: (editor?: CodeMirror.Editor) => IRange;
 }
 
+const StyledQueryValidationMsg = styled.span.attrs({
+    className: 'flex-row mr8',
+})`
+    color: ${(props) =>
+        props.type === 'info'
+            ? 'var(--color-blue-dark)'
+            : 'var(--color-false)'};
+`;
+
 export const QueryEditor: React.FC<
     IQueryEditorProps & {
         ref: React.Ref<IQueryEditorHandles>;
@@ -140,15 +150,23 @@ export const QueryEditor: React.FC<
 
         const [fullScreen, setFullScreen] = useState(false);
 
-        const { getLintAnnotations, lintSummary, isLinting } = useLint({
-            query: value,
-            editorRef,
-            metastoreId,
-            codeAnalysis,
-            getTableByName,
-            getLintErrors,
-            onLintCompletion,
-        });
+        const { getLintAnnotations, lintSummary, isLinting, queryAnnotations } =
+            useLint({
+                query: value,
+                editorRef,
+                metastoreId,
+                codeAnalysis,
+                getTableByName,
+                getLintErrors,
+                onLintCompletion,
+            });
+
+        const generalAnnotation: null | ILinterWarning = useMemo(() => {
+            const list = queryAnnotations.filter(
+                (obj: ILinterWarning) => obj.type === 'general'
+            );
+            return list.length > 0 ? list[0] : null;
+        }, [queryAnnotations]);
 
         const openTableModal = useCallback((tableId: number) => {
             navigateWithinEnv(`/table/${tableId}/`, {
@@ -603,20 +621,7 @@ export const QueryEditor: React.FC<
         );
         /* ---- end of <ReactCodeMirror /> properties ---- */
 
-        const renderLintButtons = () => {
-            if (value.length === 0) {
-                return null;
-            }
-
-            if (isLinting) {
-                return (
-                    <span className="flex-row mr8">
-                        <Icon name="Loading" className="mr4" size={16} />
-                        Linting
-                    </span>
-                );
-            }
-
+        const renderLintButton = () => {
             if (lintSummary.numErrors + lintSummary.numWarnings > 0) {
                 return (
                     <div
@@ -624,7 +629,10 @@ export const QueryEditor: React.FC<
                         title={`${formatNumber(
                             lintSummary.numErrors,
                             'error'
-                        )}, ${formatNumber(lintSummary.numWarnings, 'waring')}`}
+                        )}, ${formatNumber(
+                            lintSummary.numWarnings,
+                            'warning'
+                        )}`}
                     >
                         {lintSummary.numErrors > 0 && (
                             <span className="lint-num-errors flex-row mr4">
@@ -658,10 +666,40 @@ export const QueryEditor: React.FC<
             }
         };
 
+        const renderGeneralValidationMessage = () => {
+            if (!generalAnnotation) {
+                return null;
+            }
+            return (
+                <StyledQueryValidationMsg type={generalAnnotation.severity}>
+                    {generalAnnotation.message}
+                </StyledQueryValidationMsg>
+            );
+        };
+
+        const renderValidationMessages = () => {
+            if (value.length === 0) {
+                return null;
+            }
+            if (isLinting) {
+                return (
+                    <span className="flex-row mr8">
+                        <Icon name="Loading" className="mr4" size={16} />
+                        Linting
+                    </span>
+                );
+            }
+            return (
+                <>
+                    {renderGeneralValidationMessage()}
+                    {renderLintButton()}
+                </>
+            );
+        };
+
         const floatButtons = (
             <div className="query-editor-float-buttons-wrapper flex-row mt8 mr8">
-                {renderLintButtons()}
-
+                {renderValidationMessages()}
                 <IconButton
                     icon={fullScreen ? 'Minimize2' : 'Maximize2'}
                     onClick={toggleFullScreen}

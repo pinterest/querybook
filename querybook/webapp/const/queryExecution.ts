@@ -149,4 +149,5 @@ export interface IQueryValidationResult {
     ch: number;
     message: string;
     severity: string;
+    type: string;
 }

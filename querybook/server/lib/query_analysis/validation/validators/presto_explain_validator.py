@@ -4,6 +4,7 @@ from lib.query_analysis.validation.base_query_validator import (
     BaseQueryValidator,
     QueryValidationResult,
     QueryValidationSeverity,
+    QueryValidationResultObjectType,
 )
 from lib.utils.execute_query import ExecuteQuery
 from lib.query_executor.executors.presto import get_presto_error_dict
@@ -55,6 +56,7 @@ class PrestoExplainValidator(BaseQueryValidator):
         )
 
         return QueryValidationResult(
+            QueryValidationResultObjectType.LINT,
             statement_error_line,
             statement_error_ch,
             QueryValidationSeverity.ERROR,
