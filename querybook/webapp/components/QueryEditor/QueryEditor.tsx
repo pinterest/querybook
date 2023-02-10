@@ -622,6 +622,19 @@ export const QueryEditor: React.FC<
         /* ---- end of <ReactCodeMirror /> properties ---- */
 
         const renderLintButton = () => {
+            if (value.length === 0 || getLintErrors == null) {
+                return null;
+            }
+
+            if (isLinting) {
+                return (
+                    <span className="flex-row mr8">
+                        <Icon name="Loading" className="mr4" size={16} />
+                        Linting
+                    </span>
+                );
+            }
+
             if (lintSummary.numErrors + lintSummary.numWarnings > 0) {
                 return (
                     <div
@@ -656,7 +669,14 @@ export const QueryEditor: React.FC<
                         )}
                     </div>
                 );
-            } else if (getLintErrors) {
+            } else if (lintSummary.failedToLint) {
+                return (
+                    <span className="flex-row mr8 lint-num-warnings">
+                        <Icon name="AlertTriangle" className="mr4" size={16} />
+                        Linter is having issues
+                    </span>
+                );
+            } else {
                 return (
                     <span className="flex-row mr8 lint-passed">
                         <Icon name="CheckCircle" className="mr4" size={16} />
