@@ -15,11 +15,12 @@ class QueryValidationResultObjectType(Enum):
 class QueryValidationSeverity(Enum):
     ERROR = "error"
     WARNING = "warning"
+    INFO = "info"
 
 
 class QueryValidationResult(object):
     def __init__(
-        self,        
+        self,
         line: int,  # 0 based
         ch: int,  # location of the starting token
         severity: QueryValidationSeverity,
