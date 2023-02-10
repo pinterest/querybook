@@ -1,3 +1,4 @@
+import moment from 'moment';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -8,6 +9,7 @@ import {
 import { StatementExecutionDefaultResultSize } from 'const/queryResultLimit';
 import { useToggleState } from 'hooks/useToggleState';
 import { sanitizeAndExtraMarkdown } from 'lib/markdown';
+import { formatDuration } from 'lib/utils/datetime';
 import { fetchResult } from 'redux/queryExecutions/action';
 import { IStoreState } from 'redux/store/types';
 import { Icon } from 'ui/Icon/Icon';
@@ -133,12 +135,13 @@ export const DataDocStatementExecution: React.FC<IProps> = ({
                 <span className="statement-status-label">Initializing</span>
             );
         } else if (status === StatementExecutionStatus.RUNNING) {
-            const percentComplete = statementExecution.percent_complete;
-            const statusLabel =
-                status === StatementExecutionStatus.RUNNING ? (
-                    <span className="statement-status-label">Running</span>
-                ) : null;
-            const progressBar = status === StatementExecutionStatus.RUNNING && (
+            const { percent_complete: percentComplete, created_at: createdAt } =
+                statementExecution;
+
+            const statusLabel = (
+                <span className="statement-status-label">Running</span>
+            );
+            const progressBar = (
                 <div className="statement-execution-progress-wrapper">
                     <ProgressBar
                         value={percentComplete}
@@ -148,6 +151,28 @@ export const DataDocStatementExecution: React.FC<IProps> = ({
                     />
                 </div>
             );
+            const estimatedTimeDOM = (() => {
+                if (percentComplete === 0 || percentComplete === 100) {
+                    return null;
+                }
+
+                const secondsPassedSinceStart =
+                    new Date().getTime() / 1000 - createdAt;
+                const secondsRemainToComplete =
+                    secondsPassedSinceStart / (percentComplete / 100) -
+                    secondsPassedSinceStart;
+
+                return (
+                    <div>
+                        Estimated to be completed in{' '}
+                        {formatDuration(
+                            moment.duration(secondsRemainToComplete, 'seconds')
+                        )}
+                        .
+                    </div>
+                );
+            })();
+
             contentDOM = (
                 <div className="statement-execution-text-container">
                     <div className="statement-execution-text-title">
@@ -155,6 +180,7 @@ export const DataDocStatementExecution: React.FC<IProps> = ({
                     </div>
                     {getMetaInfoDOM()}
                     {progressBar}
+                    {estimatedTimeDOM}
                     {getLogDOM()}
                 </div>
             );
