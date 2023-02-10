@@ -28,9 +28,11 @@
         .statement-execution-progress-wrapper {
             margin-bottom: 10px;
 
-            progress {
-                width: 40%;
-                display: inline-block;
+            .ProgressBar {
+                flex: 1;
+            }
+            .progress-text {
+                flex: 1;
             }
         }
     }
