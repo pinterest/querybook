@@ -22,6 +22,7 @@ export function getContextSensitiveWarnings(
                 contextSensitiveWarnings.push({
                     message: `Table ${table.name} is newly created or does not exist`,
                     severity: 'warning',
+                    type: 'lint',
                     from: {
                         line: table.line,
                         ch: implicitSchema
@@ -55,6 +56,7 @@ export function getContextSensitiveWarnings(
 
                 contextSensitiveWarnings.push({
                     message: warningMessage,
+                    type: 'lint',
                     severity:
                         maxSeverity === DataTableWarningSeverity.ERROR
                             ? 'error'

@@ -166,7 +166,12 @@ export function useLint({
     );
     const lintAnnotationsRef = useRef<ILinterWarning[]>([]);
     const lintAnnotations = useMemo(
-        () => tableAnnotations.concat(queryAnnotations),
+        () =>
+            tableAnnotations.concat(
+                queryAnnotations.filter(
+                    (obj: ILinterWarning) => obj.type === 'lint'
+                )
+            ),
         [tableAnnotations, queryAnnotations]
     );
 
@@ -211,5 +216,6 @@ export function useLint({
         getLintAnnotations: getCodeMirrorLintAnnotations,
         isLinting: isLintingQuery || isLintingTable,
         lintSummary,
+        queryAnnotations,
     };
 }

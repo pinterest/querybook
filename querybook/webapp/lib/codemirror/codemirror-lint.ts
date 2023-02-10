@@ -17,7 +17,7 @@ export function createSQLLinter(
             );
 
         return validationResults.map((validationError) => {
-            const { line, ch, severity, message } = validationError;
+            const { type, line, ch, severity, message } = validationError;
 
             const errorToken = cm.getTokenAt({
                 line,
@@ -37,6 +37,7 @@ export function createSQLLinter(
                     },
                     severity,
                     message,
+                    type,
                 } as ILinterWarning;
             } else {
                 return {
@@ -50,6 +51,7 @@ export function createSQLLinter(
                     },
                     severity,
                     message,
+                    type,
                 } as ILinterWarning;
             }
         });
