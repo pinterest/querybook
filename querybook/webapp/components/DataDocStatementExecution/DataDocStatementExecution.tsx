@@ -135,25 +135,22 @@ export const DataDocStatementExecution: React.FC<IProps> = ({
                 <span className="statement-status-label">Initializing</span>
             );
         } else if (status === StatementExecutionStatus.RUNNING) {
-            const { percent_complete: percentComplete, created_at: createdAt } =
-                statementExecution;
+            const { created_at: createdAt } = statementExecution;
+            const percentComplete = statementExecution.percent_complete ?? 0;
 
             const statusLabel = (
                 <span className="statement-status-label">Running</span>
             );
-            const progressBar = (
-                <div className="statement-execution-progress-wrapper">
-                    <ProgressBar
-                        value={percentComplete}
-                        showValue
-                        isSmall
-                        type="success"
-                    />
-                </div>
-            );
-            const estimatedTimeDOM = (() => {
-                if (percentComplete === 0 || percentComplete === 100) {
-                    return null;
+
+            const estimatedTimeText = (() => {
+                let progressMessage = `${Math.floor(percentComplete || 0)}%`;
+
+                if (
+                    percentComplete == null ||
+                    percentComplete === 0 ||
+                    percentComplete === 100
+                ) {
+                    return progressMessage;
                 }
 
                 const secondsPassedSinceStart =
@@ -161,17 +158,27 @@ export const DataDocStatementExecution: React.FC<IProps> = ({
                 const secondsRemainToComplete =
                     secondsPassedSinceStart / (percentComplete / 100) -
                     secondsPassedSinceStart;
-
-                return (
-                    <div>
-                        Estimated to be completed in{' '}
-                        {formatDuration(
-                            moment.duration(secondsRemainToComplete, 'seconds')
-                        )}
-                        .
-                    </div>
+                const durationToComplete = formatDuration(
+                    moment.duration(secondsRemainToComplete, 'seconds')
                 );
+
+                progressMessage += ` (${durationToComplete} Remaining)`;
+
+                return progressMessage;
             })();
+
+            const progressBar = (
+                <div className="statement-execution-progress-wrapper flex-row">
+                    <ProgressBar
+                        value={percentComplete}
+                        isSmall
+                        type="success"
+                    />
+                    <AccentText className="progress-text">
+                        {estimatedTimeText}
+                    </AccentText>
+                </div>
+            );
 
             contentDOM = (
                 <div className="statement-execution-text-container">
@@ -180,7 +187,6 @@ export const DataDocStatementExecution: React.FC<IProps> = ({
                     </div>
                     {getMetaInfoDOM()}
                     {progressBar}
-                    {estimatedTimeDOM}
                     {getLogDOM()}
                 </div>
             );
