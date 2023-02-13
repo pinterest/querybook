@@ -10,7 +10,14 @@ from werkzeug.exceptions import Forbidden, NotFound
 
 from app.flask_app import flask_app, limiter
 from app.db import get_session
-from const.datasources import DS_PATH
+from const.datasources import (
+    DS_PATH,
+    OK_STATUS_CODE,
+    INVALID_SEMANTIC_STATUS_CODE,
+    ACCESS_RESTRICTED_STATUS_CODE,
+    UNKNOWN_CLIENT_ERROR_STATUS_CODE,
+    UNKNOWN_SERVER_ERROR_STATUS_CODE,
+)
 from lib.logger import get_logger
 from logic.impression import create_impression
 from lib.event_logger import event_logger
@@ -57,7 +64,7 @@ def register(
             elif flask.request.is_json:
                 params = flask.request.json
 
-            status = 200
+            status = OK_STATUS_CODE
             try:
                 kwargs.update(params)
 
@@ -80,18 +87,18 @@ def register(
                 status = e.code
                 results = {"host": _host, "error": e.description}
             except RequestException as e:
-                status = e.status_code or 500
+                status = e.status_code or UNKNOWN_CLIENT_ERROR_STATUS_CODE
                 results = {"host": _host, "error": str(e), "request_exception": True}
             except Exception as e:
                 LOG.error(e, exc_info=True)
-                status = 500
+                status = UNKNOWN_SERVER_ERROR_STATUS_CODE
                 results = {
                     "host": _host,
                     "error": str(e),
                     "traceback": traceback.format_exc(),
                 }
             finally:
-                if status != 200 and "database_session" in flask.g:
+                if status != OK_STATUS_CODE and "database_session" in flask.g:
                     flask.g.database_session.rollback()
             if custom_response:
                 return results
@@ -140,19 +147,21 @@ def admin_only(fn):
         if current_user.is_authenticated and current_user.is_admin:
             return fn(*args, **kwargs)
         else:
-            flask.abort(403)
+            flask.abort(ACCESS_RESTRICTED_STATUS_CODE)
 
     handler.__raw__ = fn
     return handler
 
 
-def api_assert(value, message="Assertion has failed", status_code=500):
+def api_assert(
+    value, message="Assertion has failed", status_code=INVALID_SEMANTIC_STATUS_CODE
+):
     if not value:
         abort_request(status_code, message)
 
 
 def abort_request(
-    status_code=500,
+    status_code=UNKNOWN_CLIENT_ERROR_STATUS_CODE,
     message=None,
 ):
     raise RequestException(message, status_code)

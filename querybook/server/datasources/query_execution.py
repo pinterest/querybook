@@ -21,7 +21,10 @@ from lib.form import validate_form
 from lib.data_doc.meta import var_config_to_var_dict
 from lib.data_doc.doc_types import DataDocMetaVarConfig
 from const.query_execution import QueryExecutionExportStatus, QueryExecutionStatus
-from const.datasources import RESOURCE_NOT_FOUND_STATUS_CODE
+from const.datasources import (
+    RESOURCE_NOT_FOUND_STATUS_CODE,
+    INVALID_SEMANTIC_STATUS_CODE,
+)
 from logic import (
     query_execution as logic,
     datadoc as datadoc_logic,
@@ -458,7 +461,7 @@ def get_templated_query(
             query, var_config_to_var_dict(var_config), engine_id
         )
     except QueryTemplatingError as e:
-        raise RequestException(e)
+        raise RequestException(e, status_code=INVALID_SEMANTIC_STATUS_CODE)
 
 
 @register("/query_execution/templated_query_params/", methods=["POST"])
