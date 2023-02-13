@@ -3,6 +3,10 @@ from flask_login import current_user
 from app.datasource import api_assert
 from app.db import with_session
 from models.board import Board, BoardEditor
+from const.datasources import (
+    ACCESS_RESTRICTED_STATUS_CODE,
+    RESOURCE_NOT_FOUND_STATUS_CODE,
+)
 
 
 class BoardDoesNotExist(Exception):
@@ -58,10 +62,10 @@ def assert_can_edit(board_id, session=None):
         api_assert(
             user_can_edit(board_id, uid=current_user.id, session=session),
             "CANNOT_EDIT_BOARD",
-            403,
+            ACCESS_RESTRICTED_STATUS_CODE,
         )
     except BoardDoesNotExist:
-        api_assert(False, "BOARD_DNE", 404)
+        api_assert(False, "BOARD_DNE", RESOURCE_NOT_FOUND_STATUS_CODE)
 
 
 @with_session
@@ -70,10 +74,10 @@ def assert_can_read(board_id, session=None):
         api_assert(
             user_can_read(board_id, uid=current_user.id, session=session),
             "CANNOT_READ_BOARD",
-            403,
+            ACCESS_RESTRICTED_STATUS_CODE,
         )
     except BoardDoesNotExist:
-        api_assert(False, "BOARD_DNE", 404)
+        api_assert(False, "BOARD_DNE", RESOURCE_NOT_FOUND_STATUS_CODE)
 
 
 @with_session
@@ -85,7 +89,7 @@ def assert_is_owner(board_id, session=None):
         api_assert(
             board.owner_uid == current_user.id,
             "NOT_BOARD_OWNER",
-            403,
+            ACCESS_RESTRICTED_STATUS_CODE,
         )
     except BoardDoesNotExist:
-        api_assert(False, "BOARD_DNE", 404)
+        api_assert(False, "BOARD_DNE", RESOURCE_NOT_FOUND_STATUS_CODE)

@@ -4,6 +4,7 @@ from sqlalchemy import and_
 from app.datasource import api_assert
 from app.db import with_session
 from models.datadoc import DataDoc, DataDocEditor
+from const.datasources import UNAUTHORIZED_STATUS_CODE, RESOURCE_NOT_FOUND_STATUS_CODE
 
 
 class DocDoesNotExist(Exception):
@@ -48,10 +49,10 @@ def assert_can_read(doc_id, session=None):
         api_assert(
             user_can_read(doc_id, uid=current_user.id, session=session),
             "CANNOT_READ_DATADOC",
-            403,
+            UNAUTHORIZED_STATUS_CODE,
         )
     except DocDoesNotExist:
-        api_assert(False, "DOC_DNE", 404)
+        api_assert(False, "DOC_DNE", RESOURCE_NOT_FOUND_STATUS_CODE)
 
 
 @with_session
@@ -60,10 +61,10 @@ def assert_can_write(doc_id, session=None):
         api_assert(
             user_can_write(doc_id, uid=current_user.id, session=session),
             "CANNOT_WRITE_DATADOC",
-            403,
+            UNAUTHORIZED_STATUS_CODE,
         )
     except DocDoesNotExist:
-        api_assert(False, "DOC_DNE", 404)
+        api_assert(False, "DOC_DNE", RESOURCE_NOT_FOUND_STATUS_CODE)
 
 
 @with_session
@@ -75,7 +76,7 @@ def assert_is_owner(doc_id, session=None):
         api_assert(
             doc.owner_uid == current_user.id,
             "NOT_DATADOC_OWNER",
-            403,
+            UNAUTHORIZED_STATUS_CODE,
         )
     except DocDoesNotExist:
-        api_assert(False, "DOC_DNE", 404)
+        api_assert(False, "DOC_DNE", RESOURCE_NOT_FOUND_STATUS_CODE)

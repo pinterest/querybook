@@ -208,7 +208,7 @@ def verify_query_execution_access(execution_id, user_envs, session=None):
             session=session,
         ),
         "CANNOT_ACCESS_QUERY_EXECUTION",
-        403,
+        ACCESS_RESTRICTED_STATUS_CODE,
     )
 
 

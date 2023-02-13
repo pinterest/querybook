@@ -15,6 +15,7 @@ from app.flask_app import cache, limiter
 from const.impression import ImpressionItemType
 from const.metastore import DataTableWarningSeverity, MetadataType
 from const.time import seconds_in_a_day
+from const.datasources import RESOURCE_NOT_FOUND_STATUS_CODE
 from lib.lineage.utils import lineage
 from lib.metastore.utils import DataTableFinder
 from lib.metastore import get_metastore_loader
@@ -75,7 +76,7 @@ def get_table(table_id, with_schema=True, with_column=True, with_warnings=True):
         api_assert(
             table,
             "Table doesn't exist or has been deleted from Metastore",
-            status_code=404,
+            status_code=RESOURCE_NOT_FOUND_STATUS_CODE,
         )
         verify_data_schema_permission(table.schema_id, session=session)
         result = table.to_dict(with_schema, with_column, with_warnings)
