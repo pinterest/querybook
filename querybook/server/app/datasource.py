@@ -13,6 +13,7 @@ from app.db import get_session
 from const.datasources import (
     DS_PATH,
     OK_STATUS_CODE,
+    UNAUTHORIZED_STATUS_CODE,
     INVALID_SEMANTIC_STATUS_CODE,
     ACCESS_RESTRICTED_STATUS_CODE,
     UNKNOWN_CLIENT_ERROR_STATUS_CODE,
@@ -56,7 +57,7 @@ def register(
         @functools.wraps(fn)
         def handler(**kwargs):
             if require_auth and not current_user.is_authenticated:
-                flask.abort(401, description="Login required.")
+                flask.abort(UNAUTHORIZED_STATUS_CODE, description="Login required.")
 
             params = {}
             if flask.request.method == "GET":

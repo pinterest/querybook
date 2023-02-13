@@ -8,6 +8,7 @@ from app.auth.permission import (
     get_data_doc_environment_ids,
     get_board_environment_ids,
 )
+from const.datasources import RESOURCE_NOT_FOUND_STATUS_CODE
 from logic import board as logic
 from logic import user as user_logic
 from logic.board_permission import assert_can_read, assert_can_edit, assert_is_owner
@@ -51,7 +52,9 @@ def get_board_by_id(board_id, environment_id):
 
         assert_can_read(board_id, session=session)
         board = Board.get(id=board_id, session=session)
-        api_assert(board is not None, "Invalid board id", 404)
+        api_assert(
+            board is not None, "Invalid board id", RESOURCE_NOT_FOUND_STATUS_CODE
+        )
         verify_environment_permission([board.environment_id])
         return board.to_dict(
             extra_fields=["docs", "tables", "boards", "queries", "items"]

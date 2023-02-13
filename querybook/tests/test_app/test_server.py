@@ -15,7 +15,7 @@ def test_ping_deploy_api(flask_client, monkeypatch):
             "exists",
             lambda p: True if p == "/tmp/querybook/deploying" else False,
         )
-        assert 503 == flask_client.get("/ping/").status_code
+        assert 423 == flask_client.get("/ping/").status_code
 
 
 def test_four_oh_four(flask_client, fake_user):
