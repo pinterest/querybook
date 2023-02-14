@@ -101,9 +101,9 @@ export const DataDocResource = {
         }>(`/favorite_data_doc/${docId}/`),
     unfavorite: (docId: number) => ds.delete(`/favorite_data_doc/${docId}/`),
 
-    run: (docId: number, sendNotification: boolean = true) =>
+    run: (docId: number, sendNotification: boolean = false) =>
         ds.save<null>(`/datadoc/${docId}/run/`, {
-            sendNotification: sendNotification,
+            send_notification: sendNotification,
         }),
 
     getDAGExport: (docId: number) =>

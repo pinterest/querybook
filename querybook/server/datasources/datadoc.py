@@ -381,7 +381,7 @@ def run_data_doc(id):
 
 
 @register("/datadoc/<int:id>/run/", methods=["POST"])
-def adhoc_run_data_doc(id, sendNotification=True):
+def adhoc_run_data_doc(id, send_notification=False):
     assert_can_write(id)
     verify_data_doc_permission(id)
 
@@ -395,7 +395,7 @@ def adhoc_run_data_doc(id, sendNotification=True):
                 "with": notifier_name,
             }
         ]
-        if sendNotification
+        if send_notification
         else []
     )
 

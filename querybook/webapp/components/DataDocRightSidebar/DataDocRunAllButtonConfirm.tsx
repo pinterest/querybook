@@ -6,25 +6,25 @@ import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
 interface IProps {
     defaultNotification: boolean;
-    handleNotificationChange: (notification: boolean) => void;
+    onNotificationChange: (notification: boolean) => void;
     hasQueryRunning: boolean;
     queryCells: ReturnType<typeof useQueryCells>;
 }
 
 export const DataDocRunAllButtonConfirm: React.FunctionComponent<IProps> = ({
     defaultNotification,
-    handleNotificationChange,
+    onNotificationChange,
     hasQueryRunning,
     queryCells,
 }) => {
     const [notification, setNotification] = useState(defaultNotification);
 
     const internalNotificationChange = useCallback(
-        (value) => {
-            handleNotificationChange(value);
+        (value: boolean) => {
+            onNotificationChange(value);
             setNotification(value);
         },
-        [handleNotificationChange, setNotification]
+        [onNotificationChange, setNotification]
     );
 
     return (
@@ -46,9 +46,7 @@ export const DataDocRunAllButtonConfirm: React.FunctionComponent<IProps> = ({
                     onChange={internalNotificationChange}
                 />
 
-                <span data-balloon-pos={'up'} className="ml4">
-                    Send Notification when Finished
-                </span>
+                <span className="ml4">Send Notification when Finished</span>
             </div>
         </div>
     );
