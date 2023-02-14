@@ -36,7 +36,7 @@ export const DataDocRunAllButton: React.FunctionComponent<IProps> = ({
             message: (
                 <DataDocRunAllButtonConfirm
                     defaultNotification={notification.current}
-                    handleNotificationChange={(value) => {
+                    onNotificationChange={(value) => {
                         notification.current = value;
                     }}
                     hasQueryRunning={hasQueryRunning}
