@@ -6,7 +6,10 @@ from lib.query_executor.clients.hive import HiveClient
 from clients.hms_client import HiveMetastoreClient
 from lib.metastore.loaders.hive_metastore_loader import HMSMetastoreLoader
 from lib.metastore.loaders.form_fileds import load_partitions_field
-from lib.metastore.base_metastore_loader import DataTable, DataColumn
+from lib.metastore.metastore_data_types import (
+    DataTable,
+    DataColumn,
+)
 
 
 class HMSThriftMetastoreLoader(HMSMetastoreLoader):

@@ -10,7 +10,7 @@
     display: inline-flex;
     margin: 2px 0px;
     border-radius: var(--border-radius-sm);
-    cursor: default;
+    cursor: inherit;
 }
 .Tag + .Tag {
     margin-left: 6px;

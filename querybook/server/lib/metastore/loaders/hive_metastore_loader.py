@@ -3,8 +3,8 @@ from lib.form import ExpandableFormField, FormField, FormFieldType, StructFormFi
 from hmsclient.genthrift.hive_metastore.ttypes import NoSuchObjectException
 
 from clients.hms_client import HiveMetastoreClient
-from lib.metastore.base_metastore_loader import (
-    BaseMetastoreLoader,
+from lib.metastore.base_metastore_loader import BaseMetastoreLoader
+from lib.metastore.metastore_data_types import (
     DataTable,
     DataColumn,
 )

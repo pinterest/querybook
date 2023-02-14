@@ -18,6 +18,7 @@ class MetadataMode(Enum):
     READ_ONLY = "read_only"
 
     # On saving, metadata will only be written to querybook db. This is the default mode if not specified.
+    # It also indicates that it will not load this metadata from the metastore.
     WRITE_LOCAL = "write_local"
 
     # On saving, metadata will be written back to metastore, as well as querybook db
@@ -36,6 +37,13 @@ class MetastoreLoaderConfig:
 
     def __init__(self, config: dict[MetadataType, MetadataMode]):
         self._config = {**self._default_config, **config}
+
+    def load_metadata(self, metadataType: MetadataType) -> bool:
+        """Check if the given metadata type will be loaded from metastore"""
+        return (
+            self._config.get(metadataType, MetadataMode.WRITE_LOCAL)
+            != MetadataMode.WRITE_LOCAL
+        )
 
     def to_dict(self):
         return {key.value: value.value for (key, value) in self._config.items()}

@@ -21,7 +21,7 @@ export interface ITagProps {
     withBorder?: boolean;
     color?: string;
 
-    tooltip?: React.ReactNode;
+    tooltip?: string;
     tooltipPos?: TooltipDirection;
 
     onClick?: () => any;

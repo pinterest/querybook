@@ -6,7 +6,12 @@ import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddBu
 import { DataTableTags } from 'components/DataTableTags/DataTableTags';
 import { ImpressionWidget } from 'components/ImpressionWidget/ImpressionWidget';
 import { UserBadge } from 'components/UserBadge/UserBadge';
-import { IDataTable } from 'const/metastore';
+import {
+    IDataTable,
+    IQueryMetastore,
+    MetadataMode,
+    MetadataType,
+} from 'const/metastore';
 import { IMyUserInfo } from 'const/user';
 import * as Utils from 'lib/utils';
 import {
@@ -26,6 +31,7 @@ export interface IDataTableHeader {
     table: IDataTable;
     userInfo: IMyUserInfo;
     tableName: string;
+    metastore: IQueryMetastore;
     updateDataTableGolden: (golden: boolean) => any;
 }
 
@@ -33,6 +39,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
     table,
     tableName,
     userInfo,
+    metastore,
 
     updateDataTableGolden,
 }) => {
@@ -177,7 +184,13 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
             >
                 Tags
             </AccentText>
-            <DataTableTags tableId={table.id} />
+            <DataTableTags
+                tableId={table.id}
+                readonly={
+                    metastore.config[MetadataType.TAG] !==
+                    MetadataMode.WRITE_LOCAL
+                }
+            />
         </div>
     );
 

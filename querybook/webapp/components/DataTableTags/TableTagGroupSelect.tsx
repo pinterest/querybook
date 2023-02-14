@@ -29,11 +29,10 @@ export const TableTagGroupSelect: React.FC<{
             {tags.map((tag) => (
                 <HoverIconTag
                     key={tag}
+                    tagName={tag}
                     iconOnHover={'X'}
                     onIconHoverClick={() => handleTagRemove(tag)}
-                >
-                    <span>{tag}</span>
-                </HoverIconTag>
+                />
             ))}
         </div>
     ) : null;
