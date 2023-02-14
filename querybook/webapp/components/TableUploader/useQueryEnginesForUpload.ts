@@ -25,6 +25,7 @@ export function useMetastoresForUpload() {
                 queryEngines
                     .filter((engine) => engine.feature_params.upload_exporter)
                     .map((engine) => engine.metastore_id)
+                    .filter((metastoreId) => metastoreId != null)
             ),
         [queryEngines]
     );
