@@ -381,11 +381,23 @@ def run_data_doc(id):
 
 
 @register("/datadoc/<int:id>/run/", methods=["POST"])
-def adhoc_run_data_doc(id):
+def adhoc_run_data_doc(id, send_notification=False):
     assert_can_write(id)
     verify_data_doc_permission(id)
 
     notifier_name = get_user_preferred_notifier(current_user.id)
+
+    notifications = (
+        [
+            {
+                "config": {"to_user": [current_user.id]},
+                "on": 0,
+                "with": notifier_name,
+            }
+        ]
+        if send_notification
+        else []
+    )
 
     celery.send_task(
         "tasks.run_datadoc.run_datadoc",
@@ -394,13 +406,7 @@ def adhoc_run_data_doc(id):
             "doc_id": id,
             "user_id": current_user.id,
             "execution_type": QueryExecutionType.ADHOC.value,
-            "notifications": [
-                {
-                    "config": {"to_user": [current_user.id]},
-                    "on": 0,
-                    "with": notifier_name,
-                }
-            ],
+            "notifications": notifications,
         },
     )
 
