@@ -176,13 +176,19 @@ def cancel_query_execution(query_execution_id):
 
     task = run_query_task.AsyncResult(execution.task_id)
 
-    if task.state == "PENDING":
-        # Task is unknown or haven't delivered to worker yet
+    if task.state in (
+        "PENDING",  # Task is unknown or haven't delivered to worker yet
+        "RECEIVED",  # Rare case where task is received but not yet start
+        "RETRY",  # Very unlikely case, because query normally do not retry
+    ):
+
         task.revoke()  # last attempt to cancel it
         cancel_query_and_notify()
     elif task.state == "ABORTED":
+        # In this case, the task is already aborted, but the status is running
+        # We will update the DB status and do nothing about the task itself
         cancel_query_and_notify()
-    else:  # RUNNING, getting STARTED
+    else:  # RUNNING, celery state is STARTED
         # Do not update status and let the worker handle it
         task.abort()
 
