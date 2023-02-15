@@ -66,7 +66,7 @@ class DataTable(NamedTuple):
     partition_keys: List[str] = []
 
     # Custom properties
-    custom_properties: dict = None
+    custom_properties: dict[str, str] = None
 
 
 class DataColumn(NamedTuple):
