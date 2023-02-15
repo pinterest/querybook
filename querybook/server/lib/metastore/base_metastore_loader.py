@@ -344,6 +344,7 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
                 create_table_tags(
                     table_id=table_id,
                     tags=table.tags,
+                    commit=False,
                     session=session,
                 )
             session.commit()
