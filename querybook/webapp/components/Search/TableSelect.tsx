@@ -126,6 +126,7 @@ export const TableSelect: React.FunctionComponent<ITableSelectProps> = ({
                     {tableNames.map((tableName) => (
                         <HoverIconTag
                             key={tableName}
+                            name={tableName}
                             iconOnHover="X"
                             onIconHoverClick={() => {
                                 const newTableNames = tableNames.filter(
@@ -133,9 +134,7 @@ export const TableSelect: React.FunctionComponent<ITableSelectProps> = ({
                                 );
                                 onTableNamesChange(newTableNames);
                             }}
-                        >
-                            <span>{tableName}</span>
-                        </HoverIconTag>
+                        />
                     ))}
                 </div>
             ) : null}

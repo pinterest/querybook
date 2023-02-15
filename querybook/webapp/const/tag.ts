@@ -1,4 +1,5 @@
 export interface ITagMeta {
+    type?: string;
     admin?: boolean;
     color?: string;
     icon?: string;

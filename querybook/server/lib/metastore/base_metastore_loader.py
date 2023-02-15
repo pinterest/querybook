@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod, abstractclassmethod
 import gevent
 import math
-from typing import NamedTuple, List, Dict, Tuple, Optional
+from typing import List, Dict, Tuple, Optional
 import traceback
 
 from app.db import DBSession, with_session
@@ -26,58 +26,12 @@ from logic.metastore import (
     get_schema_by_name,
     get_table_by_schema_id_and_name,
 )
+from logic.tag import create_table_tags
 
+from .metastore_data_types import DataTable, DataColumn
 from .utils import MetastoreTableACLChecker
 
 LOG = get_logger(__name__)
-
-
-class DataSchema(NamedTuple):
-    name: str
-
-
-class DataTable(NamedTuple):
-    name: str
-
-    # The type of table, it can be an arbitrary string
-    type: str = None
-    owner: str = None
-
-    # description from metastore, expect HTML format
-    description: str = None
-
-    # Expected in UTC seconds
-    table_created_at: int = None
-    table_updated_at: int = None
-    table_updated_by: str = None
-
-    # size of table
-    data_size_bytes: int = None
-    # Location of the raw file
-    location: str = None
-
-    # Json arrays of partitions
-    partitions: List = []
-
-    # Store the raw info here
-    raw_description: str = None
-
-    # Arrays of partition keys
-    partition_keys: List[str] = []
-
-    # Custom properties
-    custom_properties: dict[str, str] = None
-
-
-class DataColumn(NamedTuple):
-    name: str
-    type: str
-
-    # column comment from sql query when creating the table
-    comment: str = None
-
-    # user edited description from metastore, expect HTML format
-    description: str = None
 
 
 class BaseMetastoreLoader(metaclass=ABCMeta):
@@ -381,6 +335,15 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
                     comment=column.comment,
                     description=column.description,
                     table_id=table_id,
+                    commit=False,
+                    session=session,
+                )
+
+            # create tags if the metastore is configured to sync tags
+            if self.loader_config.can_load_external_metadata(MetadataType.TAG):
+                create_table_tags(
+                    table_id=table_id,
+                    tags=table.tags,
                     commit=False,
                     session=session,
                 )
