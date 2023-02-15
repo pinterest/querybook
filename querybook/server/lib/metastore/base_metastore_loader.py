@@ -340,7 +340,7 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
                 )
 
             # create tags if the metastore is configured to sync tags
-            if self.loader_config.load_metadata(MetadataType.TAG):
+            if self.loader_config.can_load_external_metadata(MetadataType.TAG):
                 create_table_tags(
                     table_id=table_id,
                     tags=table.tags,

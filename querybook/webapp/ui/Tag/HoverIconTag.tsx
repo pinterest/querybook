@@ -7,70 +7,56 @@ import type { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 import { ITagProps, Tag, TagGroup } from './Tag';
 
 export interface IHoverIconTagProps extends Omit<ITagProps, 'children'> {
-    tagName: string;
-    tagType?: string;
-    tagIcon?: string;
+    name: string;
+    type?: string;
+    icon?: string;
     iconOnHover?: AllLucideIconNames;
     onIconHoverClick?: (e?: React.MouseEvent) => any;
 }
 export const HoverIconTag = React.forwardRef<
     HTMLSpanElement,
     IHoverIconTagProps
->(
-    (
-        {
-            tagName,
-            tagType,
-            tagIcon,
-            iconOnHover,
-            onIconHoverClick,
-            ...tagProps
-        },
-        ref
-    ) => {
-        const hoverDOM = iconOnHover ? (
-            <div className="HoverIconTag-hover" onClick={onIconHoverClick}>
-                <Icon name={iconOnHover} />
-            </div>
-        ) : null;
+>(({ name, type, icon, iconOnHover, onIconHoverClick, ...tagProps }, ref) => {
+    const hoverDOM = iconOnHover ? (
+        <div className="HoverIconTag-hover" onClick={onIconHoverClick}>
+            <Icon name={iconOnHover} />
+        </div>
+    ) : null;
 
-        const className = clsx(tagProps['className'], 'HoverIconTag');
+    const className = clsx(tagProps['className'], 'HoverIconTag');
 
-        const { tooltip, tooltipPos, color, mini, onClick } = tagProps;
+    const iconDOM = icon && (
+        <Icon name={icon as any} size={16} className="mr4" />
+    );
 
-        const iconDOM = tagIcon && (
-            <Icon name={tagIcon as any} size={16} className="mr4" />
-        );
-
-        if (tagType) {
-            return (
-                <span
-                    aria-label={tooltip}
-                    data-balloon-pos={tooltipPos}
-                    onClick={onClick}
-                    ref={ref}
-                    className={className}
-                >
-                    <TagGroup>
-                        <Tag mini={mini}>
-                            {iconDOM}
-                            <span>{tagType}</span>
-                        </Tag>
-                        <Tag mini={mini} highlighted color={color}>
-                            {tagName}
-                            {hoverDOM}
-                        </Tag>
-                    </TagGroup>
-                </span>
-            );
-        }
-
+    if (type) {
+        const { tooltip, tooltipPos, color, mini, onClick, ...extraProps } =
+            tagProps;
         return (
-            <Tag {...tagProps} ref={ref} className={className}>
-                {iconDOM}
-                <span>{tagName}</span>
-                {hoverDOM}
-            </Tag>
+            <TagGroup
+                tooltip={tooltip}
+                tooltipPos={tooltipPos}
+                className={className}
+                onClick={onClick}
+                ref={ref}
+            >
+                <Tag mini={mini}>
+                    {iconDOM}
+                    <span>{type}</span>
+                </Tag>
+                <Tag mini={mini} highlighted color={color} {...extraProps}>
+                    {name}
+                    {hoverDOM}
+                </Tag>
+            </TagGroup>
         );
     }
-);
+
+    return (
+        <Tag {...tagProps} ref={ref} className={className}>
+            {iconDOM}
+            <span>{name}</span>
+            {hoverDOM}
+        </Tag>
+    );
+});

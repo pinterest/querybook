@@ -91,7 +91,7 @@ export const TableTagConfigModal: React.FC<{
                         <SimpleField
                             name="type"
                             type="input"
-                            help="The type of the tag. E.g. table tier, domain"
+                            help="The type of the tag. E.g. table domain"
                         />
                         <SimpleField name="tooltip" type="input" />
                         <SimpleField

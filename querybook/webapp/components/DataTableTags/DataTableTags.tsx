@@ -140,9 +140,9 @@ export const TableTag: React.FC<{
             )}
             <HoverIconTag
                 key={tag.id}
-                tagName={tag.name}
-                tagType={tagMeta.type}
-                tagIcon={tagMeta.icon}
+                name={tag.name}
+                type={tagMeta.type}
+                icon={tagMeta.icon}
                 iconOnHover={canUserDelete ? 'X' : null}
                 onIconHoverClick={canUserDelete ? handleDeleteTag : null}
                 tooltip={tagMeta.tooltip}

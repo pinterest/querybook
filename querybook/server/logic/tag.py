@@ -2,6 +2,7 @@ import datetime
 from app.db import with_session
 from models.tag import Tag, TagItem
 from logic.metastore import update_es_tables_by_id
+from lib.metastore.metastore_data_types import DataTag
 
 
 @with_session
@@ -93,8 +94,8 @@ def delete_tag_from_table(
 
 @with_session
 def create_table_tags(
-    table_id=None,
-    tags=[],
+    table_id: int = None,
+    tags: list[DataTag] = [],
     commit=True,
     session=None,
 ):
@@ -118,12 +119,10 @@ def create_table_tags(
         )
 
         # add a new tag_item to associate with the table
-        tag_item = TagItem.get(table_id=table_id, tag_name=tag.name, session=session)
-        if not tag_item:
-            TagItem.create(
-                {"tag_name": tag.name, "table_id": table_id, "uid": None},
-                session=session,
-            )
+        TagItem.create(
+            {"tag_name": tag.name, "table_id": table_id, "uid": None},
+            session=session,
+        )
 
     if commit:
         session.commit()

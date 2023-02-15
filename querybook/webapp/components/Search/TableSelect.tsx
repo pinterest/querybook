@@ -126,7 +126,7 @@ export const TableSelect: React.FunctionComponent<ITableSelectProps> = ({
                     {tableNames.map((tableName) => (
                         <HoverIconTag
                             key={tableName}
-                            tagName={tableName}
+                            name={tableName}
                             iconOnHover="X"
                             onIconHoverClick={() => {
                                 const newTableNames = tableNames.filter(

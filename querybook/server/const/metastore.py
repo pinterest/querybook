@@ -38,7 +38,7 @@ class MetastoreLoaderConfig:
     def __init__(self, config: dict[MetadataType, MetadataMode]):
         self._config = {**self._default_config, **config}
 
-    def load_metadata(self, metadataType: MetadataType) -> bool:
+    def can_load_external_metadata(self, metadataType: MetadataType) -> bool:
         """Check if the given metadata type will be loaded from metastore"""
         return (
             self._config.get(metadataType, MetadataMode.WRITE_LOCAL)
