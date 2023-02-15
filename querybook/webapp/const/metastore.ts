@@ -58,6 +58,7 @@ export interface IDataTable {
     column_info?: {
         partition_keys?: string[];
     };
+    custom_properties?: Record<string, string>;
 
     schema: number;
     schema_id: number;

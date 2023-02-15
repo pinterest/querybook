@@ -261,6 +261,7 @@ class DataTableInformation(
     description = sql.Column(sql.Text(length=mediumtext_length))
     hive_metastore_description = sql.Column(sql.Text(length=mediumtext_length))
     column_info = sql.Column(sql.JSON)
+    custom_properties = sql.Column(sql.JSON)
 
     def to_dict(self):
         table_information = {
@@ -269,6 +270,7 @@ class DataTableInformation(
             "description": self.description,
             "hive_metastore_description": self.hive_metastore_description,
             "column_info": self.column_info,
+            "custom_properties": self.custom_properties,
         }
         return table_information
 

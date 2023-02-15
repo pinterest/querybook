@@ -267,6 +267,7 @@ def create_table_information(
     earliest_partitions=None,
     hive_metastore_description=None,
     partition_keys=[],
+    custom_properties=None,
     commit=False,
     session=None,
 ):
@@ -284,6 +285,7 @@ def create_table_information(
         earliest_partitions=earliest_partitions,
         hive_metastore_description=hive_metastore_description,
         column_info=column_infomation,
+        custom_properties=custom_properties,
     )
 
     # The reason that we dont add description direclty in
