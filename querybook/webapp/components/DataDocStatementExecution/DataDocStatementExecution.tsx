@@ -134,11 +134,10 @@ export const DataDocStatementExecution: React.FC<IProps> = ({
             );
         } else if (status === StatementExecutionStatus.RUNNING) {
             const percentComplete = statementExecution.percent_complete;
-            const statusLabel =
-                status === StatementExecutionStatus.RUNNING ? (
-                    <span className="statement-status-label">Running</span>
-                ) : null;
-            const progressBar = status === StatementExecutionStatus.RUNNING && (
+            const statusLabel = (
+                <span className="statement-status-label">Running</span>
+            );
+            const progressBar = percentComplete != null && (
                 <div className="statement-execution-progress-wrapper">
                     <ProgressBar
                         value={percentComplete}
