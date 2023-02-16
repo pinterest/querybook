@@ -58,3 +58,6 @@ class DataColumn(NamedTuple):
 
     # user edited description from metastore, expect HTML format
     description: str = None
+
+    # list of column level tags from metastore
+    tags: List[DataTag] = []

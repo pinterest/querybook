@@ -26,7 +26,7 @@ from logic.metastore import (
     get_schema_by_name,
     get_table_by_schema_id_and_name,
 )
-from logic.tag import create_table_tags
+from logic.tag import create_table_tags, create_column_tags
 
 from .metastore_data_types import DataTable, DataColumn
 from .utils import MetastoreTableACLChecker
@@ -312,6 +312,7 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
                 location=table.location,
                 column_count=len(columns),
                 schema_id=schema_id,
+                commit=False,
                 session=session,
             ).id
             create_table_information(
@@ -329,7 +330,7 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
             )
 
             for column in columns:
-                create_column(
+                column_id = create_column(
                     name=column.name,
                     type=column.type,
                     comment=column.comment,
@@ -337,9 +338,18 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
                     table_id=table_id,
                     commit=False,
                     session=session,
-                )
+                ).id
 
-            # create tags if the metastore is configured to sync tags
+                # create tags only if the metastore is configured to sync tags
+                if self.loader_config.can_load_external_metadata(MetadataType.TAG):
+                    create_column_tags(
+                        column_id=column_id,
+                        tags=column.tags,
+                        commit=False,
+                        session=session,
+                    )
+
+            # create tags only if the metastore is configured to sync tags
             if self.loader_config.can_load_external_metadata(MetadataType.TAG):
                 create_table_tags(
                     table_id=table_id,
@@ -347,6 +357,7 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
                     commit=False,
                     session=session,
                 )
+
             session.commit()
             update_table_by_id(table_id, session=session)
             return table_id
