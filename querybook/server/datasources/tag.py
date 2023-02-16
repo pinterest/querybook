@@ -2,7 +2,10 @@ from flask_login import current_user
 
 from app.datasource import register, api_assert
 from app.db import DBSession
-from app.auth.permission import verify_data_table_permission
+from app.auth.permission import (
+    verify_data_table_permission,
+    verify_data_column_permission,
+)
 from logic import metastore as metastore_logic
 from logic import tag as logic
 from models.tag import Tag
@@ -22,8 +25,7 @@ def get_tags_by_table_id(table_id: int):
     methods=["GET"],
 )
 def get_tags_by_column_id(column_id: int):
-    column = metastore_logic.get_column_by_id(column_id)
-    verify_data_table_permission(column.table_id)
+    verify_data_column_permission(column_id)
     return logic.get_tags_by_column_id(column_id=column_id)
 
 
