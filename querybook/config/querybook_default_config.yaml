@@ -48,6 +48,10 @@ OAUTH_USER_PROFILE: ~
 LDAP_CONN: ~
 LDAP_USER_DN: uid={},dc=example,dc=com
 LDAP_UID_FIELD: uid
+LDAP_EMAIL_FIELD: mail
+LDAP_LASTNAME_FIELD: sn
+LDAP_FIRSTNAME_FIELD: givenName
+LDAP_FULLNAME_FIELD: cn
 
 # --------------- Result Store ---------------
 RESULT_STORE_TYPE: db
