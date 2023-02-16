@@ -42,13 +42,9 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
     const [expanded, , toggleExpanded] = useToggleState(false);
     const parsedType = useMemo(() => parseType('', column.type), [column.type]);
 
-    const tagsDOM = (
-        <div className="DataTableTags flex-row">
-            {(columnTags || []).map((tag) => (
-                <TableTag tag={tag} readonly={true} key={tag.id} mini={true} />
-            ))}
-        </div>
-    );
+    const tagsDOM = (columnTags || []).map((tag) => (
+        <TableTag tag={tag} readonly={true} key={tag.id} mini={true} />
+    ));
 
     const userCommentsContent = (
         <EditableTextField
@@ -86,9 +82,11 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
                                 />
                             </KeyContentDisplay>
                         )}
-                        {columnTags && columnTags.length > 0 && (
+                        {tagsDOM.length > 0 && (
                             <KeyContentDisplay keyString="Tags">
-                                {tagsDOM}
+                                <div className="DataTableTags flex-row">
+                                    {tagsDOM}
+                                </div>
                             </KeyContentDisplay>
                         )}
                         {column.comment && (
