@@ -335,7 +335,7 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
                     comment=column.comment,
                     description=column.description,
                     table_id=table_id,
-                    commit=True,
+                    commit=False,
                     session=session,
                 ).id
 

@@ -6,7 +6,7 @@ from lib.metastore.metastore_data_types import DataTag
 
 
 @with_session
-def get_tag_by_table_id(table_id, session=None):
+def get_tags_by_table_id(table_id, session=None):
     return (
         session.query(Tag)
         .join(TagItem)
@@ -17,7 +17,7 @@ def get_tag_by_table_id(table_id, session=None):
 
 
 @with_session
-def get_tag_by_column_id(column_id: int, session=None):
+def get_tags_by_column_id(column_id: int, session=None):
     return (
         session.query(Tag)
         .join(TagItem)
@@ -105,7 +105,7 @@ def delete_tag_from_table(
 
 @with_session
 def create_table_tags(
-    table_id: int = None,
+    table_id: int,
     tags: list[DataTag] = [],
     commit=True,
     session=None,
@@ -143,7 +143,7 @@ def create_table_tags(
 
 @with_session
 def create_column_tags(
-    column_id: int = None,
+    column_id: int,
     tags: list[DataTag] = [],
     commit=True,
     session=None,
