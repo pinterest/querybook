@@ -6,7 +6,6 @@ from app.auth.permission import (
     verify_data_table_permission,
     verify_data_column_permission,
 )
-from logic import metastore as metastore_logic
 from logic import tag as logic
 from models.tag import Tag
 
