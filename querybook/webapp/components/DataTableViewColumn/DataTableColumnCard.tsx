@@ -2,10 +2,13 @@ import { ContentState } from 'draft-js';
 import React, { useMemo } from 'react';
 
 import { DataTableColumnStats } from 'components/DataTableStats/DataTableColumnStats';
+import { TableTag } from 'components/DataTableTags/DataTableTags';
 import { IDataColumn } from 'const/metastore';
+import { useResource } from 'hooks/useResource';
 import { useToggleState } from 'hooks/useToggleState';
 import { Nullable } from 'lib/typescript';
 import { parseType } from 'lib/utils/complex-types';
+import { TableColumnResource } from 'resource/table';
 import { Card } from 'ui/Card/Card';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
 import { Icon } from 'ui/Icon/Icon';
@@ -30,8 +33,22 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
     onEditColumnDescriptionRedirect,
     updateDataColumnDescription,
 }) => {
+    const { data: columnTags } = useResource(
+        React.useCallback(
+            () => TableColumnResource.getTags(column.id),
+            [column.id]
+        )
+    );
     const [expanded, , toggleExpanded] = useToggleState(false);
     const parsedType = useMemo(() => parseType('', column.type), [column.type]);
+
+    const tagsDOM = (
+        <div className="DataTableTags flex-row">
+            {(columnTags || []).map((tag) => (
+                <TableTag tag={tag} readonly={true} key={tag.id} mini={true} />
+            ))}
+        </div>
+    );
 
     const userCommentsContent = (
         <EditableTextField
@@ -67,6 +84,11 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
                                 <DataTableColumnCardNestedType
                                     complexType={parsedType}
                                 />
+                            </KeyContentDisplay>
+                        )}
+                        {columnTags && columnTags.length > 0 && (
+                            <KeyContentDisplay keyString="Tags">
+                                {tagsDOM}
                             </KeyContentDisplay>
                         )}
                         {column.comment && (

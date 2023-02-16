@@ -17,6 +17,17 @@ def get_tag_by_table_id(table_id, session=None):
 
 
 @with_session
+def get_tag_by_column_id(column_id: int, session=None):
+    return (
+        session.query(Tag)
+        .join(TagItem)
+        .filter(TagItem.column_id == column_id)
+        .order_by(Tag.count.desc())
+        .all()
+    )
+
+
+@with_session
 def get_tags_by_keyword(keyword, limit=10, session=None):
     return (
         session.query(Tag)
@@ -99,7 +110,7 @@ def create_table_tags(
     commit=True,
     session=None,
 ):
-    """This function is used for loading tags from metastore."""
+    """This function is used for loading table tags from metastore."""
     # delete all tags from the table
     session.query(TagItem).filter_by(table_id=table_id).delete()
 
@@ -121,6 +132,44 @@ def create_table_tags(
         # add a new tag_item to associate with the table
         TagItem.create(
             {"tag_name": tag.name, "table_id": table_id, "uid": None},
+            session=session,
+        )
+
+    if commit:
+        session.commit()
+    else:
+        session.flush()
+
+
+@with_session
+def create_column_tags(
+    column_id: int = None,
+    tags: list[DataTag] = [],
+    commit=True,
+    session=None,
+):
+    """This function is used for loading column tags from metastore."""
+    # delete all tags from the table
+    session.query(TagItem).filter_by(column_id=column_id).delete()
+
+    for tag in tags:
+        meta = {
+            "type": tag.type,
+            "tooltip": tag.description,
+            "color": tag.color,
+            "admin": True,
+        }
+        # filter out properties with none values
+        meta = {k: v for k, v in meta.items() if v is not None}
+
+        # update or create a new tag if not exist
+        create_or_update_tag(
+            tag_name=tag.name, meta=meta, commit=commit, session=session
+        )
+
+        # add a new tag_item to associate with the table
+        TagItem.create(
+            {"tag_name": tag.name, "column_id": column_id, "uid": None},
             session=session,
         )
 
