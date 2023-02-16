@@ -312,6 +312,7 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
                 location=table.location,
                 column_count=len(columns),
                 schema_id=schema_id,
+                commit=False,
                 session=session,
             ).id
             create_table_information(
