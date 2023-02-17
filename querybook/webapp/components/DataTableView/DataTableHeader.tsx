@@ -57,11 +57,13 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
         [table.id, userInfo.uid]
     );
 
-    const { username, tableOwnerships } = useSelector((state: IStoreState) => ({
-        username: state.user.userInfoById[userInfo.uid].username,
-        tableOwnerships:
-            state.dataSources.dataTableOwnershipByTableId[table.id],
-    }));
+    const { username, tableOwnerships = [] } = useSelector(
+        (state: IStoreState) => ({
+            username: state.user.userInfoById[userInfo.uid].username,
+            tableOwnerships:
+                state.dataSources.dataTableOwnershipByTableId[table.id],
+        })
+    );
     const dbTableOwner = (table.owner || '').split('@')[0];
     const isDBTableOwner = dbTableOwner === username;
     const isTableOwner = (tableOwnerships || []).find(
@@ -131,6 +133,41 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
         />
     ));
 
+    const metastoreOwnerDOM = (metastore.owner_types || []).map((ownerType) => {
+        const ownerships = tableOwnerships.filter(
+            (ownership) => ownership.type === ownerType.name
+        );
+
+        if (ownerships.length === 0) {
+            return null;
+        }
+
+        return (
+            <div className="DataTableHeader-owner mb8" key={ownerType.type}>
+                <div className="DataTableHeader-owner-list flex-row ">
+                    <AccentText
+                        className="header-subtitle mr20 mt4"
+                        weight="bold"
+                        color="lightest"
+                    >
+                        {ownerType.display_name}
+                    </AccentText>
+                    <div className="owner-badges mr8 flex-row gap12">
+                        {ownerships.map((ownership) => (
+                            <UserBadge
+                                key={ownership.uid}
+                                uid={ownership.uid}
+                                mini
+                                cardStyle
+                                groupPopover
+                            />
+                        ))}
+                    </div>
+                </div>
+            </div>
+        );
+    });
+
     // Ownership cannot be removed if owner in db
     const ownerDOM = (
         <div className="DataTableHeader-owner mb8">
@@ -142,7 +179,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
                 >
                     Owners
                 </AccentText>
-                <div className="owner-badges mr8 flex-row">
+                <div className="owner-badges mr8 flex-row gap12">
                     {dbTableOwner && (
                         <UserBadge name={dbTableOwner} mini cardStyle />
                     )}
@@ -198,7 +235,9 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
         <div className="DataTableHeader flex-column mb16">
             {topDOM}
             {titleDOM}
-            {ownerDOM}
+            {metastore.config[MetadataType.OWNER] !== MetadataMode.WRITE_LOCAL
+                ? metastoreOwnerDOM
+                : ownerDOM}
             {tagDOM}
         </div>
     );

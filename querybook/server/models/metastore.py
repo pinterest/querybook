@@ -10,6 +10,7 @@ from const.db import (
     url_length,
     mediumtext_length,
     type_length,
+    owner_type_length,
 )
 from const.metastore import DataTableWarningSeverity
 from lib.sqlalchemy import CRUDMixin, TruncateString
@@ -172,6 +173,9 @@ class DataTable(CRUDMixin, TruncateString("name", "type", "location"), Base):
 
     name = sql.Column(sql.String(length=name_length), index=True)
     type = sql.Column(sql.String(length=name_length), index=True)
+
+    # This field is no longer being used, keep it here for backward compatibility only.
+    # Table ownership will be fully managed by DataTableOwnership
     owner = sql.Column(sql.String(length=name_length))
 
     table_created_at = sql.Column(sql.DateTime)
@@ -324,6 +328,7 @@ class DataTableOwnership(Base):
     uid = sql.Column(
         sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"), nullable=False
     )
+    type = sql.Column(sql.String(owner_type_length))
 
     def to_dict(self):
         item = {
@@ -331,6 +336,7 @@ class DataTableOwnership(Base):
             "data_table_id": self.data_table_id,
             "created_at": self.created_at,
             "uid": self.uid,
+            "type": self.type,
         }
         return item
 

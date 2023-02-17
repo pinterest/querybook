@@ -10,9 +10,6 @@
         .owner-badges {
             flex-wrap: wrap;
             min-height: 30px;
-            .UserBadge + .IconButton {
-                margin-left: 12px;
-            }
         }
     }
     .DataTableHeader-tags {

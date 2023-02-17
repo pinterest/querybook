@@ -18,6 +18,7 @@ from logic.metastore import (
     create_table,
     delete_table,
     create_table_information,
+    create_table_ownerships,
     create_column,
     delete_column,
     iterate_data_schema,
@@ -28,7 +29,7 @@ from logic.metastore import (
 )
 from logic.tag import create_table_tags, create_column_tags
 
-from .metastore_data_types import DataTable, DataColumn
+from .metastore_data_types import DataTable, DataColumn, DataOwnerType
 from .utils import MetastoreTableACLChecker
 
 LOG = get_logger(__name__)
@@ -56,6 +57,35 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
             str: external metastore link of the table metadata.
         """
         return None
+
+    @classmethod
+    def get_table_owner_types(cls) -> list[DataOwnerType]:
+        """Return all the owner types the meatstore supports.
+
+        Override this method if loading table owners from metastore is enabled
+        and your metastore supports owner types.
+
+        E.g.
+        [
+            {
+                "name": "CREATOR",
+                "display_name": "Table Creator",
+                "description": "Person who created the table",
+            },
+            {
+                "name": "BUSINESS_OWNER",
+                "display_name": "Owner",
+                "description": "Person or group who is responsible for business related aspects of the table",
+            },
+        ]
+        """
+        return [
+            {
+                "name": None,
+                "display_name": "Owners",
+                "description": "People who own the table",
+            },
+        ]
 
     @with_session
     def sync_table(
@@ -358,6 +388,14 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
                     session=session,
                 )
 
+            # load owners if the metastore is configured to sync table owners
+            if self.loader_config.can_load_external_metadata(MetadataType.OWNER):
+                create_table_ownerships(
+                    table_id=table_id,
+                    owners=table.owners,
+                    commit=False,
+                    session=session,
+                )
             session.commit()
             update_table_by_id(table_id, session=session)
             return table_id

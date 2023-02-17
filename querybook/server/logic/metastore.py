@@ -5,6 +5,8 @@ from sqlalchemy.orm import aliased
 
 from app.db import with_session
 from const.elasticsearch import ElasticsearchItem
+from lib.logger import get_logger
+from lib.metastore.metastore_data_types import DataOwner
 from lib.sqlalchemy import update_model_fields
 from models.metastore import (
     DataSchema,
@@ -19,6 +21,9 @@ from models.metastore import (
 )
 from models.query_execution import QueryExecution
 from tasks.sync_elasticsearch import sync_elasticsearch
+from logic.user import get_user_by_name
+
+LOG = get_logger(__file__)
 
 
 @with_session
@@ -391,6 +396,33 @@ def create_table_ownership(table_id, uid, commit=True, session=None):
         update_es_tables_by_id(table_id)
     table_ownership.id
     return table_ownership
+
+
+@with_session
+def create_table_ownerships(
+    table_id: int, owners: list[DataOwner] = [], commit=True, session=None
+):
+    """This function is used for loading owners from metastore."""
+    # delete all the ownerships of the table first
+    session.query(DataTableOwnership).filter_by(data_table_id=table_id).delete()
+
+    for owner in owners:
+        user = get_user_by_name(owner.username)
+        if not user:
+            LOG.error(
+                f"Failed to find user or group: {owner} when loading table owners."
+            )
+            continue
+        # add table ownership
+        table_ownership = DataTableOwnership(
+            data_table_id=table_id, uid=user.id, type=owner.type
+        )
+        session.add(table_ownership)
+
+    if commit:
+        session.commit()
+    else:
+        session.flush()
 
 
 @with_session

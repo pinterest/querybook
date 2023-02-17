@@ -13,12 +13,28 @@ class DataTag(NamedTuple):
     color: str = None
 
 
+class DataOwnerType(NamedTuple):
+    name: str
+    display_name: str
+    description: str = None
+
+
+class DataOwner(NamedTuple):
+    username: str
+    # If provided, the type here must be one of the type names from metastore loader
+    type: str = None
+
+
 class DataTable(NamedTuple):
     name: str
 
     # The type of table, it can be an arbitrary string
     type: str = None
+
+    # This is the legacy field, which will be replaced by owners field below.
     owner: str = None
+    # list of owner usernames
+    owners: list[DataOwner] = []
 
     # description from metastore, expect HTML format
     description: str = None
