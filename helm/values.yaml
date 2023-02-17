@@ -12,10 +12,6 @@ worker:
     limits:
       memory: 900Mi
       cpu: 1
-  nodeSelector: {}
-  affinity: {}
-  tolerations: []
-  podAnnotations: {}
 
 scheduler:
   replicaCount: 1
@@ -31,10 +27,6 @@ scheduler:
     limits:
       memory: '200Mi'
       cpu: '100m'
-  nodeSelector: {}
-  affinity: {}
-  tolerations: []
-  podAnnotations: {}
 
 web:
   replicaCount: 1
@@ -46,6 +38,7 @@ web:
   service:
     serviceType: ClusterIP
     servicePort: 80
+    containerPort: 10001
   resources:
     requests:
       memory: 1Gi
@@ -53,10 +46,6 @@ web:
     limits:
       memory: 3Gi
       cpu: 1
-  nodeSelector: {}
-  affinity: {}
-  tolerations: []
-  podAnnotations: {}
 
 mysql:
   enabled: true
@@ -82,10 +71,6 @@ mysql:
     limits:
       memory: '500Mi'
       cpu: '300m'
-  nodeSelector: {}
-  affinity: {}
-  tolerations: []
-  podAnnotations: {}
 
 redis:
   enabled: true
@@ -105,10 +90,6 @@ redis:
     limits:
       memory: '1Gi'
       cpu: '300m'
-  nodeSelector: {}
-  affinity: {}
-  tolerations: []
-  podAnnotations: {}
 
 elasticsearch:
   enabled: true
@@ -137,10 +118,29 @@ elasticsearch:
     limits:
       memory: '1Gi'
       cpu: '200m'
-  nodeSelector: {}
-  affinity: {}
-  tolerations: []
-  podAnnotations: {}
+
+# assigning pods to node configs. will be applied to all the querybook pods
+nodeSelector: {}
+affinity: {}
+tolerations: []
+podAnnotations: {}
+
+ingress:
+  enabled: true
+  ingressClassName: ~
+  annotations: {}
+  path: /*
+  pathType: ImplementationSpecific
+  hosts:
+  - <your-querybook-app-domain>
+  tls: []
+  # - secretName: <your-querybook-tls-secret>
+  #   hosts:
+  #     - <your-querybook-app-domain>
+
+extraEnv:
+  PUBLIC_URL: https://<your-querybook-app-domain>
+  # any other Querybook configuration env. variables can be injected from here
 
 secret:
   flask_secret_key: SOME_RANDOM_SECRET_KEY
