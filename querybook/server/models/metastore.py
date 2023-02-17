@@ -10,7 +10,6 @@ from const.db import (
     url_length,
     mediumtext_length,
     type_length,
-    owner_type_length,
 )
 from const.metastore import DataTableWarningSeverity
 from lib.sqlalchemy import CRUDMixin, TruncateString
@@ -328,7 +327,7 @@ class DataTableOwnership(Base):
     uid = sql.Column(
         sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"), nullable=False
     )
-    type = sql.Column(sql.String(owner_type_length))
+    type = sql.Column(sql.String(name_length))
 
     def to_dict(self):
         item = {

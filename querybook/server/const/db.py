@@ -9,4 +9,3 @@ description_length = 5000
 text_length = 65535
 mediumtext_length = 16777215
 url_length = 2083
-owner_type_length = 64

@@ -407,7 +407,7 @@ def create_table_ownerships(
     session.query(DataTableOwnership).filter_by(data_table_id=table_id).delete()
 
     for owner in owners:
-        user = get_user_by_name(owner.username)
+        user = get_user_by_name(owner.username, session=session)
         if not user:
             LOG.error(
                 f"Failed to find user or group: {owner} when loading table owners."

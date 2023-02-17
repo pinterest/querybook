@@ -1,6 +1,6 @@
 import { last } from 'lodash';
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
 import { DataTableTags } from 'components/DataTableTags/DataTableTags';
@@ -13,6 +13,7 @@ import {
     MetadataType,
 } from 'const/metastore';
 import { IMyUserInfo } from 'const/user';
+import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import * as Utils from 'lib/utils';
 import {
     createDataTableOwnership,
@@ -57,7 +58,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
         [table.id, userInfo.uid]
     );
 
-    const { username, tableOwnerships = [] } = useSelector(
+    const { username, tableOwnerships = [] } = useShallowSelector(
         (state: IStoreState) => ({
             username: state.user.userInfoById[userInfo.uid].username,
             tableOwnerships:
