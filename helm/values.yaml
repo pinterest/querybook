@@ -38,6 +38,7 @@ web:
   service:
     serviceType: ClusterIP
     servicePort: 80
+    containerPort: 10001
   resources:
     requests:
       memory: 1Gi

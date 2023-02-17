@@ -35,7 +35,7 @@ spec:
           imagePullPolicy: {{ .Values.web.image.pullPolicy }}
           env:
             - name: PORT
-              value: '8081'
+              value: "{{ .Values.web.service.containerPort }}"
             - name: FLASK_SECRET_KEY
               valueFrom:
                 secretKeyRef:
@@ -61,7 +61,7 @@ spec:
               value: {{ $value | quote }}
             {{- end }}
           ports:
-            - containerPort: 8081
+            - containerPort: {{ .Values.web.service.containerPort }}
           resources:
             {{- toYaml .Values.web.resources | nindent 12 }}
       restartPolicy: Always
