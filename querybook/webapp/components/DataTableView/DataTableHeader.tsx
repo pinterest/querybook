@@ -149,6 +149,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
                         className="header-subtitle mr20 mt4"
                         weight="bold"
                         color="lightest"
+                        tooltip={ownerType.description}
                     >
                         {ownerType.display_name}
                     </AccentText>
