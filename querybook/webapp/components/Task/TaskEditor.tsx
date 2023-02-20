@@ -11,6 +11,7 @@ import { sendConfirm } from 'lib/querybookUI';
 import {
     cronToRecurrence,
     recurrenceOnYup,
+    recurrenceStepYup,
     recurrenceToCron,
     recurrenceTypes,
     validateCronForRecurrrence,
@@ -50,6 +51,7 @@ const taskFormSchema = Yup.object().shape({
                   minute: Yup.number().min(0).max(59),
                   recurrence: Yup.string().oneOf(recurrenceTypes),
                   on: recurrenceOnYup,
+                  step: recurrenceStepYup,
               })
             : schema
     ),

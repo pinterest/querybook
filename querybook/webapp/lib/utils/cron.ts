@@ -7,12 +7,17 @@ export interface IRecurrence {
 
     recurrence: RecurrenceType;
     on: IRecurrenceOn;
+    step: IRecurrenceStep;
 }
 
 export interface IRecurrenceOn {
     dayMonth?: number[];
     month?: number[];
     dayWeek?: number[];
+}
+
+export interface IRecurrenceStep {
+    hour?: number;
 }
 
 export const recurrenceTypes = [
@@ -30,6 +35,8 @@ export function cronToRecurrence(cron: string): IRecurrence {
 
     let recurrencePolicy: RecurrenceType = 'daily';
     let on = {};
+    let step = {};
+
     if (dayMonth !== '*' && month !== '*') {
         recurrencePolicy = 'yearly';
         on = {
@@ -42,8 +49,13 @@ export function cronToRecurrence(cron: string): IRecurrence {
     } else if (dayWeek !== '*') {
         recurrencePolicy = 'weekly';
         on = { dayWeek: dayWeek.split(',').map((d) => Number(d)) };
-    } else if (hour === '*') {
+    } else if (hour.startsWith('*/') || hour === '*') {
         recurrencePolicy = 'hourly';
+        if (hour.startsWith('*/')) {
+            step = { hour: Number(hour.split('*/')[1]) };
+        } else {
+            step = { hour: Number(0) };
+        }
     }
 
     const recurrence: IRecurrence = {
@@ -52,6 +64,7 @@ export function cronToRecurrence(cron: string): IRecurrence {
 
         recurrence: recurrencePolicy,
         on,
+        step,
     };
 
     return recurrence;
@@ -64,6 +77,7 @@ export function recurrenceToCron(recurrence: IRecurrence): string {
     let dayMonth = '*';
     let month = '*';
     let dayWeek = '*';
+    let hourly = '';
 
     if (recurrence.recurrence === 'yearly') {
         month = recurrence.on.month.join(',');
@@ -73,7 +87,8 @@ export function recurrenceToCron(recurrence: IRecurrence): string {
     } else if (recurrence.recurrence === 'weekly') {
         dayWeek = recurrence.on.dayWeek.join(',');
     } else if (recurrence.recurrence === 'hourly') {
-        hour = '*';
+        hourly = recurrence.step.hour.toString();
+        hour = hourly === '0' ? '*' : '*/' + hourly;
     }
 
     return `${minute} ${hour} ${dayMonth} ${month} ${dayWeek}`;
@@ -137,12 +152,16 @@ export function getRecurrenceLocalTimeString(
 }
 
 export function validateCronForRecurrrence(cron: string) {
-    if (cron.includes('/')) {
+    const cronValArr = cron.split(' ');
+    if (cronValArr.length < 5) {
         return false;
     }
 
-    const cronValArr = cron.split(' ');
-    if (cronValArr.length < 5) {
+    const [minuteStep, _, monthStep, monthDayStep, weekDayStep] =
+        cronValArr.map((s) => s.includes('/'));
+
+    // Recurrence does not support step values except for hour
+    if (minuteStep || monthStep || monthDayStep || weekDayStep) {
         return false;
     }
 
@@ -185,5 +204,17 @@ export const recurrenceOnYup = Yup.object().when(
         }
 
         return Yup.object().shape(onSchema);
+    }
+);
+
+export const recurrenceStepYup = Yup.object().when(
+    'recurrence',
+    (recurrence: RecurrenceType, schema) => {
+        const stepSchema: any = {};
+        if (recurrence === 'hourly') {
+            stepSchema.hour = Yup.number().min(1).max(23).min(1).required();
+        }
+
+        return Yup.object().shape(stepSchema);
     }
 );
