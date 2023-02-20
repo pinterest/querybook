@@ -21,8 +21,11 @@ function formatItemsSentence(items: string[]) {
     }
 }
 
-const hourly = ({ minute }: IRecurrence) =>
-    `at ${minute} minutes past the hour, every hour, daily`;
+const hourly = (cronRecurrence: IRecurrence) => {
+    const minute = cronRecurrence.minute;
+    const step = cronRecurrence.step.hour;
+    return `every ${step} hours at ${minute} minutes `;
+};
 
 const daily = (cronRecurrence: IRecurrence) => {
     const localTime = getRecurrenceLocalTimeString(cronRecurrence, 'hh:mm a');
