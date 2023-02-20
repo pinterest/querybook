@@ -46,7 +46,9 @@ export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
             <div className="flex-row">
                 {recurrence.recurrence === 'hourly'
                     ? [
-                          <div className="editor-text mr12">{'Every'}</div>,
+                          <div className="editor-text mr12">
+                              {'Every day, every'}
+                          </div>,
                           <TimePicker
                               allowEmpty={false}
                               value={moment().hour(recurrence.step.hour)}

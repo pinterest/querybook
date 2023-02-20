@@ -24,7 +24,7 @@ function formatItemsSentence(items: string[]) {
 const hourly = (cronRecurrence: IRecurrence) => {
     const minute = cronRecurrence.minute;
     const step = cronRecurrence.step.hour;
-    return `every ${step} hours at ${minute} minutes `;
+    return `every day, every ${step} hours at ${minute} minutes `;
 };
 
 const daily = (cronRecurrence: IRecurrence) => {
