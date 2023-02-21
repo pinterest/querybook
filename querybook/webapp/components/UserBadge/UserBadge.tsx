@@ -84,7 +84,11 @@ export const UserBadge: React.FunctionComponent<IProps> = ({
                 >
                     <UserNameComponent userInfo={userInfo} loading={loading} />
                 </AccentText>
-                <AccentText className="handle" size="small" color="light">
+                <AccentText
+                    className="handle one-line-ellipsis"
+                    size="small"
+                    color="light"
+                >
                     @{userName} {deletedText}
                 </AccentText>
             </div>
