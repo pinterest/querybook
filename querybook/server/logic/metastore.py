@@ -1,27 +1,27 @@
 import datetime
-from models.admin import QueryEngineEnvironment
-from sqlalchemy import func, and_
-from sqlalchemy.orm import aliased
 
 from app.db import with_session
 from const.elasticsearch import ElasticsearchItem
+from const.metastore import DataOwner
 from lib.logger import get_logger
-from lib.metastore.metastore_data_types import DataOwner
 from lib.sqlalchemy import update_model_fields
+from logic.user import get_user_by_name
+from models.admin import QueryEngineEnvironment
 from models.metastore import (
+    DataJobMetadata,
     DataSchema,
     DataTable,
-    DataTableInformation,
     DataTableColumn,
+    DataTableColumnStatistics,
+    DataTableInformation,
     DataTableOwnership,
-    DataJobMetadata,
     DataTableQueryExecution,
     DataTableStatistics,
-    DataTableColumnStatistics,
 )
 from models.query_execution import QueryExecution
+from sqlalchemy import and_, func
+from sqlalchemy.orm import aliased
 from tasks.sync_elasticsearch import sync_elasticsearch
-from logic.user import get_user_by_name
 
 LOG = get_logger(__file__)
 
