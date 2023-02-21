@@ -42,5 +42,10 @@
             align-items: center;
             text-align: right;
         }
+
+        .user-badge-wrapper,
+        .user-badge-wrapper .UserBadge-names {
+            overflow: hidden;
+        }
     }
 }
