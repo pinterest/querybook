@@ -78,10 +78,13 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
             },
             {
                 "name": "BUSINESS_OWNER",
-                "display_name": "Owner",
+                "display_name": "Owners",
                 "description": "Person or group who is responsible for business related aspects of the table",
             },
         ]
+
+
+        The `display_name` will be rendered as the field label in the detailed table view, which is `Owners` by default.
         """
         return [
             {
