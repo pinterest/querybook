@@ -87,11 +87,9 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
         The `display_name` will be rendered as the field label in the detailed table view, which is `Owners` by default.
         """
         return [
-            {
-                "name": None,
-                "display_name": "Owners",
-                "description": "People who own the table",
-            },
+            DataOwnerType(
+                name=None, display_name="Owners", description="People who own the table"
+            )
         ]
 
     @with_session

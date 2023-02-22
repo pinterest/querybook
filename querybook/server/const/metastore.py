@@ -16,6 +16,7 @@ class DataTag(NamedTuple):
 
 class DataOwnerType(NamedTuple):
     name: str
+    # It will be rendered as the field label in the detailed table view
     display_name: str
     description: str = None
 
