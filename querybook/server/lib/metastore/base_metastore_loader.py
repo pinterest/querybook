@@ -71,16 +71,16 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
 
         E.g.
         [
-            {
-                "name": "CREATOR",
-                "display_name": "Table Creator",
-                "description": "Person who created the table",
-            },
-            {
-                "name": "BUSINESS_OWNER",
-                "display_name": "Owners",
-                "description": "Person or group who is responsible for business related aspects of the table",
-            },
+            DataOwnerType(
+                name="CREATOR",
+                display_name="Table Creator",
+                description="Person who created the table",
+            ),
+            DataOwnerType(
+                name="BUSINESS_OWNER",
+                display_name="Owners",
+                description="Person or group who is responsible for business related aspects of the table",
+            ),
         ]
 
 
