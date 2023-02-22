@@ -127,7 +127,7 @@ def _start_query_execution_task(
 ):
     previous_query_status, previous_query_execution_id = previous_query_result
     if previous_query_status != QueryExecutionStatus.DONE.value:
-        raise Exception(get_datadoc_error_message(previous_query_execution_id, cell_id))
+        raise Exception(get_datadoc_error_message(previous_query_execution_id))
 
     with DBSession() as session:
         query_execution = qe_logic.create_query_execution(
@@ -154,38 +154,26 @@ def _start_query_execution_task(
 
 
 @with_session
-def get_datadoc_error_message(query_execution_id, data_cell_id=None, session=None):
-    if not data_cell_id:
-        _, data_cell_id = qe_logic.get_datadoc_id_from_query_execution_id(
-            query_execution_id, session=session
-        )[0]
+def get_datadoc_error_message(query_execution_id, session=None):
+    _, data_cell_id = qe_logic.get_datadoc_id_from_query_execution_id(
+        query_execution_id, session=session
+    )[0]
     data_cell_name = datadoc_logic.get_data_cell_by_id(
         data_cell_id, session=session
-    ).meta.get("title")
-    if not data_cell_name:
-        data_cell_name = f"Untitled Cell Id [{data_cell_id}]"
+    ).meta.get("title", f"Untitled Cell Id [{data_cell_id}]")
     query_execution_error = qe_logic.get_query_execution_error(
         query_execution_id, session=session
     )
-    query_execution_error_message = None
-    if query_execution_error:
-        if query_execution_error.error_message_extracted:
-            query_execution_error_message = (
-                query_execution_error.error_message_extracted
-            )
-        else:
-            raw_error_msg = query_execution_error.error_message
-            query_execution_error_message = (
-                (raw_error_msg[:description_length])
-                if len(raw_error_msg) > description_length
-                else raw_error_msg
-            )
-
+    query_execution_error_message = (
+        query_execution_error.error_message_extracted
+        if query_execution_error.error_message_extracted
+        else query_execution_error.error_message
+    )
     error_msg = (
         f'Failure in "{data_cell_name}": {query_execution_error_message}'
         if query_execution_error_message is not None
         else GENERIC_QUERY_FAILURE_MSG
-    )
+    )[:description_length]
     return error_msg
 
 
