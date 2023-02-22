@@ -1,14 +1,10 @@
 import unittest
+from datetime import datetime
 from unittest import TestCase
 
 import boto3
-from datetime import datetime
-
+from const.metastore import DataColumn, DataTable
 from lib.metastore.loaders.glue_data_catalog_loader import GlueDataCatalogLoader
-from lib.metastore.metastore_data_types import (
-    DataTable,
-    DataColumn,
-)
 
 moto_import_failed = False
 try:

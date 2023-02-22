@@ -1,8 +1,9 @@
 import datetime
+
 from app.db import with_session
-from models.tag import Tag, TagItem
+from const.metastore import DataTag
 from logic.metastore import update_es_tables_by_id
-from lib.metastore.metastore_data_types import DataTag
+from models.tag import Tag, TagItem
 
 
 @with_session
