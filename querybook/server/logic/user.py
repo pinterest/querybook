@@ -2,7 +2,7 @@ from sqlalchemy import func
 
 from app.db import with_session
 from const.elasticsearch import ElasticsearchItem
-from const.metastore import UserGroup
+from const.user import UserGroup
 from const.user_roles import UserRoleType
 from lib.config import get_config_value
 from lib.logger import get_logger
@@ -167,17 +167,30 @@ def create_or_update_user_group(user_group: UserGroup, commit=True, session=None
             session=session,
         )
 
-    # get new member user ids by name
-    new_group_members = (
+    # get current existing member user ids
+    existing_group_members = (
+        session.query(UserGroupMember).filter(UserGroupMember.gid == group.id).all()
+    )
+    existing_group_member_ids = [m.uid for m in existing_group_members]
+
+    # get the latest member user ids by name
+    group_members = (
         session.query(User).filter(User.username.in_(user_group.members)).all()
     )
+    group_member_ids = [m.id for m in group_members]
 
-    # delete old group members
-    session.query(UserGroupMember).filter(UserGroupMember.gid == group.id).delete()
+    # delete group members not in the group anymore
+    session.query(UserGroupMember).filter(UserGroupMember.gid == group.id).filter(
+        UserGroupMember.uid.notin_(group_member_ids)
+    ).delete()
 
     # add new group members
     session.add_all(
-        [UserGroupMember(gid=group.id, uid=user.id) for user in new_group_members]
+        [
+            UserGroupMember(gid=group.id, uid=user_id)
+            for user_id in group_member_ids
+            if user_id not in existing_group_member_ids
+        ]
     )
 
     if commit:

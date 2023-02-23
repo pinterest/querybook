@@ -55,9 +55,9 @@ class DataTable(NamedTuple):
     location: str = None
 
     # Json arrays of partitions
-    partitions: list = []
-    earliest_partitions: list = None
-    latest_partitions: list = None
+    partitions: list[str] = []
+    earliest_partitions: list[str] = None
+    latest_partitions: list[str] = None
 
     # Store the raw info here
     raw_description: str = None
@@ -81,15 +81,6 @@ class DataColumn(NamedTuple):
 
     # list of column level tags from metastore
     tags: list[DataTag] = []
-
-
-class UserGroup(NamedTuple):
-    name: str
-    display_name: str
-    description: str
-    email: str
-    # list of user names
-    members: list[str]
 
 
 class DataTableWarningSeverity(Enum):
