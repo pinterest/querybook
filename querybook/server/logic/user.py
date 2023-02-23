@@ -1,17 +1,13 @@
 from sqlalchemy import func
 
 from app.db import with_session
+from const.elasticsearch import ElasticsearchItem
+from const.metastore import UserGroup
+from const.user_roles import UserRoleType
 from lib.config import get_config_value
 from lib.logger import get_logger
-from const.user_roles import UserRoleType
-from const.elasticsearch import ElasticsearchItem
-from models.user import (
-    User,
-    UserSetting,
-    UserRole,
-)
+from models.user import User, UserRole, UserSetting, UserGroupMember
 from tasks.sync_elasticsearch import sync_elasticsearch
-
 
 LOG = get_logger(__file__)
 user_settings_config = get_config_value("user_setting")
@@ -142,6 +138,52 @@ def update_user_properties(uid: int, commit=True, session=None, **properties):
 def delete_user(uid, session=None):
     # user cannot be deleted
     pass
+
+
+@with_session
+def create_or_update_user_group(user_group: UserGroup, commit=True, session=None):
+    group = get_user_by_name(user_group.name, session=session)
+    fields = {
+        "username": user_group.name,
+        "fullname": user_group.display_name,
+        "email": user_group.email,
+        "is_group": True,
+        "properties": {"description": user_group.description},
+    }
+
+    if not group:
+        # create a new group
+        group = User.create(
+            fields=fields,
+            commit=commit,
+            session=session,
+        )
+    else:
+        # update the group
+        group = User.update(
+            id=group.id,
+            fields=fields,
+            commit=commit,
+            session=session,
+        )
+
+    # get new member user ids by name
+    new_group_members = (
+        session.query(User).filter(User.username.in_(user_group.members)).all()
+    )
+
+    # delete old group members
+    session.query(UserGroupMember).filter(UserGroupMember.gid == group.id).delete()
+
+    # add new group members
+    session.add_all(
+        [UserGroupMember(gid=group.id, uid=user.id) for user in new_group_members]
+    )
+
+    if commit:
+        session.commit()
+    else:
+        session.flush()
 
 
 """

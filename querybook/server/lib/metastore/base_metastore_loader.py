@@ -11,6 +11,7 @@ from const.metastore import (
     DataTable,
     MetadataType,
     MetastoreLoaderConfig,
+    UserGroup,
 )
 from lib.form import AllFormField
 from lib.logger import get_logger
@@ -353,8 +354,12 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
             create_table_information(
                 data_table_id=table_id,
                 description=table.description,
-                latest_partitions=json.dumps((table.partitions or [])[-10:]),
-                earliest_partitions=json.dumps((table.partitions or [])[:10]),
+                latest_partitions=json.dumps(
+                    table.latest_partitions or (table.partitions or [])[-10:]
+                ),
+                earliest_partitions=json.dumps(
+                    table.earliest_partitions or (table.partitions or [])[:10]
+                ),
                 hive_metastore_description=table.raw_description,
                 partition_keys=table.partition_keys,
                 custom_properties=table.custom_properties,
@@ -478,6 +483,14 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
             Tuple[DataTable, List[DataColumn]] -- Return [null, null] if not found
         """
         pass
+
+    def get_all_user_groups(self) -> list[UserGroup]:
+        """Override this method to get all user groups from metastore.
+
+        Returns:
+            list[UserGroup]: a list of user groups.
+        """
+        return []
 
     @abstractclassmethod
     def get_metastore_params_template(self) -> AllFormField:
