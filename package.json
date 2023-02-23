@@ -97,7 +97,7 @@
         "sass": "^1.50.0",
         "smooth-scroll-into-view-if-needed": "^1.1.27",
         "socket.io-client": "^4.5.2",
-        "sql-formatter": "^12.0.4",
+        "sql-formatter": "^12.1.2",
         "styled-components": "5.3.6",
         "typescript": "4.4.4",
         "webpack": "5.65.0",
