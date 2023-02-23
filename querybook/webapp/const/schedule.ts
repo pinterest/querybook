@@ -74,6 +74,11 @@ export interface IDataDocScheduleNotification {
     };
 }
 
+export interface IDataDocScheduleRetry {
+    enabled: boolean;
+    max_retries?: number;
+    delay_sec?: number;
+}
 export interface IDataDocScheduleKwargs {
     doc_id?: number;
     user_id?: number;
@@ -83,6 +88,7 @@ export interface IDataDocScheduleKwargs {
         exporter_name?: string;
         exporter_params?: Record<string, any>;
     }>;
+    retry?: IDataDocScheduleRetry;
 }
 
 export interface IDataDocTaskSchedule extends ITaskSchedule {

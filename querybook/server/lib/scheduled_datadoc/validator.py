@@ -10,10 +10,11 @@ class InvalidScheduleException(Exception):
     pass
 
 
-valid_schedule_config_keys = ["exports", "notifications"]
+valid_schedule_config_keys = ["exports", "notifications", "retry"]
 valid_export_config_keys = ["exporter_cell_id", "exporter_name", "exporter_params"]
 valid_notification_keys = ["with", "on", "config"]
 valid_notification_config_keys = ["to", "to_user"]
+valid_retry_config_keys = ["enabled", "max_retries", "delay_sec"]
 
 
 def validate_datadoc_schedule_config(schedule_config):
@@ -21,6 +22,7 @@ def validate_datadoc_schedule_config(schedule_config):
         validate_dict_keys(schedule_config, valid_schedule_config_keys)
         validate_notifications_config(schedule_config.get("notifications", []))
         validate_exporters_config(schedule_config.get("exports", []))
+        validate_retry_config(schedule_config.get("retry", {}))
     except InvalidScheduleException as e:
         return False, str(e)
     return True, ""
@@ -81,3 +83,10 @@ def _get_exporter(export_config):
         return get_exporter(exporter_name)
     except ValueError:
         raise InvalidScheduleException(f"Invalid exporter {exporter_name}")
+
+
+def validate_retry_config(retry_config):
+    if not retry_config:
+        return
+
+    validate_dict_keys(retry_config, valid_retry_config_keys)

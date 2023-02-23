@@ -29,17 +29,21 @@ LOG = get_task_logger(__name__)
     acks_late=True,
 )
 def run_query_task(
-    self, query_execution_id, execution_type=QueryExecutionType.ADHOC.value
+    self,
+    query_execution_id,
+    execution_type=QueryExecutionType.ADHOC.value,
+    celery_task=None,
 ):
     executor = None
     error_message = None
     query_execution_status = QueryExecutionStatus.INITIALIZED
+    celery_task = celery_task if celery_task is not None else self
 
     try:
         executor = create_executor_from_execution(
-            query_execution_id, celery_task=self, execution_type=execution_type
+            query_execution_id, celery_task=celery_task, execution_type=execution_type
         )
-        run_executor_until_finish(self, executor)
+        run_executor_until_finish(celery_task, executor)
     except SoftTimeLimitExceeded:
         # SoftTimeLimitExceeded
         # This exception happens when query has been running for more than

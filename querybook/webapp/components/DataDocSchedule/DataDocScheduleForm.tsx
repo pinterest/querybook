@@ -9,6 +9,7 @@ import type { IQueryResultExporter } from 'const/queryExecution';
 import {
     IDataDocScheduleKwargs,
     IDataDocScheduleNotification,
+    IDataDocScheduleRetry,
     NotifyOn,
 } from 'const/schedule';
 import { getExporterAuthentication } from 'lib/result-export';
@@ -85,6 +86,11 @@ const scheduleFormSchema = Yup.object().shape({
                 exporter_params: Yup.object(),
             })
         ),
+        retry: Yup.object().shape({
+            enabled: Yup.boolean().required(),
+            max_retries: Yup.number(),
+            retry_delay: Yup.number(),
+        }),
     }),
 });
 
@@ -109,6 +115,7 @@ interface IScheduleFormValues {
     kwargs: {
         notifications: IDataDocScheduleNotification[];
         exports: IDataDocScheduleKwargs['exports'];
+        retry?: IDataDocScheduleRetry;
     };
 }
 
@@ -143,6 +150,11 @@ export const DataDocScheduleForm: React.FunctionComponent<
               kwargs: {
                   exports: [],
                   notifications: [],
+                  retry: {
+                      enabled: false,
+                      max_retries: 2,
+                      delay_sec: 60,
+                  },
               },
           }
         : {
@@ -166,8 +178,15 @@ export const DataDocScheduleForm: React.FunctionComponent<
                           ],
                       },
                   })),
+                  retry: kwargs.retry ?? {
+                      enabled: false,
+                      max_retries: 2,
+                      delay_sec: 60,
+                  },
               },
           };
+
+    console.log('formValues', formValues);
 
     return (
         <Formik
@@ -217,6 +236,13 @@ export const DataDocScheduleForm: React.FunctionComponent<
             }) => {
                 const enabledField = !isCreateForm && (
                     <SimpleField label="Enabled" name="enabled" type="toggle" />
+                );
+
+                const retryField = (
+                    <>
+                        <FormSectionHeader>Retry</FormSectionHeader>
+                        <ScheduleRetryForm />
+                    </>
                 );
 
                 const notificationField = (
@@ -281,6 +307,7 @@ export const DataDocScheduleForm: React.FunctionComponent<
                                         }
                                     />
                                     {enabledField}
+                                    {retryField}
                                     {notificationField}
                                     {exportField}
 
@@ -432,6 +459,59 @@ const ScheduleNotifactionsForm: React.FC<{
                 );
             }}
         />
+    );
+};
+
+const ScheduleRetryForm: React.FC = () => {
+    const { values } = useFormikContext<IScheduleFormValues>();
+
+    const retryValue = values.kwargs.retry ?? { enabled: false };
+
+    const retryCount = [1, 2, 3, 4, 5].map((retryValue) => ({
+        label: <span>{retryValue}</span>,
+        value: retryValue,
+    }));
+
+    const delayCount = [0, 15, 30, 60, 120, 300].map((delayValue) => ({
+        label: <span>{delayValue}</span>,
+        value: delayValue,
+    }));
+
+    return (
+        <>
+            <SimpleField
+                label="Retry on Failure"
+                name="kwargs.retry.enabled"
+                type="toggle"
+            />
+            {retryValue.enabled && (
+                <>
+                    <SimpleField
+                        help={() => (
+                            <div>
+                                The maximum number of retry attempts after the
+                                first attempt.
+                            </div>
+                        )}
+                        label="Max Retries"
+                        name="kwargs.retry.max_retries"
+                        type="react-select"
+                        options={retryCount}
+                        className="flex1"
+                    />
+                    <SimpleField
+                        help={() => (
+                            <div>The delay between each retry, in seconds.</div>
+                        )}
+                        label="Retry Delay (sec)"
+                        name="kwargs.retry.delay_sec"
+                        type="react-select"
+                        options={delayCount}
+                        className="flex1"
+                    />
+                </>
+            )}
+        </>
     );
 };
 
