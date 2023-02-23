@@ -11,7 +11,6 @@ from const.metastore import (
     DataTable,
     MetadataType,
     MetastoreLoaderConfig,
-    UserGroup,
 )
 from lib.form import AllFormField
 from lib.logger import get_logger
@@ -483,14 +482,6 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
             Tuple[DataTable, List[DataColumn]] -- Return [null, null] if not found
         """
         pass
-
-    def get_all_user_groups(self) -> list[UserGroup]:
-        """Override this method to get all user groups from metastore.
-
-        Returns:
-            list[UserGroup]: a list of user groups.
-        """
-        return []
 
     @abstractclassmethod
     def get_metastore_params_template(self) -> AllFormField:

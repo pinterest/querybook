@@ -18,7 +18,6 @@ from .poll_engine_status import poll_engine_status
 from .presto_hive_function_scrapper import presto_hive_function_scrapper
 from .db_clean_up_jobs import run_all_db_clean_up_jobs
 from .disable_scheduled_docs import disable_scheduled_docs
-from .sync_user_groups import sync_user_groups
 
 LOG = get_logger(__file__)
 
@@ -41,7 +40,6 @@ presto_hive_function_scrapper
 run_all_db_clean_up_jobs
 run_sample_query
 disable_scheduled_docs
-sync_user_groups
 
 LOG = get_task_logger(__name__)
 
