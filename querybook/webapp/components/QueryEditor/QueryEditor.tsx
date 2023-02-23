@@ -277,7 +277,12 @@ export const QueryEditor: React.FC<
                     );
                     editorRef.current?.setValue(formattedQuery);
                 } catch (e) {
-                    toast.error('Failed to format query.');
+                    const errorMessage = e.message ?? '';
+                    // The error message from sql-formatter is huge, and usually only the first line is helpful.
+                    const firstLine =
+                        errorMessage.substring(0, errorMessage.indexOf('\n')) ||
+                        errorMessage;
+                    toast.error(firstLine || 'Failed to format query.');
                 }
             },
             [language]
