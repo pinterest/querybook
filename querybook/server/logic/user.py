@@ -171,27 +171,28 @@ def create_or_update_user_group(user_group: UserGroup, commit=True, session=None
     existing_group_members = (
         session.query(UserGroupMember).filter(UserGroupMember.gid == group.id).all()
     )
-    existing_group_member_ids = [m.uid for m in existing_group_members]
+    existing_group_member_ids = set([m.uid for m in existing_group_members])
 
     # get the latest member user ids by name
     group_members = (
         session.query(User).filter(User.username.in_(user_group.members)).all()
     )
-    group_member_ids = [m.id for m in group_members]
+    group_member_ids = set([m.id for m in group_members])
+
+    members_to_delete = list(existing_group_member_ids - group_member_ids)
+    members_to_add = list(group_member_ids - existing_group_member_ids)
 
     # delete group members not in the group anymore
-    session.query(UserGroupMember).filter(UserGroupMember.gid == group.id).filter(
-        UserGroupMember.uid.notin_(group_member_ids)
-    ).delete()
+    if members_to_delete:
+        session.query(UserGroupMember).filter(UserGroupMember.gid == group.id).filter(
+            UserGroupMember.uid.in_(members_to_delete)
+        ).delete()
 
     # add new group members
-    session.add_all(
-        [
-            UserGroupMember(gid=group.id, uid=user_id)
-            for user_id in group_member_ids
-            if user_id not in existing_group_member_ids
-        ]
-    )
+    if members_to_add:
+        session.add_all(
+            [UserGroupMember(gid=group.id, uid=user_id) for user_id in members_to_add]
+        )
 
     if commit:
         session.commit()
