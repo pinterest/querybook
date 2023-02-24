@@ -60,6 +60,7 @@ import { Message } from 'ui/Message/Message';
 
 import { DataDocCellControl } from './DataDocCellControl';
 import { DataDocContentContainer } from './DataDocContentContainer';
+import { DataDocDeletePreview } from './DataDocDeletePreview';
 import { DataDocError } from './DataDocError';
 import { DataDocHeader } from './DataDocHeader';
 import { DataDocLoading } from './DataDocLoading';
@@ -427,9 +428,18 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                     }
                 };
                 if (shouldConfirm) {
+                    let cellName = '';
+                    if ('title' in cell.meta) {
+                        cellName = cell.meta.title
+                            ? ` "${cell.meta.title}"`
+                            : cellName;
+                    }
                     sendConfirm({
-                        header: 'Delete Cell?',
-                        message: 'Deleted cells cannot be recovered',
+                        header: `Delete ${
+                            cell.cell_type[0].toUpperCase() +
+                            cell.cell_type.slice(1).toLowerCase()
+                        } Cell${cellName}?`,
+                        message: <DataDocDeletePreview cell={cell} />,
                         onConfirm: deleteCell,
                         onHide: resolve,
                         confirmColor: 'cancel',
