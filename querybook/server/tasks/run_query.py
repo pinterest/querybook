@@ -68,7 +68,10 @@ def run_query_task(
             if executor and query_execution_status == QueryExecutionStatus.DONE:
                 log_query_per_table_task.delay(query_execution_id)
 
-    return query_execution_status.value if executor is not None else None
+    return (
+        query_execution_status.value if executor is not None else None,
+        query_execution_id,
+    )
 
 
 def run_executor_until_finish(celery_task, executor):
