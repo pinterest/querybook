@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { decorate } from 'core-decorators';
 import { ContentState } from 'draft-js';
-import { findIndex } from 'lodash';
+import { findIndex, capitalize } from 'lodash';
 import { bind, debounce } from 'lodash-decorators';
 import memoizeOne from 'memoize-one';
 import React from 'react';
@@ -435,10 +435,9 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                             : cellName;
                     }
                     sendConfirm({
-                        header: `Delete ${
-                            cell.cell_type[0].toUpperCase() +
-                            cell.cell_type.slice(1).toLowerCase()
-                        } Cell${cellName}?`,
+                        header: `Delete ${capitalize(
+                            cell.cell_type
+                        )} Cell${cellName}?`,
                         message: <DataDocDeletePreview cell={cell} />,
                         onConfirm: deleteCell,
                         onHide: resolve,
