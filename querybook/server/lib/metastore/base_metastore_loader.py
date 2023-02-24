@@ -353,8 +353,12 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
             create_table_information(
                 data_table_id=table_id,
                 description=table.description,
-                latest_partitions=json.dumps((table.partitions or [])[-10:]),
-                earliest_partitions=json.dumps((table.partitions or [])[:10]),
+                latest_partitions=json.dumps(
+                    table.latest_partitions or (table.partitions or [])[-10:]
+                ),
+                earliest_partitions=json.dumps(
+                    table.earliest_partitions or (table.partitions or [])[:10]
+                ),
                 hive_metastore_description=table.raw_description,
                 partition_keys=table.partition_keys,
                 custom_properties=table.custom_properties,

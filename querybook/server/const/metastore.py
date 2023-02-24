@@ -55,7 +55,9 @@ class DataTable(NamedTuple):
     location: str = None
 
     # Json arrays of partitions
-    partitions: list = []
+    partitions: list[str] = []
+    earliest_partitions: list[str] = None
+    latest_partitions: list[str] = None
 
     # Store the raw info here
     raw_description: str = None
