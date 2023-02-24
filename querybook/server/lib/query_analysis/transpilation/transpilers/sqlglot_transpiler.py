@@ -17,6 +17,7 @@ QUERYBOOK_TO_SQLGLOT_LANGUAGE_MAPPING = {
     "sqlite": "sqlite",
     "snowflake": "snowflake",
     # different name
+    "mssql": "tsql",
     "postgresql": "postgres",
     "sparksql": "spark",
 }
