@@ -125,7 +125,7 @@ function ExpandableFormField<T extends []>({
         if (value == null) {
             onChange('', [] as any);
         }
-    }, [value]);
+    }, [value, onChange]);
 
     if (!Array.isArray(value)) {
         return <div className="ExpandableFormField">Invalid Field</div>;
@@ -174,17 +174,15 @@ function StructFormField<T extends Record<string, unknown>>({
     value: T;
     onChange: onChangeFunc<T>;
 }) {
-    const fieldsDOM = Object.entries(formField.fields).map(
-        ([key, subField]) => (
-            <FormField key={key} stacked label={titleize(key)}>
-                <SmartForm
-                    formField={subField}
-                    value={value[key]}
-                    onChange={prependOnChangePath(key, onChange)}
-                />
-            </FormField>
-        )
-    );
+    const fieldsDOM = formField.fields.map(([key, subField]) => (
+        <FormField key={key} stacked label={titleize(key)}>
+            <SmartForm
+                formField={subField}
+                value={value[key]}
+                onChange={prependOnChangePath(key, onChange)}
+            />
+        </FormField>
+    ));
 
     return <>{fieldsDOM}</>;
 }

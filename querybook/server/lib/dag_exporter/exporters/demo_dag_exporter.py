@@ -72,8 +72,8 @@ class DemoDAGExporter(BaseDAGExporter):
     @property
     def dag_exporter_meta(self):
         return StructFormField(
-            name=FormField(description="dag name"),
-            description=FormField(description="dag description"),
+            ("name", FormField(description="dag name")),
+            ("description", FormField(description="dag description")),
         )
 
     @with_session

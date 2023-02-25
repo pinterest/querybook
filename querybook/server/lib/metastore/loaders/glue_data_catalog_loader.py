@@ -26,13 +26,16 @@ class GlueDataCatalogLoader(BaseMetastoreLoader):
     @classmethod
     def get_metastore_params_template(cls):
         return StructFormField(
-            catalog_id=FormField(
-                required=True,
-                description="Enter the Glue Data Catalog ID",
-                regex=r"^\d{12}$",
+            (
+                "catalog_id",
+                FormField(
+                    required=True,
+                    description="Enter the Glue Data Catalog ID",
+                    regex=r"^\d{12}$",
+                ),
             ),
-            region=FormField(required=True, description="Enter the AWS Region"),
-            load_partitions=load_partitions_field,
+            ("region", FormField(required=True, description="Enter the AWS Region")),
+            ("load_partitions", load_partitions_field),
         )
 
     def get_all_schema_names(self) -> List[str]:

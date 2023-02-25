@@ -26,7 +26,7 @@ interface IExpandableFormField extends IBaseFormField {
 
 interface IStructFormField extends IBaseFormField {
     field_type: 'struct';
-    fields: Record<string, AllFormField>;
+    fields: Array<[name: string, field: AllFormField]>;
 }
 
 type AllFormField = IFormField | IExpandableFormField | IStructFormField;
