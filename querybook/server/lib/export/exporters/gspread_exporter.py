@@ -94,16 +94,25 @@ class GoogleSheetsExporter(BaseExporter):
     @property
     def export_form(self):
         return StructFormField(
-            sheet_url=FormField(
-                description="Optional, if not provided a new sheet will be created."
+            (
+                "sheet_url",
+                FormField(
+                    description="Optional, if not provided a new sheet will be created."
+                ),
             ),
-            worksheet_title=FormField(
-                description='Defaults to "Sheet1"',
-                helper="Title of the worksheet, if not found then a sheet will be created",
+            (
+                "worksheet_title",
+                FormField(
+                    description='Defaults to "Sheet1"',
+                    helper="Title of the worksheet, if not found then a sheet will be created",
+                ),
             ),
-            start_cell=FormField(
-                description="The top left cell position where data will be filled. Defaults to A1",
-                regex="^[A-Z]{1,3}[1-9][0-9]*$",
+            (
+                "start_cell",
+                FormField(
+                    description="The top left cell position where data will be filled. Defaults to A1",
+                    regex="^[A-Z]{1,3}[1-9][0-9]*$",
+                ),
             ),
         )
 

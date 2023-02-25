@@ -27,15 +27,18 @@ class HMSMetastoreLoader(BaseMetastoreLoader):
     @classmethod
     def get_metastore_params_template(cls):
         return StructFormField(
-            hms_connection=ExpandableFormField(
-                of=FormField(
-                    required=True,
-                    description="Put url to hive metastore server here",
-                    field_type=FormFieldType.String,
+            (
+                "hms_connection",
+                ExpandableFormField(
+                    of=FormField(
+                        required=True,
+                        description="Put url to hive metastore server here",
+                        field_type=FormFieldType.String,
+                    ),
+                    min=1,
                 ),
-                min=1,
             ),
-            load_partitions=load_partitions_field,
+            ("load_partitions", load_partitions_field),
         )
 
     def get_all_schema_names(self) -> List[str]:

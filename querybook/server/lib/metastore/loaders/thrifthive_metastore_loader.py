@@ -17,31 +17,41 @@ class HMSThriftMetastoreLoader(HMSMetastoreLoader):
     @classmethod
     def get_metastore_params_template(cls):
         return StructFormField(
-            connection_string=FormField(
-                required=True,
-                description="Put your JDBC connection string here",
-                regex="^(?:jdbc:)?hive2:\\/\\/([\\w.-]+(?:\\:\\d+)?(?:,[\\w.-]+(?:\\:\\d+)?)*)\\/(\\w*)((?:;[\\w.-]+=[\\w.-]+)*)(\\?[\\w.-]+=[\\w.-]+(?:;[\\w.-]+=[\\w.-]+)*)?(\\#[\\w.-]+=[\\w.-]+(?:;[\\w.-]+=[\\w.-]+)*)?$",  # noqa: E501
-                helper="""
-        <p>
-        Format
-        jdbc:hive2://&lt;host1&gt;:&lt;port1&gt;,&lt;host2&gt;:&lt;port2&gt;/dbName;sess_var_list?hive_conf_list#hive_var_list
-        </p>
-        <p>Currently support zookeeper in session var, and will pass any conf variables to HS2</p>
-        <p>See
-            <a href="https://cwiki.apache.org/confluence/display/Hive/HiveServer2+Clients#HiveServer2Clients-JDBC">
-                here
-            </a> for more details.
-        </p>""",
-            ),
-            username=FormField(regex="\\w+"),
-            password=FormField(hidden=True),
-            hms_connection=ExpandableFormField(
-                of=FormField(
-                    required=True, description="Put url to hive metastore server here"
+            (
+                "hive_resource_manager",
+                FormField(
+                    description="Provide resource manager link here to provide insights"
                 ),
-                min=1,
             ),
-            load_partitions=load_partitions_field,
+            (
+                "connection_string",
+                FormField(
+                    required=True,
+                    description="Put your JDBC connection string here",
+                    regex="^(?:jdbc:)?hive2:\\/\\/([\\w.-]+(?:\\:\\d+)?(?:,[\\w.-]+(?:\\:\\d+)?)*)\\/(\\w*)((?:;[\\w.-]+=[\\w.-]+)*)(\\?[\\w.-]+=[\\w.-]+(?:;[\\w.-]+=[\\w.-]+)*)?(\\#[\\w.-]+=[\\w.-]+(?:;[\\w.-]+=[\\w.-]+)*)?$",  # noqa: E501
+                    helper="""
+<p>
+Format
+jdbc:hive2://&lt;host1&gt;:&lt;port1&gt;,&lt;host2&gt;:&lt;port2&gt;/dbName;sess_var_list?hive_conf_list#hive_var_list
+</p>
+<p>Currently support zookeeper in session var, and will pass any conf variables to HS2</p>
+<p>See [here](https://cwiki.apache.org/confluence/display/Hive/HiveServer2+Clients#HiveServer2Clients-JDBC) for more details.
+</p>""",
+                ),
+            ),
+            ("username", FormField(regex="\\w+")),
+            ("password", FormField(hidden=True)),
+            (
+                "hms_connection",
+                ExpandableFormField(
+                    of=FormField(
+                        required=True,
+                        description="Put url to hive metastore server here",
+                    ),
+                    min=1,
+                ),
+            ),
+            ("load_partitions", load_partitions_field),
         )
 
     def get_table_and_columns(
