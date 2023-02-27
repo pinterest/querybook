@@ -164,6 +164,7 @@ class QueryMetastore(CRUDMixin, Base):
             "id": self.id,
             "name": self.name,
             "config": loader_class.loader_config.to_dict(),
+            "owner_types": loader_class.get_table_owner_types(),
         }
 
     def to_dict_admin(self):

@@ -124,7 +124,7 @@ export const TableTag: React.FC<{
     );
 
     return (
-        <>
+        <div className="TableTag">
             {canUserUpdate && (
                 <ContextMenu
                     anchorRef={tagRef}
@@ -138,9 +138,11 @@ export const TableTag: React.FC<{
                     onHide={() => setShowConfigModal(false)}
                 />
             )}
-
             <HoverIconTag
                 key={tag.id}
+                name={tag.name}
+                type={tagMeta.type}
+                icon={tagMeta.icon}
                 iconOnHover={canUserDelete ? 'X' : null}
                 onIconHoverClick={canUserDelete ? handleDeleteTag : null}
                 tooltip={tagMeta.tooltip}
@@ -148,18 +150,8 @@ export const TableTag: React.FC<{
                 color={tagMeta.color}
                 onClick={handleTagClick}
                 ref={tagRef}
-                withBorder={tagMeta.admin}
                 mini={mini}
-            >
-                {tagMeta.icon && (
-                    <Icon
-                        name={tagMeta.icon as any}
-                        size={16}
-                        className="mr4"
-                    />
-                )}
-                <span>{tag.name}</span>
-            </HoverIconTag>
-        </>
+            />
+        </div>
     );
 };

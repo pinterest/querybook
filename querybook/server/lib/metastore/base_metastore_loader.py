@@ -1,80 +1,42 @@
-from abc import ABCMeta, abstractmethod, abstractclassmethod
-import gevent
 import math
-from typing import NamedTuple, List, Dict, Tuple, Optional
 import traceback
+from abc import ABCMeta, abstractclassmethod, abstractmethod
+from typing import Dict, List, Optional, Tuple
 
+import gevent
 from app.db import DBSession, with_session
-from const.metastore import MetadataType, MetastoreLoaderConfig
-from lib.logger import get_logger
-
+from const.metastore import (
+    DataColumn,
+    DataOwnerType,
+    DataTable,
+    MetadataType,
+    MetastoreLoaderConfig,
+)
 from lib.form import AllFormField
+from lib.logger import get_logger
 from lib.utils import json
 from lib.utils.utils import with_exception
-from logic.elasticsearch import update_table_by_id, delete_es_table_by_id
+from logic.elasticsearch import delete_es_table_by_id, update_table_by_id
 from logic.metastore import (
-    create_schema,
-    delete_schema,
-    create_table,
-    delete_table,
-    create_table_information,
     create_column,
+    create_schema,
+    create_table,
+    create_table_information,
+    create_table_ownerships,
     delete_column,
-    iterate_data_schema,
-    get_table_by_schema_id,
+    delete_schema,
+    delete_table,
     get_column_by_table_id,
     get_schema_by_name,
+    get_table_by_schema_id,
     get_table_by_schema_id_and_name,
+    iterate_data_schema,
 )
+from logic.tag import create_column_tags, create_table_tags
 
 from .utils import MetastoreTableACLChecker
 
 LOG = get_logger(__name__)
-
-
-class DataSchema(NamedTuple):
-    name: str
-
-
-class DataTable(NamedTuple):
-    name: str
-
-    # The type of table, it can be an arbitrary string
-    type: str = None
-    owner: str = None
-
-    # description from metastore, expect HTML format
-    description: str = None
-
-    # Expected in UTC seconds
-    table_created_at: int = None
-    table_updated_at: int = None
-    table_updated_by: str = None
-
-    # size of table
-    data_size_bytes: int = None
-    # Location of the raw file
-    location: str = None
-
-    # Json arrays of partitions
-    partitions: List = []
-
-    # Store the raw info here
-    raw_description: str = None
-
-    # Arrays of partition keys
-    partition_keys: List[str] = []
-
-
-class DataColumn(NamedTuple):
-    name: str
-    type: str
-
-    # column comment from sql query when creating the table
-    comment: str = None
-
-    # user edited description from metastore, expect HTML format
-    description: str = None
 
 
 class BaseMetastoreLoader(metaclass=ABCMeta):
@@ -99,6 +61,36 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
             str: external metastore link of the table metadata.
         """
         return None
+
+    @classmethod
+    def get_table_owner_types(cls) -> list[DataOwnerType]:
+        """Return all the owner types the meatstore supports.
+
+        Override this method if loading table owners from metastore is enabled
+        and your metastore supports owner types.
+
+        E.g.
+        [
+            DataOwnerType(
+                name="CREATOR",
+                display_name="Table Creator",
+                description="Person who created the table",
+            ),
+            DataOwnerType(
+                name="BUSINESS_OWNER",
+                display_name="Owners",
+                description="Person or group who is responsible for business related aspects of the table",
+            ),
+        ]
+
+
+        The `display_name` will be rendered as the field label in the detailed table view, which is `Owners` by default.
+        """
+        return [
+            DataOwnerType(
+                name=None, display_name="Owners", description="People who own the table"
+            )
+        ]
 
     @with_session
     def sync_table(
@@ -355,15 +347,21 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
                 location=table.location,
                 column_count=len(columns),
                 schema_id=schema_id,
+                commit=False,
                 session=session,
             ).id
             create_table_information(
                 data_table_id=table_id,
                 description=table.description,
-                latest_partitions=json.dumps((table.partitions or [])[-10:]),
-                earliest_partitions=json.dumps((table.partitions or [])[:10]),
+                latest_partitions=json.dumps(
+                    table.latest_partitions or (table.partitions or [])[-10:]
+                ),
+                earliest_partitions=json.dumps(
+                    table.earliest_partitions or (table.partitions or [])[:10]
+                ),
                 hive_metastore_description=table.raw_description,
                 partition_keys=table.partition_keys,
+                custom_properties=table.custom_properties,
                 session=session,
             )
             delete_column_not_in_metastore(
@@ -371,12 +369,39 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
             )
 
             for column in columns:
-                create_column(
+                column_id = create_column(
                     name=column.name,
                     type=column.type,
                     comment=column.comment,
                     description=column.description,
                     table_id=table_id,
+                    commit=False,
+                    session=session,
+                ).id
+
+                # create tags only if the metastore is configured to sync tags
+                if self.loader_config.can_load_external_metadata(MetadataType.TAG):
+                    create_column_tags(
+                        column_id=column_id,
+                        tags=column.tags,
+                        commit=False,
+                        session=session,
+                    )
+
+            # create tags only if the metastore is configured to sync tags
+            if self.loader_config.can_load_external_metadata(MetadataType.TAG):
+                create_table_tags(
+                    table_id=table_id,
+                    tags=table.tags,
+                    commit=False,
+                    session=session,
+                )
+
+            # load owners if the metastore is configured to sync table owners
+            if self.loader_config.can_load_external_metadata(MetadataType.OWNER):
+                create_table_ownerships(
+                    table_id=table_id,
+                    owners=table.owners,
                     commit=False,
                     session=session,
                 )

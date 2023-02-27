@@ -2,12 +2,9 @@ from datetime import datetime
 from typing import Dict, List, Tuple
 
 from clients.glue_client import GlueDataCatalogClient
-from lib.form import StructFormField, FormField
-from lib.metastore.base_metastore_loader import (
-    BaseMetastoreLoader,
-    DataTable,
-    DataColumn,
-)
+from const.metastore import DataColumn, DataTable
+from lib.form import FormField, StructFormField
+from lib.metastore.base_metastore_loader import BaseMetastoreLoader
 from lib.metastore.loaders.form_fileds import load_partitions_field
 
 

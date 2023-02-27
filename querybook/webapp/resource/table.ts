@@ -177,6 +177,7 @@ export const TableColumnResource = {
 
         return ds.update<IDataColumn>(`/column/${columnId}/`, params);
     },
+    getTags: (columnId: number) => ds.fetch<ITag[]>(`/column/${columnId}/tag/`),
 };
 
 export const TableLineageResource = {

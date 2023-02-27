@@ -1,15 +1,28 @@
 import datetime
+
 from app.db import with_session
-from models.tag import Tag, TagItem
+from const.metastore import DataTag
 from logic.metastore import update_es_tables_by_id
+from models.tag import Tag, TagItem
 
 
 @with_session
-def get_tag_by_table_id(table_id, session=None):
+def get_tags_by_table_id(table_id, session=None):
     return (
         session.query(Tag)
         .join(TagItem)
         .filter(TagItem.table_id == table_id)
+        .order_by(Tag.count.desc())
+        .all()
+    )
+
+
+@with_session
+def get_tags_by_column_id(column_id: int, session=None):
+    return (
+        session.query(Tag)
+        .join(TagItem)
+        .filter(TagItem.column_id == column_id)
         .order_by(Tag.count.desc())
         .all()
     )
@@ -28,19 +41,19 @@ def get_tags_by_keyword(keyword, limit=10, session=None):
 
 
 @with_session
-def create_or_update_tag(tag_name, commit=True, session=None):
+def create_or_update_tag(tag_name, meta={}, commit=True, session=None):
     tag = Tag.get(name=tag_name, session=session)
 
     if not tag:
         tag = Tag.create(
-            {"name": tag_name, "count": 1, "meta": {}},
+            {"name": tag_name, "count": 1, "meta": meta},
             commit=commit,
             session=session,
         )
     else:
         tag = Tag.update(
             id=tag.id,
-            fields={"count": tag.count + 1},
+            fields={"count": tag.count + 1, "meta": meta},
             skip_if_value_none=True,
             commit=commit,
             session=session,
@@ -87,5 +100,81 @@ def delete_tag_from_table(
     if commit:
         session.commit()
         update_es_tables_by_id(tag_item.table_id)
+    else:
+        session.flush()
+
+
+@with_session
+def create_table_tags(
+    table_id: int,
+    tags: list[DataTag] = [],
+    commit=True,
+    session=None,
+):
+    """This function is used for loading table tags from metastore."""
+    # delete all tags from the table
+    session.query(TagItem).filter_by(table_id=table_id).delete()
+
+    for tag in tags:
+        meta = {
+            "type": tag.type,
+            "tooltip": tag.description,
+            "color": tag.color,
+            "admin": True,
+        }
+        # filter out properties with none values
+        meta = {k: v for k, v in meta.items() if v is not None}
+
+        # update or create a new tag if not exist
+        create_or_update_tag(
+            tag_name=tag.name, meta=meta, commit=commit, session=session
+        )
+
+        # add a new tag_item to associate with the table
+        TagItem.create(
+            {"tag_name": tag.name, "table_id": table_id, "uid": None},
+            session=session,
+        )
+
+    if commit:
+        session.commit()
+    else:
+        session.flush()
+
+
+@with_session
+def create_column_tags(
+    column_id: int,
+    tags: list[DataTag] = [],
+    commit=True,
+    session=None,
+):
+    """This function is used for loading column tags from metastore."""
+    # delete all tags from the table
+    session.query(TagItem).filter_by(column_id=column_id).delete()
+
+    for tag in tags:
+        meta = {
+            "type": tag.type,
+            "tooltip": tag.description,
+            "color": tag.color,
+            "admin": True,
+        }
+        # filter out properties with none values
+        meta = {k: v for k, v in meta.items() if v is not None}
+
+        # update or create a new tag if not exist
+        create_or_update_tag(
+            tag_name=tag.name, meta=meta, commit=commit, session=session
+        )
+
+        # add a new tag_item to associate with the table
+        TagItem.create(
+            {"tag_name": tag.name, "column_id": column_id, "uid": None},
+            session=session,
+        )
+
+    if commit:
+        session.commit()
     else:
         session.flush()

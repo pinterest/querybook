@@ -109,6 +109,10 @@
     text-overflow: ellipsis;
 }
 
+.cursor-pointer {
+    cursor: pointer;
+}
+
 @mixin padding-classes {
     $padding-size-options: 0, 2, 4, 8, 12, 16, 20, 24;
     @each $size in $padding-size-options {
@@ -190,3 +194,16 @@
 }
 
 @include flex-classes;
+
+@mixin gap-classes {
+    $gap-size-options: 0, 2, 4, 8, 12, 16, 20, 24, 36, 48;
+    @each $size in $gap-size-options {
+        $gap: $size * 1px;
+
+        .gap#{$size} {
+            gap: $gap;
+        }
+    }
+}
+
+@include gap-classes;

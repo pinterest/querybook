@@ -1,8 +1,9 @@
 from typing import List, Tuple
 
-from lib.utils.utils import DATETIME_TO_UTC
+from const.metastore import DataColumn, DataTable
 from lib.utils import json as ujson
-from lib.metastore.base_metastore_loader import DataTable, DataColumn
+from lib.utils.utils import DATETIME_TO_UTC
+
 from .sqlalchemy_metastore_loader import SqlAlchemyMetastoreLoader
 
 

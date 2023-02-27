@@ -8,8 +8,9 @@ import { TooltipDirection } from 'const/tooltip';
 import './Tag.scss';
 
 export interface ITagGroupProps {
+    tooltip?: string;
+    tooltipPos?: TooltipDirection;
     className?: string;
-    children: React.ReactNode;
 }
 
 export interface ITagProps {
@@ -21,7 +22,7 @@ export interface ITagProps {
     withBorder?: boolean;
     color?: string;
 
-    tooltip?: React.ReactNode;
+    tooltip?: string;
     tooltipPos?: TooltipDirection;
 
     onClick?: () => any;
@@ -29,10 +30,15 @@ export interface ITagProps {
     className?: string;
 }
 
-export const TagGroup: React.FunctionComponent<ITagGroupProps> = ({
-    className,
-    children,
-}) => <div className={`${className} TagGroup`}>{children}</div>;
+export const TagGroup = styled.div.attrs<{
+    tooltip?: string;
+    tooltipPos?: TooltipDirection;
+    className?: string;
+}>(({ tooltip, tooltipPos, className }) => ({
+    'aria-label': tooltip,
+    'data-balloon-pos': tooltipPos,
+    className: `${className} TagGroup`,
+}))``;
 
 const StyledColorTag = styled.span.attrs<{
     highlighted?: boolean;

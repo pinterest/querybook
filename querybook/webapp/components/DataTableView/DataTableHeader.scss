@@ -6,22 +6,13 @@
     .table-title {
         font-family: var(--font-accent);
     }
-    .header-subtitle {
-        align-self: flex-start;
-    }
     .DataTableHeader-owner-list {
         .owner-badges {
             flex-wrap: wrap;
             min-height: 30px;
-            .UserBadge + .IconButton {
-                margin-left: 12px;
-            }
         }
     }
     .DataTableHeader-tags {
-        .header-subtitle {
-            margin-top: 6px;
-        }
         .DataTableTags {
             min-height: 34px;
         }

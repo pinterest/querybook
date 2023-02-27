@@ -1,12 +1,11 @@
 from typing import Dict, List, Tuple
 
-from lib.form import ExpandableFormField, FormField, StructFormField
-from lib.query_executor.clients.hive import HiveClient
-
 from clients.hms_client import HiveMetastoreClient
-from lib.metastore.loaders.hive_metastore_loader import HMSMetastoreLoader
+from const.metastore import DataColumn, DataTable
+from lib.form import ExpandableFormField, FormField, StructFormField
 from lib.metastore.loaders.form_fileds import load_partitions_field
-from lib.metastore.base_metastore_loader import DataTable, DataColumn
+from lib.metastore.loaders.hive_metastore_loader import HMSMetastoreLoader
+from lib.query_executor.clients.hive import HiveClient
 
 
 class HMSThriftMetastoreLoader(HMSMetastoreLoader):

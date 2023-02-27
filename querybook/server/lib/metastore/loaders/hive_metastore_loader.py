@@ -1,13 +1,10 @@
 from typing import Dict, List, Tuple
-from lib.form import ExpandableFormField, FormField, FormFieldType, StructFormField
-from hmsclient.genthrift.hive_metastore.ttypes import NoSuchObjectException
 
 from clients.hms_client import HiveMetastoreClient
-from lib.metastore.base_metastore_loader import (
-    BaseMetastoreLoader,
-    DataTable,
-    DataColumn,
-)
+from const.metastore import DataColumn, DataTable
+from hmsclient.genthrift.hive_metastore.ttypes import NoSuchObjectException
+from lib.form import ExpandableFormField, FormField, FormFieldType, StructFormField
+from lib.metastore.base_metastore_loader import BaseMetastoreLoader
 from lib.metastore.loaders.form_fileds import load_partitions_field
 from lib.utils import json as ujson
 
