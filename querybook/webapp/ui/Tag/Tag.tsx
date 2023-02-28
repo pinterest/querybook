@@ -55,9 +55,7 @@ const StyledColorTag = styled.span.attrs<{
         let bgColor = 'var(--bg-light)';
         let textColor = 'var(--text-light)';
         if (props.color) {
-            const color = ColorPalette.find(
-                (c) => c.name === props.color || c.color === props.color
-            );
+            const color = ColorPalette.find((c) => c.name === props.color);
             if (color) {
                 bgColor = color.fillColor;
                 textColor = color.color;
