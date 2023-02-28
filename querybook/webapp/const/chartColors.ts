@@ -1,4 +1,4 @@
-interface IColorPalette {
+export interface IColorPalette {
     name: string;
     color: string;
     fillColor: string;

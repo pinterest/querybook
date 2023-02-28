@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import { ColorPalette } from 'const/chartColors';
 import { TooltipDirection } from 'const/tooltip';
+import { getClosestColor } from 'lib/utils/color';
 
 import './Tag.scss';
 
@@ -55,7 +56,9 @@ const StyledColorTag = styled.span.attrs<{
         let bgColor = 'var(--bg-light)';
         let textColor = 'var(--text-light)';
         if (props.color) {
-            const color = ColorPalette.find((c) => c.name === props.color);
+            const color =
+                ColorPalette.find((c) => c.name === props.color) ||
+                getClosestColor(ColorPalette, props.color);
             if (color) {
                 bgColor = color.fillColor;
                 textColor = color.color;
