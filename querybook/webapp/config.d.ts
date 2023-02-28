@@ -74,3 +74,12 @@ declare module 'config/query_error.yaml' {
     >;
     export default data;
 }
+
+declare module 'config/color_palette.yaml' {
+    const data: Array<{
+        name: string;
+        color: string;
+        fillColor: string;
+    }>;
+    export default data;
+}
