@@ -20,6 +20,9 @@ class JSONEncoder(flask_json.JSONEncoder):
     def default(self, obj):  # pylint: disable=E0202
         if hasattr(obj, "to_dict"):
             return obj.to_dict()
+        # check for NamedTuple
+        elif isinstance(obj, tuple) and hasattr(obj, "_fields"):
+            return obj._asdict()
         elif isinstance(obj, datetime):
             return self.datetime_formatter(obj)
         elif isinstance(obj, date):

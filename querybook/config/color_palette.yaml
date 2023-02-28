@@ -1,0 +1,48 @@
+- name: blue
+  color: '#35B5BB'
+  fillColor: rgba(53, 181, 187, 0.25)
+- name: pink
+  color: '#ff3975'
+  fillColor: rgba(255, 57, 117, 0.25)
+- name: grey
+  color: '#bfbfbf'
+  fillColor: rgba(191, 191, 191, 0.25)
+- name: gold
+  color: '#ffca00'
+  fillColor: rgba(255, 202, 0, 0.25)
+- name: picton blue
+  color: '#529dce'
+  fillColor: rgba(82, 157, 206, 0.25)
+- name: orange
+  color: '#ff9f42'
+  fillColor: rgba(255, 159, 66, 0.25)
+- name: creamy forest green
+  color: '#6ba097'
+  fillColor: rgba(107, 160, 151, 0.25)
+- name: chartreuse
+  color: '#aee800'
+  fillColor: rgba(174, 232, 0, 0.25)
+- name: baby pink
+  color: '#ff91c8'
+  fillColor: rgba(255, 145, 200, 0.25)
+- name: icy blue
+  color: '#85d0ce'
+  fillColor: rgba(133, 208, 206, 0.25)
+- name: fuscia
+  color: '#eb37ce'
+  fillColor: rgba(235, 55, 206, 0.25)
+- name: light purple
+  color: '#C792EA'
+  fillColor: rgba(199, 146, 234, 0.25)
+- name: salmon
+  color: '#ec7f77'
+  fillColor: rgba(236, 127, 119, 0.25)
+- name: olive
+  color: '#989801'
+  fillColor: rgba(152, 152, 1, 0.25)
+- name: beige
+  color: '#ecd1af'
+  fillColor: rgba(236, 209, 175, 0.25)
+- name: choco
+  color: '#b7652b'
+  fillColor: rgba(183, 101, 43, 0.25)
