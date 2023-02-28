@@ -58,7 +58,7 @@ const StyledColorTag = styled.span.attrs<{
         if (props.color) {
             const color =
                 ColorPalette.find((c) => c.name === props.color) ||
-                getClosestColor(ColorPalette, props.color);
+                getClosestColor(props.color);
             if (color) {
                 bgColor = color.fillColor;
                 textColor = color.color;
