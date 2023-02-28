@@ -2,7 +2,7 @@ import datetime
 
 from app.db import with_session
 from const.metastore import DataTag
-from lib.utils.color import closest_color
+from lib.utils.color import find_nearest_palette_color
 from logic.metastore import update_es_tables_by_id
 from models.tag import Tag, TagItem
 
@@ -120,7 +120,7 @@ def create_table_tags(
         meta = {
             "type": tag.type,
             "tooltip": tag.description,
-            "color": closest_color(tag.color),
+            "color": find_nearest_palette_color(tag.color)["name"],
             "admin": True,
         }
         # filter out properties with none values
@@ -158,7 +158,7 @@ def create_column_tags(
         meta = {
             "type": tag.type,
             "tooltip": tag.description,
-            "color": closest_color(tag.color),
+            "color": find_nearest_palette_color(tag.color)["name"],
             "admin": True,
         }
         # filter out properties with none values

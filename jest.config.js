@@ -4,6 +4,7 @@ const config = {
         '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
             '<rootDir>/__mocks__/fileMock.js',
         '.*\\.(css|less|scss)$': '<rootDir>/__mocks__/styleMock.js',
+        'config/color_palette.yaml': '<rootDir>/../config/color_palette.yaml',
     },
     moduleDirectories: [
         'node_modules', // This is required
@@ -22,6 +23,7 @@ const config = {
     transform: {
         '^.+\\.(jsx|js|ts|tsx)$': 'babel-jest',
         '\\.m?js?$': 'jest-esm-transformer',
+        '\\.(yaml|yml)$': '<rootDir>/jest/yaml-transformer.js',
     },
 };
 

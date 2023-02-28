@@ -11,6 +11,7 @@ class DataTag(NamedTuple):
     # below properties will be stored in tag.meta
     type: str = None
     description: str = None
+    # color in hex format, e.g. #4287f5
     color: str = None
 
 
