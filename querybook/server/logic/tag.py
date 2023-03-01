@@ -117,10 +117,15 @@ def create_table_tags(
     session.query(TagItem).filter_by(table_id=table_id).delete()
 
     for tag in tags:
+        tag_color_name = (
+            find_nearest_palette_color(tag.color)["name"]
+            if tag.color is not None
+            else None
+        )
         meta = {
             "type": tag.type,
             "tooltip": tag.description,
-            "color": find_nearest_palette_color(tag.color)["name"],
+            "color": tag_color_name,
             "admin": True,
         }
         # filter out properties with none values
@@ -155,10 +160,15 @@ def create_column_tags(
     session.query(TagItem).filter_by(column_id=column_id).delete()
 
     for tag in tags:
+        tag_color_name = (
+            find_nearest_palette_color(tag.color)["name"]
+            if tag.color is not None
+            else None
+        )
         meta = {
             "type": tag.type,
             "tooltip": tag.description,
-            "color": find_nearest_palette_color(tag.color)["name"],
+            "color": tag_color_name,
             "admin": True,
         }
         # filter out properties with none values

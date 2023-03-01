@@ -18,7 +18,7 @@ def find_nearest_palette_color(hex_color: str) -> PaletteColor:
     """Given a hex color, find the nearest color from the color palette."""
     # Return the given color if it's in the color palette
     exact_color = next(
-        (color for color in color_palette if color["color"] == "#529dce"), None
+        (color for color in color_palette if color["color"] == hex_color), None
     )
     if exact_color:
         return exact_color
