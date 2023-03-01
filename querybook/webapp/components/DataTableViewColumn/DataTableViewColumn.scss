@@ -1,0 +1,15 @@
+.DataTableViewColumn {
+    .DataTableViewSearchBar {
+        display: flex;
+        background-color: var(--bg-light);
+        border-radius: var(--border-radius-sm);
+
+        > .SearchBar {
+            flex: 1
+        }
+
+        > .OrderByButton {
+            margin-right: 8px;
+        }
+    }
+}

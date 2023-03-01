@@ -4,6 +4,7 @@ import React, { useMemo } from 'react';
 
 import NOOP from 'lib/utils/noop';
 import { TextToggleButton } from 'ui/Button/TextToggleButton';
+import { TooltipDirection } from 'const/tooltip';
 
 import './OrderByButton.scss';
 
@@ -23,6 +24,7 @@ export interface ISortButtonProps {
     orderByFieldSymbol?: string;
     className?: string;
     hideAscToggle?: boolean;
+    toolTipPos?: TooltipDirection;
 
     onOrderByFieldToggle?: () => void;
     onAscToggle?: () => void;
@@ -34,6 +36,7 @@ export const OrderByButton: React.FC<ISortButtonProps> = ({
     orderByFieldSymbol,
     className,
     hideAscToggle,
+    toolTipPos = 'left',
 
     onOrderByFieldToggle = NOOP,
     onAscToggle = NOOP,
@@ -50,7 +53,7 @@ export const OrderByButton: React.FC<ISortButtonProps> = ({
                     value={false}
                     onChange={onAscToggle}
                     tooltip={asc ? 'Ascending' : 'Descending'}
-                    tooltipPos="left"
+                    tooltipPos={toolTipPos}
                     text={asc ? '↑' : '↓'}
                 />
             )}
@@ -58,7 +61,7 @@ export const OrderByButton: React.FC<ISortButtonProps> = ({
                 value={false}
                 onChange={onOrderByFieldToggle}
                 tooltip={`Order by ${orderByField}`}
-                tooltipPos="left"
+                tooltipPos={toolTipPos}
                 text={buttonSymbol}
             />
         </span>
