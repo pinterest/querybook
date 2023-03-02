@@ -31,7 +31,7 @@ export const DataTableViewColumn: React.FunctionComponent<
     onEditColumnDescriptionRedirect,
 }) => {
     const [filterString, setFilterString] = React.useState('');
-    const [orderBoardByAsc, setOrderBoardByAsc] = React.useState(true);
+    const [orderColumnsBy, setOrdeColumnsBy] = React.useState(true);
     const [orderBoardBy, setOrderBoardBy] = React.useState(false);
 
     const filteredColumns = React.useMemo(() => {
@@ -44,22 +44,18 @@ export const DataTableViewColumn: React.FunctionComponent<
             filteredCols.splice(numberOfRows);
         }
         if (orderBoardBy) {
-            if (orderBoardByAsc) {
-                filteredCols.sort((a, b) =>
-                    a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1
-                );
-            } else {
-                filteredCols.sort((a, b) =>
-                    a.name.toLowerCase() < b.name.toLowerCase() ? 1 : -1
-                );
-            }
+            filteredCols.sort(
+                (a, b) =>
+                    (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1) *
+                    (orderColumnsBy ? 1 : -1)
+            );
         }
         return filteredCols;
     }, [
         tableColumns,
         filterString,
         numberOfRows,
-        orderBoardByAsc,
+        orderColumnsBy,
         orderBoardBy,
     ]);
 
@@ -69,9 +65,9 @@ export const DataTableViewColumn: React.FunctionComponent<
 
     const sortButton = (
         <OrderByButton
-            asc={orderBoardByAsc}
+            asc={orderColumnsBy}
             hideAscToggle={!orderBoardBy}
-            onAscToggle={() => setOrderBoardByAsc((v) => !v)}
+            onAscToggle={() => setOrdeColumnsBy((v) => !v)}
             orderByField="name"
             orderByFieldSymbol={orderBoardBy ? 'Aa' : 'Default'}
             onOrderByFieldToggle={() => setOrderBoardBy((v) => !v)}
@@ -85,7 +81,6 @@ export const DataTableViewColumn: React.FunctionComponent<
                 onSearch={(s) => setFilterString(s)}
                 isSearching={false}
                 placeholder={`Find Columns`}
-                hasIcon
                 autoFocus
                 transparent
             />
