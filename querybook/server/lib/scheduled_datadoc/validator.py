@@ -13,7 +13,6 @@ class InvalidScheduleException(Exception):
 valid_schedule_config_keys = [
     "exports",
     "notifications",
-    "retry",
     "disable_if_running_doc",
 ]
 valid_export_config_keys = ["exporter_cell_id", "exporter_name", "exporter_params"]
