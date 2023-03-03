@@ -54,7 +54,7 @@ export function cronToRecurrence(cron: string): IRecurrence {
         if (hour.startsWith('*/')) {
             step = { hour: Number(hour.split('*/')[1]) };
         } else {
-            step = { hour: Number(0) };
+            step = { hour: Number(1) };
         }
     }
 
@@ -88,7 +88,7 @@ export function recurrenceToCron(recurrence: IRecurrence): string {
         dayWeek = recurrence.on.dayWeek.join(',');
     } else if (recurrence.recurrence === 'hourly') {
         hourly = recurrence.step.hour.toString();
-        hour = hourly === '0' ? '*' : '*/' + hourly;
+        hour = '*/' + hourly;
     }
 
     return `${minute} ${hour} ${dayMonth} ${month} ${dayWeek}`;
