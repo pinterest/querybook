@@ -328,6 +328,7 @@ def update_datadoc_schedule(id, cron=None, enabled=None, kwargs=None):
             updated_fields["cron"] = cron
         if enabled is not None:
             updated_fields["enabled"] = enabled
+            # reset last_run_at to default to avoid immediately triggering a new run when enabling a disabled scheduled datadoc
             if enabled and not schedule.enabled:
                 updated_fields["last_run_at"] = datetime.now()
         if kwargs is not None:
