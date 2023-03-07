@@ -1,18 +1,9 @@
 import sqlalchemy as sql
-from sqlalchemy.orm import relationship
-
 from app import db
-from const.db import (
-    name_length,
-    type_length,
-    mediumtext_length,
-    now,
-)
+from const.db import mediumtext_length, name_length, now, type_length
+from const.metastore import DataElementAssociationProperty, DataElementAssociationType
 from lib.sqlalchemy import CRUDMixin
-from const.metastore import (
-    DataElementAssociationType,
-    DataElementAssociationProperty,
-)
+from sqlalchemy.orm import relationship
 
 Base = db.Base
 

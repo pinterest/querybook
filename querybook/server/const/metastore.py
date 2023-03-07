@@ -47,6 +47,7 @@ class DataElementTuple(NamedTuple):
     type: str
     description: str
     properties: dict
+    created_by: str = None  # user/group name
 
 
 class DataElementAssociationTuple(NamedTuple):

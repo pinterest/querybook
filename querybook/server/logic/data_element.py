@@ -1,12 +1,13 @@
 from app.db import with_session
 from const.metastore import (
+    DataElementAssociationProperty,
     DataElementAssociationTuple,
     DataElementAssociationType,
-    DataElementAssociationProperty,
+    DataElementTuple,
 )
-from models.data_element import DataElement, DataElementAssociation
 from lib.logger import get_logger
-
+from logic.user import get_user_by_name
+from models.data_element import DataElement, DataElementAssociation
 
 LOG = get_logger(__file__)
 
@@ -47,6 +48,37 @@ def get_data_element_by_column_id(column_id: int, session=None):
             row.data_element.to_dict() if row.data_element else row.primitive_type
         )
     return resp
+
+
+@with_session
+def create_or_update_data_element(
+    metastore_id: int, data_element_tuple: DataElementTuple, commit=True, session=None
+):
+    if data_element_tuple.created_by:
+        created_by = get_user_by_name(data_element_tuple.created_by, session=session)
+        if not created_by:
+            LOG.error(
+                f"Can't find created_by of data element {data_element_tuple.name}: {data_element_tuple.created_by}"
+            )
+
+        data_element_tuple.created_by = created_by or None
+
+    data_element = get_data_element_by_name(data_element_tuple.name, session=session)
+    fields = {**data_element_tuple._asdict(), "metastore_id": metastore_id}
+
+    if not data_element:
+        # create a new data element
+        data_element = DataElement.create(fields=fields, commit=commit, session=session)
+    else:
+        # update the data element
+        data_element = DataElement.update(
+            id=data_element.id, fields=fields, commit=commit, session=session
+        )
+
+    if commit:
+        session.commit()
+    else:
+        session.flush()
 
 
 @with_session
