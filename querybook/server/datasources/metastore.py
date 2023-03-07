@@ -95,7 +95,7 @@ def get_table_metastore_link(
     metastore_id = schema.metastore_id
     metastore_loader = get_metastore_loader(metastore_id)
 
-    return metastore_loader.get_metastore_link(
+    return metastore_loader.get_table_metastore_link(
         metadata_type=MetadataType(metadata_type),
         schema_name=schema.name,
         table_name=table.name,
