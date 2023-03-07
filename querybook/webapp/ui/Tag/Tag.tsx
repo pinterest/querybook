@@ -3,7 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { ColorPalette } from 'const/chartColors';
-import { TooltipDirection } from 'const/tooltip';
+import { TooltipDirection, TooltipLength } from 'const/tooltip';
 
 import './Tag.scss';
 
@@ -33,10 +33,12 @@ export interface ITagProps {
 export const TagGroup = styled.div.attrs<{
     tooltip?: string;
     tooltipPos?: TooltipDirection;
+    tooltipLength?: TooltipLength;
     className?: string;
-}>(({ tooltip, tooltipPos, className }) => ({
+}>(({ tooltip, tooltipPos, tooltipLength = 'large', className }) => ({
     'aria-label': tooltip,
     'data-balloon-pos': tooltipPos,
+    'data-balloon-length': tooltipLength,
     className: `${className} TagGroup`,
 }))``;
 

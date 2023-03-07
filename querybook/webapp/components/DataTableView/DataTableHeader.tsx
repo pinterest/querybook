@@ -151,6 +151,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
                         weight="bold"
                         color="lightest"
                         tooltip={ownerType.description}
+                        tooltipPos="right"
                     >
                         {ownerType.display_name}
                     </AccentText>
