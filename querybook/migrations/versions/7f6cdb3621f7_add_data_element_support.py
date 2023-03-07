@@ -70,4 +70,3 @@ def downgrade():
     op.drop_index(op.f("ix_data_element_name"), table_name="data_element")
     op.drop_table("data_element")
     # ### end Alembic commands ###
-
