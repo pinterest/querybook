@@ -1,6 +1,7 @@
 import { ContentState } from 'draft-js';
 import React, { useMemo } from 'react';
 
+import { DataElement } from 'components/DataElement/DataElement';
 import { DataTableColumnStats } from 'components/DataTableStats/DataTableColumnStats';
 import { TableTag } from 'components/DataTableTags/DataTableTags';
 import { IDataColumn } from 'const/metastore';
@@ -8,7 +9,7 @@ import { useResource } from 'hooks/useResource';
 import { useToggleState } from 'hooks/useToggleState';
 import { Nullable } from 'lib/typescript';
 import { parseType } from 'lib/utils/complex-types';
-import { TableColumnResource } from 'resource/table';
+import { DataElementResource, TableColumnResource } from 'resource/table';
 import { Card } from 'ui/Card/Card';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
 import { Icon } from 'ui/Icon/Icon';
@@ -39,7 +40,13 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
             [column.id]
         )
     );
-    const [expanded, , toggleExpanded] = useToggleState(false);
+    const { data: dataElementAssociation } = useResource(
+        React.useCallback(
+            () => DataElementResource.getDataElementByColumnId(column.id),
+            [column.id]
+        )
+    );
+    const [expanded, , toggleExpanded] = useToggleState(true);
     const parsedType = useMemo(() => parseType('', column.type), [column.type]);
 
     const tagsDOM = (columnTags || []).map((tag) => (
@@ -87,6 +94,13 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
                                 <div className="DataTableTags flex-row">
                                     {tagsDOM}
                                 </div>
+                            </KeyContentDisplay>
+                        )}
+                        {dataElementAssociation && (
+                            <KeyContentDisplay keyString="Data Element">
+                                <DataElement
+                                    association={dataElementAssociation}
+                                />
                             </KeyContentDisplay>
                         )}
                         {column.comment && (

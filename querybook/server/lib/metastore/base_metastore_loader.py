@@ -33,6 +33,7 @@ from logic.metastore import (
     iterate_data_schema,
 )
 from logic.tag import create_column_tags, create_table_tags
+from logic.data_element import create_column_data_element_association
 
 from .utils import MetastoreTableACLChecker
 
@@ -47,7 +48,7 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
         self.acl_checker = MetastoreTableACLChecker(metastore_dict["acl_control"])
 
     @classmethod
-    def get_metastore_link(
+    def get_table_metastore_link(
         cls, metadata_type: MetadataType, schema_name: str, table_name: str
     ) -> str:
         """Return the external metastore link of the table metadata if it has an accessible page for the given type.
@@ -59,6 +60,18 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
 
         Returns:
             str: external metastore link of the table metadata.
+        """
+        return None
+
+    @classmethod
+    def get_data_element_metastore_link(cls, name: str) -> str:
+        """Return the external metastore link of the data elementif it has an accessible page.
+
+        Args:
+            name (str): data element name
+
+        Returns:
+            str: external metastore link of the data element.
         """
         return None
 
@@ -384,6 +397,17 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
                     create_column_tags(
                         column_id=column_id,
                         tags=column.tags,
+                        commit=False,
+                        session=session,
+                    )
+
+                # create data element associations only if the metastore is configured to sync data elements
+                if self.loader_config.can_load_external_metadata(
+                    MetadataType.DATA_ELEMENT
+                ):
+                    create_column_data_element_association(
+                        column_id=column_id,
+                        data_element_association=column.data_element,
                         commit=False,
                         session=session,
                     )

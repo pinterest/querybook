@@ -1,5 +1,6 @@
 from enum import Enum
 from typing import NamedTuple
+from .data_element import DataElementAssociationTuple
 
 
 class DataSchema(NamedTuple):
@@ -83,6 +84,9 @@ class DataColumn(NamedTuple):
     # list of column level tags from metastore
     tags: list[DataTag] = []
 
+    # data element
+    data_element: DataElementAssociationTuple = None
+
 
 class DataTableWarningSeverity(Enum):
     WARNING = 0
@@ -94,6 +98,7 @@ class MetadataType(Enum):
     COLUMN_DESCRIPTION = "column_description"
     OWNER = "owner"
     TAG = "tag"
+    DATA_ELEMENT = "data_element"
 
 
 class MetadataMode(Enum):
