@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { IDataElement } from 'const/dataElement';
 import { DataElementResource } from 'resource/table';
@@ -15,10 +15,10 @@ interface IProps {
 export const DataElementCard = ({ dataElement }: IProps) => {
     const { id, name, type, description, properties } = dataElement;
 
-    const onExternalLinkClick = async () => {
+    const onExternalLinkClick = useCallback(async () => {
         const { data: link } = await DataElementResource.getMetastoreLink(id);
         window.open(link, '_blank');
-    };
+    }, [id]);
 
     const propertiesDOM = Object.entries(properties ?? {}).map(
         ([key, value]) => (

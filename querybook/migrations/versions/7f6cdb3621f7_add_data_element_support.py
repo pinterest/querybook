@@ -43,14 +43,17 @@ def upgrade():
         sa.Column("column_id", sa.Integer(), nullable=False),
         sa.Column(
             "type",
-            sa.Enum("REF", "ARRAY", "MAP", name="dataelementassociationtype"),
+            sa.Enum(
+                "REF",
+                "ARRAY",
+                "MAP",
+                "STRUCT",
+                "UNION",
+                name="dataelementassociationtype",
+            ),
             nullable=False,
         ),
-        sa.Column(
-            "property_name",
-            sa.Enum("KEY", "VALUE", name="dataelementassociationproperty"),
-            nullable=False,
-        ),
+        sa.Column("property_name", sa.String(length=255), nullable=False),
         sa.Column("data_element_id", sa.Integer(), nullable=True),
         sa.Column("primitive_type", sa.String(length=4096), nullable=True),
         sa.ForeignKeyConstraint(

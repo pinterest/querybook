@@ -33,9 +33,7 @@ const DataElementTag = ({
                             />
                         )}
                         <span>
-                            {typeof dataElement === 'string'
-                                ? dataElement
-                                : dataElement.name}
+                            {!isDataElement ? dataElement : dataElement.name}
                         </span>
                     </Tag>
                     {showPopover && isDataElement && (

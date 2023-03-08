@@ -1,5 +1,5 @@
 from app.db import with_session
-from const.metastore import (
+from const.data_element import (
     DataElementAssociationProperty,
     DataElementAssociationTuple,
     DataElementAssociationType,
@@ -19,35 +19,16 @@ def get_data_element_by_id(id: int, session=None):
 
 @with_session
 def get_data_element_by_name(name: str, session=None):
-    return session.query(DataElement).filter(DataElement.name == name).first()
+    return DataElement.get(name=name, session=session)
 
 
 @with_session
-def get_data_element_by_column_id(column_id: int, session=None):
-    results = (
+def get_data_element_associations_by_column_id(column_id: int, session=None) -> dict:
+    return (
         session.query(DataElementAssociation)
         .filter(DataElementAssociation.column_id == column_id)
         .all()
     )
-
-    if not results:
-        return None
-
-    # check if there are more than 1 association type
-    association_types = set([r.type for r in results])
-    if len(association_types) > 1:
-        LOG.error(
-            f"Column {column_id} has more than one data element associated with it"
-        )
-        return None
-
-    resp = {}
-    for row in results:
-        resp["type"] = row.type.value
-        resp[row.property_name.value] = (
-            row.data_element.to_dict() if row.data_element else row.primitive_type
-        )
-    return resp
 
 
 @with_session
@@ -61,7 +42,7 @@ def create_or_update_data_element(
                 f"Can't find created_by of data element {data_element_tuple.name}: {data_element_tuple.created_by}"
             )
 
-        data_element_tuple.created_by = created_by or None
+        data_element_tuple.created_by = created_by
 
     data_element = get_data_element_by_name(data_element_tuple.name, session=session)
     fields = {**data_element_tuple._asdict(), "metastore_id": metastore_id}
@@ -95,15 +76,14 @@ def create_data_element_association_by_name(
         data_element = get_data_element_by_name(data_element_name, session=session)
 
     if not data_element and not primitive_type:
-        LOG.error(
+        raise Exception(
             f"Can not create DataElementAssociation: {data_element_name} is not a valid data element name and primitive type is empty"
         )
-        return None
 
     return DataElementAssociation(
         column_id=column_id,
         type=association_type,
-        property_name=property_name,
+        property_name=property_name.value,
         data_element_id=data_element.id,
         primitive_type=primitive_type,
     )
@@ -121,34 +101,30 @@ def create_column_data_element_association(
     session.query(DataElementAssociation).filter_by(column_id=column_id).delete()
 
     if data_element_association is not None:
-        value_association = create_data_element_association_by_name(
-            data_element_name=data_element_association.value,
-            column_id=column_id,
-            association_type=data_element_association.type,
-            property_name=DataElementAssociationProperty.VALUE,
-            primitive_type=data_element_association.value_primitive,
-            session=session,
-        )
-
-        if (
-            value_association
-            and data_element_association.type == DataElementAssociationType.MAP
-        ):
-            key_association = create_data_element_association_by_name(
-                data_element_name=data_element_association.key,
+        try:
+            value_association = create_data_element_association_by_name(
+                data_element_name=data_element_association.value,
                 column_id=column_id,
                 association_type=data_element_association.type,
-                property_name=DataElementAssociationProperty.KEY,
-                primitive_type=data_element_association.key_primitive,
+                property_name=DataElementAssociationProperty.VALUE,
+                primitive_type=data_element_association.value_primitive_type,
                 session=session,
             )
 
-            # add both key and value association only if they are both not None
-            if key_association and value_association:
-                session.add_all([value_association, key_association])
+            if data_element_association.type == DataElementAssociationType.MAP:
+                key_association = create_data_element_association_by_name(
+                    data_element_name=data_element_association.key,
+                    column_id=column_id,
+                    association_type=data_element_association.type,
+                    property_name=DataElementAssociationProperty.KEY,
+                    primitive_type=data_element_association.key_primitive_type,
+                    session=session,
+                )
+                session.add(key_association)
 
-        elif value_association:
             session.add(value_association)
+        except Exception as e:
+            LOG.error(e, exc_info=True)
 
     if commit:
         session.commit()

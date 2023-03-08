@@ -1,7 +1,10 @@
 import sqlalchemy as sql
 from app import db
 from const.db import mediumtext_length, name_length, now, type_length
-from const.metastore import DataElementAssociationProperty, DataElementAssociationType
+from const.data_element import (
+    DataElementAssociationProperty,
+    DataElementAssociationType,
+)
 from lib.sqlalchemy import CRUDMixin
 from sqlalchemy.orm import relationship
 
@@ -58,8 +61,8 @@ class DataElementAssociation(CRUDMixin, Base):
         nullable=False,
     )
     property_name = sql.Column(
-        sql.Enum(DataElementAssociationProperty),
-        default=DataElementAssociationProperty.VALUE,
+        sql.String(length=name_length),
+        default=DataElementAssociationProperty.VALUE.value,
         nullable=False,
     )
     data_element_id = sql.Column(
@@ -76,7 +79,7 @@ class DataElementAssociation(CRUDMixin, Base):
         return {
             "column_id": self.column_id,
             "type": self.type.value,
-            "property_name": self.property_name.value,
+            "property_name": self.property_name,
             "data_element_id": self.data_element_id,
             "data_element": self.data_element.to_dict() if self.data_element else None,
             "primitive_type": self.primitive_type,

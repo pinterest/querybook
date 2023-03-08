@@ -1,19 +1,6 @@
 from enum import Enum
 from typing import NamedTuple
-
-
-# Keep it in sync with DataElementAssociationType in const/dataElement.ts
-class DataElementAssociationType(Enum):
-    REF = "ref"
-    ARRAY = "array"
-    MAP = "map"
-
-
-class DataElementAssociationProperty(Enum):
-    # "key" is only for the "map" association type
-    KEY = "key"
-    # all association types will have the "value" property
-    VALUE = "value"
+from .data_element import DataElementAssociationTuple
 
 
 class DataSchema(NamedTuple):
@@ -40,25 +27,6 @@ class DataOwner(NamedTuple):
     username: str
     # If provided, the type here must be one of the type names from metastore loader
     type: str = None
-
-
-class DataElementTuple(NamedTuple):
-    name: str
-    type: str
-    description: str
-    properties: dict
-    created_by: str = None  # user/group name
-
-
-class DataElementAssociationTuple(NamedTuple):
-    # association type
-    type: DataElementAssociationType
-    # data element name. required for all association types
-    value: str
-    value_primitive: str = None
-    # data element name. required if associtaion type is map
-    key: str = None
-    key_primitive: str = None
 
 
 class DataTable(NamedTuple):
