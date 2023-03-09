@@ -11,7 +11,7 @@ export const NextRun: React.FunctionComponent<{ cron?: string }> = ({
         if (!cron) {
             return null;
         }
-        const nextDate = parseExpression(cron).next().toDate();
+        const nextDate = parseExpression(cron, { utc: true }).next().toDate();
         return generateFormattedDate(moment(nextDate).unix());
     }, [cron]);
 

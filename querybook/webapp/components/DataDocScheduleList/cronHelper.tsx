@@ -1,5 +1,5 @@
 import {
-    getRecurrenceLocalTimeString,
+    getRecurrenceUtcTimeString,
     IRecurrence,
     MONTHS,
     WEEKDAYS,
@@ -25,38 +25,38 @@ const hourly = ({ minute }: IRecurrence) =>
     `at ${minute} minutes past the hour, every hour, daily`;
 
 const daily = (cronRecurrence: IRecurrence) => {
-    const localTime = getRecurrenceLocalTimeString(cronRecurrence, 'hh:mm a');
-    return `at ${localTime}, daily`;
+    const utcTime = getRecurrenceUtcTimeString(cronRecurrence, 'hh:mm a');
+    return `at ${utcTime}, daily`;
 };
 
 const weekly = (cronRecurrence: IRecurrence) => {
-    const localTime = getRecurrenceLocalTimeString(cronRecurrence, 'hh:mm a');
+    const utcTime = getRecurrenceUtcTimeString(cronRecurrence, 'hh:mm a');
     const daysOfWeek = formatItemsSentence(
         cronRecurrence.on.dayWeek.map((day) => WEEKDAYS[day])
     );
 
-    return `at ${localTime}, only on ${daysOfWeek}, weekly`;
+    return `at ${utcTime}, only on ${daysOfWeek}, weekly`;
 };
 
 const monthly = (cronRecurrence: IRecurrence) => {
-    const localTime = getRecurrenceLocalTimeString(cronRecurrence, 'hh:mm a');
+    const utcTime = getRecurrenceUtcTimeString(cronRecurrence, 'hh:mm a');
     const daysOfMonth = formatItemsSentence(
         cronRecurrence.on.dayMonth.map(String)
     );
 
-    return `at ${localTime}, on day ${daysOfMonth} of the month`;
+    return `at ${utcTime}, on day ${daysOfMonth} of the month`;
 };
 
 const yearly = (cronRecurrence: IRecurrence) => {
-    const localTime = getRecurrenceLocalTimeString(cronRecurrence, 'hh:mm a');
+    const utcTime = getRecurrenceUtcTimeString(cronRecurrence, 'hh:mm a');
     const daysOfMonth = formatItemsSentence(
         cronRecurrence.on.dayMonth.map(String)
     );
-
     const months = formatItemsSentence(
         cronRecurrence.on.month.map((m) => MONTHS[m - 1])
     );
-    return `at ${localTime}, on day ${daysOfMonth} of the month, only in ${months}`;
+
+    return `at ${utcTime}, on day ${daysOfMonth} of the month, only in ${months}`;
 };
 
 export const cronFormatter = (recurrence: IRecurrence) => {
