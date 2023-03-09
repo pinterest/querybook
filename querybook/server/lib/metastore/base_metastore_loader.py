@@ -5,6 +5,7 @@ from typing import Dict, List, Optional, Tuple
 
 import gevent
 from app.db import DBSession, with_session
+from const.data_element import DataElementTuple, DataElementAssociationTuple
 from const.metastore import (
     DataColumn,
     DataOwnerType,
@@ -16,6 +17,7 @@ from lib.form import AllFormField
 from lib.logger import get_logger
 from lib.utils import json
 from lib.utils.utils import with_exception
+from logic.data_element import create_column_data_element_association
 from logic.elasticsearch import delete_es_table_by_id, update_table_by_id
 from logic.metastore import (
     create_column,
@@ -33,7 +35,6 @@ from logic.metastore import (
     iterate_data_schema,
 )
 from logic.tag import create_column_tags, create_table_tags
-from logic.data_element import create_column_data_element_association
 
 from .utils import MetastoreTableACLChecker
 
@@ -405,9 +406,15 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
                 if self.loader_config.can_load_external_metadata(
                     MetadataType.DATA_ELEMENT
                 ):
+                    data_element_association = (
+                        self._populate_column_data_element_association(
+                            column.data_element
+                        )
+                    )
                     create_column_data_element_association(
+                        metastore_id=self.metastore_id,
                         column_id=column_id,
-                        data_element_association=column.data_element,
+                        data_element_association=data_element_association,
                         commit=False,
                         session=session,
                     )
@@ -435,6 +442,26 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
         except Exception:
             session.rollback()
             LOG.error(traceback.format_exc())
+
+    def _populate_column_data_element_association(
+        self, data_element_association: DataElementAssociationTuple
+    ) -> DataElementAssociationTuple:
+        """If the value_data_element or key_data_element is a name instead of DataElementTuple,
+        this function will help to replace the name with the actual DataElementTuple"""
+        if data_element_association is None:
+            return None
+
+        value_data_element = data_element_association.value_data_element
+        if type(value_data_element) is str:
+            value_data_element = self.get_data_element(value_data_element)
+
+        key_data_element = data_element_association.key_data_element
+        if type(key_data_element) is str:
+            key_data_element = self.get_data_element(key_data_element)
+
+        return data_element_association._replace(
+            value_data_element=value_data_element, key_data_element=key_data_element
+        )
 
     @with_exception
     def _get_all_filtered_schema_names(self) -> List[str]:
@@ -505,6 +532,10 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
         Returns:
             Tuple[DataTable, List[DataColumn]] -- Return [null, null] if not found
         """
+        pass
+
+    def get_data_element(self, data_element_name: str) -> Optional[DataElementTuple]:
+        """Override this to get data element by name"""
         pass
 
     @abstractclassmethod
