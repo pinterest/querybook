@@ -1,3 +1,4 @@
+from typing import Union
 from app.db import with_session
 from const.data_element import (
     DataElementAssociationProperty,
@@ -61,23 +62,32 @@ def create_or_update_data_element(
     else:
         session.flush()
 
+    return data_element
+
 
 @with_session
-def create_data_element_association_by_name(
-    data_element_name: str,
+def create_data_element_association(
+    metastore_id: int,
+    data_element_tuple: Union[DataElementTuple, str],
     column_id: int,
     association_type: DataElementAssociationType,
     property_name: DataElementAssociationProperty,
     primitive_type: str = None,
     session=None,
 ):
-    data_element = None
-    if data_element_name:
-        data_element = get_data_element_by_name(data_element_name, session=session)
+    if data_element_tuple is None:
+        return None
+
+    if type(data_element_tuple) is str:
+        data_element = get_data_element_by_name(data_element_tuple, session=session)
+    else:
+        data_element = create_or_update_data_element(
+            metastore_id, data_element_tuple, session=session
+        )
 
     if not data_element and not primitive_type:
         raise Exception(
-            f"Can not create DataElementAssociation: {data_element_name} is not a valid data element name and primitive type is empty"
+            f"Can not create DataElementAssociation: {data_element_tuple} is not a valid data element and primitive type is empty"
         )
 
     return DataElementAssociation(
@@ -91,6 +101,7 @@ def create_data_element_association_by_name(
 
 @with_session
 def create_column_data_element_association(
+    metastore_id: int,
     column_id: int,
     data_element_association: DataElementAssociationTuple,
     commit=True,
@@ -102,8 +113,9 @@ def create_column_data_element_association(
 
     if data_element_association is not None:
         try:
-            value_association = create_data_element_association_by_name(
-                data_element_name=data_element_association.value,
+            value_association = create_data_element_association(
+                metastore_id=metastore_id,
+                data_element_tuple=data_element_association.value_data_element,
                 column_id=column_id,
                 association_type=data_element_association.type,
                 property_name=DataElementAssociationProperty.VALUE,
@@ -112,8 +124,9 @@ def create_column_data_element_association(
             )
 
             if data_element_association.type == DataElementAssociationType.MAP:
-                key_association = create_data_element_association_by_name(
-                    data_element_name=data_element_association.key,
+                key_association = create_data_element_association(
+                    metastore_id=metastore_id,
+                    data_element_tuple=data_element_association.key_data_element,
                     column_id=column_id,
                     association_type=data_element_association.type,
                     property_name=DataElementAssociationProperty.KEY,
