@@ -534,9 +534,9 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
         """
         pass
 
-    def get_data_element(self, data_element_name: str) -> DataElementTuple:
+    def get_data_element(self, data_element_name: str) -> Optional[DataElementTuple]:
         """Override this to get data element by name"""
-        return None
+        pass
 
     @abstractclassmethod
     def get_metastore_params_template(self) -> AllFormField:
