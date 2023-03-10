@@ -12,6 +12,7 @@
             "setup_guide/connect_to_query_engines",
             "setup_guide/prod_setup",
             "setup_guide/deployment_guide",
+            "setup_guide/helm_guide",
             "setup_guide/update_guide"
         ],
         "Configurations": [
