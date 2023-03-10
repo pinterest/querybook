@@ -15,55 +15,56 @@ export const DataElementDescription = ({
     const valueDataElement = dataElementAssociation.value;
     const keyDataElement = dataElementAssociation.key;
 
-    const valueName =
-        typeof valueDataElement === 'object'
-            ? valueDataElement.name
-            : valueDataElement;
-    const keyName =
-        typeof keyDataElement === 'object'
-            ? keyDataElement.name
-            : keyDataElement;
+    const getDescriptionDOM = () => {
+        const valueName =
+            typeof valueDataElement === 'object'
+                ? valueDataElement.name
+                : valueDataElement;
+        const valueDescription =
+            typeof valueDataElement === 'object'
+                ? valueDataElement.description
+                : null;
 
-    const valueDescription =
-        typeof valueDataElement === 'object'
-            ? valueDataElement.description
-            : null;
-    const keyDescription =
-        typeof keyDataElement === 'object' ? keyDataElement.description : null;
+        if (dataElementAssociation.type === DataElementAssociationType.REF) {
+            return <AccentText>{valueDescription}</AccentText>;
+        }
 
-    const mapDescrptionDOM = (
-        <div>
-            <KeyContentDisplay keyString={keyName}>
-                <AccentText>{keyDescription}</AccentText>
-            </KeyContentDisplay>
-            <KeyContentDisplay keyString={valueName}>
-                <AccentText>{valueDescription}</AccentText>
-            </KeyContentDisplay>
-        </div>
-    );
+        if (dataElementAssociation.type === DataElementAssociationType.ARRAY) {
+            return (
+                <KeyContentDisplay keyString={valueName}>
+                    <AccentText>{valueDescription}</AccentText>
+                </KeyContentDisplay>
+            );
+        }
 
-    const listDescriptionDOM = (
-        <div>
-            <KeyContentDisplay keyString={valueName}>
-                <AccentText>{valueDescription}</AccentText>
-            </KeyContentDisplay>
-        </div>
-    );
+        if (dataElementAssociation.type === DataElementAssociationType.MAP) {
+            const keyName =
+                typeof keyDataElement === 'object'
+                    ? keyDataElement.name
+                    : keyDataElement;
+            const keyDescription =
+                typeof keyDataElement === 'object'
+                    ? keyDataElement.description
+                    : null;
+            return (
+                <div>
+                    <KeyContentDisplay keyString={keyName}>
+                        <AccentText>{keyDescription}</AccentText>
+                    </KeyContentDisplay>
+                    <KeyContentDisplay keyString={valueName}>
+                        <AccentText>{valueDescription}</AccentText>
+                    </KeyContentDisplay>
+                </div>
+            );
+        }
+    };
 
     return (
         <div>
             <AccentText color="lightest" untitled>
                 (showing data element description)
             </AccentText>
-            {dataElementAssociation.type ===
-            DataElementAssociationType.ARRAY ? (
-                listDescriptionDOM
-            ) : dataElementAssociation.type ===
-              DataElementAssociationType.MAP ? (
-                mapDescrptionDOM
-            ) : (
-                <AccentText>{valueDescription}</AccentText>
-            )}
+            {getDescriptionDOM()}
         </div>
     );
 };
