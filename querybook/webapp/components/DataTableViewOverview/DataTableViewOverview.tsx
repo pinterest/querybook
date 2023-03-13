@@ -155,7 +155,7 @@ export const DataTableViewOverview: React.FC<
         table.custom_properties ?? {}
     ).map(([key, value]) => (
         <KeyContentDisplay key={key} keyString={titleize(key, '_', ' ')}>
-            {/https?:\/\/[^\s]+/.test(value.trim()) ? (
+            {value && /https?:\/\/[^\s]+/.test(value.trim()) ? (
                 <Link to={value} newTab>
                     {value}
                 </Link>
