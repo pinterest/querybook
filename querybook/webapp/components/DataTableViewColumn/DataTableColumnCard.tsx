@@ -2,6 +2,7 @@ import { ContentState } from 'draft-js';
 import React, { useMemo } from 'react';
 
 import { DataElement } from 'components/DataElement/DataElement';
+import { DataElementDescription } from 'components/DataElement/DataElementDescription';
 import { DataTableColumnStats } from 'components/DataTableStats/DataTableColumnStats';
 import { TableTag } from 'components/DataTableTags/DataTableTags';
 import { IDataColumn } from 'const/metastore';
@@ -53,13 +54,21 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
         <TableTag tag={tag} readonly={true} key={tag.id} mini={true} />
     ));
 
-    const userCommentsContent = (
-        <EditableTextField
-            value={column.description as ContentState}
-            onSave={updateDataColumnDescription.bind(null, column.id)}
-            placeholder="No user comments yet for column."
-            onEditRedirect={onEditColumnDescriptionRedirect}
-        />
+    const descriptionContent = (
+        <div>
+            {dataElementAssociation &&
+                !(column.description as ContentState).hasText() && (
+                    <DataElementDescription
+                        dataElementAssociation={dataElementAssociation}
+                    />
+                )}
+            <EditableTextField
+                value={column.description as ContentState}
+                onSave={updateDataColumnDescription.bind(null, column.id)}
+                placeholder="add column description"
+                onEditRedirect={onEditColumnDescriptionRedirect}
+            />
+        </div>
     );
     return (
         <div className="DataTableColumnCard">
@@ -108,8 +117,8 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
                                 {column.comment}
                             </KeyContentDisplay>
                         )}
-                        <KeyContentDisplay keyString="User Comments">
-                            {userCommentsContent}
+                        <KeyContentDisplay keyString="Description">
+                            {descriptionContent}
                         </KeyContentDisplay>
                         <DataTableColumnStats columnId={column.id} />
                     </div>
