@@ -44,7 +44,7 @@ export const TablePanelView: React.FunctionComponent<ITablePanelViewProps> = ({
                         ? (table.description as ContentState).getPlainText()
                         : ''}
                 </SubPanelSection>
-                <DataTableTags tableId={table.id} readonly />
+                <DataTableTags tableId={table.id} readonly showType={false} />
             </PanelSection>
         );
 

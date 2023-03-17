@@ -7,13 +7,11 @@ import { DataTableColumnStats } from 'components/DataTableStats/DataTableColumnS
 import { TableTag } from 'components/DataTableTags/DataTableTags';
 import { IDataColumn } from 'const/metastore';
 import { useResource } from 'hooks/useResource';
-import { useToggleState } from 'hooks/useToggleState';
 import { Nullable } from 'lib/typescript';
 import { parseType } from 'lib/utils/complex-types';
-import { DataElementResource, TableColumnResource } from 'resource/table';
+import { TableColumnResource } from 'resource/table';
 import { Card } from 'ui/Card/Card';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
-import { Icon } from 'ui/Icon/Icon';
 import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
 import { AccentText, StyledText } from 'ui/StyledText/StyledText';
 
@@ -35,31 +33,23 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
     onEditColumnDescriptionRedirect,
     updateDataColumnDescription,
 }) => {
-    const { data: columnTags } = useResource(
-        React.useCallback(
-            () => TableColumnResource.getTags(column.id),
-            [column.id]
-        )
+    const { data: detailedColumn } = useResource(
+        React.useCallback(() => TableColumnResource.get(column.id), [column.id])
     );
-    const { data: dataElementAssociation } = useResource(
-        React.useCallback(
-            () => DataElementResource.getDataElementByColumnId(column.id),
-            [column.id]
-        )
-    );
-    const [expanded, , toggleExpanded] = useToggleState(true);
     const parsedType = useMemo(() => parseType('', column.type), [column.type]);
 
-    const tagsDOM = (columnTags || []).map((tag) => (
+    const tagsDOM = (detailedColumn?.tags || []).map((tag) => (
         <TableTag tag={tag} readonly={true} key={tag.id} mini={true} />
     ));
 
     const descriptionContent = (
         <div>
-            {dataElementAssociation &&
+            {detailedColumn?.data_element_association &&
                 !(column.description as ContentState).hasText() && (
                     <DataElementDescription
-                        dataElementAssociation={dataElementAssociation}
+                        dataElementAssociation={
+                            detailedColumn.data_element_association
+                        }
                     />
                 )}
             <EditableTextField
@@ -73,60 +63,48 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
     return (
         <div className="DataTableColumnCard">
             <Card key={column.id} alignLeft>
-                <div
-                    className="DataTableColumnCard-top horizontal-space-between"
-                    onClick={() => toggleExpanded()}
-                    aria-label={
-                        expanded ? 'click to collapse' : 'click to expand'
-                    }
-                    data-balloon-pos="down-right"
-                >
-                    <div className="DataTableColumnCard-left">
-                        <StyledText color="light" className="column-type mr12">
-                            {column.type}
-                        </StyledText>
-                        <AccentText weight="extra">{column.name}</AccentText>
-                    </div>
-                    <Icon name={expanded ? 'ChevronUp' : 'ChevronDown'} />
+                <div className="DataTableColumnCard-header">
+                    <AccentText weight="extra" className="column-name">
+                        {column.name}
+                    </AccentText>
+                    <StyledText color="light" className="column-type">
+                        {column.type}
+                    </StyledText>
                 </div>
-                {expanded ? (
-                    <div className="mt16">
-                        {parsedType.children && (
-                            <KeyContentDisplay keyString="Type Detail">
-                                <DataTableColumnCardNestedType
-                                    complexType={parsedType}
-                                />
-                            </KeyContentDisplay>
-                        )}
-                        {tagsDOM.length > 0 && (
-                            <KeyContentDisplay keyString="Tags">
-                                <div className="DataTableTags flex-row">
-                                    {tagsDOM}
-                                </div>
-                            </KeyContentDisplay>
-                        )}
-                        {dataElementAssociation && (
-                            <KeyContentDisplay keyString="Data Element">
-                                <DataElement
-                                    association={dataElementAssociation}
-                                />
-                            </KeyContentDisplay>
-                        )}
-                        {column.comment && (
-                            <KeyContentDisplay keyString="Definition">
-                                {column.comment}
-                            </KeyContentDisplay>
-                        )}
-                        <KeyContentDisplay keyString="Description">
-                            {descriptionContent}
+                <div className="mt16">
+                    {parsedType.children && (
+                        <KeyContentDisplay keyString="Type Detail">
+                            <DataTableColumnCardNestedType
+                                complexType={parsedType}
+                            />
                         </KeyContentDisplay>
-                        <DataTableColumnStats columnId={column.id} />
-                    </div>
-                ) : (
-                    <div className="DataTableColumnCard-preview">
-                        {(column.description as ContentState).getPlainText()}
-                    </div>
-                )}
+                    )}
+                    {tagsDOM.length > 0 && (
+                        <KeyContentDisplay keyString="Tags">
+                            <div className="DataTableTags flex-row">
+                                {tagsDOM}
+                            </div>
+                        </KeyContentDisplay>
+                    )}
+                    {detailedColumn?.data_element_association && (
+                        <KeyContentDisplay keyString="Data Element">
+                            <DataElement
+                                association={
+                                    detailedColumn.data_element_association
+                                }
+                            />
+                        </KeyContentDisplay>
+                    )}
+                    {column.comment && (
+                        <KeyContentDisplay keyString="Definition">
+                            {column.comment}
+                        </KeyContentDisplay>
+                    )}
+                    <KeyContentDisplay keyString="Description">
+                        {descriptionContent}
+                    </KeyContentDisplay>
+                    <DataTableColumnStats stats={detailedColumn?.stats} />
+                </div>
             </Card>
         </div>
     );

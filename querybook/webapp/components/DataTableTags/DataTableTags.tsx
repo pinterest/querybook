@@ -26,12 +26,14 @@ interface IProps {
     tableId: number;
     readonly?: boolean;
     mini?: boolean;
+    showType?: boolean;
 }
 
 export const DataTableTags: React.FunctionComponent<IProps> = ({
     tableId,
     readonly = false,
     mini = false,
+    showType = true,
 }) => {
     const isUserAdmin = useSelector(
         (state: IStoreState) => state.user.myUserInfo.isAdmin
@@ -62,6 +64,7 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
             key={tag.id}
             isUserAdmin={isUserAdmin}
             mini={mini}
+            showType={showType}
         />
     ));
 
@@ -82,7 +85,8 @@ export const TableTag: React.FC<{
     readonly?: boolean;
     deleteTag?: (tagName: string) => void;
     mini?: boolean;
-}> = ({ tag, readonly, deleteTag, isUserAdmin, mini }) => {
+    showType?: boolean;
+}> = ({ tag, readonly, deleteTag, isUserAdmin, mini, showType = true }) => {
     const tagMeta = tag.meta ?? {};
     const tagRef = React.useRef<HTMLSpanElement>();
     const [showConfigModal, setShowConfigModal] = React.useState(false);
@@ -151,6 +155,7 @@ export const TableTag: React.FC<{
                 onClick={handleTagClick}
                 ref={tagRef}
                 mini={mini}
+                showType={showType}
             />
         </div>
     );

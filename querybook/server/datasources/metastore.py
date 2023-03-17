@@ -23,6 +23,8 @@ from lib.query_analysis.samples import make_samples_query
 from lib.utils import mysql_cache
 from logic import metastore as logic
 from logic import admin as admin_logic
+from logic import data_element as data_element_logic
+from logic import tag as tag_logic
 from models.metastore import (
     DataTableWarning,
     DataTableStatistics,
@@ -374,12 +376,16 @@ def get_column_by_table(table_id, column_name, with_table=False):
 
 @register("/column/<int:column_id>/", methods=["GET"])
 def get_column(column_id, with_table=False):
-    with DBSession() as session:
-        column = logic.get_column_by_id(column_id, session=session)
-        verify_data_table_permission(column.table_id, session=session)
-        column_dict = column.to_dict(with_table)
+    column = logic.get_column_by_id(column_id)
+    verify_data_table_permission(column.table_id)
+    column_dict = column.to_dict(with_table)
 
-        return column_dict
+    column_dict["stats"] = DataTableColumnStatistics.get_all(column_id=column_id)
+    column_dict["tags"] = tag_logic.get_tags_by_column_id(column_id=column_id)
+    column_dict[
+        "data_element_association"
+    ] = data_element_logic.get_data_element_association_by_column_id(column_id)
+    return column_dict
 
 
 @register("/column/<int:column_id>/", methods=["PUT"])

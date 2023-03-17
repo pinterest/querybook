@@ -54,7 +54,7 @@ def create_or_update_tag(tag_name, meta={}, commit=True, session=None):
     else:
         tag = Tag.update(
             id=tag.id,
-            fields={"count": tag.count + 1, "meta": meta},
+            fields={"count": tag.count + 1, "meta": {**tag.meta, **meta}},
             skip_if_value_none=True,
             commit=commit,
             session=session,
