@@ -97,7 +97,7 @@ def create_data_element_association(
     session=None,
 ):
     if (
-        data_element_tuple is None
+        not data_element_tuple
         or not data_element_tuple.name
         or not data_element_tuple.type
     ):

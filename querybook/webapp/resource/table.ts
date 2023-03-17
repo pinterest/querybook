@@ -10,6 +10,7 @@ import type {
     IDataTableSamples,
     IDataTableWarning,
     IDataTableWarningUpdateFields,
+    IDetailedDataColumn,
     ILineage,
     IPaginatedQuerySampleFilters,
     IQueryMetastore,
@@ -168,10 +169,9 @@ export const TableResource = {
 };
 
 export const TableColumnResource = {
-    get: (columnId: number) => ds.fetch<IDataColumn>(`/column/${columnId}/`),
+    get: (columnId: number) =>
+        ds.fetch<IDetailedDataColumn>(`/column/${columnId}/`),
 
-    getStats: (columnId: number) =>
-        ds.fetch<ITableColumnStats[]>(`/column/stats/${columnId}/`),
     update: (columnId: number, description: ContentState) => {
         const params = {
             description: convertContentStateToHTML(description),

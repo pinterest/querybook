@@ -119,6 +119,8 @@ export interface IDataColumn {
     name: string;
     table_id: number;
     type: string;
+}
+export interface IDetailedDataColumn extends IDataColumn {
     stats?: ITableColumnStats[];
     tags?: ITag[];
     data_element_association?: IDataElementAssociation;
