@@ -1,5 +1,8 @@
 import type { ContentState } from 'draft-js';
 
+import { IDataElementAssociation } from './dataElement';
+import { ITag } from './tag';
+
 // Keep it in sync with MetadataType in server/const/metastore.py
 export enum MetadataType {
     TABLE_DESCRIPTION = 'table_description',
@@ -116,6 +119,11 @@ export interface IDataColumn {
     name: string;
     table_id: number;
     type: string;
+}
+export interface IDetailedDataColumn extends IDataColumn {
+    stats?: ITableColumnStats[];
+    tags?: ITag[];
+    data_element_association?: IDataElementAssociation;
 }
 
 export interface ILineage {

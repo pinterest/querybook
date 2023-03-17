@@ -4,24 +4,19 @@
     .Card {
         margin: 16px 0px;
 
-        .DataTableColumnCard-top {
-            cursor: pointer;
-            .DataTableColumnCard-left {
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                max-width: 95%;
-
-                .column-type {
-                    min-width: 80px;
-                    word-break: break-all;
-                }
+        .DataTableColumnCard-header {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            .column-name {
+                width: 180px;
+                margin-right: 12px;
             }
-        }
 
-        .DataTableColumnCard-preview {
-            @include one-line-ellipsis();
-            width: 95%;
+            .column-type {
+                width: 100%;
+                word-break: break-all;
+            }
         }
 
         .EditableTextField .editor-wrapper {
@@ -31,7 +26,6 @@
 }
 
 .DataTableColumnCardNestedType {
-
     .column-type {
         min-width: 80px;
         word-break: break-all;

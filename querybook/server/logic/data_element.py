@@ -1,6 +1,7 @@
 from typing import Union
 from app.db import with_session
 from const.data_element import (
+    DataElementAssociationDict,
     DataElementAssociationProperty,
     DataElementAssociationTuple,
     DataElementAssociationType,
@@ -24,12 +25,32 @@ def get_data_element_by_name(name: str, session=None):
 
 
 @with_session
-def get_data_element_associations_by_column_id(column_id: int, session=None) -> dict:
-    return (
+def get_data_element_association_by_column_id(
+    column_id: int, session=None
+) -> DataElementAssociationDict:
+    associations = (
         session.query(DataElementAssociation)
         .filter(DataElementAssociation.column_id == column_id)
         .all()
     )
+    if not associations:
+        return None
+
+    # check if there are more than 1 association type
+    association_types = set([r.type for r in associations])
+    if len(association_types) > 1:
+        LOG.error(
+            f"Column {column_id} has more than one data element associated with it"
+        )
+        return None
+
+    data_element = {}
+    for row in associations:
+        data_element["type"] = row.type.value
+        data_element[row.property_name] = (
+            row.data_element if row.data_element else row.primitive_type
+        )
+    return data_element
 
 
 @with_session
@@ -75,7 +96,11 @@ def create_data_element_association(
     primitive_type: str = None,
     session=None,
 ):
-    if data_element_tuple is None:
+    if (
+        not data_element_tuple
+        or not data_element_tuple.name
+        or not data_element_tuple.type
+    ):
         return None
 
     if type(data_element_tuple) is str:

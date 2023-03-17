@@ -1,7 +1,6 @@
 import type { ContentState } from 'draft-js';
 import JSONBig from 'json-bigint';
 
-import { IDataElementAssociation } from 'const/dataElement';
 import type {
     DataTableWarningSeverity,
     IDataColumn,
@@ -11,6 +10,7 @@ import type {
     IDataTableSamples,
     IDataTableWarning,
     IDataTableWarningUpdateFields,
+    IDetailedDataColumn,
     ILineage,
     IPaginatedQuerySampleFilters,
     IQueryMetastore,
@@ -169,8 +169,9 @@ export const TableResource = {
 };
 
 export const TableColumnResource = {
-    getStats: (columnId: number) =>
-        ds.fetch<ITableColumnStats[]>(`/column/stats/${columnId}/`),
+    get: (columnId: number) =>
+        ds.fetch<IDetailedDataColumn>(`/column/${columnId}/`),
+
     update: (columnId: number, description: ContentState) => {
         const params = {
             description: convertContentStateToHTML(description),
@@ -240,9 +241,6 @@ export const TableTagResource = {
 };
 
 export const DataElementResource = {
-    getDataElementByColumnId: (columnId: number) =>
-        ds.fetch<IDataElementAssociation>(`/column/${columnId}/data_element/`),
-
     getMetastoreLink: (dataElementId: number) =>
         ds.fetch<string>(`/data_element/${dataElementId}/metastore_link/`),
 };

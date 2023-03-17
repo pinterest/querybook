@@ -26,6 +26,7 @@
     font-size: var(--small-text-size);
     font-family: var(--font-accent);
     max-width: 100%;
+    white-space: nowrap;
 
     span {
         @include one-line-ellipsis();
