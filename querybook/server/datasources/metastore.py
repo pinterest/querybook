@@ -562,68 +562,6 @@ def create_table_stats(data):
     return
 
 
-@register("/column/stats/<int:column_id>/", methods=["GET"])
-def get_table_column_stats(column_id):
-    """Get all table stats column by id"""
-    with DBSession() as session:
-        column = logic.get_column_by_id(column_id, session=session)
-        verify_data_table_permission(column.table_id, session=session)
-        return DataTableColumnStatistics.get_all(column_id=column_id, session=session)
-
-
-@register("/column/stats/<metastore_name>/", methods=["POST"])
-def create_table_column_stats_by_name(metastore_name, data):
-    """Batch add/update table column stats"""
-    # TODO: verify user is a service account
-    with DBSession() as session:
-        metastore = admin_logic.get_query_metastore_by_name(
-            metastore_name, session=session
-        )
-        api_assert(metastore, "Invalid metastore")
-        verify_metastore_permission(metastore.id, session=session)
-
-        with DataTableFinder(metastore.id) as t_finder:
-            for d in data:
-                column = t_finder.get_table_column_by_name(
-                    schema_name=d["schema_name"],
-                    table_name=d["table_name"],
-                    column_name=d["column_name"],
-                    session=session,
-                )
-
-                if column is not None:
-                    for s in d["stats"]:
-                        logic.upsert_table_column_stat(
-                            column_id=column.id,
-                            key=s["key"],
-                            value=s["value"],
-                            uid=current_user.id,
-                            session=session,
-                        )
-    return
-
-
-@register("/column/stats/", methods=["POST"])
-def create_table_column_stats(data):
-    """Batch add/update table column stats"""
-    # TODO: verify user is a service account
-    with DBSession() as session:
-
-        for d in data:
-            column = logic.get_column_by_id(d["column_id"], session=session)
-            if column:
-                verify_data_table_permission(column.table_id, session=session)
-                for s in d["stats"]:
-                    logic.upsert_table_column_stat(
-                        column_id=d["column_id"],
-                        key=s["key"],
-                        value=s["value"],
-                        uid=current_user.id,
-                        session=session,
-                    )
-    return
-
-
 @register("/lineage/", methods=["POST"])
 @admin_only
 def add_lineage(table_id, parent_table_id, job_metadata_id):

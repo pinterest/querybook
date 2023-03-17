@@ -48,7 +48,7 @@ def get_data_element_association_by_column_id(
     for row in associations:
         data_element["type"] = row.type.value
         data_element[row.property_name] = (
-            row.data_element.to_dict() if row.data_element else row.primitive_type
+            row.data_element if row.data_element else row.primitive_type
         )
     return data_element
 
