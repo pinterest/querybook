@@ -4,46 +4,24 @@ title: Connect to a Query Engine
 sidebar_label: Connect to a Query Engine
 ---
 
-## Concepts
-
-Before going through the setup steps, let's get familiar with some concepts of Querybook.
-
-**Metastore**
-
-Metastores are used to store metadata for tables, such as table schemas, table and column descriptions, tags, ownership, and more. They differ from actual databases that store table data. For example, in the Hive metastore, the actual data may be stored on S3. In SqlAlchemy compatible databases like MySQL and PostgreSQL, metadata and data are stored in the same database.
-
-:::info
-Metastore is optional when executing a query. However, it provides several benefits, such as the ability to know which tables you can query and other metadata about the table, including schema, description, tags, ownership, and more. It also provides auto-completion support.
-:::
-
-**Query Engine**
-
-Query engines execute queries on data sources and return results in a structured format, such as Presto.
-
-**Environment**
-
-Environments are used for access control and scoped workspaces.
-
-![](/img/documentation/Querybook_concepts.png)
-
--   A query engine can be associated with a metastore.
--   An environment can contain multiple query engines.
--   A user can be added to one or many environments, depending on the data source(s) they are granted access to and the environment(s) that have access.
-
-Therefore, the general process of adding a query engine is:
-
-1. Create a new query engine associated with the metastore.
-2. Add the query engine to an environment or create a new environment first if necessary.
-3. [**Optional but highly recommended**] Create a new metastore for the data source if it does not already exist.
-
 ## Prerequisites
 
 -   Have the Querybook repository cloned.
 -   Have a PostgreSQL database ready to connect. It could be either on your localhost or on a remote server.
 
+## General Process
+
+1. Create a query engine for query execution.
+2. Add the query engine to an environment. Create one first if needed.
+3. **[Optional but highly recommended]** Create a new metastore to associate with the query engine.
+
+:::info
+If dont have an idea of above concepts of **query engine**, **environment** and **metastore**, please refer to [here](../configurations/general_config#environment)
+:::
+
 ## Step by Step
 
-Here we'll guide you through the process of adding a query engine for **PostgreSQL** in Querybook.
+Here we'll guide you through the process of adding a query engine for **PostgreSQL** as an example.
 
 1. Create a `local.txt` file under the `requirements/` folder in the project's root directory.
 

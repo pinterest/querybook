@@ -16,7 +16,7 @@ In the next section we will go over different things that can be configured in t
 Checkout [Sharing & Security](../overview/sharing_and_security.md) to learn how to configure access permission for these entities.
 :::
 
-#### Environment
+### Environment
 
 Environment ensures users on Querybook are only allowed to access to information/query they have permission to. All DataDocs, Query Engines are attached to some environments.
 
@@ -43,6 +43,12 @@ Once a metastore is created, you can configure the auto sync schedule, manually 
 ### Query Engine
 
 Query engine configures the endpoints that users can query. Each query engine needs to be attached to an environment for security measures. They can also attach a metastore to allow users to see table information while writing queries. All available query engine executors are grouped by language and each of them have different configuration values that needs to be set.
+
+![](/img/documentation/Querybook_concepts.png)
+
+-   A query engine can be associated with a metastore.
+-   An environment can contain multiple query engines.
+-   A user can be added to one or many environments, depending on the data source(s) they are granted access to and the environment(s) that have access.
 
 ### Announcement
 
