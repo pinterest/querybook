@@ -1,5 +1,5 @@
 ---
-id: helm_deployment_guide
+id: helm_guide
 title: Helm Deployment Guide
 sidebar_label: Helm Deployment Guide
 ---
