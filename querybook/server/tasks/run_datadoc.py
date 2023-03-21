@@ -148,7 +148,6 @@ def _start_query_execution_task(
             ),
             namespace="/datadoc",
             room=data_doc_id,
-            broadcast=True,
         )
         return query_execution.id
 

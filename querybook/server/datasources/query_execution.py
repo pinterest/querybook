@@ -96,7 +96,6 @@ def create_query_execution(query, engine_id, data_cell_id=None, originator=None)
                     ),
                     namespace="/datadoc",
                     room=data_doc.id,
-                    broadcast=True,
                 )
 
             return query_execution_dict

@@ -465,7 +465,6 @@ def add_datadoc_editor(
                 (originator, doc_id, uid, None),
                 namespace="/datadoc",
                 room=doc_id,
-                broadcast=True,
             )
 
         socketio.emit(
@@ -473,7 +472,6 @@ def add_datadoc_editor(
             (originator, doc_id, uid, editor_dict),
             namespace="/datadoc",
             room=doc_id,
-            broadcast=True,
         )
         logic.update_es_data_doc_by_id(doc_id)
         send_add_datadoc_editor_email(doc_id, uid, read, write)
@@ -501,7 +499,6 @@ def add_datadoc_access_request(doc_id, originator=None):
             (originator, doc_id, uid, access_request_dict),
             namespace="/datadoc",
             room=doc_id,
-            broadcast=True,
         )
     send_datadoc_access_request_notification(doc_id=doc_id, uid=uid)
     return access_request_dict
@@ -516,7 +513,6 @@ def remove_datadoc_access_request(doc_id, uid, originator=None):
         (originator, doc_id, uid, None),
         namespace="/datadoc",
         room=doc_id,
-        broadcast=True,
     )
 
 
@@ -597,7 +593,6 @@ def update_datadoc_editor(
                 ),
                 namespace="/datadoc",
                 room=editor_dict["data_doc_id"],
-                broadcast=True,
             )
             return editor_dict
 
@@ -620,7 +615,6 @@ def delete_datadoc_editor(
                 (originator, editor_dict["data_doc_id"], editor_dict["uid"], None),
                 namespace="/datadoc",
                 room=editor_dict["data_doc_id"],
-                broadcast=True,
             )
 
 
@@ -663,7 +657,6 @@ def update_datadoc_owner(doc_id, next_owner_id, originator=None):
             (originator, doc_id, current_user.id, current_owner_editor_dict),
             namespace="/datadoc",
             room=doc_id,
-            broadcast=True,
         )
         socketio.emit(
             "data_doc_editor",
@@ -675,7 +668,6 @@ def update_datadoc_owner(doc_id, next_owner_id, originator=None):
             ),
             namespace="/datadoc",
             room=next_owner_editor_dict["data_doc_id"],
-            broadcast=True,
         )
         socketio.emit(
             "data_doc_updated",
@@ -685,7 +677,6 @@ def update_datadoc_owner(doc_id, next_owner_id, originator=None):
             ),
             namespace="/datadoc",
             room=next_owner_editor_dict["data_doc_id"],
-            broadcast=True,
         )
         logic.update_es_data_doc_by_id(doc_id)
         # Update queries in elasticsearch to reflect new permissions

@@ -33,7 +33,6 @@ def register_socket(url, namespace=None, websocket_logging=True):
                         "error",
                         str(e),
                         namespace=namespace,
-                        broadcast=False,
                         room=flask.request.sid,
                     )
 

@@ -38,7 +38,6 @@ def update_datadoc(doc_id, fields, sid="", session=None):
         ),
         namespace=DATA_DOC_NAMESPACE,
         room=doc_id,
-        broadcast=True,
     )
 
     return doc_dict
@@ -67,7 +66,6 @@ def insert_data_cell(
         ),
         namespace=DATA_DOC_NAMESPACE,
         room=doc_id,
-        broadcast=True,
     )
 
     return data_cell_dict
@@ -93,7 +91,6 @@ def move_data_cell(doc_id, from_index, to_index, sid="", session=None):
         ),
         namespace=DATA_DOC_NAMESPACE,
         room=doc_id,
-        broadcast=True,
     )
 
     # Should we return data instead?
@@ -146,7 +143,6 @@ def paste_data_cell(
                 ),
                 namespace=DATA_DOC_NAMESPACE,
                 room=doc_id,
-                broadcast=True,
             )
         else:
             socketio.emit(
@@ -158,7 +154,6 @@ def paste_data_cell(
                 ),
                 namespace=DATA_DOC_NAMESPACE,
                 room=doc_id,
-                broadcast=True,
             )
             socketio.emit(
                 "data_cell_deleted",
@@ -168,7 +163,6 @@ def paste_data_cell(
                 ),
                 namespace=DATA_DOC_NAMESPACE,
                 room=old_data_doc.id,
-                broadcast=True,
             )
     else:  # Copy
         new_cell_dict = insert_data_cell(
@@ -189,7 +183,6 @@ def paste_data_cell(
         (sid),
         namespace=DATA_DOC_NAMESPACE,
         room=doc_id,
-        broadcast=False,
     )
 
 
@@ -209,7 +202,6 @@ def update_data_cell(cell_id, fields, sid="", session=None):
         (sid, data_cell_dict),
         namespace=DATA_DOC_NAMESPACE,
         room=data_doc.id,
-        broadcast=True,
     )
 
     return data_cell_dict
@@ -231,7 +223,6 @@ def delete_data_cell(doc_id, cell_id, sid="", session=None):
         ),
         namespace=DATA_DOC_NAMESPACE,
         room=doc_id,
-        broadcast=True,
     )
 
     return True
