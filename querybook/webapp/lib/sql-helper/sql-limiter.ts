@@ -45,13 +45,22 @@ export function getSelectStatementLimit(
         return null;
     }
 
-    const matchLimitPattern = tokenPatternMatch(outerStatement, [
+    const matchLimitPatternNum = tokenPatternMatch(outerStatement, [
         { type: 'KEYWORD', text: 'limit' },
         { type: 'NUMBER' },
     ]);
 
-    if (matchLimitPattern) {
-        return Number(matchLimitPattern[1].text);
+    if (matchLimitPatternNum) {
+        return Number(matchLimitPatternNum[1].text);
+    }
+
+    const matchLimitPatternAll = tokenPatternMatch(outerStatement, [
+        { type: 'KEYWORD', text: 'limit' },
+        { type: 'KEYWORD', text: 'all' },
+    ]);
+
+    if (matchLimitPatternAll) {
+        return -2;
     }
 
     const matchFetchFirstPattern = tokenPatternMatch(outerStatement, [
@@ -108,7 +117,7 @@ export function getLimitedQuery(
     const updatedQuery = statements
         .map((statement) => {
             const existingLimit = getSelectStatementLimit(statement, language);
-            if (existingLimit == null || existingLimit >= 0) {
+            if (existingLimit == null || existingLimit >= 0 || existingLimit === -2) {
                 return statement + ';';
             }
 
