@@ -6,7 +6,7 @@ sidebar_label: Connect to a Query Engine
 
 ## Prerequisites
 
--   Have the Querybook repository cloned.
+-   Have the Querybook repository cloned. See [Quick Setup](./quick_setup.md).
 -   Have a PostgreSQL database ready to connect. It could be either on your localhost or on a remote server.
 
 ## General Process
@@ -16,7 +16,7 @@ sidebar_label: Connect to a Query Engine
 3. **[Optional but highly recommended]** Create a new metastore to associate with the query engine.
 
 :::info
-If dont have an idea of above concepts of **query engine**, **environment** and **metastore**, please refer to [here](../configurations/general_config#environment)
+If you dont have an idea of above concepts of **query engine**, **environment** and **metastore**, please refer to [here](../configurations/general_config#environment)
 :::
 
 ## Step by Step
@@ -55,7 +55,7 @@ make
         postgresql://<username>:<password>@<server-host>:<port>/<database>
         ```
         Please refer to the SqlAlchemy [documentation](https://docs.sqlalchemy.org/en/20/core/engines.html#postgresql) for the connection string format.
-    - Select `ConnectionChecker` as status checker
+    - Select `SelectOneChecker` as the status checker
 
     :::caution About localhost
 
