@@ -1,7 +1,7 @@
 ---
-id: connect_to_query_engines
-title: Connect to Query Engines
-sidebar_label: Connect to Query Engines
+id: query_engines
+title: Query Engines
+sidebar_label: Query Engines
 ---
 
 ## Overview
@@ -30,48 +30,11 @@ If you have tried any of the tier 3 databases and confirmed it works, please upd
 
 ## Query Engine Support
 
-Querybook only supports a few of the Tier 1 & 2 databases by default. When Querybook is launched, it checks with SqlAlchemy to see if any of the databases below are available. If so, the query engine would be automatically available to set up in the Admin UI. Please see the [step by step guide](#step-by-step-guide) below to see an working example.
-
-## Step by step guide
-
-In this guide, we will go through adding Amazon Redshift query engine to Querybook. This serves as an example to adding all sqlalchemy-compatible query engines.
-
-1. Clone and download the repo
-
-```sh
-git clone git@github.com:pinterest/querybook.git
-cd querybook
-```
-
-2. Create a `local.txt` under `requirements/` folder in the project's root directory
-
-```sh
-touch requirements/local.txt
-```
-
-3. Add the required packages
-
-```sh
-echo -e "sqlalchemy-redshift\nredshift_connector" > requirements/local.txt
-```
-
-4. Start the container
-
-```sh
-make
-```
-
-5. Register as a new user and use the demo setup.
-6. Visit [https://localhost:10001/admin/query_engine/](https://localhost:10001/admin/query_engine/) and create a new query engine. Put `redshift` as the language and `generic-sqlalchemy` as the executor. In the `Executor Params`, put the connection string (as specified by SqlAlchemy) in the `Connection_string` field.
-7. Go to [https://localhost:10001/admin/environment/1/](https://localhost:10001/admin/environment/1/) and add the Redshift engine under the demo_environment.
-8. Now you can run queries against the new Redshift engine in [https://localhost:10001/demo_environment/adhoc/](https://localhost:10001/demo_environment/adhoc/).
-9. To include table metadata and autocompletion, you would need to add a metastore. Visit [https://localhost:10001/admin/metastore/](https://localhost:10001/admin/metastore/) and create a new metastore. Use SqlAlchemyMetastoreLoader with the exact connection string used for the query engine. Click on `Save` -> `CREATE SCHEDULE` -> `Create Task`. Now click on `Run Task` to sync. You can view the progress in the `History` tab. Wait until it is completed (Should be done in seconds if the number of tables is small).
-10. Go to your query engine page on [https://localhost:10001/admin/query_engine/](https://localhost:10001/admin/query_engine/), in the Metastore field, choose the metastore you just created and click `Save`.
-11. Visit [https://localhost:10001/demo_environment/adhoc/](https://localhost:10001/demo_environment/adhoc/) again and the auto complete feature should be available. You can also view all tables by clicking on the `Tables` button on the left sidebar and select the specific metastore.
+Querybook only supports a few of the Tier 1 & 2 databases by default. When Querybook is launched, it checks with SqlAlchemy to see if any of the databases below are available. If so, the query engine would be automatically available to set up in the Admin UI.
 
 ## All Query Engines
 
-**Note**: If the query engine is not included below, but it does have a Sqlalchemy integration, you can still use it in Querybook. Follow the [step by step guide](#step-by-step-guide) with 1 additional step before step 4. Visit `<project_root>/querybook/server/lib/query_executor/sqlalchemy.py` and add the query engine to the list variable `SQLALCHEMY_SUPPORTED_DIALECTS`, and continue to step 4. If it works, please contribute to Querybook by submitting a PR of your changes.
+**Note**: If the query engine is not included below, but it does have a Sqlalchemy integration, you can still use it in Querybook. Follow the [Connect to a Query Engine](./connect_to_a_query_engine) with 1 additional step before step 4. Visit `<project_root>/querybook/server/lib/query_executor/sqlalchemy.py` and add the query engine to the list variable `SQLALCHEMY_SUPPORTED_DIALECTS`, and continue to step 4. If it works, please contribute to Querybook by submitting a PR of your changes.
 
 | Query Engine         | Tier | Package                                                                                                                                                                  |
 | -------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
