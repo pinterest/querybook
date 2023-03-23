@@ -8,13 +8,14 @@
             display: flex;
             flex-direction: row;
             align-items: center;
+            gap: 12px;
+
             .column-name {
-                width: 180px;
-                margin-right: 12px;
+                min-width: 160px;
             }
 
             .column-type {
-                width: 100%;
+                flex: 1;
                 word-break: break-all;
             }
         }
