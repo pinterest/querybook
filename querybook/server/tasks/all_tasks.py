@@ -1,10 +1,15 @@
-from celery.signals import celeryd_init
+from celery.signals import celeryd_init, task_failure
 from celery.utils.log import get_task_logger
 from importlib import import_module
 
 from app.flask_app import celery
 from env import QuerybookSettings
 from lib.logger import get_logger
+from lib.stats_logger import (
+    stats_logger,
+    DATADOC_TASK_FAILURE_COUNTER,
+    SYSTEM_TASK_FAILURE_COUNTER,
+)
 
 from .export_query_execution import export_query_execution_task
 from .run_query import run_query_task
@@ -54,3 +59,12 @@ def configure_workers(sender=None, conf=None, **kwargs):
         clean_up_query_execution()
     else:
         LOG.info(f"Starting DEV Celery worker: {sender}")
+
+
+@task_failure.connect
+def handle_task_failure(sender, signal, *args, **kwargs):
+    task_name = sender.name
+    if task_name.startswith("tasks.run_datadoc"):
+        stats_logger.incr(DATADOC_TASK_FAILURE_COUNTER)
+    else:
+        stats_logger.incr(SYSTEM_TASK_FAILURE_COUNTER)

@@ -7,6 +7,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.exc import SQLAlchemyError, DisconnectionError
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker, scoped_session
+from lib.stats_logger import stats_logger, SQL_SESSION_FAILURE_COUNTER
 
 try:
     from greenlet import getcurrent as _get_ident
@@ -122,6 +123,10 @@ def with_session(fn):
                 import traceback
 
                 LOG.error(traceback.format_exc())
+
+                # increment sql session failure counter
+                stats_logger.incr(SQL_SESSION_FAILURE_COUNTER)
+
                 raise e
             finally:
                 # Since we created the session, close it.
@@ -151,6 +156,10 @@ def DBSession():
         import traceback
 
         LOG.error(traceback.format_exc())
+
+        # increment sql session failure counter
+        stats_logger.incr(SQL_SESSION_FAILURE_COUNTER)
+
         raise e
     finally:
         get_session().remove()
