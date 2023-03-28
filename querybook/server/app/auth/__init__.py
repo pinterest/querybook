@@ -1,5 +1,3 @@
-import time
-
 from flask import request
 from flask_login import logout_user, current_user
 
@@ -7,26 +5,10 @@ from const.path import BUILD_PATH
 from const.datasources import DS_PATH
 from env import QuerybookSettings
 from lib.utils.import_helper import import_module_with_default
-from lib.stats_logger import stats_logger, ACTIVE_USER_COUNTER
 
 
 auth = None
 login_config = None
-active_users = {}
-
-ACTIVE_USER_SESSION_TIMEOUT = 30 * 60  # 30 minutes in seconds
-
-
-def update_active_users():
-    if current_user.id not in active_users:
-        stats_logger.incr(ACTIVE_USER_COUNTER)
-
-    active_users[current_user.id] = time.time()
-
-    for user_id, last_activity_time in list(active_users.items()):
-        if time.time() - last_activity_time > ACTIVE_USER_SESSION_TIMEOUT:
-            del active_users[user_id]
-            stats_logger.decr(ACTIVE_USER_COUNTER)
 
 
 def init_app(flask_app):
@@ -47,8 +29,6 @@ def init_app(flask_app):
         if not current_user.is_authenticated:
             return auth.login(request)
 
-        update_active_users()
-
     check_auth  # PYLINT :(
 
 
@@ -59,16 +39,12 @@ def load_auth():
 
 
 def logout():
-    current_user_id = current_user.id
     global auth
     has_logout = hasattr(auth, "on_logout_user")
     if has_logout:
         auth.on_logout_user()
 
     logout_user()
-
-    del active_users[current_user_id]
-    stats_logger.decr(ACTIVE_USER_COUNTER)
 
 
 def get_login_config():

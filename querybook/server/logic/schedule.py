@@ -4,7 +4,7 @@ from sqlalchemy.sql.expression import func, and_
 
 from app.flask_app import celery
 from app.db import with_session
-from const.schedule import TaskRunStatus
+from const.schedule import TaskRunStatus, ScheduleTaskType, UserTaskNames
 from lib.sqlalchemy import update_model_fields
 from models.schedule import (
     TaskSchedule,
@@ -14,6 +14,13 @@ from models.datadoc import DataDoc
 from models.board import BoardItem
 
 DATADOC_SCHEDULE_PREFIX = "run_data_doc_"
+
+
+def get_schedule_task_type(task_name: str) -> ScheduleTaskType:
+    if task_name in UserTaskNames:
+        return ScheduleTaskType.USER
+    else:
+        return ScheduleTaskType.PROD
 
 
 @with_session
@@ -46,7 +53,6 @@ def create_task_schedule(
     kwargs=None,
     options=None,
     enabled=None,
-    task_type=None,
     commit=True,
     session=None,
 ):
@@ -59,7 +65,7 @@ def create_task_schedule(
         kwargs=kwargs or {},
         options=options or {},
         enabled=enabled,
-        task_type=task_type,
+        task_type=get_schedule_task_type(name),
     )
 
     session.add(schedule)

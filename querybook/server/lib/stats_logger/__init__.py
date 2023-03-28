@@ -4,7 +4,6 @@ from .base_stats_logger import BaseStatsLogger
 
 
 # metrics name templates
-ACTIVE_USER_COUNTER = "active_user"
 API_REQUEST_COUNTER = "api.{}"
 API_REQUEST_LATENCY_TIMER = "api.duration.ms.{}"
 WS_CONNECTIONS_COUNTER = "ws.connections"

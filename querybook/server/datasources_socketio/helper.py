@@ -22,10 +22,6 @@ def register_socket(url, namespace=None, websocket_logging=True):
                 # decrement ws connections counter on disconnect
                 stats_logger.decr(WS_CONNECTIONS_COUNTER)
             else:
-                # decrement ws connections counter on disconnect
-                if url == "disconnect":
-                    stats_logger.decr(WS_CONNECTIONS_COUNTER)
-
                 try:
                     if websocket_logging:
                         event_logger.log_websocket_event(
@@ -42,6 +38,10 @@ def register_socket(url, namespace=None, websocket_logging=True):
                         namespace=namespace,
                         room=flask.request.sid,
                     )
+
+                # decrement ws connections counter on disconnect
+                if url == "disconnect":
+                    stats_logger.decr(WS_CONNECTIONS_COUNTER)
 
         handler.__raw__ = fn
         return handler

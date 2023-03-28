@@ -10,7 +10,7 @@ from const.db import (
     description_length,
     now,
 )
-from const.schedule import TaskRunStatus
+from const.schedule import TaskRunStatus, ScheduleTaskType
 from lib.sqlalchemy import CRUDMixin, TruncateString
 
 Base = db.Base
@@ -67,7 +67,7 @@ class TaskSchedule(CRUDMixin, Base):
     no_changes = sql.Column(sql.Boolean, default=False)
 
     task_type = sql.Column(
-        sql.String(length=name_length), nullable=False, default="prod"
+        sql.String(length=name_length), nullable=False, default=ScheduleTaskType.PROD
     )
 
     def get_cron(self):
