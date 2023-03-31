@@ -3,6 +3,7 @@ from flask_login import current_user
 from app.datasource import register, admin_only, api_assert
 from app.db import DBSession
 from const.admin import AdminOperation, AdminItemType
+from const.schedule import ScheduleTaskType
 from datasources.admin_audit_log import with_admin_audit_log
 from env import QuerybookSettings
 
@@ -601,7 +602,7 @@ def exec_demo_set_up():
                 "task": "tasks.update_metastore.update_metastore",
                 "cron": "0 0 * * *",
                 "args": [metastore_id],
-                "task_type": "prod",
+                "task_type": ScheduleTaskType.PROD,
                 "enabled": True,
             },
             # commit=False,

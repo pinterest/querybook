@@ -1,27 +1,32 @@
 import datetime
 import functools
 import json
-import traceback
 import socket
+import time
+import traceback
 
 import flask
-from flask_login import current_user
-from werkzeug.exceptions import Forbidden, NotFound
-
-from app.flask_app import flask_app, limiter
 from app.db import get_session
+from app.flask_app import flask_app, limiter
 from const.datasources import (
+    ACCESS_RESTRICTED_STATUS_CODE,
     DS_PATH,
+    INVALID_SEMANTIC_STATUS_CODE,
     OK_STATUS_CODE,
     UNAUTHORIZED_STATUS_CODE,
-    INVALID_SEMANTIC_STATUS_CODE,
-    ACCESS_RESTRICTED_STATUS_CODE,
     UNKNOWN_CLIENT_ERROR_STATUS_CODE,
     UNKNOWN_SERVER_ERROR_STATUS_CODE,
 )
+from flask_login import current_user
+from lib.event_logger import event_logger
+from lib.stats_logger import (
+    stats_logger,
+    API_REQUEST_COUNTER,
+    API_REQUEST_LATENCY_TIMER,
+)
 from lib.logger import get_logger
 from logic.impression import create_impression
-from lib.event_logger import event_logger
+from werkzeug.exceptions import Forbidden, NotFound
 
 LOG = get_logger(__file__)
 _host = socket.gethostname()
@@ -56,6 +61,11 @@ def register(
         @flask_app.route(r"%s%s" % (DS_PATH, url), methods=methods)
         @functools.wraps(fn)
         def handler(**kwargs):
+            # increment the number of api request counter
+            stats_logger.incr(API_REQUEST_COUNTER.format(fn.__name__))
+            # start the timer for api request duration
+            start_time = time.time()
+
             if require_auth and not current_user.is_authenticated:
                 flask.abort(UNAUTHORIZED_STATUS_CODE, description="Login required.")
 
@@ -78,6 +88,12 @@ def register(
                     )
 
                 results = fn(**kwargs)
+
+                # stop the timer and record the duration
+                duration_ms = (time.time() - start_time) * 1000.0
+                stats_logger.timing(
+                    API_REQUEST_LATENCY_TIMER.format(fn.__name__), duration_ms
+                )
 
                 if not custom_response:
                     if not isinstance(results, dict) or "data" not in results:

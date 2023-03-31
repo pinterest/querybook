@@ -11,3 +11,11 @@ class NotifyOn(Enum):
     ALL = 0
     ON_FAILURE = 1
     ON_SUCCESS = 2
+
+
+class ScheduleTaskType(Enum):
+    PROD = "prod"
+    USER = "user"
+
+
+UserTaskNames = set(["tasks.run_datadoc.run_datadoc"])

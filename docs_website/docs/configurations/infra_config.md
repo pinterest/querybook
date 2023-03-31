@@ -92,6 +92,14 @@ The following settings are only relevant if you are using `s3` and your S3 bucke
 
 You can also add addtional loggers in the event logger plugin. See [Add Event Logger guide](../integrations/add_event_logger.md) for more details.
 
+### Stats Logging
+
+`STATS_LOGGER_NAME` (optional, defaults to **"null"**): This configures what stats logger to be used.
+
+    - null: This is the default logger, which does nothing and disregards the logs.
+    - console: This will print the stats logs to the console. Could be used for debugging purpose.
+
+You need to add your own stats logger plugin to use it. See [Add Stats Logger guide](../integrations/add_stats_logger.md) for more details.
 ## Authentication
 
 `AUTH_BACKEND` (optional, defaults to **app.auth.password_auth**): Python path to the authentication file. By default Querybook provides:

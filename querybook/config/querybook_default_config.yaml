@@ -81,3 +81,6 @@ TABLE_MAX_UPLOAD_SIZE: ~
 
 # --------------- Event Logging ---------------
 EVENT_LOGGER_NAME: ~
+
+# --------------- Stats Logging ---------------
+STATS_LOGGER_NAME: ~

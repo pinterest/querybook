@@ -37,6 +37,7 @@
             "integrations/add_query_transpilation",
             "integrations/add_table_upload",
             "integrations/add_event_logger",
+            "integrations/add_stats_logger",
             "integrations/customize_html",
             "integrations/embedded_iframe"
         ],

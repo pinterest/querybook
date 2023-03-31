@@ -295,7 +295,6 @@ def create_datadoc_schedule(
                 "user_id": data_doc.owner_uid,
                 "doc_id": id,
             },
-            task_type="user",
             session=session,
         )
 

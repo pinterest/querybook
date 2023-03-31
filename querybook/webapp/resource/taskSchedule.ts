@@ -43,7 +43,6 @@ export const TaskScheduleResource = {
         cron: string;
         name: string;
         task: string;
-        task_type: 'user' | 'prod';
         enabled: boolean;
         args?: any[];
         kwargs?: Record<any, any>;
