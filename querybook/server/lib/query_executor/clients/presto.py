@@ -61,7 +61,7 @@ class PrestoClient(ClientBaseClass):
         port = 8080 if not presto_conf.port else presto_conf.port
 
         requests_kwargs = {}
-        if connection_timeout and connection_timeout > 0:  # not None and >0
+        if connection_timeout and connection_timeout > 0:
             requests_kwargs["timeout"] = connection_timeout
 
         connection = presto.connect(
