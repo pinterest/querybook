@@ -44,10 +44,6 @@ function SimpleFormField<T>({
     value: T;
     onChange: onChangeFunc<T>;
 }) {
-    const onFieldChange = React.useCallback(
-        (newVal: any) => onChange('', newVal),
-        [onChange]
-    );
     const {
         description,
         hidden,
@@ -56,6 +52,18 @@ function SimpleFormField<T>({
         field_type: fieldType,
         options,
     } = formField;
+
+    const onFieldChange = React.useCallback(
+        (newVal: any) => {
+            if (fieldType === 'number') {
+                newVal = Number(newVal);
+            }
+
+            return onChange('', newVal);
+        },
+        [onChange, fieldType]
+    );
+
     let controlDOM: React.ReactChild;
     if (fieldType === 'string' || fieldType === 'number') {
         const inputProps = {
