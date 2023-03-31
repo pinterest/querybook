@@ -181,7 +181,7 @@ def cancel_query_execution(query_execution_id):
         "RETRY",  # Very unlikely case, because query normally do not retry
     ):
 
-        task.revoke()  # last attempt to cancel it
+        task.revoke(terminate=True)  # last attempt to cancel it
         cancel_query_and_notify()
     elif task.state == "ABORTED":
         # In this case, the task is already aborted, but the status is running

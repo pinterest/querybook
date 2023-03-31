@@ -51,6 +51,13 @@ presto_executor_template = StructFormField(
 <p>See [here](https://prestodb.github.io/docs/current/installation/jdbc.html) for more details.</p>""",
         ),
     ),
+    (
+        "connection_timeout",
+        FormField(
+            field_type=FormFieldType.Number,
+            helper="Max number of seconds before timing out the request",
+        ),
+    ),
 )
 
 trino_executor_template = StructFormField(
