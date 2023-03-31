@@ -11,8 +11,6 @@ class PrestoCursor(PrestoCursorMixin[presto.Cursor, Tuple], CursorBaseClass):
         self._cursor = cursor
         self._init_query_state_vars()
 
-        print(cursor._requests_kwargs)
-
     def _init_query_state_vars(self) -> None:
         self._tracking_url = None
         self._percent_complete = 0
