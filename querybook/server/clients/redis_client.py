@@ -3,7 +3,7 @@ import time
 
 import redis
 from env import QuerybookSettings
-from lib.stats_logger import REDIS_LATENCY_TIMER, stats_logger
+from lib.stats_logger import REDIS_OPERATIONS, stats_logger
 
 __redis = None
 
@@ -34,7 +34,9 @@ def with_redis(fn):
 
         # stop the timer and record the duration
         duration_ms = (time.time() - start_time) * 1000.0
-        stats_logger.timing(REDIS_LATENCY_TIMER.format(fn.__name__), duration_ms)
+        stats_logger.timing(
+            REDIS_OPERATIONS, duration_ms, tags={"operation": fn.__name__}
+        )
 
         return result
 

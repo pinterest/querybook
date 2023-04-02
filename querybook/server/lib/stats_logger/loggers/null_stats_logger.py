@@ -8,14 +8,14 @@ class NullStatsLogger(BaseStatsLogger):
     def logger_name(self) -> str:
         return "null"
 
-    def incr(self, key: str) -> None:
+    def incr(self, key: str, tags: dict[str, str] = None) -> None:
         pass
 
-    def decr(self, key: str) -> None:
+    def decr(self, key: str, tags: dict[str, str] = None) -> None:
         pass
 
-    def timing(self, key: str, value: float) -> None:
+    def timing(self, key: str, value: float, tags: dict[str, str] = None) -> None:
         pass
 
-    def gauge(self, key: str, value: float) -> None:
+    def gauge(self, key: str, value: float, tags: dict[str, str] = None) -> None:
         pass

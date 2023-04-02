@@ -11,7 +11,7 @@ from lib.query_executor.notification import notifiy_on_execution_completion
 from lib.query_executor.executor_factory import create_executor_from_execution
 from lib.query_executor.exc import QueryExecutorException
 from lib.query_executor.utils import format_error_message
-from lib.stats_logger import stats_logger, QUERY_EXECUTION_COUNTER
+from lib.stats_logger import QUERY_EXECUTIONS, stats_logger
 
 from logic import query_execution as qe_logic
 from logic.elasticsearch import update_query_execution_by_id
@@ -32,7 +32,7 @@ LOG = get_task_logger(__name__)
 def run_query_task(
     self, query_execution_id, execution_type=QueryExecutionType.ADHOC.value
 ):
-    stats_logger.incr(QUERY_EXECUTION_COUNTER.format(execution_type))
+    stats_logger.incr(QUERY_EXECUTIONS, tags={"execution_type": execution_type})
 
     executor = None
     error_message = None
@@ -57,7 +57,7 @@ def run_query_task(
             7406, "{}\n{}".format(e, traceback.format_exc())
         )
     finally:
-        stats_logger.decr(QUERY_EXECUTION_COUNTER.format(execution_type))
+        stats_logger.decr(QUERY_EXECUTIONS, tags={"execution_type": execution_type})
 
         # When the finally block is reached, it is expected
         # that the executor should be in one of the end state

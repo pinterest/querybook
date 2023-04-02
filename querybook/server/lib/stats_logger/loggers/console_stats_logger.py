@@ -14,18 +14,22 @@ class ConsoleStatsLogger(BaseStatsLogger):
     def logger_name(self) -> str:
         return "console"
 
-    def incr(self, key: str) -> None:
-        LOG.debug(COLOR_YELLOW + "[stats_logger] (incr) " + key + COLOR_RESET)
+    def incr(self, key: str, tags: dict[str, str] = None) -> None:
+        LOG.debug(COLOR_YELLOW + f"[stats_logger] (incr) {key} | {tags}" + COLOR_RESET)
 
-    def decr(self, key: str) -> None:
-        LOG.debug(COLOR_YELLOW + "[stats_logger] (decr) " + key + COLOR_RESET)
+    def decr(self, key: str, tags: dict[str, str] = None) -> None:
+        LOG.debug(COLOR_YELLOW + f"[stats_logger] (decr) {key} | {tags}" + COLOR_RESET)
 
-    def timing(self, key: str, value: float) -> None:
+    def timing(self, key: str, value: float, tags: dict[str, str] = None) -> None:
         LOG.debug(
-            COLOR_YELLOW + f"[stats_logger] (timing) {key} | {value} " + COLOR_RESET
+            COLOR_YELLOW
+            + f"[stats_logger] (timing) {key} | {value} | {tags}"
+            + COLOR_RESET
         )
 
-    def gauge(self, key: str, value: float) -> None:
+    def gauge(self, key: str, value: float, tags: dict[str, str] = None) -> None:
         LOG.debug(
-            COLOR_YELLOW + f"[stats_logger] (gauge) {key} | {value} " + COLOR_RESET
+            COLOR_YELLOW
+            + f"[stats_logger] (gauge) {key} | {value} | {tags}"
+            + COLOR_RESET
         )
