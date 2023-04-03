@@ -63,6 +63,8 @@ def upgrade():
             ["data_element_id"], ["data_element.id"], ondelete="CASCADE"
         ),
         sa.PrimaryKeyConstraint("id"),
+        mysql_charset="utf8mb4",
+        mysql_engine="InnoDB",
     )
     # ### end Alembic commands ###
 
