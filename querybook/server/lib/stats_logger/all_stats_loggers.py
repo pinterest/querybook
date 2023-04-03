@@ -15,4 +15,4 @@ def get_stats_logger_class(name: str):
     for logger in ALL_STATS_LOGGERS:
         if logger.logger_name == name:
             return logger
-    raise ValueError(f"Unknown event logger name {name}")
+    raise ValueError(f"Unknown stats logger name {name}")

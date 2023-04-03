@@ -19,11 +19,7 @@ from const.datasources import (
 )
 from flask_login import current_user
 from lib.event_logger import event_logger
-from lib.stats_logger import (
-    stats_logger,
-    API_REQUEST_COUNTER,
-    API_REQUEST_LATENCY_TIMER,
-)
+from lib.stats_logger import API_REQUESTS, stats_logger
 from lib.logger import get_logger
 from logic.impression import create_impression
 from werkzeug.exceptions import Forbidden, NotFound
@@ -61,8 +57,6 @@ def register(
         @flask_app.route(r"%s%s" % (DS_PATH, url), methods=methods)
         @functools.wraps(fn)
         def handler(**kwargs):
-            # increment the number of api request counter
-            stats_logger.incr(API_REQUEST_COUNTER.format(fn.__name__))
             # start the timer for api request duration
             start_time = time.time()
 
@@ -92,7 +86,9 @@ def register(
                 # stop the timer and record the duration
                 duration_ms = (time.time() - start_time) * 1000.0
                 stats_logger.timing(
-                    API_REQUEST_LATENCY_TIMER.format(fn.__name__), duration_ms
+                    API_REQUESTS,
+                    duration_ms,
+                    tags={"endpoint": fn.__name__, "method": flask.request.method},
                 )
 
                 if not custom_response:
