@@ -7,6 +7,13 @@ slug: /changelog
 
 Here are the list of breaking changes that you should be aware of when updating Querybook:
 
+## v3.22.0
+
+Updated the charset of table `data_element` to `utf8mb4`. For those mysql db's default charset is not utf8, please run below sql to update it if needed.
+```sql
+ALTER TABLE data_element CONVERT TO CHARACTER SET utf8mb4
+```
+
 ## v3.13.0
 
 Added two new abstract methods `notify_recipients` and `notifier_help` for `BaseNotifier`, which will allow a notifier to send messages to a list of recipients and provide help text for the recipients. Follow the example of `SlackNotifier` and `EmailNotifier` to implement it for your own notifier.
