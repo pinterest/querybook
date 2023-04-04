@@ -813,6 +813,15 @@ def get_data_doc_editor_by_id(id, session=None):
 def get_data_doc_editors_by_doc_id(data_doc_id, session=None):
     return session.query(DataDocEditor).filter_by(data_doc_id=data_doc_id).all()
 
+# Return Instance of unique data
+@with_session
+def get_data_doc_editors_by_doc_id_and_uid(data_doc_id, uid, session=None):
+    return (
+        session.query(DataDocEditor)
+        .filter(DataDocEditor.data_doc_id == data_doc_id)
+        .filter(DataDocEditor.uid == uid)
+    ).first()
+
 
 @with_session
 def get_data_doc_writers_by_doc_id(doc_id, session=None):
@@ -860,38 +869,25 @@ def update_data_doc_editor(
             session.refresh(editor)
         return editor
 
+
 @with_session
-def create_or_update_data_doc_editor(
+def create_or_update_doc_editor(
     data_doc_id, uid, read=False, write=False, commit=True, session=None
 ):
-    # Update DataDocEditor if Exists
-    editor = session.query(DataDocEditor).filter(DataDocEditor.data_doc_id==data_doc_id).filter(DataDocEditor.uid==uid).first()
+    editor = get_data_doc_editors_by_doc_id_and_uid(data_doc_id=data_doc_id, uid=uid)
     if editor:
-        updated = update_model_fields(
-            editor, skip_if_value_none=True, read=read, write=write
+        return update_data_doc_editor(
+            id=editor.id, read=read, write=write, commit=commit, session=session
         )
-
-        if updated:
-            if commit:
-                session.commit()
-                update_es_queries_by_datadoc_id(editor.data_doc_id)
-            else:
-                session.flush()
-            session.refresh(editor)
-        return editor
-
-    # Create DataDocEditor if Not Exists
-    editor = DataDocEditor(data_doc_id=data_doc_id, uid=uid, read=read, write=write)
-
-    session.add(editor)
-    if commit:
-        session.commit()
-        update_es_data_doc_by_id(editor.data_doc_id)
-        update_es_queries_by_datadoc_id(editor.data_doc_id)
     else:
-        session.flush()
-    session.refresh(editor)
-    return editor
+        return create_data_doc_editor(
+            data_doc_id=data_doc_id,
+            uid=uid,
+            read=read,
+            write=write,
+            commit=commit,
+            session=session,
+        )
 
 
 @with_session
