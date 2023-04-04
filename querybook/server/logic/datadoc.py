@@ -860,6 +860,39 @@ def update_data_doc_editor(
             session.refresh(editor)
         return editor
 
+@with_session
+def create_or_update_data_doc_editor(
+    data_doc_id, uid, read=False, write=False, commit=True, session=None
+):
+    # Update DataDocEditor if Exists
+    editor = session.query(DataDocEditor).filter(DataDocEditor.data_doc_id==data_doc_id).filter(DataDocEditor.uid==uid).first()
+    if editor:
+        updated = update_model_fields(
+            editor, skip_if_value_none=True, read=read, write=write
+        )
+
+        if updated:
+            if commit:
+                session.commit()
+                update_es_queries_by_datadoc_id(editor.data_doc_id)
+            else:
+                session.flush()
+            session.refresh(editor)
+        return editor
+
+    # Create DataDocEditor if Not Exists
+    editor = DataDocEditor(data_doc_id=data_doc_id, uid=uid, read=read, write=write)
+
+    session.add(editor)
+    if commit:
+        session.commit()
+        update_es_data_doc_by_id(editor.data_doc_id)
+        update_es_queries_by_datadoc_id(editor.data_doc_id)
+    else:
+        session.flush()
+    session.refresh(editor)
+    return editor
+
 
 @with_session
 def delete_data_doc_editor(id, doc_id, session=None, commit=True):
