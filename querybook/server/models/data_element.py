@@ -13,6 +13,7 @@ Base = db.Base
 
 class DataElement(CRUDMixin, Base):
     __tablename__ = "data_element"
+    __table_args__ = {"mysql_engine": "InnoDB", "mysql_charset": "utf8mb4"}
 
     id = sql.Column(sql.Integer, primary_key=True)
     created_at = sql.Column(sql.DateTime, default=now)
