@@ -5,3 +5,7 @@ pytest==5.2.2
 black==19.10b0
 pre-commit==2.2.0
 coverage==5.4
+importlib-metadata==4.13.0
+markupsafe==2.0.1
+itsdangerous==2.0.1
+protobuf==3.20.*
