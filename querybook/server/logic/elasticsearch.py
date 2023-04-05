@@ -47,6 +47,8 @@ from logic.query_execution import (
 from models.user import User
 from models.datadoc import DataCellType
 from models.board import Board
+from models.data_element import DataElement
+from models.metastore import DataTable
 
 
 LOG = get_logger(__file__)
@@ -538,6 +540,19 @@ def get_table_weight(table_id: int, session=None) -> int:
     return int(math.log2(((num_impressions + num_samples * 10) + 1) + boost_score))
 
 
+def get_unique_data_elements_from_table(table: DataTable) -> list[DataElement]:
+    unique_names = set()
+    data_elements = []
+    for c in table.columns:
+        for data_element in c.data_elements:
+            if data_element.name in unique_names:
+                continue
+            data_elements.append(data_element)
+            unique_names.add(data_element.name)
+
+    return data_elements
+
+
 @with_session
 def table_to_es(table, fields=None, session=None):
     schema = table.data_schema
@@ -545,12 +560,25 @@ def table_to_es(table, fields=None, session=None):
     table_name = table.name
     full_name = "{}.{}".format(schema_name, table_name)
 
+    # columns may be associated with the same data element
+    data_elements = get_unique_data_elements_from_table(table)
+
     def get_table_description():
         return (
             richtext_to_plaintext(table.information.description, escape=True)
             if table.information
             else ""
         )
+
+    def get_column_descriptions():
+        return [
+            richtext_to_plaintext(c.description, escape=True) for c in table.columns
+        ]
+
+    def get_data_element_descriptions():
+        return [
+            richtext_to_plaintext(d.description, escape=True) for d in data_elements
+        ]
 
     weight = None
 
@@ -583,6 +611,9 @@ def table_to_es(table, fields=None, session=None):
         "description": get_table_description,
         "created_at": lambda: DATETIME_TO_UTC(table.created_at),
         "columns": [c.name for c in table.columns],
+        "column_descriptions": get_column_descriptions,
+        "data_elements": [d.name for d in data_elements],
+        "data_element_descriptions": get_data_element_descriptions,
         "golden": table.golden,
         "importance_score": compute_weight,
         "tags": [tag.tag_name for tag in table.tags],

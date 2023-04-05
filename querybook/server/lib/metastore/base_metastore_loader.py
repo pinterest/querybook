@@ -361,6 +361,8 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
                 location=table.location,
                 column_count=len(columns),
                 schema_id=schema_id,
+                golden=table.golden,
+                boost_score=table.boost_score,
                 commit=False,
                 session=session,
             ).id

@@ -298,6 +298,10 @@ class DataTableColumn(TruncateString("name", "type", "comment"), Base):
         sql.Integer, sql.ForeignKey("data_table.id", ondelete="CASCADE")
     )
 
+    data_elements = relationship(
+        "DataElement", secondary="data_element_association", uselist=True, viewonly=True
+    )
+
     def to_dict(self, include_table=False):
         column_dict = {
             "id": self.id,

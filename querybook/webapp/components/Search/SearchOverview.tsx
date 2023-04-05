@@ -4,6 +4,7 @@ import React, { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import CreatableSelect from 'react-select/creatable';
 
+import { DataElementGroupSelect } from 'components/DataElement/DataElementGroupSelect';
 import { TableTagGroupSelect } from 'components/DataTableTags/TableTagGroupSelect';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import { UserSelect } from 'components/UserSelect/UserSelect';
@@ -328,10 +329,27 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
         [updateSearchFilter]
     );
 
+    const updateDataElements = React.useCallback(
+        (newDataElements: string[]) => {
+            updateSearchFilter(
+                'data_elements',
+                newDataElements.length ? newDataElements : null
+            );
+        },
+        [updateSearchFilter]
+    );
+
     const tagDOM = (
         <TableTagGroupSelect
             tags={searchFilters?.tags}
             updateTags={updateTags}
+        />
+    );
+
+    const dataElementDOM = (
+        <DataElementGroupSelect
+            dataElements={searchFilters?.data_elements}
+            updateDataElements={updateDataElements}
         />
     );
 
@@ -693,7 +711,13 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                     </div>
                 </div>
                 <div className="search-filter">
-                    <span className="filter-title">Schemas</span>
+                    <span
+                        className="filter-title"
+                        aria-label="Table belongs to ANY selected schemas"
+                        data-balloon-pos="up"
+                    >
+                        Schemas
+                    </span>
                     <SearchSchemaSelect
                         updateSearchFilter={updateSearchFilter}
                         schema={searchFilters?.schema}
@@ -704,8 +728,24 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                     {dateFilterDOM}
                 </div>
                 <div className="search-filter">
-                    <span className="filter-title">Tags</span>
+                    <span
+                        className="filter-title"
+                        aria-label="Table contains ALL selected tags"
+                        data-balloon-pos="up"
+                    >
+                        Tags
+                    </span>
                     {tagDOM}
+                </div>
+                <div className="search-filter">
+                    <span
+                        className="filter-title"
+                        aria-label="Table associates with ALL selected data elements"
+                        data-balloon-pos="up"
+                    >
+                        Data Elements
+                    </span>
+                    {dataElementDOM}
                 </div>
                 <div className="search-filter">
                     <span className="filter-title">Search Settings</span>

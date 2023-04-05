@@ -201,6 +201,8 @@ def create_table(
     location=None,
     column_count=None,
     schema_id=None,
+    golden=False,
+    boost_score=1,
     commit=True,
     session=None,
 ):
@@ -219,6 +221,8 @@ def create_table(
         "location": location,
         "column_count": column_count,
         "schema_id": schema_id,
+        "golden": golden,
+        "boost_score": boost_score,
     }
 
     table = get_table_by_schema_id_and_name(schema_id, name, session=session)

@@ -22,6 +22,7 @@ export interface ITableSearchFilters {
     startDate?: number;
     endDate?: number;
     schema?: string;
+    data_elements?: string[];
 }
 
 interface ISchemaTableSearch extends IDataSchema {

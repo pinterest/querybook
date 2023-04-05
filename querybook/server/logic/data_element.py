@@ -25,6 +25,18 @@ def get_data_element_by_name(name: str, session=None):
 
 
 @with_session
+def get_data_elements_by_keyword(keyword, limit=10, session=None):
+    return (
+        session.query(DataElement)
+        .filter(DataElement.name.like("%" + keyword + "%"))
+        .order_by(DataElement.name.asc())
+        .offset(0)
+        .limit(limit)
+        .all()
+    )
+
+
+@with_session
 def get_data_element_association_by_column_id(
     column_id: int, session=None
 ) -> DataElementAssociationDict:
