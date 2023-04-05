@@ -1,7 +1,11 @@
 ipython
 watchdog_gevent
 watchdog[watchmedo]
-
 black==22.3.0
 pre-commit==2.9.2
 setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
+importlib-metadata==4.13.0
+markupsafe==2.0.1
+itsdangerous==2.0.1
+protobuf==3.20.*
+
