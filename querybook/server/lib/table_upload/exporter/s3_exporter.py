@@ -75,18 +75,17 @@ class S3BaseExporter(BaseTableUploadExporter):
             return sanitize_s3_url_with_trailing_slash(s3_path) + schema_name + "/"
 
         if self._exporter_config.get("use_schema_location", False):
-            # Defer import since this is only needed for this option
-            from lib.metastore.loaders.hive_metastore_loader import HMSMetastoreLoader
-
             query_engine = get_query_engine_by_id(self._engine_id, session=session)
-            metastore: HMSMetastoreLoader = get_metastore_loader(
-                query_engine.metastore_id, session=session
-            )
-            if metastore is None or not isinstance(metastore, HMSMetastoreLoader):
-                raise Exception("Invalid metastore to use use_schema_location option")
-            schema_location_uri = metastore.hmc.get_database(
+            metastore = get_metastore_loader(query_engine.metastore_id, session=session)
+
+            if metastore is None:
+                raise Exception("Invalid metastore")
+
+            schema_location_uri = metastore.get_schema_location(
                 self._table_config["schema_name"]
-            ).locationUri
+            )
+            if not schema_location_uri:
+                raise Exception("Invalid metastore to use use_schema_location option")
 
             return sanitize_s3_url_with_trailing_slash(schema_location_uri)
 

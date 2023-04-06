@@ -538,6 +538,10 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
         """Override this to get data element by name"""
         pass
 
+    def get_schema_location(self, schema_name: str) -> str:
+        """Get schema location, used by table uploader"""
+        pass
+
     @abstractclassmethod
     def get_metastore_params_template(self) -> AllFormField:
         """Override this to get the form field required for the metastore
