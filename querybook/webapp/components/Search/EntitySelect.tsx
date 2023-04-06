@@ -14,7 +14,6 @@ interface IEntitySelectProps {
     selectedEntities: string[];
     loadEntityOptions: (searchText: string) => Promise<string[]>;
 
-    creatable?: boolean;
     placeholder?: string;
     onSelect?: (entity: string) => void;
     onEntitiesChange?: (entities: string[]) => void;
