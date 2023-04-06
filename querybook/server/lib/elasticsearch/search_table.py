@@ -5,6 +5,8 @@ from lib.elasticsearch.query_utils import (
     combine_keyword_and_filter_query,
 )
 
+FILTERS_TO_AND = ["tags", "data_elements"]
+
 
 def _get_potential_exact_schema_table_name(keywords):
     """Get the schema and table name from a full table name.
@@ -97,7 +99,7 @@ def construct_tables_query(
         }
     }
 
-    search_filter = match_filters(filters)
+    search_filter = match_filters(filters, and_filter_names=FILTERS_TO_AND)
     query = {
         "query": {
             "bool": combine_keyword_and_filter_query(keywords_query, search_filter)
@@ -114,6 +116,10 @@ def construct_tables_query(
         highlight_fields(
             {
                 "columns": {
+                    "fragment_size": 20,
+                    "number_of_fragments": 5,
+                },
+                "data_elements": {
                     "fragment_size": 20,
                     "number_of_fragments": 5,
                 },

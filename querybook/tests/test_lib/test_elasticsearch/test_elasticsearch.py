@@ -339,11 +339,26 @@ class TableTestCase(TestCase):
         mock_data_schema.name = self.SCHEMA_NAME
         return mock_data_schema
 
+    def _get_data_element_mock(self, name: str, description: str):
+        mock_de = MagicMock()
+        mock_de.name = name
+        mock_de.description = description
+        return mock_de
+
     def _get_columns_mock(self):
         mock_col_a = MagicMock()
         mock_col_a.name = "col_a"
+        mock_col_a.description = "col_a_description"
+        mock_col_a.data_elements = [
+            self._get_data_element_mock("de_a", "de_a_description"),
+            self._get_data_element_mock("de_b", "de_b_description"),
+        ]
         mock_col_b = MagicMock()
         mock_col_b.name = "col_b"
+        mock_col_b.description = "col_b_description"
+        mock_col_b.data_elements = [
+            self._get_data_element_mock("de_a", "de_a_description"),
+        ]
         return [mock_col_a, mock_col_b]
 
     def _get_table_mock(self):
@@ -393,6 +408,9 @@ class TableTestCase(TestCase):
             "description": self.TABLE_DESCRIPTION,
             "created_at": CREATED_AT_EPOCH,
             "columns": ["col_a", "col_b"],
+            "column_descriptions": ["col_a_description", "col_b_description"],
+            "data_elements": ["de_a", "de_b"],
+            "data_element_descriptions": ["de_a_description", "de_b_description"],
             "golden": False,
             "importance_score": self.TABLE_WEIGHT,
             "tags": ["tag_1", "tag_2"],

@@ -424,6 +424,11 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
                             {descriptionDOM}
                         </span>
                     </Level>
+                    <Level className="result-items-bottom">
+                        <span className="result-item-description">
+                            {descriptionDOM}
+                        </span>
+                    </Level>
                 </div>
             </div>
             <UrlContextMenu url={url} anchorRef={selfRef} />

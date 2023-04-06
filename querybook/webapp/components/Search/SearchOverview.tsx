@@ -4,7 +4,6 @@ import React, { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import CreatableSelect from 'react-select/creatable';
 
-import { TableTagGroupSelect } from 'components/DataTableTags/TableTagGroupSelect';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import { UserSelect } from 'components/UserSelect/UserSelect';
 import { ComponentType, ElementType } from 'const/analytics';
@@ -24,6 +23,7 @@ import {
     makeReactSelectStyle,
     miniAsyncReactSelectStyles,
 } from 'lib/utils/react-select';
+import { isTagValid } from 'lib/utils/tag';
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
 import * as dataTableSearchActions from 'redux/dataTableSearch/action';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
@@ -34,6 +34,7 @@ import {
 import * as searchActions from 'redux/search/action';
 import { RESULT_PER_PAGE, SearchOrder, SearchType } from 'redux/search/types';
 import { IStoreState } from 'redux/store/types';
+import { DataElementResource, TableTagResource } from 'resource/table';
 import { Button } from 'ui/Button/Button';
 import { Checkbox } from 'ui/Checkbox/Checkbox';
 import { Container } from 'ui/Container/Container';
@@ -51,6 +52,7 @@ import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 import { EmptyText } from 'ui/StyledText/StyledText';
 import { Tabs } from 'ui/Tabs/Tabs';
 
+import { EntitySelect } from './EntitySelect';
 import { SearchDatePicker } from './SearchDatePicker';
 import {
     BoardItem,
@@ -328,10 +330,32 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
         [updateSearchFilter]
     );
 
+    const updateDataElements = React.useCallback(
+        (newDataElements: string[]) => {
+            updateSearchFilter(
+                'data_elements',
+                newDataElements.length ? newDataElements : null
+            );
+        },
+        [updateSearchFilter]
+    );
+
     const tagDOM = (
-        <TableTagGroupSelect
-            tags={searchFilters?.tags}
-            updateTags={updateTags}
+        <EntitySelect
+            selectedEntities={searchFilters?.tags || []}
+            loadEntities={TableTagResource.search}
+            onEntitiesChange={updateTags}
+            validateEntity={isTagValid}
+            placeholder="search tag"
+        />
+    );
+
+    const dataElementDOM = (
+        <EntitySelect
+            selectedEntities={searchFilters?.data_elements || []}
+            loadEntities={DataElementResource.search}
+            onEntitiesChange={updateDataElements}
+            placeholder="search data element"
         />
     );
 
@@ -693,7 +717,13 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                     </div>
                 </div>
                 <div className="search-filter">
-                    <span className="filter-title">Schemas</span>
+                    <span
+                        className="filter-title"
+                        aria-label="Table belongs to ONE OF selected schemas"
+                        data-balloon-pos="up"
+                    >
+                        Schemas
+                    </span>
                     <SearchSchemaSelect
                         updateSearchFilter={updateSearchFilter}
                         schema={searchFilters?.schema}
@@ -704,8 +734,24 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                     {dateFilterDOM}
                 </div>
                 <div className="search-filter">
-                    <span className="filter-title">Tags</span>
+                    <span
+                        className="filter-title"
+                        aria-label="Table contains ALL selected tags"
+                        data-balloon-pos="up"
+                    >
+                        Tags
+                    </span>
                     {tagDOM}
+                </div>
+                <div className="search-filter">
+                    <span
+                        className="filter-title"
+                        aria-label="Table associates with ALL selected data elements"
+                        data-balloon-pos="up"
+                    >
+                        Data Elements
+                    </span>
+                    {dataElementDOM}
                 </div>
                 <div className="search-filter">
                     <span className="filter-title">Search Settings</span>

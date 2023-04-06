@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ITag } from 'const/tag';
 import { stopPropagationAndDefault } from 'lib/utils/noop';
 import { navigateWithinEnv } from 'lib/utils/query-string';
+import { useRankedTags } from 'lib/utils/tag';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import {
     deleteTableTag,
@@ -18,7 +19,6 @@ import { HoverIconTag } from 'ui/Tag/HoverIconTag';
 
 import { CreateDataTableTag } from './CreateDataTableTag';
 import { TableTagConfigModal } from './TableTagConfigModal';
-import { useRankedTags } from './utils';
 
 import './DataTableTags.scss';
 

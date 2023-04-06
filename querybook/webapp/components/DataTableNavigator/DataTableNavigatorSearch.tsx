@@ -2,7 +2,7 @@ import { startCase } from 'lodash';
 import React, { useCallback, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { TableTagGroupSelect } from 'components/DataTableTags/TableTagGroupSelect';
+import { EntitySelect } from 'components/Search/EntitySelect';
 import { ComponentType, ElementType } from 'const/analytics';
 import { useToggleState } from 'hooks/useToggleState';
 import { trackClick } from 'lib/analytics';
@@ -12,6 +12,7 @@ import {
 } from 'redux/dataTableSearch/action';
 import { ITableSearchFilters } from 'redux/dataTableSearch/types';
 import { IStoreState } from 'redux/store/types';
+import { TableTagResource } from 'resource/table';
 import { SoftButton } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 import { OrderByButton } from 'ui/OrderByButton/OrderByButton';
@@ -108,9 +109,12 @@ export const DataTableNavigatorSearch: React.FC<{
                         />
                     </SearchFilterRow>
                     <SearchFilterRow title="Tags">
-                        <TableTagGroupSelect
-                            tags={searchFilters?.tags}
-                            updateTags={updateTags}
+                        <EntitySelect
+                            selectedEntities={searchFilters?.tags || []}
+                            loadEntities={TableTagResource.search}
+                            onEntitiesChange={updateTags}
+                            placeholder="Tag name"
+                            mini
                         />
                     </SearchFilterRow>
                 </div>

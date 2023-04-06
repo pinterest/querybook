@@ -1,0 +1,21 @@
+.EntitySelect {
+    min-width: 180px;
+
+    .invalid {
+        border: 1px solid var(--color-false);
+        border-radius: var(--border-radius-sm);
+    }
+
+    .entity-list {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 8px;
+
+        .Tag {
+            margin-left: 0 !important;
+            font-size: var(--xxsmall-text-size);
+        }
+    }
+}
