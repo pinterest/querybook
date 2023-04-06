@@ -20,7 +20,7 @@ interface IEntitySelectProps {
     placeholder?: string;
     onSelect?: (entity: string) => void;
     onEntitiesChange?: (entities: string[]) => void;
-    isEntityValid?: (entity: string) => boolean;
+    validateEntity?: (entity: string) => boolean;
     mini?: boolean;
 }
 
@@ -32,7 +32,7 @@ export const EntitySelect = ({
     showSelected = true,
     creatable = true,
     placeholder = 'search',
-    isEntityValid = null,
+    validateEntity = null,
     mini = false,
 }: IEntitySelectProps) => {
     const [searchText, setSearchText] = useState('');
@@ -64,21 +64,21 @@ export const EntitySelect = ({
         () =>
             !searchText ||
             (!selectedEntities.includes(searchText) &&
-                isEntityValid(searchText)),
-        [searchText, selectedEntities, isEntityValid]
+                validateEntity(searchText)),
+        [searchText, selectedEntities, validateEntity]
     );
 
     const handleEntitySelect = useCallback(
         (option) => {
             const valid =
                 !selectedEntities.includes(option) &&
-                (isEntityValid?.(option) ?? true);
+                (validateEntity?.(option) ?? true);
             if (valid) {
                 onSelect?.(option);
                 onEntitiesChange?.([...selectedEntities, option]);
             }
         },
-        [selectedEntities, isEntityValid, onSelect, onEntitiesChange]
+        [selectedEntities, validateEntity, onSelect, onEntitiesChange]
     );
 
     const handleEntityRemove = useCallback(

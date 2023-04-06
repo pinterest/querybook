@@ -3,12 +3,11 @@ import { useDispatch } from 'react-redux';
 
 import { EntitySelect } from 'components/Search/EntitySelect';
 import { ITag } from 'const/tag';
+import { isTagValid } from 'lib/utils/tag';
 import { Dispatch } from 'redux/store/types';
 import { createTableTag } from 'redux/tag/action';
 import { TableTagResource } from 'resource/table';
 import { IconButton } from 'ui/Button/IconButton';
-
-import { isTagValid } from './utils';
 
 import './CreateDataTableTag.scss';
 
@@ -51,7 +50,7 @@ export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
                         selectedEntities={existingTags || []}
                         loadEntities={TableTagResource.search}
                         onSelect={handleCreateTag}
-                        isEntityValid={isTagValid}
+                        validateEntity={isTagValid}
                         placeholder="alphanumeric only"
                         showSelected={false}
                     />

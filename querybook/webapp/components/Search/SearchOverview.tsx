@@ -4,7 +4,6 @@ import React, { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import CreatableSelect from 'react-select/creatable';
 
-import { isTagValid } from 'components/DataTableTags/utils';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import { UserSelect } from 'components/UserSelect/UserSelect';
 import { ComponentType, ElementType } from 'const/analytics';
@@ -24,6 +23,7 @@ import {
     makeReactSelectStyle,
     miniAsyncReactSelectStyles,
 } from 'lib/utils/react-select';
+import { isTagValid } from 'lib/utils/tag';
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
 import * as dataTableSearchActions from 'redux/dataTableSearch/action';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
@@ -345,7 +345,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
             selectedEntities={searchFilters?.tags || []}
             loadEntities={TableTagResource.search}
             onEntitiesChange={updateTags}
-            isEntityValid={isTagValid}
+            validateEntity={isTagValid}
             placeholder="search tag"
         />
     );

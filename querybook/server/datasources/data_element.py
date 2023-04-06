@@ -7,7 +7,7 @@ from logic import data_element as logic
     "/data_element/keyword/",
     methods=["GET"],
 )
-def search_data_elements_by_keyword(keyword):
+def search_data_elements_by_keyword(keyword: str) -> list[str]:
     data_elements = logic.search_data_elements_by_keyword(keyword=keyword)
     return [data_element.name for data_element in data_elements]
 
