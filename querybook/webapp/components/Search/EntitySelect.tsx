@@ -107,7 +107,7 @@ export const EntitySelect = ({
                     ))}
                 </div>
             )}
-            <div className={isInvalidForCreation ? 'invalid' : 'undefined'}>
+            <div className={isInvalidForCreation ? 'invalid' : undefined}>
                 <SimpleReactSelect
                     creatable={creatable}
                     value={searchText}
