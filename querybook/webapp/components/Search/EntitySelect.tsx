@@ -63,25 +63,23 @@ export const EntitySelect = ({
         [entities, selectedEntities]
     );
 
-    const isValid = React.useMemo(
+    const isInvalidForCreation = React.useMemo(
         () =>
-            !searchText ||
-            (!selectedEntities.includes(searchText) &&
-                (!creatable || !validateEntity || validateEntity(searchText))),
+            creatable &&
+            searchText.length > 0 &&
+            (selectedEntities.includes(searchText) ||
+                (validateEntity && !validateEntity(searchText))),
         [searchText, creatable, selectedEntities, validateEntity]
     );
 
     const handleEntitySelect = useCallback(
         (option) => {
-            const valid =
-                !selectedEntities.includes(option) &&
-                (validateEntity?.(option) ?? true);
-            if (valid) {
+            if (!selectedEntities.includes(option)) {
                 onSelect?.(option);
                 onEntitiesChange?.([...selectedEntities, option]);
             }
         },
-        [selectedEntities, validateEntity, onSelect, onEntitiesChange]
+        [selectedEntities, onSelect, onEntitiesChange]
     );
 
     const handleEntityRemove = useCallback(
@@ -107,7 +105,7 @@ export const EntitySelect = ({
                     ))}
                 </div>
             )}
-            <div className={isValid ? undefined : 'invalid'}>
+            <div className={isInvalidForCreation ? 'invalid' : 'undefined'}>
                 <SimpleReactSelect
                     creatable={creatable}
                     value={searchText}
