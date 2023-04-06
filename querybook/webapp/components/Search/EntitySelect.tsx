@@ -20,7 +20,10 @@ interface IEntitySelectProps {
     placeholder?: string;
     onSelect?: (entity: string) => void;
     onEntitiesChange?: (entities: string[]) => void;
+
+    // will validate only if creatable is true
     validateEntity?: (entity: string) => boolean;
+
     mini?: boolean;
 }
 
@@ -64,8 +67,8 @@ export const EntitySelect = ({
         () =>
             !searchText ||
             (!selectedEntities.includes(searchText) &&
-                (!validateEntity || validateEntity(searchText))),
-        [searchText, selectedEntities, validateEntity]
+                (!creatable || !validateEntity || validateEntity(searchText))),
+        [searchText, creatable, selectedEntities, validateEntity]
     );
 
     const handleEntitySelect = useCallback(
