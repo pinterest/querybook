@@ -1,0 +1,16 @@
+.EntitySelect {
+    min-width: 180px;
+
+    .entity-list {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 8px;
+
+        .Tag {
+            margin-left: 0 !important;
+            font-size: var(--xxsmall-text-size);
+        }
+    }
+}

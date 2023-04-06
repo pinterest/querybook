@@ -5,7 +5,7 @@ from lib.elasticsearch.query_utils import (
     combine_keyword_and_filter_query,
 )
 
-FILTERS_TO_AND = ["data_elements"]
+FILTERS_TO_AND = ["tags", "data_elements"]
 
 
 def _get_potential_exact_schema_table_name(keywords):

@@ -47,8 +47,6 @@ from logic.query_execution import (
 from models.user import User
 from models.datadoc import DataCellType
 from models.board import Board
-from models.data_element import DataElement
-from models.metastore import DataTable
 
 
 LOG = get_logger(__file__)
@@ -540,19 +538,6 @@ def get_table_weight(table_id: int, session=None) -> int:
     return int(math.log2(((num_impressions + num_samples * 10) + 1) + boost_score))
 
 
-def get_unique_data_elements_from_table(table: DataTable) -> list[DataElement]:
-    unique_names = set()
-    data_elements = []
-    for c in table.columns:
-        for data_element in c.data_elements:
-            if data_element.name in unique_names:
-                continue
-            data_elements.append(data_element)
-            unique_names.add(data_element.name)
-
-    return data_elements
-
-
 @with_session
 def table_to_es(table, fields=None, session=None):
     schema = table.data_schema
@@ -561,7 +546,7 @@ def table_to_es(table, fields=None, session=None):
     full_name = "{}.{}".format(schema_name, table_name)
 
     # columns may be associated with the same data element
-    data_elements = get_unique_data_elements_from_table(table)
+    data_elements = {d.name: d for c in table.columns for d in c.data_elements}.values()
 
     def get_table_description():
         return (

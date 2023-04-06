@@ -4,8 +4,7 @@ import React, { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import CreatableSelect from 'react-select/creatable';
 
-import { DataElementGroupSelect } from 'components/DataElement/DataElementGroupSelect';
-import { TableTagGroupSelect } from 'components/DataTableTags/TableTagGroupSelect';
+import { isTagValid } from 'components/DataTableTags/utils';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import { UserSelect } from 'components/UserSelect/UserSelect';
 import { ComponentType, ElementType } from 'const/analytics';
@@ -35,6 +34,7 @@ import {
 import * as searchActions from 'redux/search/action';
 import { RESULT_PER_PAGE, SearchOrder, SearchType } from 'redux/search/types';
 import { IStoreState } from 'redux/store/types';
+import { DataElementResource, TableTagResource } from 'resource/table';
 import { Button } from 'ui/Button/Button';
 import { Checkbox } from 'ui/Checkbox/Checkbox';
 import { Container } from 'ui/Container/Container';
@@ -52,6 +52,7 @@ import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 import { EmptyText } from 'ui/StyledText/StyledText';
 import { Tabs } from 'ui/Tabs/Tabs';
 
+import { EntitySelect } from './EntitySelect';
 import { SearchDatePicker } from './SearchDatePicker';
 import {
     BoardItem,
@@ -340,16 +341,27 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
     );
 
     const tagDOM = (
-        <TableTagGroupSelect
-            tags={searchFilters?.tags}
-            updateTags={updateTags}
+        <EntitySelect
+            selectedEntities={searchFilters?.tags || []}
+            loadEntityOptions={async (searchText) => {
+                const { data } = await TableTagResource.search(searchText);
+                return data;
+            }}
+            onEntitiesChange={updateTags}
+            isEntityValid={isTagValid}
+            placeholder="search tag"
         />
     );
 
     const dataElementDOM = (
-        <DataElementGroupSelect
-            dataElements={searchFilters?.data_elements}
-            updateDataElements={updateDataElements}
+        <EntitySelect
+            selectedEntities={searchFilters?.data_elements || []}
+            loadEntityOptions={async (searchText) => {
+                const { data } = await DataElementResource.search(searchText);
+                return data;
+            }}
+            onEntitiesChange={updateDataElements}
+            placeholder="search data element"
         />
     );
 
@@ -713,7 +725,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                 <div className="search-filter">
                     <span
                         className="filter-title"
-                        aria-label="Table belongs to ANY selected schemas"
+                        aria-label="Table belongs to ONE OF selected schemas"
                         data-balloon-pos="up"
                     >
                         Schemas
