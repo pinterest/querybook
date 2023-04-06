@@ -1,70 +1,81 @@
 import React, { useCallback, useState } from 'react';
-import AsyncSelect, { Props as AsyncProps } from 'react-select/async-creatable';
 
+import { useResource } from 'hooks/useResource';
+import { ICancelablePromise } from 'lib/datasource';
 import {
     makeReactSelectStyle,
     miniReactSelectStyles,
 } from 'lib/utils/react-select';
-import { overlayRoot } from 'ui/Overlay/Overlay';
+import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 import { HoverIconTag } from 'ui/Tag/HoverIconTag';
 
 import './EntitySelect.scss';
 
 interface IEntitySelectProps {
     selectedEntities: string[];
-    loadEntityOptions: (searchText: string) => Promise<string[]>;
+    loadEntities: (keyword: string) => ICancelablePromise<{ data: string[] }>;
 
+    showSelected?: boolean;
+    creatable?: boolean;
     placeholder?: string;
     onSelect?: (entity: string) => void;
     onEntitiesChange?: (entities: string[]) => void;
     isEntityValid?: (entity: string) => boolean;
     mini?: boolean;
-    usePortalMenu?: boolean;
 }
 
-export const EntitySelect: React.FunctionComponent<IEntitySelectProps> = ({
+export const EntitySelect = ({
     selectedEntities,
-    loadEntityOptions,
+    loadEntities,
     onSelect,
     onEntitiesChange,
+    showSelected = true,
+    creatable = true,
     placeholder = 'search',
     isEntityValid = null,
     mini = false,
-    usePortalMenu = true,
-}) => {
+}: IEntitySelectProps) => {
     const [searchText, setSearchText] = useState('');
-    const selectProps: Partial<AsyncProps<any, boolean>> = {};
     const reactSelectStyle = React.useMemo(
         () =>
             makeReactSelectStyle(
-                usePortalMenu,
+                true,
                 mini ? miniReactSelectStyles : undefined
             ),
-        [mini, usePortalMenu]
+        [mini]
     );
-    if (usePortalMenu) {
-        selectProps.menuPortalTarget = overlayRoot;
-    }
 
-    const loadOptions = useCallback(
-        async (searchText: string) => {
-            const options = await loadEntityOptions(searchText);
-            return options.map((option) => ({
-                value: option,
-                label: option,
-            }));
-        },
-        [loadEntityOptions]
+    const { data: entities } = useResource<string[]>(
+        React.useCallback(
+            () => loadEntities(searchText),
+            [loadEntities, searchText]
+        )
+    );
+
+    const options = React.useMemo(
+        () =>
+            (entities || []).filter(
+                (entity) => !selectedEntities.includes(entity)
+            ),
+        [entities, selectedEntities]
+    );
+
+    const isValid = React.useMemo(
+        () =>
+            !searchText ||
+            (!selectedEntities.includes(searchText) &&
+                isEntityValid(searchText)),
+        [searchText, selectedEntities, isEntityValid]
     );
 
     const handleEntitySelect = useCallback(
-        (option: { value: string; label: string }) => {
+        (option) => {
             const valid =
-                !selectedEntities.includes(option.value) &&
-                (isEntityValid?.(option.value) ?? true);
+                !selectedEntities.includes(option) &&
+                (isEntityValid?.(option) ?? true);
             if (valid) {
-                onSelect?.(option.value);
-                onEntitiesChange?.([...selectedEntities, option.value]);
+                onSelect?.(option);
+                onEntitiesChange?.([...selectedEntities, option]);
             }
         },
         [selectedEntities, isEntityValid, onSelect, onEntitiesChange]
@@ -79,7 +90,7 @@ export const EntitySelect: React.FunctionComponent<IEntitySelectProps> = ({
 
     return (
         <div className="EntitySelect">
-            {selectedEntities.length > 0 && (
+            {showSelected && selectedEntities.length > 0 && (
                 <div className="entity-list">
                     {selectedEntities.map((entity) => (
                         <HoverIconTag
@@ -93,18 +104,21 @@ export const EntitySelect: React.FunctionComponent<IEntitySelectProps> = ({
                     ))}
                 </div>
             )}
-            <AsyncSelect
-                styles={reactSelectStyle}
-                placeholder={placeholder}
-                onChange={handleEntitySelect}
-                defaultOptions
-                loadOptions={loadOptions}
-                inputValue={searchText}
-                value={null}
-                onInputChange={(text) => setSearchText(text)}
-                clearAfterSelect
-                {...selectProps}
-            />
+            <div className={isValid ? undefined : 'invalid'}>
+                <SimpleReactSelect
+                    creatable={creatable}
+                    value={searchText}
+                    options={options}
+                    onChange={(val) => handleEntitySelect(val)}
+                    selectProps={{
+                        onInputChange: (newValue) => setSearchText(newValue),
+                        placeholder,
+                        styles: reactSelectStyle,
+                        noOptionsMessage: () => null,
+                    }}
+                    clearAfterSelect
+                />
+            </div>
         </div>
     );
 };

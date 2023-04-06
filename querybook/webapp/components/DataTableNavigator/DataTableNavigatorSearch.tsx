@@ -111,12 +111,7 @@ export const DataTableNavigatorSearch: React.FC<{
                     <SearchFilterRow title="Tags">
                         <EntitySelect
                             selectedEntities={searchFilters?.tags || []}
-                            loadEntityOptions={async (searchText) => {
-                                const { data } = await TableTagResource.search(
-                                    searchText
-                                );
-                                return data;
-                            }}
+                            loadEntities={TableTagResource.search}
                             onEntitiesChange={updateTags}
                             placeholder="Tag name"
                             mini

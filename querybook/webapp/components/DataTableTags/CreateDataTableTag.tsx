@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 
+import { EntitySelect } from 'components/Search/EntitySelect';
 import { ITag } from 'const/tag';
 import { Dispatch } from 'redux/store/types';
 import { createTableTag } from 'redux/tag/action';
+import { TableTagResource } from 'resource/table';
 import { IconButton } from 'ui/Button/IconButton';
 
-import { TableTagSelect } from './TableTagSelect';
+import { isTagValid } from './utils';
 
 import './CreateDataTableTag.scss';
 
@@ -43,10 +45,15 @@ export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
         <div className="CreateDataTableTag flex-row">
             {showSelect ? (
                 <div className="CreateDataTableTag-input flex-row">
-                    <TableTagSelect
-                        onSelect={handleCreateTag}
-                        existingTags={existingTags}
+                    <EntitySelect
                         creatable
+                        mini
+                        selectedEntities={existingTags || []}
+                        loadEntities={TableTagResource.search}
+                        onSelect={handleCreateTag}
+                        isEntityValid={isTagValid}
+                        placeholder="alphanumeric only"
+                        showSelected={false}
                     />
                 </div>
             ) : (

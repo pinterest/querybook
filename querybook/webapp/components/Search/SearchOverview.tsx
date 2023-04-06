@@ -343,10 +343,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
     const tagDOM = (
         <EntitySelect
             selectedEntities={searchFilters?.tags || []}
-            loadEntityOptions={async (searchText) => {
-                const { data } = await TableTagResource.search(searchText);
-                return data;
-            }}
+            loadEntities={TableTagResource.search}
             onEntitiesChange={updateTags}
             isEntityValid={isTagValid}
             placeholder="search tag"
@@ -356,10 +353,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
     const dataElementDOM = (
         <EntitySelect
             selectedEntities={searchFilters?.data_elements || []}
-            loadEntityOptions={async (searchText) => {
-                const { data } = await DataElementResource.search(searchText);
-                return data;
-            }}
+            loadEntities={DataElementResource.search}
             onEntitiesChange={updateDataElements}
             placeholder="search data element"
         />

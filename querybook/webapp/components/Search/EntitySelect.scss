@@ -1,6 +1,11 @@
 .EntitySelect {
     min-width: 180px;
 
+    .invalid {
+        border: 1px solid var(--color-false);
+        border-radius: var(--border-radius-sm);
+    }
+
     .entity-list {
         display: flex;
         align-items: center;
