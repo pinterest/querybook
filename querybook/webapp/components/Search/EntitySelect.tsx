@@ -20,7 +20,12 @@ interface IEntitySelectProps {
     placeholder?: string;
     onSelect?: (entity: string) => void;
     onEntitiesChange?: (entities: string[]) => void;
+
+    /**
+     * will validate only if creatable is true
+     */
     validateEntity?: (entity: string) => boolean;
+
     mini?: boolean;
 }
 
@@ -60,25 +65,23 @@ export const EntitySelect = ({
         [entities, selectedEntities]
     );
 
-    const isValid = React.useMemo(
+    const isInvalidForCreation = React.useMemo(
         () =>
-            !searchText ||
-            (!selectedEntities.includes(searchText) &&
-                validateEntity(searchText)),
-        [searchText, selectedEntities, validateEntity]
+            creatable &&
+            searchText.length > 0 &&
+            (selectedEntities.includes(searchText) ||
+                (validateEntity && !validateEntity(searchText))),
+        [searchText, creatable, selectedEntities, validateEntity]
     );
 
     const handleEntitySelect = useCallback(
         (option) => {
-            const valid =
-                !selectedEntities.includes(option) &&
-                (validateEntity?.(option) ?? true);
-            if (valid) {
+            if (!selectedEntities.includes(option)) {
                 onSelect?.(option);
                 onEntitiesChange?.([...selectedEntities, option]);
             }
         },
-        [selectedEntities, validateEntity, onSelect, onEntitiesChange]
+        [selectedEntities, onSelect, onEntitiesChange]
     );
 
     const handleEntityRemove = useCallback(
@@ -104,7 +107,7 @@ export const EntitySelect = ({
                     ))}
                 </div>
             )}
-            <div className={isValid ? undefined : 'invalid'}>
+            <div className={isInvalidForCreation ? 'invalid' : undefined}>
                 <SimpleReactSelect
                     creatable={creatable}
                     value={searchText}

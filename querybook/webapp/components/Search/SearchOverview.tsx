@@ -23,7 +23,6 @@ import {
     makeReactSelectStyle,
     miniAsyncReactSelectStyles,
 } from 'lib/utils/react-select';
-import { isTagValid } from 'lib/utils/tag';
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
 import * as dataTableSearchActions from 'redux/dataTableSearch/action';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
@@ -345,7 +344,6 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
             selectedEntities={searchFilters?.tags || []}
             loadEntities={TableTagResource.search}
             onEntitiesChange={updateTags}
-            validateEntity={isTagValid}
             placeholder="search tag"
         />
     );
