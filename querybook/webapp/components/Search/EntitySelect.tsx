@@ -64,7 +64,7 @@ export const EntitySelect = ({
         () =>
             !searchText ||
             (!selectedEntities.includes(searchText) &&
-                validateEntity(searchText)),
+                (!validateEntity || validateEntity(searchText))),
         [searchText, selectedEntities, validateEntity]
     );
 
