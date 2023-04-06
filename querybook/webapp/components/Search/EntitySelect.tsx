@@ -21,7 +21,9 @@ interface IEntitySelectProps {
     onSelect?: (entity: string) => void;
     onEntitiesChange?: (entities: string[]) => void;
 
-    // will validate only if creatable is true
+    /**
+     * will validate only if creatable is true
+     */
     validateEntity?: (entity: string) => boolean;
 
     mini?: boolean;
