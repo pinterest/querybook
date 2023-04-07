@@ -57,8 +57,6 @@ def run_query_task(
             7406, "{}\n{}".format(e, traceback.format_exc())
         )
     finally:
-        stats_logger.decr(QUERY_EXECUTIONS, tags={"execution_type": execution_type})
-
         # When the finally block is reached, it is expected
         # that the executor should be in one of the end state
         with DBSession() as session:

@@ -19,8 +19,10 @@ def register_socket(url, namespace=None, websocket_logging=True):
             if not current_user.is_authenticated:
                 LOG.error("Unauthorized websocket access")
                 disconnect()
-                # decrement ws connections counter on disconnect
-                stats_logger.decr(WS_CONNECTIONS)
+                # incr ws connections counter on disconnect
+                stats_logger.incr(
+                    WS_CONNECTIONS, tags={"namespace": namespace, "event": "disconnect"}
+                )
             else:
                 try:
                     if websocket_logging:
@@ -41,10 +43,16 @@ def register_socket(url, namespace=None, websocket_logging=True):
 
                 # increment ws connections counter on connect
                 if url == "connect":
-                    stats_logger.incr(WS_CONNECTIONS, tags={"namespace": namespace})
-                # decrement ws connections counter on disconnect
+                    stats_logger.incr(
+                        WS_CONNECTIONS,
+                        tags={"namespace": namespace, "event": "connect"},
+                    )
+                # incr ws connections counter on disconnect
                 elif url == "disconnect":
-                    stats_logger.decr(WS_CONNECTIONS, tags={"namespace": namespace})
+                    stats_logger.incr(
+                        WS_CONNECTIONS,
+                        tags={"namespace": namespace, "event": "disconnect"},
+                    )
 
         handler.__raw__ = fn
         return handler
