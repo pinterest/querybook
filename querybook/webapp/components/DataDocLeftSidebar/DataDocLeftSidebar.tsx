@@ -1,10 +1,13 @@
 import clsx from 'clsx';
+import Resizable from 're-resizable';
 import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { DataTableViewMini } from 'components/DataTableViewMini/DataTableViewMini';
 import { IDataCell } from 'const/datadoc';
 import { useEvent } from 'hooks/useEvent';
+import { useResizeToCollapseSidebar } from 'hooks/useResizeToCollapse';
+import { enableResizable } from 'lib/utils';
 import { getShortcutSymbols, KeyMap, matchKeyMap } from 'lib/utils/keyboard';
 import { setSidebarTableId } from 'redux/querybookUI/action';
 import { IStoreState } from 'redux/store/types';
@@ -23,6 +26,7 @@ interface IProps {
 
 type LeftSidebarContentState = 'contents' | 'table' | 'default';
 const TOGGLE_TOC_SHORTCUT = getShortcutSymbols(KeyMap.dataDoc.toggleToC.key);
+const DEFAULT_SIDEBAR_WIDTH = 280;
 
 export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
     docId,
@@ -69,27 +73,42 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
         }
     }, [sidebarTableId]);
 
+    const resizeToCollapseSidebar = useResizeToCollapseSidebar(
+        DEFAULT_SIDEBAR_WIDTH,
+        1 / 3,
+        React.useCallback(() => setContentState('default'), [])
+    );
+
     let contentDOM: React.ReactChild;
     if (contentState === 'contents') {
         contentDOM = (
-            <div className="sidebar-content sidebar-content-contents">
-                <Level className="contents-panel-header">
-                    <IconButton
-                        icon="ArrowLeft"
-                        onClick={() => setContentState('default')}
-                    />
-                    <div className="flex-row">
-                        <span className="mr4">
-                            contents ({TOGGLE_TOC_SHORTCUT})
-                        </span>
-                        <InfoButton layout={['right', 'top']}>
-                            Click to jump to the corresponding cell. Drag cells
-                            to reorder them.
-                        </InfoButton>
-                    </div>
-                </Level>
-                <DataDocContents cells={cells} docId={docId} />
-            </div>
+            <Resizable
+                defaultSize={{
+                    width: `${DEFAULT_SIDEBAR_WIDTH}px`,
+                }}
+                minWidth={DEFAULT_SIDEBAR_WIDTH}
+                enable={enableResizable({ right: true })}
+                onResize={resizeToCollapseSidebar}
+            >
+                <div className="sidebar-content sidebar-content-contents">
+                    <Level className="contents-panel-header">
+                        <IconButton
+                            icon="ArrowLeft"
+                            onClick={() => setContentState('default')}
+                        />
+                        <div className="flex-row">
+                            <span className="mr4">
+                                contents ({TOGGLE_TOC_SHORTCUT})
+                            </span>
+                            <InfoButton layout={['right', 'top']}>
+                                Click to jump to the corresponding cell. Drag
+                                cells to reorder them.
+                            </InfoButton>
+                        </div>
+                    </Level>
+                    <DataDocContents cells={cells} docId={docId} />
+                </div>
+            </Resizable>
         );
     } else if (contentState === 'table') {
         contentDOM = (
