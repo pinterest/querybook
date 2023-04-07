@@ -2,7 +2,7 @@
 
 exports[`matches enzyme snapshots matches snapshot - false 1`] = `
 <div
-  className="DisabledSection-dp9deb-0 burDkq"
+  className="DisabledSection-dp9deb-0 gMnJTZ"
   disabled={false}
 >
   <input />
@@ -11,7 +11,7 @@ exports[`matches enzyme snapshots matches snapshot - false 1`] = `
 
 exports[`matches enzyme snapshots matches snapshot 1`] = `
 <div
-  className="DisabledSection-dp9deb-0 bAEMhI"
+  className="DisabledSection-dp9deb-0 iFDlrD"
 >
   <input />
 </div>
@@ -19,7 +19,7 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <div
-  className="DisabledSection-dp9deb-0 bAEMhI"
+  className="DisabledSection-dp9deb-0 iFDlrD"
 >
   <input />
 </div>
