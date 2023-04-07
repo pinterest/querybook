@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { DataTableViewMini } from 'components/DataTableViewMini/DataTableViewMini';
 import { IDataCell } from 'const/datadoc';
 import { useEvent } from 'hooks/useEvent';
+import { useResizeToCollapseSidebar } from 'hooks/useResizeToCollapse';
 import { enableResizable } from 'lib/utils';
 import { getShortcutSymbols, KeyMap, matchKeyMap } from 'lib/utils/keyboard';
 import { setSidebarTableId } from 'redux/querybookUI/action';
@@ -72,24 +73,10 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
         }
     }, [sidebarTableId]);
 
-    const resizeToCollapseSidebar = React.useCallback(
-        (event, direction, elementRef) => {
-            if (
-                direction === 'right' &&
-                elementRef.clientWidth === DEFAULT_SIDEBAR_WIDTH
-            ) {
-                const sidebarRect = elementRef.getBoundingClientRect();
-                // this checks if mouse cursor is 1/3 * SIDEBAR_WIDTH left of sidebar
-                if (
-                    event instanceof MouseEvent &&
-                    sidebarRect.left + sidebarRect.width - event.clientX >
-                        DEFAULT_SIDEBAR_WIDTH / 3
-                ) {
-                    setContentState('default');
-                }
-            }
-        },
-        []
+    const resizeToCollapseSidebar = useResizeToCollapseSidebar(
+        DEFAULT_SIDEBAR_WIDTH,
+        1 / 3,
+        React.useCallback(() => setContentState('default'), [])
     );
 
     let contentDOM: React.ReactChild;

@@ -8,6 +8,7 @@ import { QuerySnippetNavigator } from 'components/QuerySnippetNavigator/QuerySni
 import { QueryViewNavigator } from 'components/QueryViewNavigator/QueryViewNavigator';
 import { useEvent } from 'hooks/useEvent';
 import { useLocalStoreState } from 'hooks/useLocalStoreState';
+import { useResizeToCollapseSidebar } from 'hooks/useResizeToCollapse';
 import { SIDEBAR_ENTITY } from 'lib/local-store/const';
 import { KeyMap, matchKeyMap } from 'lib/utils/keyboard';
 import { navigateWithinEnv } from 'lib/utils/query-string';
@@ -55,24 +56,10 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
         [dispatch, collapsed, setEntity]
     );
 
-    const scrollToCollapseSidebar = React.useCallback(
-        (event, direction, elementRef) => {
-            if (
-                direction === 'right' &&
-                elementRef.clientWidth === SIDEBAR_WIDTH
-            ) {
-                const sidebarRect = elementRef.getBoundingClientRect();
-                // this checks if mouse cursor is SIDEBAR_WIDTH / 2 left of sidebar
-                if (
-                    event instanceof MouseEvent &&
-                    sidebarRect.left + sidebarRect.width - event.clientX >
-                        SIDEBAR_WIDTH / 2
-                ) {
-                    dispatch(setCollapsed(true));
-                }
-            }
-        },
-        []
+    const resizeToCollapseSidebar = useResizeToCollapseSidebar(
+        SIDEBAR_WIDTH,
+        1 / 3,
+        React.useCallback(() => dispatch(setCollapsed(true)), [dispatch])
     );
 
     const handleCollapseKeyDown = React.useCallback(
@@ -175,7 +162,7 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
             className={className}
             initialWidth={SIDEBAR_WIDTH}
             minWidth={SIDEBAR_WIDTH}
-            onResize={scrollToCollapseSidebar}
+            onResize={resizeToCollapseSidebar}
         >
             {contentDOM}
         </Sidebar>
