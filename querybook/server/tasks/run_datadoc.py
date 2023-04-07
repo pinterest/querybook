@@ -73,10 +73,15 @@ def run_datadoc_with_config(
         # Prepping chain jobs each unit is a [make_qe_task, run_query_task] combo
         for index, query_cell in enumerate(query_cells):
             engine_id = query_cell.meta["engine"]
+            raw_query = query_cell.context
+
+            # Skip empty cells
+            if not raw_query or raw_query.isspace():
+                continue
 
             try:
                 query = render_templated_query(
-                    query_cell.context,
+                    raw_query,
                     data_doc.meta_variables,
                     engine_id,
                     session=session,
