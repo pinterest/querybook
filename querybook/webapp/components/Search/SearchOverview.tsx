@@ -728,10 +728,6 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                     />
                 </div>
                 <div className="search-filter">
-                    <span className="filter-title">Created At</span>
-                    {dateFilterDOM}
-                </div>
-                <div className="search-filter">
                     <span
                         className="filter-title"
                         aria-label="Table contains ALL selected tags"
@@ -754,6 +750,10 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                 <div className="search-filter">
                     <span className="filter-title">Search Settings</span>
                     {searchSettingsDOM}
+                </div>
+                <div className="search-filter">
+                    <span className="filter-title">Created At</span>
+                    {dateFilterDOM}
                 </div>
             </>
         ) : (
