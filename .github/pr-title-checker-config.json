@@ -4,6 +4,6 @@
         "color": "EEEEEE"
     },
     "CHECKS": {
-        "regexp": "(build|fix|ci|docs|ui|refactor|test|feat|minor|MAJOR|BREAKING CHANGE|\\[Snyk\\])(\\(.+\\))?!?\\:"
+        "regexp": "(build|fix|ci|docs|ui|refactor|test|feat|minor|MAJOR|BREAKING CHANGE)(\\(.+\\))?!?\\:||\\[Snyk\\]"
     }
 }
