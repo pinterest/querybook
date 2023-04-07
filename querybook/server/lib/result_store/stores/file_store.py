@@ -32,7 +32,7 @@ class FileUploader(BaseUploader):
         os.makedirs(self.uri_dir_path, exist_ok=True)
 
     def write(self, data: str):
-        # write each line into csv
+        # Append each line to a list and then dump at once
         data_len = len(data)
         if (
             QuerybookSettings.DB_MAX_UPLOAD_SIZE > 0
@@ -41,16 +41,12 @@ class FileUploader(BaseUploader):
             return False
 
         self._chunks_length += data_len
-        # commenting this as this would affect performance. Here the query result is being written line by line to file.
-        # as a fix, we will keep appendng to a list and then dump at once.
         # with open(self.uri, "a") as result_file:
         #     result_file.write(data)
         self._chunks.append(data)
         return True
 
     def end(self):
-        # commenting and adding below lines to fix the perfomrnce issue 
-        #pass
         data = "".join(self._chunks)
         with open(self.uri, "w") as result_file:
             result_file.write(data)
