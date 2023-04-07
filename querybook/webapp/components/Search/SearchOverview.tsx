@@ -693,10 +693,12 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
             </>
         ) : searchType === 'Table' ? (
             <>
-                <div className="search-filter">
-                    <span className="filter-title">Metastore</span>
-                    {metastoreSelectDOM}
-                </div>
+                {queryMetastores.length > 1 && (
+                    <div className="search-filter">
+                        <span className="filter-title">Metastore</span>
+                        {metastoreSelectDOM}
+                    </div>
+                )}
                 <div className="search-filter">
                     <span className="filter-title">Top Tier</span>
                     <div className="result-item-golden horizontal-space-between">
