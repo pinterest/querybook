@@ -88,18 +88,18 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     className="Pagination-previous"
   >
     <span
-      className="StyledButton-aqwbwz-0 AohKP Button fill"
+      className="StyledButton-aqwbwz-0 hryjfs Button fill"
       color="var(--text-light)"
       onClick={[Function]}
       size="medium"
     >
       <div
-        className="StyledText__StyledTextDiv-sc-1ldibmc-0 bAiAjz Text"
+        className="StyledText__StyledTextDiv-sc-1ldibmc-0 ePPGbo Text"
       >
         Previous
       </div>
       <div
-        className="StyledText__StyledTextDiv-sc-1ldibmc-0 bAiAjz Text flex-row"
+        className="StyledText__StyledTextDiv-sc-1ldibmc-0 ePPGbo Text flex-row"
       />
     </span>
   </div>
@@ -107,18 +107,18 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     className="Pagination-next"
   >
     <span
-      className="StyledButton-aqwbwz-0 AohKP Button fill"
+      className="StyledButton-aqwbwz-0 hryjfs Button fill"
       color="var(--text-light)"
       onClick={[Function]}
       size="medium"
     >
       <div
-        className="StyledText__StyledTextDiv-sc-1ldibmc-0 bAiAjz Text"
+        className="StyledText__StyledTextDiv-sc-1ldibmc-0 ePPGbo Text"
       >
         Next
       </div>
       <div
-        className="StyledText__StyledTextDiv-sc-1ldibmc-0 bAiAjz Text flex-row"
+        className="StyledText__StyledTextDiv-sc-1ldibmc-0 ePPGbo Text flex-row"
       />
     </span>
   </div>
@@ -127,69 +127,69 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
   >
     <li>
       <span
-        className="StyledButton-aqwbwz-0 AohKP Button Pagination-page-button  fill"
+        className="StyledButton-aqwbwz-0 hryjfs Button Pagination-page-button  fill"
         color="var(--text-light)"
         onClick={[Function]}
         size="medium"
       >
         <div
-          className="StyledText__StyledTextDiv-sc-1ldibmc-0 bAiAjz Text"
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 ePPGbo Text"
         >
           1
         </div>
         <div
-          className="StyledText__StyledTextDiv-sc-1ldibmc-0 bAiAjz Text flex-row"
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 ePPGbo Text flex-row"
         />
       </span>
     </li>
     <li>
       <span
-        className="StyledButton-aqwbwz-0 AohKP Button Pagination-page-button current fill"
+        className="StyledButton-aqwbwz-0 hryjfs Button Pagination-page-button current fill"
         color="var(--text-light)"
         onClick={[Function]}
         size="medium"
       >
         <div
-          className="StyledText__StyledTextDiv-sc-1ldibmc-0 bAiAjz Text"
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 ePPGbo Text"
         >
           2
         </div>
         <div
-          className="StyledText__StyledTextDiv-sc-1ldibmc-0 bAiAjz Text flex-row"
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 ePPGbo Text flex-row"
         />
       </span>
     </li>
     <li>
       <span
-        className="StyledButton-aqwbwz-0 AohKP Button Pagination-page-button  fill"
+        className="StyledButton-aqwbwz-0 hryjfs Button Pagination-page-button  fill"
         color="var(--text-light)"
         onClick={[Function]}
         size="medium"
       >
         <div
-          className="StyledText__StyledTextDiv-sc-1ldibmc-0 bAiAjz Text"
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 ePPGbo Text"
         >
           3
         </div>
         <div
-          className="StyledText__StyledTextDiv-sc-1ldibmc-0 bAiAjz Text flex-row"
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 ePPGbo Text flex-row"
         />
       </span>
     </li>
     <li>
       <span
-        className="StyledButton-aqwbwz-0 AohKP Button Pagination-page-button  fill"
+        className="StyledButton-aqwbwz-0 hryjfs Button Pagination-page-button  fill"
         color="var(--text-light)"
         onClick={[Function]}
         size="medium"
       >
         <div
-          className="StyledText__StyledTextDiv-sc-1ldibmc-0 bAiAjz Text"
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 ePPGbo Text"
         >
           4
         </div>
         <div
-          className="StyledText__StyledTextDiv-sc-1ldibmc-0 bAiAjz Text flex-row"
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 ePPGbo Text flex-row"
         />
       </span>
     </li>
@@ -202,18 +202,18 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
     </li>
     <li>
       <span
-        className="StyledButton-aqwbwz-0 AohKP Button Pagination-page-button  fill"
+        className="StyledButton-aqwbwz-0 hryjfs Button Pagination-page-button  fill"
         color="var(--text-light)"
         onClick={[Function]}
         size="medium"
       >
         <div
-          className="StyledText__StyledTextDiv-sc-1ldibmc-0 bAiAjz Text"
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 ePPGbo Text"
         >
           10
         </div>
         <div
-          className="StyledText__StyledTextDiv-sc-1ldibmc-0 bAiAjz Text flex-row"
+          className="StyledText__StyledTextDiv-sc-1ldibmc-0 ePPGbo Text flex-row"
         />
       </span>
     </li>

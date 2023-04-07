@@ -28,19 +28,19 @@ exports[`matches enzyme snapshots matches snapshot 1`] = `
 
 exports[`matches test renderer snapshot serializes the styles 1`] = `
 <span
-  className="StyledButton-aqwbwz-0 AohKP Button fill"
+  className="StyledButton-aqwbwz-0 hryjfs Button fill"
   color="var(--text-light)"
   disabled={false}
   onClick={[Function]}
   size="medium"
 >
   <div
-    className="StyledText__StyledTextDiv-sc-1ldibmc-0 bAiAjz Text"
+    className="StyledText__StyledTextDiv-sc-1ldibmc-0 ePPGbo Text"
   >
     test
   </div>
   <div
-    className="StyledText__StyledTextDiv-sc-1ldibmc-0 bAiAjz Text flex-row"
+    className="StyledText__StyledTextDiv-sc-1ldibmc-0 ePPGbo Text flex-row"
   />
 </span>
 `;

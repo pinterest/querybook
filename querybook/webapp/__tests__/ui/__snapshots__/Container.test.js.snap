@@ -17,7 +17,7 @@ exports[`matches test renderer snapshot serializes the styles 1`] = `
   className="TestContainer Container"
 >
   <div
-    className="FullHeight-p6umsy-0 ipLfZZ Container-content"
+    className="FullHeight-p6umsy-0 dihyVK Container-content"
   >
     Test
   </div>
