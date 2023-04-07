@@ -25,6 +25,7 @@ interface IProps {
 
 type LeftSidebarContentState = 'contents' | 'table' | 'default';
 const TOGGLE_TOC_SHORTCUT = getShortcutSymbols(KeyMap.dataDoc.toggleToC.key);
+const DEFAULT_SIDEBAR_WIDTH = 280;
 
 export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
     docId,
@@ -71,14 +72,36 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
         }
     }, [sidebarTableId]);
 
+    const resizeToCollapseSidebar = React.useCallback(
+        (event, direction, elementRef) => {
+            if (
+                direction === 'right' &&
+                elementRef.clientWidth === DEFAULT_SIDEBAR_WIDTH
+            ) {
+                const sidebarRect = elementRef.getBoundingClientRect();
+                // this checks if mouse cursor is 1/3 * SIDEBAR_WIDTH left of sidebar
+                if (
+                    event instanceof MouseEvent &&
+                    sidebarRect.left + sidebarRect.width - event.clientX >
+                        DEFAULT_SIDEBAR_WIDTH / 3
+                ) {
+                    setContentState('default');
+                }
+            }
+        },
+        []
+    );
+
     let contentDOM: React.ReactChild;
     if (contentState === 'contents') {
         contentDOM = (
             <Resizable
                 defaultSize={{
-                    width: '280px',
+                    width: `${DEFAULT_SIDEBAR_WIDTH}px`,
                 }}
+                minWidth={DEFAULT_SIDEBAR_WIDTH}
                 enable={enableResizable({ right: true })}
+                onResize={resizeToCollapseSidebar}
             >
                 <div className="sidebar-content sidebar-content-contents">
                     <Level className="contents-panel-header">
