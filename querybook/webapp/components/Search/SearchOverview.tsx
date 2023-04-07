@@ -693,10 +693,12 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
             </>
         ) : searchType === 'Table' ? (
             <>
-                <div className="search-filter">
-                    <span className="filter-title">Metastore</span>
-                    {metastoreSelectDOM}
-                </div>
+                {queryMetastores.length > 1 && (
+                    <div className="search-filter">
+                        <span className="filter-title">Metastore</span>
+                        {metastoreSelectDOM}
+                    </div>
+                )}
                 <div className="search-filter">
                     <span className="filter-title">Top Tier</span>
                     <div className="result-item-golden horizontal-space-between">
@@ -728,10 +730,6 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                     />
                 </div>
                 <div className="search-filter">
-                    <span className="filter-title">Created At</span>
-                    {dateFilterDOM}
-                </div>
-                <div className="search-filter">
                     <span
                         className="filter-title"
                         aria-label="Table contains ALL selected tags"
@@ -754,6 +752,10 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                 <div className="search-filter">
                     <span className="filter-title">Search Settings</span>
                     {searchSettingsDOM}
+                </div>
+                <div className="search-filter">
+                    <span className="filter-title">Created At</span>
+                    {dateFilterDOM}
                 </div>
             </>
         ) : (
