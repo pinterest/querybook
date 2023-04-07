@@ -28,6 +28,7 @@ class FileUploader(BaseUploader):
 
     def start(self):
         self._chunks_length = 0
+        self._chunks = []
         os.makedirs(self.uri_dir_path, exist_ok=True)
 
     def write(self, data: str):
@@ -40,12 +41,20 @@ class FileUploader(BaseUploader):
             return False
 
         self._chunks_length += data_len
-        with open(self.uri, "a") as result_file:
-            result_file.write(data)
+        # commenting this as this would affect performance. Here the query result is being written line by line to file.
+        # as a fix, we will keep appendng to a list and then dump at once.
+        # with open(self.uri, "a") as result_file:
+        #     result_file.write(data)
+        self._chunks.append(data)
         return True
 
     def end(self):
-        pass
+        # commenting and adding below lines to fix the perfomrnce issue 
+        #pass
+        data = "".join(self._chunks)
+        with open(self.uri, "w") as result_file:
+            result_file.write(data)
+
 
     @property
     def uri_dir_path(self):
