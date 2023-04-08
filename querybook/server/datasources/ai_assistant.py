@@ -11,13 +11,10 @@ def get_text_to_sql(text=None, tables=None):
 @register("/ai_assistant/sql2text/",  methods=["GET"])
 def get_sql_to_text(query=None):
     text = ai_assistant.get_sql_to_text(sql=query)
-
-    print(text)
     return text or None
 
 
 @register("/ai_assistant/recommend_tables/", methods=["GET"])
 def table_recommendation(question=None):
     tables = ai_assistant.recommend_tables(question)
-    print(tables)
     return tables

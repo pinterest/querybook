@@ -164,3 +164,7 @@ By default Querybook supports email and slack notifications for sharing DataDocs
 `EMAILER_CONN` (optional, defaults to localhost:22): Location of the emailer server
 
 `QUERYBOOK_EMAIL_ADDRESS` (optional, required for email): Origin address when sending emails
+
+### OpenAI 
+
+`OPENAI_API_KEY` (optional, required for AI features): OPENAI API Key for AI integration

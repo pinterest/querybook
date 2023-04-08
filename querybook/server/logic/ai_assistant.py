@@ -3,8 +3,12 @@ from app.db import with_session
 import openai
 
 # Set up the OpenAI API client
-openai.api_key = "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"
+from env import QuerybookSettings
+from lib.logger import get_logger
 
+openai.api_key = QuerybookSettings.OPENAI_API_KEY
+
+LOG = get_logger(__file__)
 
 @with_session
 def get_sql_to_text(sql, session=None):
@@ -15,7 +19,6 @@ def get_sql_to_text(sql, session=None):
             "Human:" + sql +
             "AI:"
     )
-    print(prompt)
     response = openai.Completion.create(
         engine="text-davinci-003",
         prompt=prompt,
@@ -24,9 +27,8 @@ def get_sql_to_text(sql, session=None):
         stop=None,
         temperature=0.1,
     )
-    print(response.choices)
+    LOG.info(response.choices)
     text = response.choices[0].text.strip()
-    print(text)
     return text
 
 @with_session
@@ -39,7 +41,6 @@ def get_text_to_sql(text, tables, session=None):
             "HUman: Make sure you only output the sql query.\n"
             "AI:"
     )
-    print(prompt)
     response = openai.Completion.create(
         engine="text-davinci-003",
         prompt=prompt,
@@ -48,18 +49,17 @@ def get_text_to_sql(text, tables, session=None):
         stop=None,
         temperature=0.1,
     )
-    print(response.choices)
+    LOG.info(response.choices)
     sql = response.choices[0].text.strip()
-    print(sql)
     return sql
 
 @with_session
 def recommend_tables(question, session=None):
     top_table_list = ['experiment.experiment_users_join_date', 'default.unique_actions',
                       'ad.ad_all_event' 'data.users_d', 'default.user_states_sa',
-                      'default.xd28_users_sa',  'default.xd7_users_sa',
+                      'default.xd28_users',  'default.xd7_users',
                       'experiment.experiment_users', 'data.feedview_log', 'default.context_logs',  'shopping.feedview_log_flat', 'bi.dates',
-                      'bi.pinner_pin_activity_stats',  'catalogs.merchants', 'bi.bi_daily_table_availability',
+                      'bi.pinner_pin_activity_stats',  'catalogs.merchants',
                       'data.boards_d', 'data.pins_d', 'default.unique_app_events']
     prompt = (
             "The following is a conversation between an AI assistant and a human:\n\n"
@@ -69,7 +69,7 @@ def recommend_tables(question, session=None):
             "Human: Make sure you limit the number of tables to be less than three.\n"
             "AI:"
     )
-    print(prompt)
+    LOG.info(prompt)
     response = openai.Completion.create(
         engine="text-davinci-003",
         prompt=prompt,
@@ -78,7 +78,6 @@ def recommend_tables(question, session=None):
         stop=None,
         temperature=0.1,
     )
-    print(response.choices)
     text = response.choices[0].text.strip()
-    print(text)
+    LOG.info(text)
     return text

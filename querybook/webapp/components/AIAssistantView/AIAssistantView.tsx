@@ -41,7 +41,7 @@ export const SQL2TextView = ({query}) => {
 
     const translatedQuery = translation !=="" ? (
         <div>
-            <div> {"Hi, i'm QueryBot, your AI assistant. Here's your translated query:"}</div>
+            <div> {"Hi, i'm QueryBot, your AI assistant. Here's the explanation of query:"}</div>
             <WordByWordTextbox text={translation}></WordByWordTextbox>
         </div>
     ) : null;
@@ -53,7 +53,7 @@ export const SQL2TextView = ({query}) => {
             <div className="flex-right mt16">
                 <Button
                     icon="Play"
-                    title="Translate Query"
+                    title="Explain Query"
                     onClick={onSubmitClick}
                     className="mr4"
                 />
