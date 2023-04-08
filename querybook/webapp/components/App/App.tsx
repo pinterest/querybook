@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 
 import { AppRouter } from 'components/AppRouter/AppRouter';
 import { reduxStore } from 'redux/store';
+import {NextUIProvider} from "@nextui-org/react";
 
 // Make debugging easier
 window.reduxStore = reduxStore;
@@ -13,7 +14,9 @@ window.reduxStore = reduxStore;
 export const App = () => (
     <DndProvider backend={HTML5Backend}>
         <Provider store={reduxStore}>
-            <AppRouter />
+            <NextUIProvider>
+                <AppRouter />
+            </NextUIProvider>
         </Provider>
     </DndProvider>
 );

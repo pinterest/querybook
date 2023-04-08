@@ -36,6 +36,7 @@
         "@babel/preset-env": "^7.16.0",
         "@babel/preset-react": "^7.16.0",
         "@babel/preset-typescript": "^7.16.0",
+        "@nextui-org/react": "^1.0.0-beta.12",
         "@types/diff": "^5.0.2",
         "@welldone-software/why-did-you-render": "^6.1.1",
         "axios": "^1.2.2",
