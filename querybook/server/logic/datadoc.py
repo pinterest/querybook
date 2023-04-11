@@ -811,7 +811,7 @@ def get_data_doc_editor_by_id(id, session=None):
 
 @with_session
 def get_unique_data_doc_editor_by_id_and_uid(data_doc_id, uid, session=None):
-    return session.query(DataDocEditor).filter(DataDocDataCell.data_doc_id == data_doc_id).filter(DataDocDataCell.uid == uid)
+    return session.query(DataDocEditor).filter(DataDocDataCell.data_doc_id == data_doc_id).filter(DataDocDataCell.uid == uid).first()
 
 
 @with_session
