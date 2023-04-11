@@ -442,7 +442,7 @@ def add_datadoc_editor(
 ):
     with DBSession() as session:
         assert_can_write(doc_id, session=session)
-        editor = logic.create_data_doc_editor(
+        editor = logic.create_or_update_data_doc_editor(
             data_doc_id=doc_id, uid=uid, read=read, write=write, commit=False
         )
         editor_dict = editor.to_dict()

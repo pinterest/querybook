@@ -810,6 +810,11 @@ def get_data_doc_editor_by_id(id, session=None):
 
 
 @with_session
+def get_unique_data_doc_editor_by_id_and_uid(id, uid, session=None):
+    return session.query(DataDocEditor).filter(DataDocDataCell.data_doc_id == id).filter(DataDocDataCell.uid == uid)
+
+
+@with_session
 def get_data_doc_editors_by_doc_id(data_doc_id, session=None):
     return session.query(DataDocEditor).filter_by(data_doc_id=data_doc_id).all()
 
@@ -859,6 +864,14 @@ def update_data_doc_editor(
                 session.flush()
             session.refresh(editor)
         return editor
+
+
+@with_session
+def create_or_update_data_doc_editor(id, uid, read=False, write=False, commit=True, session=None):
+    editor = get_unique_data_doc_editor_by_id_and_uid(id, uid, session=session)
+    if editor:
+        update_data_doc_editor(id, read=read, write=write, commit=commit, session=session)
+    create_data_doc_editor(id, uid, read=read, write=write, commit=commit, session=session)
 
 
 @with_session
