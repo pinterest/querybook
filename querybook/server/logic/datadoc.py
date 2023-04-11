@@ -870,8 +870,8 @@ def update_data_doc_editor(
 def create_or_update_data_doc_editor(data_doc_id, uid, read=False, write=False, commit=True, session=None):
     editor = get_unique_data_doc_editor_by_id_and_uid(data_doc_id, uid, session=session)
     if editor:
-        update_data_doc_editor(data_doc_id, read=read, write=write, commit=commit, session=session)
-    create_data_doc_editor(data_doc_id, uid, read=read, write=write, commit=commit, session=session)
+        return update_data_doc_editor(data_doc_id, read=read, write=write, commit=commit, session=session)
+    return create_data_doc_editor(data_doc_id, uid, read=read, write=write, commit=commit, session=session)
 
 
 @with_session
