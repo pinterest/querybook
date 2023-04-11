@@ -98,6 +98,9 @@ class HMSMetastoreLoader(BaseMetastoreLoader):
             self.hmc, schema_name, table_name, conditions
         )
 
+    def get_schema_location(self, schema_name: str) -> str:
+        return self.hmc.get_database(schema_name).locationUri
+
     def _get_hmc(self, metastore_dict):
         return HiveMetastoreClient(
             hmss_ro_addrs=metastore_dict["metastore_params"]["hms_connection"]

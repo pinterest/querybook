@@ -224,6 +224,15 @@ tables:
                 columns:
                     type: keyword
                     normalizer: case_insensitive
+                column_descriptions:
+                    type: text
+                    analyzer: user_content_analyzer
+                data_elements:
+                    type: keyword
+                    normalizer: case_insensitive
+                data_element_descriptions:
+                    type: text
+                    analyzer: user_content_analyzer
                 golden:
                     type: boolean
                 importance_score:

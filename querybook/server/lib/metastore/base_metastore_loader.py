@@ -361,6 +361,8 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
                 location=table.location,
                 column_count=len(columns),
                 schema_id=schema_id,
+                golden=table.golden,
+                boost_score=table.boost_score,
                 commit=False,
                 session=session,
             ).id
@@ -536,6 +538,10 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
 
     def get_data_element(self, data_element_name: str) -> Optional[DataElementTuple]:
         """Override this to get data element by name"""
+        pass
+
+    def get_schema_location(self, schema_name: str) -> str:
+        """Get schema location, used by table uploader"""
         pass
 
     @abstractclassmethod

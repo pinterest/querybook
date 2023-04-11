@@ -70,6 +70,9 @@ class DataTable(NamedTuple):
     # Custom properties
     custom_properties: dict[str, str] = None
 
+    golden: bool = False
+    boost_score: float = 1
+
 
 class DataColumn(NamedTuple):
     name: str

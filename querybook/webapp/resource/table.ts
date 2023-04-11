@@ -14,7 +14,6 @@ import type {
     ILineage,
     IPaginatedQuerySampleFilters,
     IQueryMetastore,
-    ITableColumnStats,
     ITableQueryEngine,
     ITableSampleParams,
     ITableStats,
@@ -241,6 +240,9 @@ export const TableTagResource = {
 };
 
 export const DataElementResource = {
+    search: (keyword: string) =>
+        ds.fetch<string[]>(`/data_element/keyword/`, { keyword }),
+
     getMetastoreLink: (dataElementId: number) =>
         ds.fetch<string>(`/data_element/${dataElementId}/metastore_link/`),
 };
