@@ -810,8 +810,8 @@ def get_data_doc_editor_by_id(id, session=None):
 
 
 @with_session
-def get_unique_data_doc_editor_by_id_and_uid(id, uid, session=None):
-    return session.query(DataDocEditor).filter(DataDocDataCell.data_doc_id == id).filter(DataDocDataCell.uid == uid)
+def get_unique_data_doc_editor_by_id_and_uid(data_doc_id, uid, session=None):
+    return session.query(DataDocEditor).filter(DataDocDataCell.data_doc_id == data_doc_id).filter(DataDocDataCell.uid == uid)
 
 
 @with_session
@@ -867,11 +867,11 @@ def update_data_doc_editor(
 
 
 @with_session
-def create_or_update_data_doc_editor(id, uid, read=False, write=False, commit=True, session=None):
-    editor = get_unique_data_doc_editor_by_id_and_uid(id, uid, session=session)
+def create_or_update_data_doc_editor(data_doc_id, uid, read=False, write=False, commit=True, session=None):
+    editor = get_unique_data_doc_editor_by_id_and_uid(data_doc_id, uid, session=session)
     if editor:
-        update_data_doc_editor(id, read=read, write=write, commit=commit, session=session)
-    create_data_doc_editor(id, uid, read=read, write=write, commit=commit, session=session)
+        update_data_doc_editor(data_doc_id, read=read, write=write, commit=commit, session=session)
+    create_data_doc_editor(data_doc_id, uid, read=read, write=write, commit=commit, session=session)
 
 
 @with_session
