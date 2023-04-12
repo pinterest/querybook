@@ -35,7 +35,7 @@ export const EntitySelect = ({
     onSelect,
     onEntitiesChange,
     showSelected = true,
-    creatable = true,
+    creatable = false,
     placeholder = 'search',
     validateEntity = null,
     mini = false,
