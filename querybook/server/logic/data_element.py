@@ -1,4 +1,5 @@
 from typing import Union
+
 from app.db import with_session
 from const.data_element import (
     DataElementAssociationDict,
@@ -10,6 +11,7 @@ from const.data_element import (
 from lib.logger import get_logger
 from logic.user import get_user_by_name
 from models.data_element import DataElement, DataElementAssociation
+from sqlalchemy.sql.expression import case
 
 LOG = get_logger(__file__)
 
@@ -28,8 +30,11 @@ def get_data_element_by_name(name: str, session=None):
 def search_data_elements_by_keyword(keyword: str, limit=20, session=None):
     return (
         session.query(DataElement)
-        .filter(DataElement.name.like(keyword + "%"))
-        .order_by(DataElement.name.asc())
+        .filter(DataElement.name.like("%" + keyword + "%"))
+        .order_by(
+            case([(DataElement.name.startswith(keyword), 0)], else_=1),
+            DataElement.name.asc(),
+        )
         .limit(limit)
         .all()
     )
