@@ -637,6 +637,9 @@ def exec_demo_set_up():
                 column_id=score_column.id, uid=current_user.id, session=session
             )
 
+        demo_logic.create_demo_data_elements(metastore_id, session=session)
+        demo_logic.create_demo_tags(metastore_id, session=session)
+
         schedule_logic.run_and_log_scheduled_task(
             scheduled_task_id=task_schedule_id, session=session
         )

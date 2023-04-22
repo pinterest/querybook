@@ -4,8 +4,15 @@ from logic import (
     metastore as m_logic,
     datadoc as data_doc_logic,
     user as user_logic,
+    tag as tag_logic,
+    data_element as de_logic,
 )
 
+from const.data_element import (
+    DataElementTuple,
+    DataElementAssociationTuple,
+    DataElementAssociationType,
+)
 from lib.lineage.utils import lineage as lineage_logic
 
 
@@ -433,3 +440,57 @@ FROM
     )
 
     return data_doc_id
+
+
+@with_session
+def create_demo_tags(metastore_id: int, session=None):
+    table = m_logic.get_table_by_name(
+        schema_name="main",
+        name="world_happiness_2019",
+        metastore_id=metastore_id,
+        session=session,
+    )
+    tag = tag_logic.create_or_update_tag(
+        tag_name="latest", commit=False, session=session
+    )
+    tag_logic.add_tag_to_table(table.id, tag.name, uid=1, session=session)
+    session.commit()
+
+
+@with_session
+def create_demo_data_elements(metastore_id: int, session=None):
+    first_user = user_logic.get_user_by_id(1, session=session)
+    de_tuple = DataElementTuple(
+        name="Country",
+        type="STRING",
+        description="Contains all plain country names",
+        properties={},
+        created_by=first_user.username,
+    )
+
+    data_element = de_logic.create_or_update_data_element(
+        metastore_id, data_element_tuple=de_tuple, commit=False, session=session
+    )
+
+    for year in range(2015, 2020):
+        table = m_logic.get_table_by_name(
+            schema_name="main",
+            name=f"world_happiness_{year}",
+            metastore_id=metastore_id,
+            session=session,
+        )
+        column = m_logic.get_column_by_name(
+            name="Country", table_id=table.id, session=session
+        )
+        de_association = DataElementAssociationTuple(
+            type=DataElementAssociationType.REF,
+            value_data_element=data_element.name,
+        )
+        de_logic.create_column_data_element_association(
+            metastore_id,
+            column.id,
+            data_element_association=de_association,
+            commit=False,
+            session=session,
+        )
+    session.commit()

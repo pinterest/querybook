@@ -348,14 +348,11 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
         />
     );
 
-    const dataElementDOM = (
-        <EntitySelect
-            selectedEntities={searchFilters?.data_elements || []}
-            loadEntities={DataElementResource.search}
-            onEntitiesChange={updateDataElements}
-            placeholder="search data element"
-        />
-    );
+    const queryMetastore =
+        searchType === SearchType.Table &&
+        queryMetastores.find((metastore) => metastore.id === metastoreId);
+    const queryMetastoreHasDataElements =
+        !!queryMetastore?.flags?.has_data_element;
 
     const metastoreSelectDOM =
         searchType === SearchType.Table ? (
@@ -373,6 +370,14 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                 </Select>
             </div>
         ) : null;
+    const dataElementDOM = queryMetastoreHasDataElements && (
+        <EntitySelect
+            selectedEntities={searchFilters?.data_elements || []}
+            loadEntities={DataElementResource.search}
+            onEntitiesChange={updateDataElements}
+            placeholder="search data element"
+        />
+    );
 
     const orderByButtonFormatter = React.useCallback(
         () => (
@@ -729,6 +734,19 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                         schema={searchFilters?.schema}
                     />
                 </div>
+                {queryMetastoreHasDataElements && (
+                    <div className="search-filter">
+                        <span
+                            className="filter-title"
+                            aria-label="Table associates with ALL selected data elements"
+                            data-balloon-pos="up"
+                        >
+                            Data Elements
+                        </span>
+                        {dataElementDOM}
+                    </div>
+                )}
+
                 <div className="search-filter">
                     <span
                         className="filter-title"
@@ -739,16 +757,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                     </span>
                     {tagDOM}
                 </div>
-                <div className="search-filter">
-                    <span
-                        className="filter-title"
-                        aria-label="Table associates with ALL selected data elements"
-                        data-balloon-pos="up"
-                    >
-                        Data Elements
-                    </span>
-                    {dataElementDOM}
-                </div>
+
                 <div className="search-filter">
                     <span className="filter-title">Search Settings</span>
                     {searchSettingsDOM}
