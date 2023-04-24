@@ -1,4 +1,6 @@
+import clsx from 'clsx';
 import React, { useCallback, useState } from 'react';
+import { components, OptionProps } from 'react-select';
 
 import { useResource } from 'hooks/useResource';
 import { ICancelablePromise } from 'lib/datasource';
@@ -7,13 +9,29 @@ import {
     miniReactSelectStyles,
 } from 'lib/utils/react-select';
 import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
+import { StyledText } from 'ui/StyledText/StyledText';
 import { HoverIconTag } from 'ui/Tag/HoverIconTag';
 
 import './EntitySelect.scss';
 
+interface IEntityWithDescription {
+    label: string;
+    desc?: string;
+    value: string;
+}
+
+type StringOrWithDescription =
+    | string
+    | {
+          name: string;
+          desc: string;
+      };
+
 interface IEntitySelectProps {
     selectedEntities: string[];
-    loadEntities: (keyword: string) => ICancelablePromise<{ data: string[] }>;
+    loadEntities: (
+        keyword: string
+    ) => ICancelablePromise<{ data: StringOrWithDescription[] }>;
 
     showSelected?: boolean;
     creatable?: boolean;
@@ -28,6 +46,30 @@ interface IEntitySelectProps {
 
     mini?: boolean;
 }
+
+const OptionWithDesc: React.FC<OptionProps<IEntityWithDescription, true>> = (
+    props
+) => {
+    const { label, desc } = props.data as IEntityWithDescription;
+
+    return (
+        <components.Option
+            {...props}
+            className={clsx(props.className, 'OptionWithDesc')}
+        >
+            <span>{label}</span>
+            {desc && (
+                <StyledText
+                    untitled
+                    size={'xsmall'}
+                    className="two-line-ellipsis"
+                >
+                    {desc}
+                </StyledText>
+            )}
+        </components.Option>
+    );
+};
 
 export const EntitySelect = ({
     selectedEntities,
@@ -50,18 +92,31 @@ export const EntitySelect = ({
         [mini]
     );
 
-    const { data: entities } = useResource<string[]>(
+    const { data: entities } = useResource<StringOrWithDescription[]>(
         React.useCallback(
             () => loadEntities(searchText),
             [loadEntities, searchText]
         )
     );
 
-    const options = React.useMemo(
+    const options: IEntityWithDescription[] = React.useMemo(
         () =>
-            (entities || []).filter(
-                (entity) => !selectedEntities.includes(entity)
-            ),
+            (entities || [])
+                .map((entity) => {
+                    if (typeof entity === 'string') {
+                        return {
+                            label: entity,
+                            value: entity,
+                        };
+                    } else {
+                        return {
+                            label: entity.name,
+                            desc: entity.desc,
+                            value: entity.name,
+                        };
+                    }
+                })
+                .filter((option) => !selectedEntities.includes(option.value)),
         [entities, selectedEntities]
     );
 
@@ -118,6 +173,10 @@ export const EntitySelect = ({
                         placeholder,
                         styles: reactSelectStyle,
                         noOptionsMessage: () => null,
+                        components: {
+                            // @ts-ignore: react-select's error does not prevent the component from working
+                            Option: OptionWithDesc,
+                        },
                     }}
                     clearAfterSelect
                 />
