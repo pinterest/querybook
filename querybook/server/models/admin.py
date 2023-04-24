@@ -168,10 +168,10 @@ class QueryMetastore(CRUDMixin, Base):
         }
 
         if with_flags:
-            from logic.data_element import get_query_metastore_has_data_elements
+            from logic.data_element import check_query_metastore_has_data_elements
 
             d["flags"] = {
-                "has_data_element": get_query_metastore_has_data_elements(self.id)
+                "has_data_element": check_query_metastore_has_data_elements(self.id)
             }
 
         return d

@@ -27,7 +27,7 @@ def get_data_element_by_name(name: str, session=None):
 
 
 @with_session
-def get_query_metastore_has_data_elements(metastore_id, session=None):
+def check_query_metastore_has_data_elements(metastore_id, session=None):
     has_data_elements = (
         session.query(DataElement).filter_by(metastore_id=metastore_id).first()
     )
@@ -145,7 +145,7 @@ def create_data_element_association(
         column_id=column_id,
         type=association_type,
         property_name=property_name.value,
-        data_element_id=data_element.id,
+        data_element_id=data_element.id if data_element is not None else None,
         primitive_type=primitive_type,
     )
 
