@@ -56,6 +56,6 @@ class DataElementAssociationTuple(NamedTuple):
     # for map association, value can either be a data element or a primitive type, e.g. i32
     value_primitive_type: str = None
     # data element tuple or name. required if associtaion type is map
-    key_data_element: Union[DataElementTuple, str] = None
+    key_data_element: Optional[Union[DataElementTuple, str]] = None
     # for map association, key can either be a data element or a primitive type, e.g. i32
-    key_primitive_type: str = None
+    key_primitive_type: Optional[str] = None

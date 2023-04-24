@@ -27,6 +27,14 @@ def get_data_element_by_name(name: str, session=None):
 
 
 @with_session
+def check_query_metastore_has_data_elements(metastore_id, session=None):
+    has_data_elements = (
+        session.query(DataElement).filter_by(metastore_id=metastore_id).first()
+    )
+    return has_data_elements is not None
+
+
+@with_session
 def search_data_elements_by_keyword(keyword: str, limit=20, session=None):
     return (
         session.query(DataElement)
@@ -73,17 +81,24 @@ def get_data_element_association_by_column_id(
 def create_or_update_data_element(
     metastore_id: int, data_element_tuple: DataElementTuple, commit=True, session=None
 ):
+    created_by_uid = None
     if data_element_tuple.created_by:
-        created_by = get_user_by_name(data_element_tuple.created_by, session=session)
-        if not created_by:
+        created_by_user = get_user_by_name(
+            data_element_tuple.created_by, session=session
+        )
+        if not created_by_user:
             LOG.error(
                 f"Can't find created_by of data element {data_element_tuple.name}: {data_element_tuple.created_by}"
             )
-
-        data_element_tuple.created_by = created_by
+        else:
+            created_by_uid = created_by_user.id
 
     data_element = get_data_element_by_name(data_element_tuple.name, session=session)
-    fields = {**data_element_tuple._asdict(), "metastore_id": metastore_id}
+    fields = {
+        **data_element_tuple._asdict(),
+        "metastore_id": metastore_id,
+        "created_by": created_by_uid,
+    }
 
     if not data_element:
         # create a new data element
@@ -112,30 +127,25 @@ def create_data_element_association(
     primitive_type: str = None,
     session=None,
 ):
-    if (
-        not data_element_tuple
-        or not data_element_tuple.name
-        or not data_element_tuple.type
-    ):
-        return None
-
-    if type(data_element_tuple) is str:
-        data_element = get_data_element_by_name(data_element_tuple, session=session)
-    else:
-        data_element = create_or_update_data_element(
-            metastore_id, data_element_tuple, session=session
-        )
-
-    if not data_element and not primitive_type:
+    if not data_element_tuple and not primitive_type:
         raise Exception(
             f"Can not create DataElementAssociation: {data_element_tuple} is not a valid data element and primitive type is empty"
         )
+
+    data_element = None
+    if data_element_tuple:
+        if type(data_element_tuple) is str:
+            data_element = get_data_element_by_name(data_element_tuple, session=session)
+        elif data_element_tuple.name and data_element_tuple.type:
+            data_element = create_or_update_data_element(
+                metastore_id, data_element_tuple, session=session
+            )
 
     return DataElementAssociation(
         column_id=column_id,
         type=association_type,
         property_name=property_name.value,
-        data_element_id=data_element.id,
+        data_element_id=data_element.id if data_element is not None else None,
         primitive_type=primitive_type,
     )
 
