@@ -109,10 +109,6 @@
     @include one-line-ellipsis();
 }
 
-.two-line-ellipsis {
-    @include ellipsis(2);
-}
-
 .cursor-pointer {
     cursor: pointer;
 }

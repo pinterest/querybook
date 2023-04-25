@@ -62,7 +62,7 @@ const OptionWithDesc: React.FC<OptionProps<IEntityWithDescription, true>> = (
                 <StyledText
                     untitled
                     size={'xsmall'}
-                    className="two-line-ellipsis"
+                    className="OptionWithDesc-desc"
                 >
                     {desc}
                 </StyledText>
