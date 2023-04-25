@@ -1,3 +1,5 @@
+@import '../../scss_variables.scss';
+
 .EntitySelect {
     min-width: 180px;
 
@@ -16,6 +18,14 @@
         .Tag {
             margin-left: 0 !important;
             font-size: var(--xxsmall-text-size);
+        }
+    }
+}
+
+.OptionWithDesc {
+    &:not(&:hover) {
+        .OptionWithDesc-desc {
+            @include ellipsis(2);
         }
     }
 }
