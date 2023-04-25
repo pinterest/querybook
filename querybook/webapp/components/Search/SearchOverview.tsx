@@ -100,7 +100,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
         searchRequest,
         queryMetastores,
         queryEngines,
-        metastoreId,
+        metastoreId: _metastoreId,
     } = useShallowSelector((state: IStoreState) => ({
         ...state.search,
         environment: currentEnvironmentSelector(state),
@@ -109,6 +109,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
         queryMetastores: queryMetastoresSelector(state),
         metastoreId: state.dataTableSearch.metastoreId,
     }));
+    const metastoreId = _metastoreId ?? queryMetastores?.[0]?.id;
 
     const results = resultByPage[currentPage] || [];
     const isLoading = !!searchRequest;
@@ -358,7 +359,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
         searchType === SearchType.Table ? (
             <div className="tables-search-select">
                 <Select
-                    value={metastoreId || queryMetastores[0].id}
+                    value={metastoreId}
                     onChange={handleMetastoreChange}
                     transparent
                 >
@@ -660,7 +661,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                     <span className="filter-title">Query Engine</span>
                     {queryEngineFilterDOM}
                 </div>
-                {queryMetastores.length && (
+                {queryMetastores.length > 0 && (
                     <div className="search-filter">
                         <span className="filter-title">Tables</span>
                         {tableFilterDOM}
