@@ -38,7 +38,8 @@ def get_all_query_metastores(
     environment_id,
 ):
     verify_environment_permission([environment_id])
-    return admin_logic.get_all_query_metastore_by_environment(environment_id)
+    metastores = admin_logic.get_all_query_metastore_by_environment(environment_id)
+    return [m.to_dict(with_flags=True) for m in metastores]
 
 
 @register("/schema/<int:schema_id>/", methods=["PUT"])

@@ -1,6 +1,8 @@
 from typing import Any, Dict, List, Optional
 
 import trino
+from trino.exceptions import TrinoUserError
+
 from lib.query_executor.base_client import ClientBaseClass, CursorBaseClass
 from lib.query_executor.clients.utils.presto_cursor import PrestoCursorMixin
 from lib.query_executor.connection_string.trino import get_trino_connection_conf
@@ -18,15 +20,22 @@ class TrinoCursor(PrestoCursorMixin[trino.dbapi.Cursor, List[Any]], CursorBaseCl
         self._tracking_url = None
         self._percent_complete = 0
 
-    def poll(self) -> bool:
-        # this needs to be take care
-        self.rows.extend(self._cursor._query.fetch())
-        self._cursor._iterator = iter(self.rows)
-        poll_result = self._cursor.stats
-        completed = self._cursor._query._finished
-        if poll_result:
-            self._update_percent_complete(poll_result)
+    def poll(self):
+        try:
+            self.rows.extend(self._cursor._query.fetch())
+            self._cursor._iterator = iter(self.rows)
+            poll_result = self._cursor.stats
+            completed = self._cursor._query._finished
+            if poll_result:
+                self._update_percent_complete(poll_result)
+                self._update_tracking_url(poll_result)
+
+        except TrinoUserError as e:
+            # Catch the error and update the tracking url
+            poll_result = {"queryId": e.query_id}
             self._update_tracking_url(poll_result)
+
+            raise e
 
         return completed
 

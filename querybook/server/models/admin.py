@@ -156,16 +156,25 @@ class QueryMetastore(CRUDMixin, Base):
 
     acl_control = sql.Column(sql.JSON, default={}, nullable=False)
 
-    def to_dict(self):
+    def to_dict(self, with_flags=False):
         from lib.metastore import get_metastore_loader_class_by_name
 
         loader_class = get_metastore_loader_class_by_name(self.loader)
-        return {
+        d = {
             "id": self.id,
             "name": self.name,
             "config": loader_class.loader_config.to_dict(),
             "owner_types": [t._asdict() for t in loader_class.get_table_owner_types()],
         }
+
+        if with_flags:
+            from logic.data_element import check_query_metastore_has_data_elements
+
+            d["flags"] = {
+                "has_data_element": check_query_metastore_has_data_elements(self.id)
+            }
+
+        return d
 
     def to_dict_admin(self):
         return {

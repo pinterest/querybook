@@ -241,7 +241,12 @@ export const TableTagResource = {
 
 export const DataElementResource = {
     search: (keyword: string) =>
-        ds.fetch<string[]>(`/data_element/keyword/`, { keyword }),
+        ds.fetch<
+            Array<{
+                name: string;
+                desc: string;
+            }>
+        >(`/data_element/keyword/`, { keyword }),
 
     getMetastoreLink: (dataElementId: number) =>
         ds.fetch<string>(`/data_element/${dataElementId}/metastore_link/`),

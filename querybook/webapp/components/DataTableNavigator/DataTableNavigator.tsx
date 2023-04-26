@@ -142,14 +142,16 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
         }
     }, [noMetastore]);
 
+    const queryMetastore = useMemo(
+        () =>
+            queryMetastores?.find((metastore) => metastore.id === metastoreId),
+        [metastoreId, queryMetastores]
+    );
     useEffect(() => {
-        if (
-            queryMetastores.length > 0 &&
-            !queryMetastores.find((metastore) => metastore.id === metastoreId)
-        ) {
+        if (queryMetastores.length > 0 && !queryMetastore) {
             selectMetastore(queryMetastores[0].id);
         }
-    }, [queryMetastores, metastoreId]);
+    }, [queryMetastores, queryMetastore, selectMetastore]);
 
     const handleMetastoreChange = useCallback(
         (evt: React.ChangeEvent<HTMLSelectElement>) => {
@@ -260,15 +262,17 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
         <div className="DataTableNavigator SidebarNavigator">
             <div className="list-header">
                 {metastorePicker}
-                <DataTableNavigatorSearch
-                    metastoreId={metastoreId}
-                    searchFilters={searchFilters}
-                    searchString={searchString}
-                    onSearch={handleSearch}
-                    updateSearchFilter={updateSearchFilter}
-                    resetSearchFilter={resetSearchFilter}
-                    showTableSearchResult={showTableSearchResult}
-                />
+                {queryMetastore && (
+                    <DataTableNavigatorSearch
+                        queryMetastore={queryMetastore}
+                        searchFilters={searchFilters}
+                        searchString={searchString}
+                        onSearch={handleSearch}
+                        updateSearchFilter={updateSearchFilter}
+                        resetSearchFilter={resetSearchFilter}
+                        showTableSearchResult={showTableSearchResult}
+                    />
+                )}
             </div>
             <div className="list-content">{tablesDOM}</div>
         </div>

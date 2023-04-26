@@ -31,6 +31,9 @@ export interface IQueryMetastore {
     name: string;
     config: Record<MetadataType, MetadataMode>;
     owner_types: [IDataOwnerType];
+    flags?: {
+        has_data_element: boolean;
+    };
 }
 
 export interface IDataSchema {

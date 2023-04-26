@@ -100,7 +100,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
         searchRequest,
         queryMetastores,
         queryEngines,
-        metastoreId,
+        metastoreId: _metastoreId,
     } = useShallowSelector((state: IStoreState) => ({
         ...state.search,
         environment: currentEnvironmentSelector(state),
@@ -109,6 +109,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
         queryMetastores: queryMetastoresSelector(state),
         metastoreId: state.dataTableSearch.metastoreId,
     }));
+    const metastoreId = _metastoreId ?? queryMetastores?.[0]?.id;
 
     const results = resultByPage[currentPage] || [];
     const isLoading = !!searchRequest;
@@ -348,20 +349,17 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
         />
     );
 
-    const dataElementDOM = (
-        <EntitySelect
-            selectedEntities={searchFilters?.data_elements || []}
-            loadEntities={DataElementResource.search}
-            onEntitiesChange={updateDataElements}
-            placeholder="search data element"
-        />
-    );
+    const queryMetastore =
+        searchType === SearchType.Table &&
+        queryMetastores.find((metastore) => metastore.id === metastoreId);
+    const queryMetastoreHasDataElements =
+        !!queryMetastore?.flags?.has_data_element;
 
     const metastoreSelectDOM =
         searchType === SearchType.Table ? (
             <div className="tables-search-select">
                 <Select
-                    value={metastoreId || queryMetastores[0].id}
+                    value={metastoreId}
                     onChange={handleMetastoreChange}
                     transparent
                 >
@@ -373,6 +371,14 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                 </Select>
             </div>
         ) : null;
+    const dataElementDOM = queryMetastoreHasDataElements && (
+        <EntitySelect
+            selectedEntities={searchFilters?.data_elements || []}
+            loadEntities={DataElementResource.search}
+            onEntitiesChange={updateDataElements}
+            placeholder="search data element"
+        />
+    );
 
     const orderByButtonFormatter = React.useCallback(
         () => (
@@ -655,7 +661,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                     <span className="filter-title">Query Engine</span>
                     {queryEngineFilterDOM}
                 </div>
-                {queryMetastores.length && (
+                {queryMetastores.length > 0 && (
                     <div className="search-filter">
                         <span className="filter-title">Tables</span>
                         {tableFilterDOM}
@@ -729,6 +735,19 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                         schema={searchFilters?.schema}
                     />
                 </div>
+                {queryMetastoreHasDataElements && (
+                    <div className="search-filter">
+                        <span
+                            className="filter-title"
+                            aria-label="Table associates with ALL selected data elements"
+                            data-balloon-pos="up"
+                        >
+                            Data Elements
+                        </span>
+                        {dataElementDOM}
+                    </div>
+                )}
+
                 <div className="search-filter">
                     <span
                         className="filter-title"
@@ -739,16 +758,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                     </span>
                     {tagDOM}
                 </div>
-                <div className="search-filter">
-                    <span
-                        className="filter-title"
-                        aria-label="Table associates with ALL selected data elements"
-                        data-balloon-pos="up"
-                    >
-                        Data Elements
-                    </span>
-                    {dataElementDOM}
-                </div>
+
                 <div className="search-filter">
                     <span className="filter-title">Search Settings</span>
                     {searchSettingsDOM}

@@ -597,7 +597,9 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
         try:
             # Try our best to fetch logs again
             if self._cursor:
-                self._logger.on_statement_update(log=self._get_logs())
+                self._logger.on_statement_update(
+                    log=self._get_logs(), meta_info=self.meta_info
+                )
         except Exception:
             # In case of failure just ignore
             pass
