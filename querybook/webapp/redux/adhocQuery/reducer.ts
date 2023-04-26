@@ -3,13 +3,20 @@ import { produce } from 'immer';
 import { EnvironmentAction } from 'redux/environment/types';
 
 import { saveAdhocQuery } from './persistence';
-import { AdhocQueryAction, AdhocQueryState } from './types';
+import {
+    AdhocQueryAction,
+    IRemoveSelectedExecutionAction,
+    AdhocQueryState,
+} from './types';
 
 const initialState: Readonly<AdhocQueryState> = {};
 
 export default (
     state = initialState,
-    action: AdhocQueryAction | EnvironmentAction
+    action:
+        | AdhocQueryAction
+        | EnvironmentAction
+        | IRemoveSelectedExecutionAction
 ) =>
     produce(state, (draft) => {
         switch (action.type) {
@@ -18,6 +25,16 @@ export default (
                 draft[environmentId] = {
                     ...draft[environmentId],
                     ...adhocQuery,
+                    selectedExec: adhocQuery.executionId,
+                };
+                saveAdhocQuery(draft[environmentId], environmentId);
+                return;
+            }
+            case '@@adhocQuery/REMOVE_SELECTED_EXECUTION': {
+                const { environmentId } = action.payload;
+                draft[environmentId] = {
+                    ...draft[environmentId],
+                    selectedExec: null,
                 };
                 saveAdhocQuery(draft[environmentId], environmentId);
                 return;

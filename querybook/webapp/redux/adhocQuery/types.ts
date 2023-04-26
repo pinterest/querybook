@@ -16,7 +16,16 @@ export interface ISetAdhocQueryAction extends Action {
     };
 }
 
-export type AdhocQueryAction = ISetAdhocQueryAction;
+export interface IRemoveSelectedExecutionAction extends Action {
+    type: '@@adhocQuery/REMOVE_SELECTED_EXECUTION';
+    payload: {
+        environmentId: number;
+    };
+}
+
+export type AdhocQueryAction =
+    | ISetAdhocQueryAction
+    | IRemoveSelectedExecutionAction;
 
 export type ThunkResult<R> = ThunkAction<
     R,

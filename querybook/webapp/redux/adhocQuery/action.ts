@@ -2,7 +2,11 @@ import { IAdhocQuery } from 'const/adhocQuery';
 import { fetchQueryExecutionIfNeeded } from 'redux/queryExecutions/action';
 
 import { loadAdhocQuery } from './persistence';
-import { ISetAdhocQueryAction, ThunkResult } from './types';
+import {
+    ISetAdhocQueryAction,
+    IRemoveSelectedExecutionAction,
+    ThunkResult,
+} from './types';
 
 export function receiveAdhocQuery(
     adhocQuery: Partial<IAdhocQuery>,
@@ -12,6 +16,17 @@ export function receiveAdhocQuery(
         type: '@@adhocQuery/SET_ADHOC_QUERY',
         payload: {
             adhocQuery,
+            environmentId,
+        },
+    };
+}
+
+export function removeSelectedExecution(
+    environmentId: number
+): IRemoveSelectedExecutionAction {
+    return {
+        type: '@@adhocQuery/REMOVE_SELECTED_EXECUTION',
+        payload: {
             environmentId,
         },
     };

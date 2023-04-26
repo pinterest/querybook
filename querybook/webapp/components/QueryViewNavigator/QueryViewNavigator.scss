@@ -83,3 +83,9 @@
         word-break: break-all;
     }
 }
+
+.active-execution {
+    border-left: 4px solid #e64680;
+    background-color: #feedf3;
+    border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
+}

@@ -1,6 +1,8 @@
 import clsx from 'clsx';
 import moment from 'moment';
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useMemo, useRef, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 import { IQueryEngine } from 'const/queryEngine';
 import { IQueryExecution } from 'const/queryExecution';
@@ -13,6 +15,7 @@ import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 import { AccentText } from 'ui/StyledText/StyledText';
 import { Tag } from 'ui/Tag/Tag';
 import { TimeFromNow } from 'ui/Timer/TimeFromNow';
+import { IStoreState } from 'redux/store/types';
 
 interface IProps {
     queryExecution: IQueryExecution;
@@ -45,6 +48,35 @@ const ExecutionTime: React.FC<{ queryExecution: IQueryExecution }> = ({
     return <span>{durationText}</span>;
 };
 
+const useIsActiveItem = ({ selfRef, queryId }) => {
+    const { search } = useLocation();
+    const executionId: number = React.useMemo(() => {
+        const query = new URLSearchParams(search);
+        return +query.get('executionId');
+    }, [search]);
+    const environmentId: number = useSelector(
+        (state: IStoreState) => state.environment.currentEnvironmentId
+    );
+    const selectedExecution: number = useSelector(
+        (state: IStoreState) => state.adhocQuery[environmentId]?.selectedExec
+    );
+
+    useEffect(() => {
+        const isScroll =
+            executionId === queryId ||
+            (!executionId && selectedExecution === queryId);
+
+        if (isScroll) {
+            selfRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [selfRef, executionId, selectedExecution]);
+
+    return (
+        executionId === queryId ||
+        (!executionId && selectedExecution === queryId)
+    );
+};
+
 export const QueryResult: React.FunctionComponent<IProps> = ({
     queryEngineById,
     queryExecution,
@@ -66,10 +98,15 @@ export const QueryResult: React.FunctionComponent<IProps> = ({
         history.push(queryExecutionUrl, { isModal: true });
     }, [queryExecutionUrl]);
 
+    const isActiveExecution = useIsActiveItem({ selfRef, queryId });
+
     return (
         <>
             <div
-                className={clsx('QueryResult')}
+                className={clsx({
+                    QueryResult: true,
+                    'active-execution': isActiveExecution,
+                })}
                 onClick={handleClick}
                 ref={selfRef}
             >
