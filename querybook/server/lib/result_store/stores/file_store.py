@@ -4,6 +4,7 @@ import os
 from typing import Optional
 from lib.result_store.stores.base_store import BaseReader, BaseUploader
 from env import QuerybookSettings
+from lib.utils.csv import str_to_csv_iter
 
 # to use, enable docker volume inside docker-compose.yml
 # uncomment lines `- file:/opt/store/`
@@ -28,7 +29,6 @@ class FileUploader(BaseUploader):
 
     def start(self):
         self._chunks_length = 0
-        self._chunks = []
         os.makedirs(self.uri_dir_path, exist_ok=True)
 
     def write(self, data: str):
@@ -41,20 +41,12 @@ class FileUploader(BaseUploader):
             return False
 
         self._chunks_length += data_len
-        # commenting this as this would affect performance. Here the query result is being written line by line to file.
-        # as a fix, we will keep appendng to a list and then dump at once.
-        # with open(self.uri, "a") as result_file:
-        #     result_file.write(data)
-        self._chunks.append(data)
+        with open(self.uri, "a") as result_file:
+            result_file.write(data)
         return True
 
     def end(self):
-        # commenting and adding below lines to fix the perfomrnce issue 
-        #pass
-        data = "".join(self._chunks)
-        with open(self.uri, "w") as result_file:
-            result_file.write(data)
-
+        pass
 
     @property
     def uri_dir_path(self):
@@ -70,9 +62,14 @@ class FileReader(BaseReader):
         pass
 
     def get_csv_iter(self, number_of_lines: Optional[int]):
-        with open(self.uri) as result_file:
-            reader = csv.reader(result_file)
-            return islice(reader, number_of_lines)
+        # with open(self.uri) as result_file:
+        #     reader = csv.reader(result_file)
+        #     return islice(reader, number_of_lines)
+
+        # Execution completes but was showing error "I/O exception opening closed file" while displaying result. 
+        # Commenting the above and adding the below as fix.
+        
+        return islice(str_to_csv_iter(self.read_raw()), number_of_lines)
 
     def read_lines(self, number_of_lines: int):
         with open(self.uri) as result_file:
