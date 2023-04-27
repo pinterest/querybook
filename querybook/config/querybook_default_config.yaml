@@ -69,6 +69,9 @@ AWS_REGION: us-east-1
 # Folowing settings are relevant to db store
 DB_MAX_UPLOAD_SIZE: 5242880
 
+# Folowing settings are relevant to file store
+FILE_CHUNK_SIZE: 100000
+
 # For Google service account Storage, also for querying
 GOOGLE_CREDS: ~
 

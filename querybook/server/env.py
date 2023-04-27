@@ -116,6 +116,7 @@ class QuerybookSettings(object):
     AWS_REGION = get_env_config("AWS_REGION")
 
     DB_MAX_UPLOAD_SIZE = int(get_env_config("DB_MAX_UPLOAD_SIZE"))
+    FILE_CHUNK_SIZE = int(get_env_config("FILE_CHUNK_SIZE"))
 
     GOOGLE_CREDS = json.loads(get_env_config("GOOGLE_CREDS") or "null")
 
