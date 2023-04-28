@@ -64,7 +64,7 @@ The following settings are only relevant if you are using `db`, note that all un
 
 `DB_MAX_UPLOAD_SIZE` (optional, defaults to **5242880**): The max size of the result that can be retained, any row that exceeds the size limit will be truncated.
 
-`FILE_CHUNK_SIZE` (optional, defaults to **100000**): The max size of each batch of query result that can be written to file at a time for RESULT_STORE_TYPE as 'file'.
+`FILE_CHUNK_SIZE` (optional, defaults to **1024000**): The max size of each batch of query result that can be written to file at a time for RESULT_STORE_TYPE as 'file'.
 
 The following settings are only relevant if you are using `s3` or `gcs` (Google Cloud Storage), note that all units are in bytes:
 
