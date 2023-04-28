@@ -57,8 +57,7 @@ class FileUploader(BaseUploader):
             result_file.write(data)
 
     def end(self):
-        if len(self._chunks) < self._chunk_size:
-            self.unload()
+        self.unload()
 
     @property
     def uri_dir_path(self):
