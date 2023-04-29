@@ -23,6 +23,7 @@ import { ListMenu } from 'ui/Menu/ListMenu';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 import { Tag } from 'ui/Tag/Tag';
+import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 
 import './QueryRunButton.scss';
 
@@ -60,6 +61,7 @@ export const QueryRunButton = React.forwardRef<
             onEngineIdSelect,
             rowLimit,
             onRowLimitChange,
+            onTestModeChange,
         },
         ref
     ) => {
@@ -104,6 +106,13 @@ export const QueryRunButton = React.forwardRef<
                 />
             ) : null;
 
+        const testModeDOM =
+            <TestModeToggle
+                setTestMode={onTestModeChange}
+            />;
+
+
+
         return (
             <div className="QueryRunButton flex-row ml16">
                 <QueryEngineSelector
@@ -114,6 +123,7 @@ export const QueryRunButton = React.forwardRef<
                     onEngineIdSelect={onEngineIdSelect}
                 />
                 {rowLimitDOM}
+                {testModeDOM}
                 {runButtonDOM}
             </div>
         );
@@ -247,5 +257,50 @@ const QueryLimitSelector: React.FC<{
         >
             <ListMenu items={rowLimitMenuItems} type="select" />
         </Dropdown>
+    );
+};
+
+const TestModeToggle: React.FC<{
+    setTestMode: (isTestMode: boolean) => void;
+}> = ({ setTestMode }) => {
+    //    React.useEffect(() => {
+    //        if (!rowLimitOptions.some((option) => option.value === rowLimit)) {
+    //            setRowLimit(DEFAULT_ROW_LIMIT);
+    //        }
+    //    }, [rowLimit, setRowLimit]);
+    //
+    //    const selectedRowLimitText = React.useMemo(() => {
+    //        if (rowLimit >= 0) {
+    //            return formatNumber(rowLimit);
+    //        }
+    //        return 'none';
+    //    }, [rowLimit]);
+    //
+    //    const rowLimitMenuItems = rowLimitOptions.map((option) => ({
+    //        name: <span>{option.label}</span>,
+    //        onClick: () => setRowLimit(option.value),
+    //        checked: option.value === rowLimit,
+    //    }));
+    //
+    return (
+        <ToggleButton
+            customButtonRenderer={() => (
+                <div
+                    className="flex-center ph4"
+                    aria-label="In test mode, results are approximate but return faster by using sampling"
+                >
+                </div>
+            )}
+            layout={['bottom', 'right']}
+            selected={false}
+            onClick={() => {
+                // TODO: change button display
+                // TODO: Change query area background too?
+                // TODO add analytics trackClick()
+                setTestMode(false) // TODO: pass the actual selected value
+            }}
+        >
+            <Icon name="Check" fill />
+        </ToggleButton >
     );
 };

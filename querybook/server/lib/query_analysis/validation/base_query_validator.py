@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from lib.query_analysis.templating import (
     QueryTemplatingError,
     render_templated_query,
@@ -18,6 +18,7 @@ class QueryValidationSeverity(Enum):
     INFO = "info"
 
 
+# TODO: This would be cleaner as a dataclass, but we'd have to make the argument and attribute names consistent
 class QueryValidationResult(object):
     def __init__(
         self,
@@ -26,20 +27,23 @@ class QueryValidationResult(object):
         severity: QueryValidationSeverity,
         message: str,
         obj_type: QueryValidationResultObjectType = QueryValidationResultObjectType.LINT,
+        diff: Optional[str] = None,
     ):
         self.type = obj_type
         self.line = line
         self.ch = ch
         self.severity = severity
         self.message = message
+        self.diff = diff
 
-    def to_dict(self):
+    def to_dict(self):  # TODO: would be neater to use dataclasses.asdict
         return {
             "type": self.type.value,
             "line": self.line,
             "ch": self.ch,
             "severity": self.severity.value,
             "message": self.message,
+            "diff": self.diff,
         }
 
 
