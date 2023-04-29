@@ -180,7 +180,6 @@ def cancel_query_execution(query_execution_id):
         "RECEIVED",  # Rare case where task is received but not yet start
         "RETRY",  # Very unlikely case, because query normally do not retry
     ):
-
         task.revoke(terminate=True)  # last attempt to cancel it
         cancel_query_and_notify()
     elif task.state == "ABORTED":
@@ -639,9 +638,15 @@ def perform_query_syntax_check(
 
     engine = admin_logic.get_query_engine_by_id(engine_id)
     validator_name = engine.feature_params.get("validator", None)
-    api_assert(validator_name is not None, "This engine has no validator configured")
+    # api_assert(validator_name is not None, "This engine has no validator configured") # DEBUG
 
-    validator = get_validator_by_name(validator_name)
+    # validator = get_validator_by_name(validator_name) # DEBUG
+
+    from lib.query_analysis.validation.validators.optimizing_validator import (
+        OptimizingValidator,
+    )  # DEBUG
+
+    validator = OptimizingValidator("whatever")  # DEBUG
 
     api_assert(
         engine.language in validator.languages(),
