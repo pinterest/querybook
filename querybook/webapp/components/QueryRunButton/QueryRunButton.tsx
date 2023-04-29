@@ -24,6 +24,7 @@ import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 import { Tag } from 'ui/Tag/Tag';
 import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
+import { StyledText } from 'ui/StyledText/StyledText';
 
 import './QueryRunButton.scss';
 
@@ -263,25 +264,8 @@ const QueryLimitSelector: React.FC<{
 const TestModeToggle: React.FC<{
     setTestMode: (isTestMode: boolean) => void;
 }> = ({ setTestMode }) => {
-    //    React.useEffect(() => {
-    //        if (!rowLimitOptions.some((option) => option.value === rowLimit)) {
-    //            setRowLimit(DEFAULT_ROW_LIMIT);
-    //        }
-    //    }, [rowLimit, setRowLimit]);
-    //
-    //    const selectedRowLimitText = React.useMemo(() => {
-    //        if (rowLimit >= 0) {
-    //            return formatNumber(rowLimit);
-    //        }
-    //        return 'none';
-    //    }, [rowLimit]);
-    //
-    //    const rowLimitMenuItems = rowLimitOptions.map((option) => ({
-    //        name: <span>{option.label}</span>,
-    //        onClick: () => setRowLimit(option.value),
-    //        checked: option.value === rowLimit,
-    //    }));
-    //
+    const [selected, setSelected] = React.useState(false);
+    const [backgroundColor, setBackgroundColor] = React.useState('red');
     return (
         <ToggleButton
             customButtonRenderer={() => (
@@ -292,15 +276,23 @@ const TestModeToggle: React.FC<{
                 </div>
             )}
             layout={['bottom', 'right']}
-            selected={false}
+            selected={selected}
+            //color={selected ? 'var(--color-accent)' : 'var(--text-light)'}
+            //color={selected ? 'red' : 'gray'}
+            //color={backgroundColor}
             onClick={() => {
-                // TODO: change button display
+                setSelected(!selected)//;                // TODO: change button display
                 // TODO: Change query area background too?
                 // TODO add analytics trackClick()
-                setTestMode(false) // TODO: pass the actual selected value
-            }}
+                setTestMode(selected)
+                //setBackgroundColor('green')
+            }
+
+            }
         >
-            <Icon name="Check" fill />
+            <StyledText>Test mode</StyledText>
+
+            <Icon name="Check" />
         </ToggleButton >
     );
 };
