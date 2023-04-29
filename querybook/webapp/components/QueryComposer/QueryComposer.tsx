@@ -394,8 +394,8 @@ function useTestMode(
             ) {
                 // TODO: Handle Errors
                 console.log(optimizedQuery);
-                // TODO handle multiple diffs
-                setQuery(query + optimizedQuery.data[0].diff);
+                // Assumes that only one optimization is returned
+                setQuery(optimizedQuery.data[0].diff.b);
             };
 
             TemplatedQueryResource.validateQuery(
