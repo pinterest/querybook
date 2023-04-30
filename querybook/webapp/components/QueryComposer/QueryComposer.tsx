@@ -384,7 +384,8 @@ function useTestMode(
     // TODO: Should the implementation be different per query engine?
 ) {
     return useCallback( //TODO: useResource to memoize?
-        () => {
+        (selected) => {
+            console.log('CCCC', selected);
             const engineId = queryEngine.id;
 
             function HandleValidateFulfilled(
@@ -393,7 +394,6 @@ function useTestMode(
                 error,
             ) {
                 // TODO: Handle Errors
-                console.log(optimizedQuery);
                 // Assumes that only one optimization is returned
                 setQuery(optimizedQuery.data[0].diff.b);
             };
@@ -401,7 +401,9 @@ function useTestMode(
             TemplatedQueryResource.validateQuery(
                 query,
                 engineId,
-                templatedVariables
+                templatedVariables,
+                selected ? ['RemoveTableSampleOptimization'] : ['ApplyTableSampleOptimization']
+
             ).then(HandleValidateFulfilled); // TODO: this works, but it's not the React way
         }
     )

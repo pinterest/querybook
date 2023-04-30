@@ -632,21 +632,23 @@ def send_query_execution_invitation_notification(execution_id, uid, session=None
 
 @register("/query/validate/", methods=["POST"])
 def perform_query_syntax_check(
-    query: str, engine_id: int, var_config: list[DataDocMetaVarConfig]
+    query: str,
+    engine_id: int,
+    var_config: list[DataDocMetaVarConfig],
+    validators: list[str],
 ):
     verify_query_engine_permission(engine_id)
 
     engine = admin_logic.get_query_engine_by_id(engine_id)
-    validator_name = engine.feature_params.get("validator", None)
+    # validator_name = engine.feature_params.get("validator", None) # DEBUG
     # api_assert(validator_name is not None, "This engine has no validator configured") # DEBUG
-
     # validator = get_validator_by_name(validator_name) # DEBUG
 
     from lib.query_analysis.validation.validators.optimizing_validator import (
         OptimizingValidator,
     )  # DEBUG
 
-    validator = OptimizingValidator("whatever")  # DEBUG
+    validator = OptimizingValidator(optimizer_names=tuple(validators))
 
     api_assert(
         engine.language in validator.languages(),

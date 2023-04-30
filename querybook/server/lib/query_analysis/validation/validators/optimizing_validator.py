@@ -7,6 +7,7 @@ from lib.query_analysis.validation.base_query_validator import (
 import difflib
 from dataclasses import dataclass, asdict
 from sqlglot import exp, parse_one, expressions
+from enum import Enum
 
 
 @dataclass
@@ -68,8 +69,14 @@ class RemoveTableSampleOptimization(BaseOptimization):
         return transformed_tree.sql()
 
 
+class AllOptimizers(Enum):
+    ApplyTableSampleOptimization = ApplyTableSampleOptimization
+    RemoveTableSampleOptimization = RemoveTableSampleOptimization
+
+
+@dataclass
 class OptimizingValidator(BaseQueryValidator):
-    optimizers: List[BaseOptimization] = [ApplyTableSampleOptimization()]
+    optimizer_names: Tuple[str] = "ApplyTableSampleOptimization"
 
     def languages(self):
         return ["presto", "trino", "sqlite"]
@@ -84,7 +91,9 @@ class OptimizingValidator(BaseQueryValidator):
         validation_errors = []
 
         new_query = query
-        for o in self.optimizers:
+        optimizers = [AllOptimizers[o].value() for o in self.optimizer_names]
+        # TODO: add warning about non-existant optimizers
+        for o in optimizers:
             new_query = o.optimize(query)
 
         cruncher = difflib.SequenceMatcher(isjunk=None, a=query, b=new_query)
