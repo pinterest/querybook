@@ -34,6 +34,7 @@ class BaseOptimization:
 
 
 class ApplyTableSampleOptimization(BaseOptimization):
+    # TODO: do not rapply if already applied
     sample_percent: int = 10
 
     def optimize(self, query: str) -> str:

@@ -265,34 +265,21 @@ const TestModeToggle: React.FC<{
     setTestMode: (isTestMode: boolean) => void;
 }> = ({ setTestMode }) => {
     const [selected, setSelected] = React.useState(false);
-    const [backgroundColor, setBackgroundColor] = React.useState('red');
+
     return (
         <ToggleButton
-            customButtonRenderer={() => (
-                <div
-                    className="flex-center ph4"
-                    aria-label="In test mode, results are approximate but return faster by using sampling"
-                >
-                </div>
-            )}
-            layout={['bottom', 'right']}
-            selected={selected}
-            //color={selected ? 'var(--color-accent)' : 'var(--text-light)'}
-            //color={selected ? 'red' : 'gray'}
-            //color={backgroundColor}
+            color={selected ? 'accent' : 'light'}
             onClick={() => {
-                setSelected(!selected)//;                // TODO: change button display
+                setSelected(!selected)
                 // TODO: Change query area background too?
-                // TODO add analytics trackClick()
+                // TODO: add analytics trackClick()
                 setTestMode(selected)
-                //setBackgroundColor('green')
-            }
-
-            }
+            }}
         >
             <StyledText>Test mode</StyledText>
 
-            <Icon name="Check" />
+            <Icon name={selected ? 'Check' : ''} />
+
         </ToggleButton >
     );
 };
