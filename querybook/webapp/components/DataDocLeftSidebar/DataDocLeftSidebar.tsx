@@ -61,6 +61,7 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
         () => () => {
             clearSidebarTableId();
             setContentState('default');
+            console.log('mroe')
         },
         []
     );
