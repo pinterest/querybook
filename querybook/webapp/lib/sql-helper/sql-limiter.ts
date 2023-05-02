@@ -15,6 +15,7 @@ import { Nullable } from 'lib/typescript';
  * Checks if a select statement has a limit and returns the limit
  * If the statement is not select then null is returned
  * If the statement has no limit then -1 is returned
+ * If the statement has LIMIT ALL then -2 is returned
  *
  * @param statement the query string
  * @param language language of the query
@@ -44,7 +45,7 @@ export function getSelectStatementLimit(
     if (!['select', 'union'].includes(getStatementType(outerStatement))) {
         return null;
     }
-
+    
     const matchLimitPatternNum = tokenPatternMatch(outerStatement, [
         { type: 'KEYWORD', text: 'limit' },
         { type: 'NUMBER' },
