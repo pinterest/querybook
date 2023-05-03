@@ -13,7 +13,7 @@ export function useDeleteDataDoc() {
     const dispatch: Dispatch = useDispatch();
 
     return useCallback(
-        (docId) =>
+        (docId: number) =>
             sendConfirm({
                 header: 'Delete DataDoc?',
                 message: 'This action is irreversible.',
