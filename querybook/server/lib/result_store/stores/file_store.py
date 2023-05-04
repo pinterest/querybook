@@ -36,8 +36,8 @@ class FileUploader(BaseUploader):
         # Append each line to a list and then dump at once in batches
         data_len = len(data)
         if (
-            QuerybookSettings.DB_MAX_UPLOAD_SIZE > 0
-            and self._chunks_length + data_len > QuerybookSettings.DB_MAX_UPLOAD_SIZE
+            QuerybookSettings.FILE_MAX_UPLOAD_SIZE > 0
+            and self._chunks_length + data_len > QuerybookSettings.FILE_MAX_UPLOAD_SIZE
         ):
             return False
         

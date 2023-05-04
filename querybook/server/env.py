@@ -117,6 +117,7 @@ class QuerybookSettings(object):
 
     DB_MAX_UPLOAD_SIZE = int(get_env_config("DB_MAX_UPLOAD_SIZE"))
     FILE_CHUNK_SIZE = int(get_env_config("FILE_CHUNK_SIZE"))
+    FILE_MAX_UPLOAD_SIZE = int(get_env_config("FILE_MAX_UPLOAD_SIZE"))
 
     GOOGLE_CREDS = json.loads(get_env_config("GOOGLE_CREDS") or "null")
 
