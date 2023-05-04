@@ -61,14 +61,7 @@ class FileReader(BaseReader):
     def start(self):
         pass
 
-    def get_csv_iter(self, number_of_lines: Optional[int]):
-        # with open(self.uri) as result_file:
-        #     reader = csv.reader(result_file)
-        #     return islice(reader, number_of_lines)
-
-        # Execution completes but was showing error "I/O exception opening closed file" while displaying result. 
-        # Commenting the above and adding the below as fix.
-        
+    def get_csv_iter(self, number_of_lines: Optional[int]): 
         return islice(str_to_csv_iter(self.read_raw()), number_of_lines)
 
     def read_lines(self, number_of_lines: int):
