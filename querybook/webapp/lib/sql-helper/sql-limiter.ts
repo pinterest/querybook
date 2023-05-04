@@ -45,7 +45,6 @@ export function getSelectStatementLimit(
     if (!['select', 'union'].includes(getStatementType(outerStatement))) {
         return null;
     }
-    
     const matchLimitPatternNum = tokenPatternMatch(outerStatement, [
         { type: 'KEYWORD', text: 'limit' },
         { type: 'NUMBER' },
@@ -118,7 +117,11 @@ export function getLimitedQuery(
     const updatedQuery = statements
         .map((statement) => {
             const existingLimit = getSelectStatementLimit(statement, language);
-            if (existingLimit == null || existingLimit >= 0 || existingLimit === -2) {
+            if (
+                existingLimit == null || 
+                existingLimit >= 0 || 
+                existingLimit === -2
+            ) {
                 return statement + ';';
             }
 
