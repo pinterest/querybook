@@ -35,14 +35,7 @@ class FileUploader(BaseUploader):
     def write(self, data: str):
         # Append each line to a list and then dump at once in batches
         data_len = len(data)
-        if (
-            QuerybookSettings.FILE_MAX_UPLOAD_SIZE > 0
-            and self._chunks_length + data_len > QuerybookSettings.FILE_MAX_UPLOAD_SIZE
-        ):
-            return False
-        
         self._chunks_length += data_len
-        
         self._chunks.append(data)
 
         if len(self._chunks) == self._chunk_size:
@@ -54,7 +47,8 @@ class FileUploader(BaseUploader):
     def unload(self):
         data = "".join(self._chunks)
         with open(self.uri, "a") as result_file:
-            result_file.write(data)
+            if os.path.getsize(self.uri) <= QuerybookSettings.FILE_MAX_UPLOAD_SIZE:
+                result_file.write(data)
 
     def end(self):
         self.unload()
@@ -106,3 +100,4 @@ class FileReader(BaseReader):
     @property
     def uri(self):
         return self._uri
+
