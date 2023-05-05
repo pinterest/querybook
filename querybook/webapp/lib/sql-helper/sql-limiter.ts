@@ -118,8 +118,8 @@ export function getLimitedQuery(
         .map((statement) => {
             const existingLimit = getSelectStatementLimit(statement, language);
             if (
-                existingLimit == null || 
-                existingLimit >= 0 || 
+                existingLimit == null ||
+                existingLimit >= 0 ||
                 existingLimit === -2
             ) {
                 return statement + ';';
