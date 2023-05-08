@@ -38,16 +38,18 @@ class FileUploader(BaseUploader):
         self._chunks_length += data_len
         self._chunks.append(data)
 
-        if len(self._chunks) == self._chunk_size:
+        if self._chunks_length >= self._chunk_size:
             self.unload()
             self._chunks = []
+            self._chunks_length = 0
 
         return True
 
     def unload(self):
         data = "".join(self._chunks)
         with open(self.uri, "a") as result_file:
-            if os.path.getsize(self.uri) <= QuerybookSettings.FILE_MAX_UPLOAD_SIZE:
+            size = os.path.getsize(self.uri) + self._chunks_length
+            if size <= QuerybookSettings.FILE_MAX_UPLOAD_SIZE:
                 result_file.write(data)
 
     def end(self):
