@@ -1,4 +1,3 @@
-import csv
 from itertools import islice
 import os
 from typing import Optional
