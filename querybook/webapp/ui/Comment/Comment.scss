@@ -1,0 +1,48 @@
+.Comment {
+    .Comment-form {
+        width: 100%;
+        .DebouncedInput {
+            flex-grow: 1;
+            input {
+                background-color: var(--bg-lightest);
+            }
+        }
+    }
+    .Comment-list {
+        .Comment-past {
+            .Comment-past-top {
+                > div,
+                > span {
+                    margin-right: 8px;
+                    white-space: nowrap;
+                }
+                .UserAvatar {
+                    margin-right: 12px;
+                }
+            }
+            .Comment-past-comment {
+                margin-left: 32px;
+                background-color: var(--bg-lightest);
+                border-radius: var(--border-radius-sm);
+                .Comment-reactions {
+                    justify-content: start;
+                    .Comment-reaction {
+                        background-color: var(--bg-light);
+                        border-radius: var(--border-radius-sm);
+                        &.active {
+                            background-color: var(--color-accent-lightest-0);
+                        }
+                    }
+                }
+                .Comment-edit {
+                    .IconButton svg {
+                        padding: 2px;
+                    }
+                }
+                .IconButton {
+                    background-color: var(--bg-light);
+                }
+            }
+        }
+    }
+}

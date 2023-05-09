@@ -22,6 +22,7 @@ import { getShareUrl } from 'lib/data-doc/data-doc-utils';
 import * as dataDocActions from 'redux/dataDoc/action';
 import * as dataDocSelectors from 'redux/dataDoc/selector';
 import { IStoreState } from 'redux/store/types';
+import { Comment } from 'ui/Comment/Comment';
 
 import './DataDocCell.scss';
 
@@ -260,6 +261,9 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> =
                         onClick={showCollapsed ? uncollapseCell : null}
                     >
                         {renderCell()}
+                        <div className="mt12">
+                            <Comment />
+                        </div>
                     </div>
                     {renderCellControlDOM(index + 1, false)}
                 </div>
