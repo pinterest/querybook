@@ -77,3 +77,20 @@ class DataCellComment(CRUDMixin, Base):
 
     data_cell = relationship("DataCell")
     comment = relationship("Comment")
+
+
+class NestedComment(CRUDMixin, Base):
+    __tablename__ = "nested_comment"
+    id = sql.Column(sql.Integer, primary_key=True, autoincrement=True)
+    parent_comment_id = sql.Column(
+        sql.Integer,
+        sql.ForeignKey("comment.id", ondelete="CASCADE"),
+        nullable=False,
+        unique=True,
+    )
+    child_comment_id = sql.Column(
+        sql.Integer,
+        sql.ForeignKey("comment.id", ondelete="CASCADE"),
+        nullable=False,
+        unique=True,
+    )
