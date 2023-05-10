@@ -102,4 +102,4 @@ class FileReader(BaseReader):
     @property
     def uri(self):
         return self._uri
-
+    
