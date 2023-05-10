@@ -3,12 +3,14 @@ import { useDrag } from 'react-dnd';
 
 import { DataDocHoverContent } from 'components/DataDocHoverContent/DataDocHoverContent';
 import { IDataDoc } from 'const/datadoc';
+import { generateFormattedDate } from 'lib/utils/datetime';
 import NOOP from 'lib/utils/noop';
 import { IconButton } from 'ui/Button/IconButton';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
 import { ListLink } from 'ui/Link/ListLink';
 import { Popover } from 'ui/Popover/Popover';
 import { PopoverHoverWrapper } from 'ui/Popover/PopoverHoverWrapper';
+import { StyledText } from 'ui/StyledText/StyledText';
 
 import { DataDocDraggableType } from './navigatorConst';
 
@@ -58,6 +60,17 @@ export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> =
                                 title={title}
                                 isRow
                             >
+                                {title ? null : (
+                                    <StyledText
+                                        color="lightest-0"
+                                        weight="light"
+                                    >
+                                        {generateFormattedDate(
+                                            dataDoc.updated_at,
+                                            'X'
+                                        )}
+                                    </StyledText>
+                                )}
                                 {onRemove && (
                                     <IconButton
                                         className="delete-grid-item-button ml8"
