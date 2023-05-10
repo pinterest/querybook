@@ -31,10 +31,18 @@
                 padding-right: var(--padding-sm);
                 align-items: baseline;
 
-                .result-item-title {
-                    overflow: hidden;
+                > div:first-child {
+                    overflow-wrap: break-word;
+                    max-width: calc(100% - 140px);
+                    div {
+                        width: 100%;
+                        text-align: left;
+                    }
+                }
+                > div:last-child {
+                    text-align: right;
                     white-space: nowrap;
-                    text-overflow: ellipsis;
+                    min-width: 140px;
                 }
             }
 
