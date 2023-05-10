@@ -30,16 +30,20 @@
             .result-items-top {
                 padding-right: var(--padding-sm);
                 align-items: baseline;
+                width: 100%;
 
                 > div:first-child {
-                    overflow-wrap: break-word;
-                    max-width: calc(100% - 140px);
-                    div {
+                    flex-grow: 1;
+                    overflow: hidden;
+                    .Text {
                         width: 100%;
-                        text-align: left;
+                        .result-item-title {
+                            overflow-wrap: break-word;
+                        }
                     }
                 }
-                > div:last-child {
+
+                > div:last-child:not(:first-child) {
                     text-align: right;
                     white-space: nowrap;
                     min-width: 140px;
