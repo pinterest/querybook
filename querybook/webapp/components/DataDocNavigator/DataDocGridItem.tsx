@@ -3,7 +3,7 @@ import { useDrag } from 'react-dnd';
 
 import { DataDocHoverContent } from 'components/DataDocHoverContent/DataDocHoverContent';
 import { IDataDoc } from 'const/datadoc';
-import { generateFormattedDate } from 'lib/utils/datetime';
+import { fromNow } from 'lib/utils/datetime';
 import NOOP from 'lib/utils/noop';
 import { IconButton } from 'ui/Button/IconButton';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
@@ -65,10 +65,7 @@ export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> =
                                         color="lightest-0"
                                         weight="light"
                                     >
-                                        {generateFormattedDate(
-                                            dataDoc.updated_at,
-                                            'X'
-                                        )}
+                                        {fromNow(dataDoc.updated_at, 'X')}
                                     </StyledText>
                                 )}
                                 {onRemove && (
