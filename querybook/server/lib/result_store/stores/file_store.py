@@ -60,7 +60,7 @@ class FileReader(BaseReader):
     def start(self):
         pass
 
-    def get_csv_iter(self, number_of_lines: Optional[int]): 
+    def get_csv_iter(self, number_of_lines: Optional[int]):
         return islice(str_to_csv_iter(self.read_raw()), number_of_lines)
 
     def read_lines(self, number_of_lines: int):
