@@ -409,7 +409,7 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
                     <div className="result-items-top horizontal-space-between">
                         <div className="flex-row">
                             <HighlightTitle
-                                title={`${schema}.${name}${schema}.${name}${schema}.${name}${schema}.${name}`}
+                                title={`${schema}.${name}`}
                                 searchString={searchString}
                             />
                             {goldenIcon}
