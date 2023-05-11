@@ -35,7 +35,15 @@ def _match_table_word_fields(fields):
 
 
 def _match_table_phrase_queries(fields, keywords):
-    phrase_queries = []
+    # always boost the matches from data element descritpions, as they usually have the most relevant information
+    phrase_queries = [
+        {
+            "match_phrase": {
+                "data_element_descriptions": {"query": keywords, "boost": 10}
+            }
+        }
+    ]
+
     for field in fields:
         if field == "table_name":
             phrase_queries.append(
@@ -90,10 +98,10 @@ def construct_tables_query(
     keywords_query = {
         "function_score": {
             "query": keywords_query,
-            "boost_mode": "multiply",
+            "boost_mode": "sum",
             "script_score": {
                 "script": {
-                    "source": "1 + (doc['importance_score'].value + (doc['golden'].value ? 1 : 0))"
+                    "source": "doc['importance_score'].value * 10 + (doc['golden'].value ? 10 : 0)"
                 }
             },
         }
