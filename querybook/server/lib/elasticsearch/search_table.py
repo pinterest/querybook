@@ -35,14 +35,7 @@ def _match_table_word_fields(fields):
 
 
 def _match_table_phrase_queries(fields, keywords):
-    # always boost the matches from data element descritpions, as they usually have the most relevant information
-    phrase_queries = [
-        {
-            "match_phrase": {
-                "data_element_descriptions": {"query": keywords, "boost": 10}
-            }
-        }
-    ]
+    phrase_queries = []
 
     for field in fields:
         if field == "table_name":
@@ -51,6 +44,17 @@ def _match_table_phrase_queries(fields, keywords):
             )
         elif field == "column":
             phrase_queries.append({"match_phrase": {"columns": {"query": keywords}}})
+
+    # boost the matches from data element descritpions if there are no search fields specified
+    if len(phrase_queries) == 0:
+        phrase_queries.append(
+            {
+                "match_phrase": {
+                    "data_element_descriptions": {"query": keywords, "boost": 10}
+                }
+            }
+        )
+
     return phrase_queries
 
 
