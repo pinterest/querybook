@@ -35,27 +35,17 @@ def _match_table_word_fields(fields):
 
 
 def _match_table_phrase_queries(fields, keywords):
-    phrase_queries = []
-
-    for field in fields:
-        if field == "table_name":
-            phrase_queries.append(
-                {"match_phrase": {"full_name": {"query": keywords, "boost": 10}}}
-            )
-        elif field == "column":
-            phrase_queries.append({"match_phrase": {"columns": {"query": keywords}}})
-
-    # boost the matches from data element descritpions if there are no search fields specified
-    if len(phrase_queries) == 0:
-        phrase_queries.append(
-            {
-                "match_phrase": {
-                    "data_element_descriptions": {"query": keywords, "boost": 10}
-                }
+    # boos score for phrase match
+    return [
+        {"match_phrase": {"full_name": {"query": keywords, "boost": 1}}},
+        {"match_phrase": {"description": {"query": keywords, "boost": 1}}},
+        {"match_phrase": {"column_descriptions": {"query": keywords, "boost": 1}}},
+        {
+            "match_phrase": {
+                "data_element_descriptions": {"query": keywords, "boost": 1}
             }
-        )
-
-    return phrase_queries
+        },
+    ]
 
 
 def construct_tables_query(
