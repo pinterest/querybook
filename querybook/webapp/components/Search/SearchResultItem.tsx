@@ -417,7 +417,7 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
                         <StyledText
                             size="small"
                             color="lightest"
-                            className="result-item-timestamp"
+                            className="result-item-timestamp ml8"
                         >
                             {generateFormattedDate(createdAt, 'X')}
                         </StyledText>
