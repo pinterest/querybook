@@ -30,7 +30,6 @@
             .result-items-top {
                 padding-right: var(--padding-sm);
                 align-items: baseline;
-                width: 100%;
 
                 > div:first-child {
                     flex-grow: 1;
@@ -43,7 +42,7 @@
                     }
                 }
 
-                > div:last-child:not(:first-child) {
+                .result-item-timestamp {
                     text-align: right;
                     white-space: nowrap;
                     min-width: 140px;

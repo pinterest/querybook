@@ -409,12 +409,16 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
                     <div className="result-items-top horizontal-space-between">
                         <div className="flex-row">
                             <HighlightTitle
-                                title={`${schema}.${name}`}
+                                title={`${schema}.${name}${schema}.${name}${schema}.${name}${schema}.${name}${schema}.${name}`}
                                 searchString={searchString}
                             />
                             {goldenIcon}
                         </div>
-                        <StyledText size="small" color="lightest">
+                        <StyledText
+                            size="small"
+                            color="lightest"
+                            className="result-item-timestamp"
+                        >
                             {generateFormattedDate(createdAt, 'X')}
                         </StyledText>
                     </div>
