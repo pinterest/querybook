@@ -31,15 +31,8 @@
                 padding-right: var(--padding-sm);
                 align-items: baseline;
 
-                > div:first-child {
-                    flex-grow: 1;
-                    overflow: hidden;
-                    .Text {
-                        width: 100%;
-                        .result-item-title {
-                            overflow-wrap: break-word;
-                        }
-                    }
+                .result-item-title {
+                    overflow-wrap: anywhere;
                 }
 
                 .result-item-timestamp {
