@@ -1,3 +1,4 @@
+import moment from 'moment';
 import React from 'react';
 import { useDrag } from 'react-dnd';
 
@@ -24,6 +25,8 @@ export interface IDataDocGridItemProps {
     onRemove?: (dataDoc: IDataDoc) => any;
 }
 
+const ONE_WEEK_EPOCH = 604800;
+
 export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> =
     React.memo(({ dataDoc, className, url, onRemove }) => {
         const [, drag] = useDrag({
@@ -47,6 +50,18 @@ export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> =
 
         const { title = '', public: publicDataDoc } = dataDoc;
         const privateIcon = !publicDataDoc ? 'Lock' : null;
+        const todayEpoch = React.useMemo(() => new Date().getTime() / 1000, []);
+
+        const getLastUpdatedDOM = React.useCallback(
+            (updatedAt: number) => {
+                const isMoreThanAWeekAgo =
+                    todayEpoch - updatedAt > ONE_WEEK_EPOCH;
+                return isMoreThanAWeekAgo
+                    ? moment(updatedAt, 'X').format('YYYY-MM-DD')
+                    : fromNow(updatedAt, 'X');
+            },
+            [todayEpoch]
+        );
 
         return (
             <div ref={drag} className="DataDocGridItem">
@@ -65,7 +80,7 @@ export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> =
                                         color="lightest-0"
                                         weight="light"
                                     >
-                                        {fromNow(dataDoc.updated_at, 'X')}
+                                        {getLastUpdatedDOM(dataDoc.updated_at)}
                                     </StyledText>
                                 )}
                                 {onRemove && (
