@@ -36,7 +36,7 @@ class CommentReaction(CRUDMixin, Base):
         sql.ForeignKey("comment.id", ondelete="CASCADE"),
         nullable=False,
     )
-    reaction = sql.Column(sql.String(length=name_length), index=True, nullable=False)
+    reaction = sql.Column(sql.String(length=name_length), nullable=False)
     created_by = sql.Column(
         sql.Integer, sql.ForeignKey("user.id", ondelete="SET NULL"), nullable=True
     )
@@ -57,7 +57,6 @@ class DataTableComment(CRUDMixin, Base):
         nullable=False,
     )
 
-    data_table = relationship("DataTable", uselist=False)
     comment = relationship("Comment", uselist=False)
 
 
@@ -76,5 +75,4 @@ class DataCellComment(CRUDMixin, Base):
         nullable=False,
     )
 
-    data_cell = relationship("DataCell", uselist=False)
     comment = relationship("Comment", uselist=False)
