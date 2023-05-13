@@ -50,18 +50,15 @@ export const DataDocGridItem: React.FunctionComponent<IDataDocGridItemProps> =
 
         const { title = '', public: publicDataDoc } = dataDoc;
         const privateIcon = !publicDataDoc ? 'Lock' : null;
-        const todayEpoch = React.useMemo(() => new Date().getTime() / 1000, []);
 
-        const getLastUpdatedDOM = React.useCallback(
-            (updatedAt: number) => {
-                const isMoreThanAWeekAgo =
-                    todayEpoch - updatedAt > ONE_WEEK_EPOCH;
-                return isMoreThanAWeekAgo
-                    ? moment(updatedAt, 'X').format('YYYY-MM-DD')
-                    : fromNow(updatedAt, 'X');
-            },
-            [todayEpoch]
-        );
+        const getLastUpdatedDOM = (updatedAt: number) => {
+            const todayEpoch = new Date().getTime() / 1000;
+
+            const isMoreThanAWeekAgo = todayEpoch - updatedAt > ONE_WEEK_EPOCH;
+            return isMoreThanAWeekAgo
+                ? moment(updatedAt, 'X').format('YYYY-MM-DD')
+                : fromNow(updatedAt, 'X');
+        };
 
         return (
             <div ref={drag} className="DataDocGridItem">
