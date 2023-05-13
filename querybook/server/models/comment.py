@@ -23,7 +23,6 @@ class Comment(CRUDMixin, Base):
     parent_comment_id = sql.Column(
         sql.Integer,
         sql.ForeignKey("comment.id", ondelete="CASCADE"),
-        index=True,
         nullable=True,
     )
 
@@ -35,7 +34,6 @@ class CommentReaction(CRUDMixin, Base):
     comment_id = sql.Column(
         sql.Integer,
         sql.ForeignKey("comment.id", ondelete="CASCADE"),
-        index=True,
         nullable=False,
     )
     reaction = sql.Column(sql.String(length=name_length), index=True, nullable=False)
@@ -51,7 +49,6 @@ class DataTableComment(CRUDMixin, Base):
     data_table_id = sql.Column(
         sql.Integer,
         sql.ForeignKey("data_table.id", ondelete="CASCADE"),
-        index=True,
         nullable=False,
     )
     comment_id = sql.Column(
@@ -71,7 +68,6 @@ class DataCellComment(CRUDMixin, Base):
     data_cell_id = sql.Column(
         sql.Integer,
         sql.ForeignKey("data_cell.id", ondelete="CASCADE"),
-        index=True,
         nullable=False,
     )
     comment_id = sql.Column(
