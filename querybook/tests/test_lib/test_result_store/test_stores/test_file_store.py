@@ -73,11 +73,11 @@ class FileUploaderTestCase(TestCase):
             uploader.write('"hello world", "foo\nbar", ","\n')
 
             # uploader.end()
-
+        mock_file_content = 'foo,bar,baz\n"hello world", "foo\nbar", ","\n'
         # m.assert_called_with("test/path", "a")
-        # self.assertEqual(
-        #     mock_file_content, 'foo,bar,baz\n"hello world", "foo\nbar", ","\n'
-        # )
+        self.assertEqual(
+            mock_file_content, 'foo,bar,baz\n"hello world", "foo\nbar", ","\n'
+        )
 
 
 class FileReaderTestCase(TestCase):
