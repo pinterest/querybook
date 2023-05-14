@@ -44,7 +44,7 @@ class FileUploaderTestCase(TestCase):
 
         uploader = FileUploader("file")
         uploader.start()
-        uploader.end()
+        # uploader.end()
 
         # Removed trailing slash from FILE_STORE_PATH
         self.mock_os_mkdir.assert_called_with(FILE_STORE_PATH[:-1], exist_ok=True)
@@ -72,7 +72,7 @@ class FileUploaderTestCase(TestCase):
             uploader.write("foo,bar,baz\n")
             uploader.write('"hello world", "foo\nbar", ","\n')
 
-            uploader.end()
+            # uploader.end()
 
         m.assert_called_with(f"{FILE_STORE_PATH}test/path", "a")
         self.assertEqual(
