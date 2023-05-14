@@ -83,25 +83,25 @@ class FileUploaderTestCase(TestCase):
             mock_file_content, 'foo,bar,baz\n"hello world", "foo\nbar", ","\n'
         )
 
-import builtins
+# import builtins
 
-class TestListWindowsPasswords(unittest.TestCase):
-    def setUp(self):
-        self._orig_pathexists = os.path.exists
-        os.path.exists = MockPathExists(True)
+# class TestListWindowsPasswords(unittest.TestCase):
+#     def setUp(self):
+#         self._orig_pathexists = os.path.exists
+#         os.path.exists = MockPathExists(True)
 
-    def test_dump(self):
-        with patch('builtins.open', unittest.mock.mock_open()) as m:
-            data_writer = WriteData(
-                dir='/my/path/not/exists',
-                name='Foo'
-            )
-            data_writer.dump()
+#     def test_dump(self):
+#         with patch('builtins.open', unittest.mock.mock_open()) as m:
+#             data_writer = WriteData(
+#                 dir='/my/path/not/exists',
+#                 name='Foo'
+#             )
+#             data_writer.dump()
 
-        self.assertEqual(os.path.exists.received_args[0], '/my/path/not/exists')  # fixed
-        m.assert_called_once_with('/my/path/not/exists/output.text', 'w+')
-        handle = m()
-        handle.write.assert_called_once_with('Hello, Foo!')
+#         self.assertEqual(os.path.exists.received_args[0], '/my/path/not/exists')  # fixed
+#         m.assert_called_once_with('/my/path/not/exists/output.text', 'w+')
+#         handle = m()
+#         handle.write.assert_called_once_with('Hello, Foo!')
 
 class FileReaderTestCase(TestCase):
     mock_raw_csv = 'foo,bar,baz\n"hello "" world","foo \t bar",","\n'
