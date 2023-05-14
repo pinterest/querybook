@@ -33,10 +33,13 @@ class FileUploaderTestCase(TestCase):
         self.mock_path_exists.return_value = False
         self.addCleanup(path_patch.stop)
 
+        # self._orig_pathexists = os.path.exists
+        # os.path.exists = MockPathExists(True)
+
     def test_simple_start(self):
         uploader = FileUploader("hello/world/123")
         uploader.start()
-        uploader.end()
+        # uploader.end()
 
         self.mock_os_mkdir.assert_called_with(
             f"{FILE_STORE_PATH}hello/world", exist_ok=True
@@ -63,10 +66,10 @@ class FileUploaderTestCase(TestCase):
             nonlocal mock_file_content
             mock_file_content += s
 
-        with mock.patch("builtins.open", mock.mock_open()) as m:
+        with mock.patch("builtins.open", mock.mock_open(f"{FILE_STORE_PATH}test/path")) as m:
             m.return_value.write.side_effect = mock_write_file
 
-            uploader = FileUploader("test/path")
+            uploader = FileUploader(mock.mock_open(f"{FILE_STORE_PATH}test/path"))
             uploader.start()
 
             uploader.write("foo,bar,baz\n")
@@ -75,10 +78,30 @@ class FileUploaderTestCase(TestCase):
             # uploader.end()
 
         m.assert_called_with("test/path", "a")
+        # m.write.
         self.assertEqual(
             mock_file_content, 'foo,bar,baz\n"hello world", "foo\nbar", ","\n'
         )
 
+import builtins
+
+class TestListWindowsPasswords(unittest.TestCase):
+    def setUp(self):
+        self._orig_pathexists = os.path.exists
+        os.path.exists = MockPathExists(True)
+
+    def test_dump(self):
+        with patch('builtins.open', unittest.mock.mock_open()) as m:
+            data_writer = WriteData(
+                dir='/my/path/not/exists',
+                name='Foo'
+            )
+            data_writer.dump()
+
+        self.assertEqual(os.path.exists.received_args[0], '/my/path/not/exists')  # fixed
+        m.assert_called_once_with('/my/path/not/exists/output.text', 'w+')
+        handle = m()
+        handle.write.assert_called_once_with('Hello, Foo!')
 
 class FileReaderTestCase(TestCase):
     mock_raw_csv = 'foo,bar,baz\n"hello "" world","foo \t bar",","\n'
