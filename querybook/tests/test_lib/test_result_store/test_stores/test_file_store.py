@@ -66,7 +66,7 @@ class FileUploaderTestCase(TestCase):
         with mock.patch("builtins.open", mock.mock_open()) as m:
             m.return_value.write.side_effect = mock_write_file
 
-            uploader = FileUploader(mock.mock_open(f"{FILE_STORE_PATH}test/path"))
+            uploader = FileUploader("test/path")
             uploader.start()
 
             uploader.write("foo,bar,baz\n")
