@@ -59,12 +59,12 @@ class FileUploaderTestCase(TestCase):
     def test_unload(self,):
         pass
 
-    @mock.patch('FileUploader.unload') 
+    @mock.patch('lib.result_store.stores.file_store.FileUploader.unload') 
     def test_end(self, mock_unload):
         self.unload()
         mock_unload.assert_called_with()
 
-    @mock.patch('FileUploader.end') 
+    @mock.patch('lib.result_store.stores.file_store.FileUploader.end') 
     def test_simple_write_value(self, mock_end):
         mock_file_content = ""
         uploader = FileUploader("test/path")
