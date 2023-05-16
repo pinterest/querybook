@@ -56,8 +56,18 @@ class FileUploaderTestCase(TestCase):
         uploader = FileUploader("hello")
         self.assertEqual(uploader.uri_dir_path, FILE_STORE_PATH[:-1])
 
-    def test_simple_write_value(self):
+    def test_unload(self,):
+        pass
+
+    @mock.patch('FileUploader.unload') 
+    def test_end(self, mock_unload):
+        self.unload()
+        mock_unload.assert_called_with()
+
+    @mock.patch('FileUploader.end') 
+    def test_simple_write_value(self, mock_end):
         mock_file_content = ""
+        uploader = FileUploader("test/path")
 
         def mock_write_file(s: str):
             nonlocal mock_file_content
@@ -67,13 +77,12 @@ class FileUploaderTestCase(TestCase):
             m.return_value.write.side_effect = mock_write_file
             m.return_value.unload.side_effect = mock_write_file
 
-            uploader = FileUploader(f"{FILE_STORE_PATH}test/path")
             uploader.start()
 
             uploader.write("foo,bar,baz\n")
             uploader.write('"hello world", "foo\nbar", ","\n')
 
-            uploader.end()
+            mock_end.assert_called_with()
 
         m.assert_called_with(f"{FILE_STORE_PATH}test/path", "a")
         self.assertEqual(
