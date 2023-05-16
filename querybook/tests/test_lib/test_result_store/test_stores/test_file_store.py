@@ -74,7 +74,7 @@ class FileUploaderTestCase(TestCase):
 
             # uploader.end()
 
-        m.assert_called_with(mock.mock_open())
+        m.assert_called_with("test/path")
         self.assertEqual(
             mock_file_content, 'foo,bar,baz\n"hello world", "foo\nbar", ","\n'
         )
