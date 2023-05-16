@@ -56,9 +56,6 @@ class FileUploaderTestCase(TestCase):
         uploader = FileUploader("hello")
         self.assertEqual(uploader.uri_dir_path, FILE_STORE_PATH[:-1])
 
-    def test_unload(self,):
-        pass
-
     @mock.patch('lib.result_store.stores.file_store.FileUploader.unload') 
     def test_end(self, mock_unload):
         self.unload()
@@ -75,7 +72,6 @@ class FileUploaderTestCase(TestCase):
 
         with mock.patch("builtins.open", mock.mock_open()) as m:
             m.return_value.write.side_effect = mock_write_file
-            m.return_value.unload.side_effect = mock_write_file
 
             uploader.start()
 
