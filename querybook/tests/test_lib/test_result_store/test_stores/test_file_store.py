@@ -63,8 +63,8 @@ class FileUploaderTestCase(TestCase):
             nonlocal mock_file_content
             mock_file_content += s
 
-        with mock.patch("builtins.open", mock.mock_open("test/path")) as m:
-            m.side_effect.return_value.write = mock_write_file
+        with mock.patch("builtins.open", mock.mock_open()) as m:
+            m.return_value.write.side_effect = mock_write_file
 
             uploader = FileUploader("test/path")
             uploader.start()
@@ -73,8 +73,8 @@ class FileUploaderTestCase(TestCase):
             uploader.write('"hello world", "foo\nbar", ","\n')
 
             # uploader.end()
-        # mock_file_content = 'foo,bar,baz\n"hello world", "foo\nbar", ","\n'
-        m.assert_called_with("test/path", "a")
+
+        m.assert_called_with(f"{FILE_STORE_PATH}test/path", "w")
         self.assertEqual(
             mock_file_content, 'foo,bar,baz\n"hello world", "foo\nbar", ","\n'
         )
