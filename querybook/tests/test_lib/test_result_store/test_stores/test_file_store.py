@@ -73,6 +73,7 @@ class FileUploaderTestCase(TestCase):
             uploader.write('"hello world", "foo\nbar", ","\n')
 
             # uploader.end()
+            
 
         m.assert_called_with(f"{FILE_STORE_PATH}test/path")
         self.assertEqual(
