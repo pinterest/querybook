@@ -63,7 +63,7 @@ class FileUploaderTestCase(TestCase):
             nonlocal mock_file_content
             mock_file_content += s
 
-        with mock.patch("builtins.open", mock.mock_open("test/path", "a")) as m:
+        with mock.patch("builtins.open", mock.mock_open("test/path")) as m:
             m.return_value.write = mock_write_file
 
             uploader = FileUploader("test/path")
