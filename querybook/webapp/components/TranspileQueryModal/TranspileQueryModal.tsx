@@ -65,8 +65,8 @@ export const TranspileQueryModal: React.FC<IProps> = ({
             <QueryComparison
                 fromQuery={fromQuery}
                 toQuery={toQuery}
-                fromEngine={fromEngine}
-                toEngine={toEngine}
+                fromTag={fromEngine.name}
+                toTag={toEngine.name}
             />
         );
 

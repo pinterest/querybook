@@ -36,7 +36,7 @@
     .data-doc-content-container {
         flex: 0 1 var(--max-width);
         padding: 36px 8px 36px 16px;
-        overflow: hidden;
+        // overflow: hidden;
 
         .data-doc-header {
             padding: 0px 12px 8px;
@@ -148,7 +148,8 @@
                 .additional-dropdown-button,
                 .add-snippet-wrapper,
                 .query-editor-float-buttons-wrapper,
-                .chart-cell-controls {
+                .chart-cell-controls,
+                .ai-controls {
                     opacity: 0;
                     transition: opacity 0.2s ease-out;
                 }
@@ -169,7 +170,8 @@
                     .additional-dropdown-button,
                     .add-snippet-wrapper,
                     .query-editor-float-buttons-wrapper,
-                    .chart-cell-controls {
+                    .chart-cell-controls,
+                    .ai-controls {
                         opacity: 1;
                     }
                 }

@@ -8,6 +8,8 @@ import React from 'react';
 import toast from 'react-hot-toast';
 import { connect } from 'react-redux';
 
+import { AIToolbar, QueryTitleEditor } from 'components/AIToolbar/AIToolbar';
+import { AIView } from 'components/AIToolbar/AIView';
 import { DataDocQueryExecutions } from 'components/DataDocQueryExecutions/DataDocQueryExecutions';
 import { runQuery, transformQuery } from 'components/QueryComposer/RunQuery';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
@@ -19,6 +21,7 @@ import {
 } from 'components/QueryRunButton/QueryRunButton';
 import { QuerySnippetInsertionModal } from 'components/QuerySnippetInsertionModal/QuerySnippetInsertionModal';
 import { TemplatedQueryView } from 'components/TemplateQueryView/TemplatedQueryView';
+import { QueryComparison } from 'components/TranspileQueryModal/QueryComparison';
 import { TranspileQueryModal } from 'components/TranspileQueryModal/TranspileQueryModal';
 import { UDFForm } from 'components/UDFForm/UDFForm';
 import { ComponentType, ElementType } from 'const/analytics';
@@ -51,7 +54,6 @@ import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Icon } from 'ui/Icon/Icon';
 import { IListMenuItem, ListMenu } from 'ui/Menu/ListMenu';
 import { Modal } from 'ui/Modal/Modal';
-import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
 import { AccentText } from 'ui/StyledText/StyledText';
 
 import { ISelectedRange } from './common';
@@ -110,6 +112,10 @@ interface IState {
         toEngine: IQueryEngine;
         transpilerName: string;
     };
+
+    newQuery: string;
+    showAIView: boolean;
+    showAIDiff: boolean;
 }
 
 class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
@@ -129,7 +135,17 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             showRenderedTemplateModal: false,
             showUDFModal: false,
             hasLintError: false,
+            newQuery: '',
+            showAIView: false,
+            showAIDiff: false,
         };
+    }
+    @bind
+    public get aiOption() {
+        const option = this.props.templatedVariables.find(
+            (v) => v.name === 'option'
+        );
+        return option?.value;
     }
 
     @bind public get keyMap() {
@@ -654,15 +670,15 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
             isEditable,
         } = this.props;
-        const { meta, selectedRange } = this.state;
+        const { meta, query, selectedRange } = this.state;
 
         const queryTitleDOM = isEditable ? (
-            <ResizableTextArea
+            <QueryTitleEditor
                 value={meta.title}
                 onChange={this.handleMetaTitleChange}
-                transparent
                 placeholder={this.defaultCellTitle}
-                className="Title"
+                onUpdateTitle={this.handleMetaTitleChange}
+                query={query}
             />
         ) : (
             <span className="p8">{this.dataCellTitle}</span>
@@ -713,6 +729,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             showRenderedTemplateModal,
             showUDFModal,
             transpilerConfig,
+            newQuery,
         } = this.state;
         const queryEngine = queryEngineById[this.engineId];
         const queryCollapsed = this.queryCollapsed;
@@ -729,31 +746,67 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
         const editorDOM = !queryCollapsed && (
             <div className="editor">
-                <BoundQueryEditor
-                    value={query}
-                    lineWrapping={true}
-                    onKeyDown={this.onKeyDown}
-                    onChange={this.handleChange}
-                    onFocus={this.onFocus}
-                    onBlur={this.onBlur}
-                    onSelection={this.onSelection}
-                    readOnly={!isEditable}
-                    keyMap={this.keyMap}
-                    ref={this.queryEditorRef}
-                    engine={queryEngine}
-                    cellId={cellId}
-                    height={isFullScreen ? 'full' : 'auto'}
-                    onFullScreen={this.props.toggleFullScreen}
-                    getLintErrors={
-                        this.hasQueryValidators
-                            ? this.createGetLintAnnotations(
-                                  this.engineId,
-                                  this.props.templatedVariables
-                              )
-                            : null
-                    }
-                    onLintCompletion={this.onLintCompletion}
-                />
+                {!this.state.showAIView && (
+                    <AIView
+                        query={query}
+                        engineId={this.engineId}
+                        showDiff={this.state.showAIDiff}
+                        setShowDiff={(showAIDiff) =>
+                            this.setState({ showAIDiff })
+                        }
+                        onUpdateQuery={this.handleChange}
+                        onAccept={(newQuery) => {
+                            this.handleChange(newQuery);
+                            this.setState({ showAIView: false });
+                        }}
+                        onDiscard={() => this.setState({ showAIView: false })}
+                        queryEngineById={queryEngineById}
+                        queryEngines={this.props.queryEngines}
+                        onUpdateEngineId={this.handleMetaChange.bind(
+                            this,
+                            'engine'
+                        )}
+                    />
+                )}
+                {!this.state.showAIDiff && (
+                    <BoundQueryEditor
+                        value={query}
+                        lineWrapping={true}
+                        onKeyDown={this.onKeyDown}
+                        onChange={this.handleChange}
+                        onFocus={this.onFocus}
+                        onBlur={this.onBlur}
+                        onSelection={this.onSelection}
+                        readOnly={!isEditable}
+                        keyMap={this.keyMap}
+                        ref={this.queryEditorRef}
+                        engine={queryEngine}
+                        cellId={cellId}
+                        height={isFullScreen ? 'full' : 'auto'}
+                        onFullScreen={this.props.toggleFullScreen}
+                        getLintErrors={
+                            this.hasQueryValidators
+                                ? this.createGetLintAnnotations(
+                                      this.engineId,
+                                      this.props.templatedVariables
+                                  )
+                                : null
+                        }
+                        onLintCompletion={this.onLintCompletion}
+                    />
+                )}
+                {!!newQuery && (
+                    <QueryComparison
+                        fromQuery={query}
+                        toQuery={newQuery}
+                        showControls={true}
+                        onAccept={(newQuery) => {
+                            this.handleChange(newQuery);
+                            this.setState({ newQuery: '' });
+                        }}
+                        onDiscard={() => this.setState({ newQuery: '' })}
+                    />
+                )}
                 {openSnippetDOM}
             </div>
         );
@@ -809,6 +862,35 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
         return (
             <>
+                {this.aiOption === 'A' && (
+                    <AIToolbar
+                        query={query}
+                        onUpdateQuery={this.handleChange}
+                        onUpdateTitle={this.handleMetaTitleChange}
+                    />
+                )}
+                {/* {this.state.showAIView && (
+                    <AIView
+                        query={query}
+                        engineId={this.engineId}
+                        showDiff={this.state.showAIDiff}
+                        setShowDiff={(showAIDiff) =>
+                            this.setState({ showAIDiff })
+                        }
+                        onUpdateQuery={this.handleChange}
+                        onAccept={(newQuery) => {
+                            this.handleChange(newQuery);
+                            this.setState({ showAIView: false });
+                        }}
+                        onDiscard={() => this.setState({ showAIView: false })}
+                        queryEngineById={queryEngineById}
+                        queryEngines={this.props.queryEngines}
+                        onUpdateEngineId={this.handleMetaChange.bind(
+                            this,
+                            'engine'
+                        )}
+                    />
+                )} */}
                 {editorDOM}
                 {insertQuerySnippetModalDOM}
                 {templatedQueryViewModalDOM}

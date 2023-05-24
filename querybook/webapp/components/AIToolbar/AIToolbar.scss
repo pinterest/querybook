@@ -1,0 +1,133 @@
+.AIToolbar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+    gap: 8px;
+
+    .DebouncedInput {
+        flex: 1;
+
+        input {
+            padding-left: 40px;
+            // line-height: 1.5rem;
+            // background-color: var(--bg);
+        }
+    }
+
+    .StarsIcon,
+    .StarsIconButton {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--icon);
+
+        display: flex;
+        align-items: center;
+    }
+
+    .StarsIconButton {
+        left: 0px;
+    }
+
+    .Title {
+        font-weight: var(--bold-font);
+    }
+
+    .with-icon {
+        padding-left: 40px;
+    }
+}
+
+.diff-container {
+    position: relative;
+
+    .diff-controls {
+        margin-top: 8px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 6px;
+    }
+}
+
+.ai-modal {
+    .title {
+        font-size: var(--text-size);
+        font-weight: var(--bold-font);
+        margin-bottom: var(--margin);
+    }
+
+    .Modal-box {
+        min-height: 50vh;
+        .Modal-content {
+            margin: 0 !important;
+            padding: var(--padding-lg) !important;
+        }
+    }
+    .AIToolbarV2 {
+        flex: 1;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        background-color: var(--bg-light);
+        border-radius: var(--border-radius-sm);
+
+        &:hover {
+            background-color: var(--bg-hover);
+        }
+
+        .StarsIcon {
+            position: relative;
+            color: var(--icon);
+            padding: 8px;
+
+            display: flex;
+            align-items: center;
+        }
+
+        .ai-mode {
+            color: var(--color-pink-dark);
+        }
+
+        .DebouncedInput {
+            flex: 1;
+
+            input {
+                line-height: 2rem;
+                // background-color: var(--bg);
+                border-radius: 0;
+                background-color: transparent;
+            }
+        }
+    }
+
+    .content {
+        flex: 1;
+
+        .hint {
+            margin-top: 6px;
+            font-size: var(--text-size);
+            color: var(--text-lightest-0);
+            font-family: var(--font-accent);
+            user-select: none;
+        }
+    }
+    .sidebar {
+        width: 20%;
+
+        .search-filter {
+            margin: 4px 0px;
+
+            .filter-title {
+                margin-bottom: 8px;
+                display: flex;
+                font-family: var(--font-accent);
+                align-items: center;
+                white-space: nowrap;
+            }
+        }
+    }
+}

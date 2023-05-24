@@ -1,7 +1,7 @@
 import { diffWordsWithSpace } from 'diff';
 import React, { useMemo } from 'react';
 
-import { IQueryEngine } from 'const/queryEngine';
+import { Button } from 'ui/Button/Button';
 import { ThemedCodeHighlightWithMark } from 'ui/CodeHighlight/ThemedCodeHighlightWithMark';
 import { IHighlightRange } from 'ui/CodeHighlight/types';
 import { AccentText } from 'ui/StyledText/StyledText';
@@ -12,12 +12,24 @@ import './QueryComparison.scss';
 export const QueryComparison: React.FC<{
     fromQuery: string;
     toQuery: string;
-    fromEngine: IQueryEngine;
-    toEngine: IQueryEngine;
-}> = ({ fromQuery, toQuery, fromEngine, toEngine }) => {
+    fromTag?: string;
+    toTag?: string;
+    showControls?: boolean;
+    onAccept?: (newQuery: string) => any;
+    onDiscard?: () => any;
+}> = ({
+    fromQuery,
+    toQuery,
+    fromTag,
+    toTag,
+    showControls,
+    onAccept,
+    onDiscard,
+}) => {
     const [addedRanges, removedRanges] = useMemo(() => {
         const added: IHighlightRange[] = [];
         const removed: IHighlightRange[] = [];
+
         const diffObjects = diffWordsWithSpace(fromQuery, toQuery);
 
         let currentAddedIdx = 0;
@@ -48,29 +60,50 @@ export const QueryComparison: React.FC<{
 
     return (
         <div className="QueryComparison">
-            <div className="mr8 flex1">
-                <div className="center-align">
-                    <AccentText weight="bold">Original</AccentText>
+            {showControls && (
+                <div className="query-comparison-controls">
+                    <Button
+                        title="Accept"
+                        onClick={() => onAccept(toQuery)}
+                        color="accent"
+                        size="small"
+                    />
+                    <Button
+                        title="Discard"
+                        size="small"
+                        onClick={() => onDiscard()}
+                    />
                 </div>
-                <Tag>{fromEngine.name}</Tag>
-                <ThemedCodeHighlightWithMark
-                    highlightRanges={removedRanges}
-                    query={fromQuery}
-                    maxEditorHeight={'40vh'}
-                    autoHeight={false}
-                />
-            </div>
-            <div className="flex1">
-                <div className="center-align">
-                    <AccentText weight="bold">Transpiled</AccentText>
+            )}
+            <div className="diff-view">
+                <div className="mr8 flex1">
+                    {false && (
+                        <div className="center-align">
+                            <AccentText weight="bold">Original</AccentText>
+                        </div>
+                    )}
+                    {fromTag && <Tag>{fromTag}</Tag>}
+                    <ThemedCodeHighlightWithMark
+                        highlightRanges={removedRanges}
+                        query={fromQuery}
+                        maxEditorHeight={'40vh'}
+                        autoHeight={true}
+                    />
                 </div>
-                <Tag>{toEngine.name}</Tag>
-                <ThemedCodeHighlightWithMark
-                    highlightRanges={addedRanges}
-                    query={toQuery}
-                    maxEditorHeight={'40vh'}
-                    autoHeight={false}
-                />
+                <div className="flex1">
+                    {false && (
+                        <div className="center-align">
+                            <AccentText weight="bold">New</AccentText>
+                        </div>
+                    )}
+                    {toTag && <Tag>{toTag}</Tag>}
+                    <ThemedCodeHighlightWithMark
+                        highlightRanges={addedRanges}
+                        query={toQuery}
+                        maxEditorHeight={'40vh'}
+                        autoHeight={true}
+                    />
+                </div>
             </div>
         </div>
     );
