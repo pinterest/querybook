@@ -8,6 +8,7 @@ import React from 'react';
 import toast from 'react-hot-toast';
 import { connect } from 'react-redux';
 
+import { QueryCellTitle } from 'components/AIAssistant/QueryCellTitle';
 import { DataDocQueryExecutions } from 'components/DataDocQueryExecutions/DataDocQueryExecutions';
 import { runQuery, transformQuery } from 'components/QueryComposer/RunQuery';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
@@ -51,7 +52,6 @@ import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Icon } from 'ui/Icon/Icon';
 import { IListMenuItem, ListMenu } from 'ui/Menu/ListMenu';
 import { Modal } from 'ui/Modal/Modal';
-import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
 import { AccentText } from 'ui/StyledText/StyledText';
 
 import { ISelectedRange } from './common';
@@ -654,15 +654,15 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
             isEditable,
         } = this.props;
-        const { meta, selectedRange } = this.state;
+        const { meta, query, selectedRange } = this.state;
 
         const queryTitleDOM = isEditable ? (
-            <ResizableTextArea
+            <QueryCellTitle
                 value={meta.title}
                 onChange={this.handleMetaTitleChange}
-                transparent
                 placeholder={this.defaultCellTitle}
-                className="Title"
+                onUpdateTitle={this.handleMetaTitleChange}
+                query={query}
             />
         ) : (
             <span className="p8">{this.dataCellTitle}</span>
