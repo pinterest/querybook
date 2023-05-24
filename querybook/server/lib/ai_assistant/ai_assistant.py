@@ -5,7 +5,6 @@ from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 
 from env import QuerybookSettings
 
-from .base_ai_assistant import BaseAIAssistant
 from .all_ai_assistants import get_ai_assistant_class
 
 

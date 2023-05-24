@@ -87,4 +87,4 @@ STATS_LOGGER_NAME: ~
 
 # --------------- AI ASSISTANT ---------------
 AI_ASSISTANT_NAME: openai
-OPENAI_API_KEY: ~
+OPENAI_API_KEY: ''

@@ -35,3 +35,4 @@ table_upload
 tag
 event_log
 data_element
+ai_assistant
