@@ -80,6 +80,6 @@ def fake_user(monkeypatch):
     return user
 
 @pytest.fixture
-def mock_open():
+def fake_open():
     with mock.patch('builtins.open', mock.mock_open()) as m:
-        yield m
+        yield open

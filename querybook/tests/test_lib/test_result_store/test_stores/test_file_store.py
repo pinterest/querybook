@@ -5,7 +5,7 @@ from lib.result_store.stores.file_store import (
     FILE_STORE_PATH,
     get_file_uri,
 )
-
+from tests.conftest import fake_open
 
 class GetFileUriTestCase(TestCase):
     def test_invalid_path(self):
@@ -56,7 +56,7 @@ class FileUploaderTestCase(TestCase):
         uploader = FileUploader("hello")
         self.assertEqual(uploader.uri_dir_path, FILE_STORE_PATH[:-1])
 
-    def test_simple_write_value(self, mock_open):
+    def test_simple_write_value(self):
         mock_file_content = ""
 
         def mock_write_file(s: str):
@@ -64,7 +64,7 @@ class FileUploaderTestCase(TestCase):
             mock_file_content += s
 
         # with mock.patch("builtins.open", mock.mock_open()) as m:
-        mock_open.return_value.write.return_value = mock_write_file
+        fake_open.return_value.write.side_effect = mock_write_file
 
         uploader = FileUploader("test/path")
         uploader.start()
@@ -74,11 +74,9 @@ class FileUploaderTestCase(TestCase):
 
         # uploader.end()
 
-        mock_open.assert_called_with(f"{FILE_STORE_PATH}test/path", "w")
+        fake_open.assert_called_with(f"{FILE_STORE_PATH}test/path", "w")
 
-        self.assertEqual(
-        mock_file_content, 'foo,bar,baz\n"hello world", "foo\nbar", ","\n'
-    )
+        self.assertEqual(mock_file_content, 'foo,bar,baz\n"hello world", "foo\nbar", ","\n')
 
 
 class FileReaderTestCase(TestCase):
