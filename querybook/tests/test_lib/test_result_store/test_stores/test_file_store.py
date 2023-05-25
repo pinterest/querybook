@@ -74,7 +74,8 @@ class FileUploaderTestCase(TestCase):
 
             # uploader.end()
 
-        m.assert_called_with("test/path", "a")
+        m.assert_called_with("test/path", "w")
+        # m.return_value.write.assert_called_once_with('processed data')
         self.assertEqual(
             mock_file_content, 'foo,bar,baz\n"hello world", "foo\nbar", ","\n'
         )
