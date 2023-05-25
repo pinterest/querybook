@@ -65,3 +65,35 @@ class TagItem(CRUDMixin, Base):
         backref=backref("tags", cascade="all, delete", passive_deletes=True),
         foreign_keys=[column_id],
     )
+
+
+class DataDocTagItem(CRUDMixin, Base):
+    __tablename__ = "data_doc_tag_item"
+
+    id = sql.Column(sql.Integer, primary_key=True)
+    created_at = sql.Column(sql.DateTime, default=now)
+
+    tag_name = sql.Column(
+        sql.String(length=name_length),
+        sql.ForeignKey("tag.name", ondelete="CASCADE"),
+        nullable=False,
+    )
+
+    datadoc_id = sql.Column(
+        sql.Integer, sql.ForeignKey("data_doc.id", ondelete="CASCADE"), nullable=True
+    )
+
+    uid = sql.Column(
+        sql.Integer, sql.ForeignKey("user.id", ondelete="SET NULL"), nullable=True
+    )
+
+    tag = relationship(
+        "Tag",
+        backref=backref("data_doc_tag_item", cascade="all, delete", passive_deletes=True),
+        foreign_keys=[tag_name],
+    )
+    datadoc = relationship(
+        "DataDoc",
+        backref=backref("tags", cascade="all, delete", passive_deletes=True),
+        foreign_keys=[datadoc_id],
+    )

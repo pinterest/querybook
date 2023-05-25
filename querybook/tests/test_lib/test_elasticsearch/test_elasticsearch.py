@@ -245,6 +245,9 @@ class DataDocTestCase(TestCase):
     ENVIRONMENT_ID = 7
     OWNER_UID = "bob"
     DATADOC_TITLE = "Test DataDoc"
+    SCHEDULED = True
+
+    TAGS = [type('', (object,), {"tag_name": "1"})()]
 
     def _get_datadoc_cells_mock(self):
         return [
@@ -273,6 +276,8 @@ class DataDocTestCase(TestCase):
             title=self.DATADOC_TITLE,
             public=False,
             cells=self._get_datadoc_cells_mock(),
+            scheduled=self.SCHEDULED,
+            tags=self.TAGS,
         )
         return mock_doc
 
@@ -304,6 +309,8 @@ class DataDocTestCase(TestCase):
             "title": self.DATADOC_TITLE,
             "public": False,
             "readable_user_ids": ["alice", "charlie"],
+            "scheduled": self.SCHEDULED,
+            "tags": [tag.tag_name for tag in self.TAGS],
         }
         self.assertEqual(result, expected_result)
 

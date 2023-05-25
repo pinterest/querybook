@@ -154,6 +154,8 @@ datadocs:
                     type: boolean
                 readable_user_ids:
                     type: integer
+                tags:
+                    type: keyword
 tables:
     index_name: search_tables_v1
     type_name: tables # Keep this same in mappings

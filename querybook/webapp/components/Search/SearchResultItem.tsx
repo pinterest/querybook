@@ -286,6 +286,16 @@ export const DataDocItem: React.FunctionComponent<IDataDocItemProps> = ({
         />
     );
 
+    const tagsListDOM = preview.tags?.length ? (
+        <div>
+            {preview.tags.map((tag) => (
+                <Tag mini key={tag}>
+                    {tag}
+                </Tag>
+            ))}
+        </div>
+    ) : null;
+
     return (
         <div className="SearchResultItemContainer">
             <div
@@ -303,6 +313,7 @@ export const DataDocItem: React.FunctionComponent<IDataDocItemProps> = ({
                             searchString={searchString}
                         />
                     </div>
+                    {tagsListDOM}
                     {descriptionDOM}
                     <Level className="result-items-bottom">
                         <span className="result-item-owner">

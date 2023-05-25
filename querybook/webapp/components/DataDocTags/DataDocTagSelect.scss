@@ -1,0 +1,13 @@
+.DataDocTagSelect {
+    min-width: 180px;
+    margin: 0px;
+    padding: 0px;
+    > div {
+        width: 100%;
+    }
+    border: 1px solid transparent;
+    border-radius: var(--border-radius-sm);
+    &.invalid-string {
+        border-color: var(--color-false);
+    }
+}

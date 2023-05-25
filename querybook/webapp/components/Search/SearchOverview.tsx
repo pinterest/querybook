@@ -34,6 +34,7 @@ import * as searchActions from 'redux/search/action';
 import { RESULT_PER_PAGE, SearchOrder, SearchType } from 'redux/search/types';
 import { IStoreState } from 'redux/store/types';
 import { DataElementResource, TableTagResource } from 'resource/table';
+import { DataDocTagResource } from 'resource/dataDoc';
 import { Button } from 'ui/Button/Button';
 import { Checkbox } from 'ui/Checkbox/Checkbox';
 import { Container } from 'ui/Container/Container';
@@ -344,6 +345,15 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
         <EntitySelect
             selectedEntities={searchFilters?.tags || []}
             loadEntities={TableTagResource.search}
+            onEntitiesChange={updateTags}
+            placeholder="search tag"
+        />
+    );
+
+    const dataDocTagDOM = (
+        <EntitySelect
+            selectedEntities={searchFilters?.tags || []}
+            loadEntities={DataDocTagResource.search}
             onEntitiesChange={updateTags}
             placeholder="search tag"
         />
@@ -691,6 +701,16 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                 <div className="search-filter">
                     <span className="filter-title">Authors</span>
                     {getAuthorFiltersDOM('owner_uid')}
+                </div>
+                <div className="search-filter">
+                    <span
+                        className="filter-title"
+                        aria-label="Datadoc contains ALL selected tags"
+                        data-balloon-pos="up"
+                    >
+                        Tags
+                    </span>
+                    {dataDocTagDOM}
                 </div>
                 <div className="search-filter">
                     <span className="filter-title">Created At</span>

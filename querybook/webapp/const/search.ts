@@ -3,6 +3,8 @@ export interface IDataDocPreview {
     created_at: number;
     title: string;
     owner_uid: number;
+    scheduled: boolean;
+    tags: string[];
     highlight?: {
         cells?: string[];
     };
