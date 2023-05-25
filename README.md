@@ -43,6 +43,14 @@ systemctl start sfjustis_backend.service
 and run `gunicorn --bind 0.0.0.0:5000 wsgi:app -m 007` or `python wsgi.py`.
 Visit https://localhost:5000 when the server up.
 
+# Pytest
+```
+cd projects/<backend dir>
+```
+```
+pytest
+```
+
 
 ## Frontend Config
 
