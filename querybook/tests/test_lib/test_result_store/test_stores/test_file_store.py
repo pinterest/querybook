@@ -56,7 +56,7 @@ class FileUploaderTestCase(TestCase):
         uploader = FileUploader("hello")
         self.assertEqual(uploader.uri_dir_path, FILE_STORE_PATH[:-1])
 
-    def test_simple_write_value(self):
+    def test_simple_write_value(self, fake_open):
         mock_file_content = ""
 
         def mock_write_file(s: str):
@@ -64,7 +64,8 @@ class FileUploaderTestCase(TestCase):
             mock_file_content += s
 
         # with mock.patch("builtins.open", mock.mock_open()) as m:
-        fake_open.return_value.write.side_effect = mock_write_file
+        fake_open.return_value.write.return_value = mock_write_file("foo,bar,baz\n")
+        fake_open.return_value.write.return_value = mock_write_file('"hello world", "foo\nbar", ","\n')
 
         uploader = FileUploader("test/path")
         uploader.start()
@@ -74,8 +75,8 @@ class FileUploaderTestCase(TestCase):
 
         # uploader.end()
 
-        fake_open.assert_called_with(f"{FILE_STORE_PATH}test/path", "w")
-
+        fake_open.assert_called_with(f"{FILE_STORE_PATH}test/path", "a")
+        fake_open.return_value.write.assert_called_once_with('foo,bar,baz\n"hello world", "foo\nbar", ","\n')
         self.assertEqual(mock_file_content, 'foo,bar,baz\n"hello world", "foo\nbar", ","\n')
 
 
