@@ -64,7 +64,7 @@ class FileUploaderTestCase(TestCase):
             mock_file_content += s
 
         with mock.patch("builtins.open", mock.mock_open()) as m:
-            m.return_value.write.side_effect = mock_write_file
+            m.return_value.write.return_value= mock_write_file
 
             uploader = FileUploader("test/path")
             uploader.start()
@@ -74,8 +74,8 @@ class FileUploaderTestCase(TestCase):
 
             # uploader.end()
 
-            m.assert_called_with("test/path", "w")
-        # m.return_value.write.assert_called_once_with('processed data')
+            m.assert_called_with(f"{FILE_STORE_PATH}test/path", "w")
+
             self.assertEqual(
             mock_file_content, 'foo,bar,baz\n"hello world", "foo\nbar", ","\n'
         )
