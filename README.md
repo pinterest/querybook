@@ -69,7 +69,7 @@ systemctl start sfjustis_frontend.service
 and run `npm start`.
 Visit https://localhost:3000 when the server up.
 
-# PS
+## PS
 Everytime you do `git pull`.. restart service
 
 # Backend
