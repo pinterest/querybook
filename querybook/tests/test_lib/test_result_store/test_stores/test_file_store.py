@@ -56,7 +56,7 @@ class FileUploaderTestCase(TestCase):
         uploader = FileUploader("hello")
         self.assertEqual(uploader.uri_dir_path, FILE_STORE_PATH[:-1])
 
-    def test_simple_write_value(self, fake_open):
+    def test_simple_write_value(self):
         mock_file_content = ""
 
         def mock_write_file(s: str):
