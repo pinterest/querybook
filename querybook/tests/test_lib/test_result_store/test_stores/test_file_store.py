@@ -56,29 +56,29 @@ class FileUploaderTestCase(TestCase):
         uploader = FileUploader("hello")
         self.assertEqual(uploader.uri_dir_path, FILE_STORE_PATH[:-1])
 
-    def test_simple_write_value(self):
+    def test_simple_write_value(self, mock_open):
         mock_file_content = ""
 
         def mock_write_file(s: str):
             nonlocal mock_file_content
             mock_file_content += s
 
-        with mock.patch("builtins.open", mock.mock_open()) as m:
-            m.return_value.write.return_value= mock_write_file
+        # with mock.patch("builtins.open", mock.mock_open()) as m:
+        mock_open.return_value.write.return_value = mock_write_file
 
-            uploader = FileUploader("test/path")
-            uploader.start()
+        uploader = FileUploader("test/path")
+        uploader.start()
 
-            uploader.write("foo,bar,baz\n")
-            uploader.write('"hello world", "foo\nbar", ","\n')
+        uploader.write("foo,bar,baz\n")
+        uploader.write('"hello world", "foo\nbar", ","\n')
 
-            # uploader.end()
+        # uploader.end()
 
-            m.assert_called_with(f"{FILE_STORE_PATH}test/path", "w")
+        mock_open.assert_called_with(f"{FILE_STORE_PATH}test/path", "w")
 
-            self.assertEqual(
-            mock_file_content, 'foo,bar,baz\n"hello world", "foo\nbar", ","\n'
-        )
+        self.assertEqual(
+        mock_file_content, 'foo,bar,baz\n"hello world", "foo\nbar", ","\n'
+    )
 
 
 class FileReaderTestCase(TestCase):
