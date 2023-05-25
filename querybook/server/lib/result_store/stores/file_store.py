@@ -4,6 +4,7 @@ import os
 from typing import Optional
 from lib.result_store.stores.base_store import BaseReader, BaseUploader
 from env import QuerybookSettings
+from lib.utils.csv import str_to_csv_iter, LINE_TERMINATOR 
 
 # to use, enable docker volume inside docker-compose.yml
 # uncomment lines `- file:/opt/store/`
@@ -69,9 +70,10 @@ class FileReader(BaseReader):
         pass
 
     def get_csv_iter(self, number_of_lines: Optional[int]):
-        with open(self.uri) as result_file:
-            reader = csv.reader(result_file)
-            return islice(reader, number_of_lines)
+        # with open(self.uri) as result_file:
+        #     reader = csv.reader(result_file)
+        #     return islice(reader, number_of_lines)
+        return islice(str_to_csv_iter(self.read_raw()), number_of_lines)
 
     def read_lines(self, number_of_lines: int):
         with open(self.uri) as result_file:

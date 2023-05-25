@@ -36,7 +36,7 @@ class FileUploaderTestCase(TestCase):
     def test_simple_start(self):
         uploader = FileUploader("hello/world/123")
         uploader.start()
-        # uploader.end()
+        # uploader.end() # no need bec we are not writing anything at start and previously it was pass
 
         self.mock_os_mkdir.assert_called_with(
             f"{FILE_STORE_PATH}hello/world", exist_ok=True
@@ -56,15 +56,8 @@ class FileUploaderTestCase(TestCase):
         uploader = FileUploader("hello")
         self.assertEqual(uploader.uri_dir_path, FILE_STORE_PATH[:-1])
 
-    @mock.patch('lib.result_store.stores.file_store.FileUploader.unload') 
-    def test_end(self, mock_unload):
-        self.unload()
-        mock_unload.assert_called_with()
-
-    @mock.patch('lib.result_store.stores.file_store.FileUploader.end') 
-    def test_simple_write_value(self, mock_end):
+    def test_simple_write_value(self):
         mock_file_content = ""
-        uploader = FileUploader("test/path")
 
         def mock_write_file(s: str):
             nonlocal mock_file_content
@@ -73,12 +66,13 @@ class FileUploaderTestCase(TestCase):
         with mock.patch("builtins.open", mock.mock_open()) as m:
             m.return_value.write.side_effect = mock_write_file
 
+            uploader = FileUploader("test/path")
             uploader.start()
 
             uploader.write("foo,bar,baz\n")
             uploader.write('"hello world", "foo\nbar", ","\n')
 
-            mock_end.assert_called_with()
+            # uploader.end()
 
         m.assert_called_with(f"{FILE_STORE_PATH}test/path", "a")
         self.assertEqual(
