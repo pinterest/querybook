@@ -2,11 +2,8 @@
 
 # Getting started
 
-## Prerequisite
-
-Please install Docker before trying out Querybook.
-
 ## Quick setup
+## Backend Config
 
 Pull the repo..
 First,
@@ -43,10 +40,44 @@ systemctl start sfjustis_backend.service
 ```
 
 (do after activate python environment)
-and run `gunicorn --bind 0.0.0.0:5000 wsgi:app -m 007` or `python wsgi.py`. Visit https://localhost:5000 when the server up.
+and run `gunicorn --bind 0.0.0.0:5000 wsgi:app -m 007` or `python wsgi.py`.
+Visit https://localhost:5000 when the server up.
 
 
-## Configuration
+## Frontend Config
 
+Pull the repo..
+First,
+```
+git remote add sfgov <repo>
+```
+then,
+```
+git pull sfgov main
+```
+& then setup venv for our project..
+```
+npm i
+```
+& then, start server
+```
+systemctl enable sfjustis_frontend.service
+systemctl start sfjustis_frontend.service
+```
 
-# User Interface
+(do after activate python environment)
+and run `npm start`.
+Visit https://localhost:3000 when the server up.
+
+# PS
+Everytime you do `git pull`.. restart service
+
+# Backend
+```
+systemctl restart sfjustis_backend.service
+```
+
+# Frontend
+```
+systemctl restart sfjustis_frontend.service
+```
