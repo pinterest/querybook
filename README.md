@@ -55,7 +55,7 @@ then,
 ```
 git pull sfgov main
 ```
-& then setup venv for our project..
+& then install pkgs for our project..
 ```
 npm i
 ```
