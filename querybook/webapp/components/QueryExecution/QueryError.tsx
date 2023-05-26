@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { AIAutoFixButton } from 'components/AIToolbar/AIToolbar';
 import { ErrorSuggestion } from 'components/DataDocStatementExecution/ErrorSuggestion';
 import { IQueryEngine } from 'const/queryEngine';
 import {
@@ -34,6 +35,7 @@ interface IProps {
     queryError: IQueryError;
     queryExecution: IQueryExecution;
     statementExecutions: IStatementExecution[];
+    changeCellContext?: (context: string) => void;
 }
 
 const queryErrorTypeToString: Record<number, string> = {
@@ -125,6 +127,7 @@ export const QueryError: React.FunctionComponent<IProps> = ({
     queryExecution,
     statementExecutions,
     queryEngine,
+    changeCellContext,
 }) => {
     const {
         error_message: errorMessage,
@@ -184,10 +187,27 @@ export const QueryError: React.FunctionComponent<IProps> = ({
                 type="error"
                 size="small"
                 title={
-                    <span className="QueryError-title flex-row">
-                        <Icon name="AlertOctagon" size={20} className="mr8" />
-                        {errorTitle}
-                    </span>
+                    <div
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <span className="QueryError-title flex-row">
+                            <Icon
+                                name="AlertOctagon"
+                                size={20}
+                                className="mr8"
+                            />
+                            {errorTitle}
+                        </span>
+                        <AIAutoFixButton
+                            query={queryExecution.query}
+                            error={errorMessage}
+                            onUpdateQuery={changeCellContext}
+                        />
+                    </div>
                 }
             >
                 <div className="QueryError-top">
@@ -202,7 +222,8 @@ export const QueryError: React.FunctionComponent<IProps> = ({
 export const QueryErrorWrapper: React.FunctionComponent<{
     queryExecution: IQueryExecution;
     statementExecutions: IStatementExecution[];
-}> = ({ queryExecution, statementExecutions }) => {
+    changeCellContext?: (context: string) => void;
+}> = ({ queryExecution, statementExecutions, changeCellContext }) => {
     const queryError = useSelector(
         (state: IStoreState) =>
             state.queryExecutions.queryErrorById[queryExecution.id]
@@ -229,6 +250,7 @@ export const QueryErrorWrapper: React.FunctionComponent<{
                 queryExecution={queryExecution}
                 statementExecutions={statementExecutions}
                 queryEngine={queryEngine}
+                changeCellContext={changeCellContext}
             />
         </Loader>
     );

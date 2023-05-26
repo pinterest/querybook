@@ -222,6 +222,7 @@ export const QueryExecution: React.FC<IProps> = ({
                 <QueryErrorWrapper
                     queryExecution={queryExecution}
                     statementExecutions={statementExecutions}
+                    changeCellContext={changeCellContext}
                 />
             );
         }

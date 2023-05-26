@@ -1,6 +1,14 @@
 .QueryComparison {
-    display: flex;
-    .Tag {
-        margin-bottom: 12px;
+    .diff-view {
+        display: flex;
+        .Tag {
+            margin-bottom: 12px;
+        }
+    }
+
+    .query-comparison-controls {
+        display: flex;
+        margin-bottom: 4px;
+        justify-content: flex-end;
     }
 }

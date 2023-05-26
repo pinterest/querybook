@@ -1,6 +1,7 @@
 import * as DraftJs from 'draft-js';
 import React from 'react';
 
+import { AIChartButton } from 'components/AIToolbar/AIToolbar';
 import { QueryExecutionPicker } from 'components/ExecutionPicker/QueryExecutionPicker';
 import { StatementExecutionPicker } from 'components/ExecutionPicker/StatementExecutionPicker';
 import { IDataChartCellMeta } from 'const/datadoc';
@@ -9,7 +10,6 @@ import { transformData } from 'lib/chart/chart-data-transformation';
 import { getDataTransformationOptions } from 'lib/chart/chart-meta-processing';
 import { QueryExecutionResource } from 'resource/queryExecution';
 import { TextButton } from 'ui/Button/Button';
-import { InfoButton } from 'ui/Button/InfoButton';
 import { Modal } from 'ui/Modal/Modal';
 import { EmptyText } from 'ui/StyledText/StyledText';
 
@@ -232,10 +232,11 @@ export const DataDocChartCell = React.memo<IProps>(
                             size="small"
                             className="mr8"
                         />
-                        <InfoButton>
-                            Chart data comes from the last query cell above.
-                            Configure chart to select desired format.
-                        </InfoButton>
+                        <AIChartButton
+                            data={transformedChartData}
+                            meta={meta}
+                            onUpdateMeta={onChange}
+                        />
                     </div>
                 </div>
                 {renderChartDOM()}
