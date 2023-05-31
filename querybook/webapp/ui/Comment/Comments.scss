@@ -1,0 +1,127 @@
+.Comments {
+    width: 480px;
+    border-radius: var(--border-radius-sm);
+    overflow: hidden;
+    .Comment-form {
+        width: 100%;
+        background-color: var(--bg-lightest);
+        .UserAvatar {
+            align-self: flex-start;
+            margin-right: 12px;
+        }
+        .RichTextEditor {
+            flex-grow: 1;
+            input {
+                background-color: transparent;
+            }
+            ::placeholder {
+                color: var(--text-lightest-0);
+            }
+        }
+    }
+    .CommentThread {
+        margin-left: 32px;
+        .ClosedCommentThread {
+            margin-top: -4px;
+            background-color: var(--bg-lightest);
+            border-radius: var(--border-radius-sm);
+            padding: 8px;
+
+            .HoverText {
+                display: none;
+            }
+
+            &:hover {
+                background-color: var(--bg-light);
+                .ThreadCount {
+                    font-weight: var(--bold-font);
+                }
+                .LastReplyDate {
+                    display: none;
+                }
+                .HoverText {
+                    display: inline-flex;
+                }
+            }
+            cursor: pointer;
+            .UserAvatar + .UserAvatar {
+                margin-left: 4px;
+            }
+        }
+    }
+    .Comment {
+        + .Comment {
+            margin-top: 16px;
+        }
+        .Comment-top {
+            height: 28px;
+            .Comment-top-left {
+                > div,
+                > span {
+                    margin-right: 8px;
+                    white-space: nowrap;
+                }
+                .UserAvatar {
+                    margin-right: 12px;
+                }
+                .UserName {
+                    font-weight: var(--extra-bold-font);
+                }
+            }
+
+            .Comment-top-right {
+                display: none;
+                .Comment-edit {
+                    .IconButton {
+                        background-color: var(--bg-light);
+                        svg {
+                            padding: 2px;
+                        }
+                    }
+                }
+            }
+        }
+        .Comment-text {
+            margin-left: 32px;
+        }
+        &:hover {
+            .Comment-top-right {
+                display: flex;
+            }
+        }
+    }
+}
+
+.Reactions {
+    .Reaction {
+        background-color: var(--bg-light);
+        border-radius: var(--border-radius-sm);
+        cursor: default;
+        &.active {
+            background-color: var(--color-accent-lightest-0);
+        }
+    }
+}
+
+.AddReactionButton {
+    .IconButton {
+        background-color: var(--bg-light);
+    }
+}
+
+.EmojiList {
+    background: var(--bg);
+    margin-top: 6px;
+    border: var(--border);
+    border-radius: var(--border-radius-sm);
+    box-shadow: var(--box-shadow-sm);
+    padding: var(--padding-sm);
+    position: relative;
+    min-width: 20px;
+    min-height: 20px;
+    font-size: var(--med-text-size);
+    cursor: default;
+    .Emoji {
+        cursor: pointer;
+    }
+}

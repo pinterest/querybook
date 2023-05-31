@@ -91,6 +91,7 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> =
             );
 
             const [showCollapsed, setShowCollapsed] = React.useState(undefined);
+
             useEffect(() => {
                 if (defaultCollapse != null) {
                     setShowCollapsed(defaultCollapse);
