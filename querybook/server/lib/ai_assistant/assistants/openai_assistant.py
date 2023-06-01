@@ -1,5 +1,3 @@
-import os
-
 from lib.ai_assistant.base_ai_assistant import BaseAIAssistant
 from lib.logger import get_logger
 
