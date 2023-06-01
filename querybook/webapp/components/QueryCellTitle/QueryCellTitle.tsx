@@ -58,9 +58,7 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
                 onChange={onChange}
                 transparent
                 placeholder={loading ? 'Generating...' : placeholder}
-                className={`Title ${
-                    titleGenerationEnabled ? 'with-icon' : ''
-                }`}
+                className={`Title ${titleGenerationEnabled ? 'with-icon' : ''}`}
             />
         </div>
     );
