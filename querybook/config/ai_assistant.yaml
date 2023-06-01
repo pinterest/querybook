@@ -1,7 +1,13 @@
-provider: openai
+provider: ~
+
 config:
-    model_name: gpt-3.5-turbo
-    temperature: 0
+    model_name: ~
+
+# --------------- OpenAI ---------------
+# provider: openai
+# config:
+#     model_name: gpt-3.5-turbo
+#     temperature: 0
 
 query_title_generation:
     enabled: true

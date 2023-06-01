@@ -23,7 +23,9 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
     const [loading, setLoading] = useState(false);
 
     const titleGenerationEnabled =
-        AIAssistantConfig.query_title_generation.enabled && query;
+        AIAssistantConfig.provider &&
+        AIAssistantConfig.query_title_generation.enabled &&
+        query;
 
     const generateTitle = useCallback(
         (query) => {

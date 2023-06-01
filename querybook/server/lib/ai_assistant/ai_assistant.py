@@ -3,12 +3,8 @@ import queue
 
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 
-from lib.config import get_config_value
 
 from .all_ai_assistants import get_ai_assistant_class
-
-
-AI_ASSISTANT_CONFIG = get_config_value("ai_assistant", {})
 
 
 class ThreadedGenerator:
@@ -49,9 +45,9 @@ class ChainStreamHandler(StreamingStdOutCallbackHandler):
 
 
 class AIAssistant:
-    def __init__(self):
-        self._assisant = get_ai_assistant_class(AI_ASSISTANT_CONFIG.get("provider"))
-        self._assisant.set_config(AI_ASSISTANT_CONFIG.get("config", {}))
+    def __init__(self, provider: str, config: dict = {}):
+        self._assisant = get_ai_assistant_class(provider)
+        self._assisant.set_config(config)
 
     def _get_streaming_result(self, fn, kwargs):
         g = ThreadedGenerator()
@@ -61,11 +57,8 @@ class AIAssistant:
         thread.start()
         return g
 
-    def generate_title_from_query(self, query, stream=True):
-        if stream:
-            return self._get_streaming_result(
-                self._assisant.generate_title_from_query,
-                {"query": query, "stream": stream},
-            )
-        else:
-            return self._assisant.generate_title_from_query(query, stream)
+    def generate_title_from_query(self, query):
+        return self._get_streaming_result(
+            self._assisant.generate_title_from_query,
+            {"query": query},
+        )

@@ -1,6 +1,5 @@
 import os
 
-from env import QuerybookSettings
 from lib.ai_assistant.base_ai_assistant import BaseAIAssistant
 from lib.logger import get_logger
 
@@ -11,6 +10,10 @@ LOG = get_logger(__file__)
 
 
 class OpenAIAssistant(BaseAIAssistant):
+    """To use it, please set the following environment variable:
+    OPENAI_API_KEY: OpenAI API key
+    """
+
     @property
     def name(self) -> str:
         return "openai"
