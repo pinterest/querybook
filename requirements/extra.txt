@@ -25,3 +25,6 @@
 # Result Store
 -r platform/aws.txt
 -r platform/gcp.txt
+
+# AI Assistant
+-r ai/openai.txt

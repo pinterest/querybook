@@ -1,0 +1,2 @@
+-r base.txt
+openai==0.27.5

@@ -13,6 +13,9 @@ class BaseAIAssistant(ABC):
     def name(self) -> str:
         raise NotImplementedError()
 
+    def set_config(self, config: dict):
+        self._config = config
+
     @property
     def title_generation_prompt_template(self) -> str:
         system_template = "You are a helpful assistant that can summerize SQL queries."
@@ -20,8 +23,8 @@ class BaseAIAssistant(ABC):
             system_template
         )
         human_template = (
-            "Try to explain what below SQL query does and then generate a concise title for it. "
-            "Please only respond the title without any explanation.\n"
+            "Generate a concise summary with no more than 8 words for the query below. "
+            "Only respond the title without any explanation or leading words.\n"
             "```\n{query}\n```\nTitle:"
         )
         human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)

@@ -156,10 +156,44 @@ export function uploadDatasource<T = null>(
     return syncDatasource<T>('POST', urlOptions, null, options);
 }
 
+async function streamDatasource(
+    url: string,
+    data?: Record<string, unknown>,
+    onData?: (data: string) => void,
+    onEnd?: () => void
+) {
+    const resp = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+        },
+        body: JSON.stringify(data),
+    });
+    if (resp.status !== 200) {
+        console.error(resp);
+        return;
+    }
+    const decoder = new TextDecoder();
+    const reader = resp.body.getReader();
+    let dataStream = '';
+    while (true) {
+        const { done, value } = await reader.read();
+        if (done) {
+            onEnd?.();
+            break;
+        }
+        dataStream += decoder.decode(value);
+        onData?.(dataStream);
+    }
+
+    return dataStream;
+}
+
 export default {
     fetch: fetchDatasource,
     save: saveDatasource,
     update: updateDatasource,
     delete: deleteDatasource,
     upload: uploadDatasource,
+    stream: streamDatasource,
 };

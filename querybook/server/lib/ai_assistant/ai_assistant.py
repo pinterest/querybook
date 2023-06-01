@@ -3,9 +3,12 @@ import queue
 
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 
-from env import QuerybookSettings
+from lib.config import get_config_value
 
 from .all_ai_assistants import get_ai_assistant_class
+
+
+AI_ASSISTANT_CONFIG = get_config_value("ai_assistant", {})
 
 
 class ThreadedGenerator:
@@ -33,7 +36,7 @@ class ThreadedGenerator:
 class ChainStreamHandler(StreamingStdOutCallbackHandler):
     """Callback handlder to stream the result to a generator."""
 
-    def __init__(self, gen):
+    def __init__(self, gen: ThreadedGenerator):
         super().__init__()
         self.gen = gen
 
@@ -47,7 +50,8 @@ class ChainStreamHandler(StreamingStdOutCallbackHandler):
 
 class AIAssistant:
     def __init__(self):
-        self._assisant = get_ai_assistant_class(QuerybookSettings.AI_ASSISTANT_NAME)
+        self._assisant = get_ai_assistant_class(AI_ASSISTANT_CONFIG.get("provider"))
+        self._assisant.set_config(AI_ASSISTANT_CONFIG.get("config", {}))
 
     def _get_streaming_result(self, fn, kwargs):
         g = ThreadedGenerator()

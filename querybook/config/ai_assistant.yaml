@@ -1,0 +1,13 @@
+provider: openai
+config:
+    model_name: gpt-3.5-turbo
+    temperature: 0
+
+query_title_generation:
+    enabled: true
+
+query_generation:
+    enabled: false
+
+query_error_fix:
+    enabled: false

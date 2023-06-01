@@ -8,8 +8,8 @@ import React from 'react';
 import toast from 'react-hot-toast';
 import { connect } from 'react-redux';
 
-import { QueryCellTitle } from 'components/AIAssistant/QueryCellTitle';
 import { DataDocQueryExecutions } from 'components/DataDocQueryExecutions/DataDocQueryExecutions';
+import { QueryCellTitle } from 'components/QueryCellTitle/QueryCellTitle';
 import { runQuery, transformQuery } from 'components/QueryComposer/RunQuery';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
 import { IQueryEditorHandles } from 'components/QueryEditor/QueryEditor';
@@ -661,7 +661,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 value={meta.title}
                 onChange={this.handleMetaTitleChange}
                 placeholder={this.defaultCellTitle}
-                onUpdateTitle={this.handleMetaTitleChange}
                 query={query}
             />
         ) : (

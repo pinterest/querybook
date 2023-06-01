@@ -11,10 +11,6 @@ LOG = get_logger(__file__)
 
 
 class OpenAIAssistant(BaseAIAssistant):
-    def __init__(self) -> None:
-        os.environ["OPENAI_API_KEY"] = QuerybookSettings.OPENAI_API_KEY
-        self._api_config = {"temperature": 0, "model_name": "gpt-3.5-turbo"}
-
     @property
     def name(self) -> str:
         return "openai"
@@ -28,7 +24,7 @@ class OpenAIAssistant(BaseAIAssistant):
             query=query
         ).to_messages()
         chat = ChatOpenAI(
-            **self._api_config,
+            **self._config,
             streaming=stream,
             callback_manager=CallbackManager([callback_handler]),
         )

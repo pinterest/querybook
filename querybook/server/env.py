@@ -130,7 +130,3 @@ class QuerybookSettings(object):
 
     # Stats Logging
     STATS_LOGGER_NAME = get_env_config("STATS_LOGGER_NAME") or "null"
-
-    # AI Assistant
-    AI_ASSISTANT_NAME = get_env_config("AI_ASSISTANT_NAME")
-    OPENAI_API_KEY = get_env_config("OPENAI_API_KEY")

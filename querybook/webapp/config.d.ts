@@ -83,3 +83,20 @@ declare module 'config/color_palette.yaml' {
     }>;
     export default data;
 }
+
+declare module 'config/ai_assistant.yaml' {
+    const data: {
+        provider: string;
+        query_title_generation: {
+            enabled: boolean;
+        };
+        query_generation: {
+            enabled: boolean;
+        };
+
+        query_error_fix_enabled: {
+            enabled: boolean;
+        };
+    };
+    export default data;
+}
