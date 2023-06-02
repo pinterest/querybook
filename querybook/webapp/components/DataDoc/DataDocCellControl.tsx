@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback } from 'react';
 import toast from 'react-hot-toast';
 
 import DatadocConfig from 'config/datadoc.yaml';
@@ -11,10 +11,9 @@ import { copy, sleep, titleize } from 'lib/utils';
 import { getShortcutSymbols, KeyMap } from 'lib/utils/keyboard';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { SoftButton } from 'ui/Button/Button';
-import { Comments } from 'ui/Comment/Comments';
+import { CommentButton } from 'ui/Comment/CommentButton';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { IListMenuItem, ListMenu } from 'ui/Menu/ListMenu';
-import { Popover } from 'ui/Popover/Popover';
 
 const COPY_CELL_SHORTCUT = getShortcutSymbols(KeyMap.dataDoc.copyCell.key);
 const PASTE_CELL_SHORTCUT = getShortcutSymbols(KeyMap.dataDoc.pasteCell.key);
@@ -70,8 +69,6 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
 }) => {
     const [animateDefaultChange, setAnimateDefaultChange] =
         React.useState(false);
-    const [showComments, setShowComments] = React.useState(false);
-    const commentButtonRef = useRef<HTMLAnchorElement>();
 
     const handleToggleDefaultCollapsed = React.useCallback(() => {
         trackClick({
@@ -149,16 +146,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
             });
         }
 
-        rightButtons.push(
-            <SoftButton
-                className="block-crud-button"
-                onClick={() => setShowComments((curr) => !curr)}
-                icon="MessageSquare"
-                aria-label="Comments"
-                data-balloon-pos="left"
-                ref={commentButtonRef}
-            />
-        );
+        rightButtons.push(<CommentButton />);
     }
 
     if (isEditable) {
@@ -276,17 +264,6 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                 <div className="block-right-buttons-wrapper flex-row">
                     {rightButtons}
                 </div>
-            ) : null}
-            {showComments ? (
-                <Popover
-                    onHide={() => setShowComments(false)}
-                    anchor={commentButtonRef.current}
-                    layout={['bottom', 'right']}
-                    hideArrow
-                    noPadding
-                >
-                    <Comments />
-                </Popover>
             ) : null}
         </div>
     );
