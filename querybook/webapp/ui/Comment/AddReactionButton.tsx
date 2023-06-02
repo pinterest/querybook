@@ -38,10 +38,14 @@ export const AddReactionButton: React.FunctionComponent<IProps> = ({
 
     const [showEmojis, setShowEmojis] = React.useState(false);
 
-    const handleEmojiClick = (emoji: string) => {
-        // TODO: make this work (with backend)
-        console.log(emoji, 'added by', uid);
-    };
+    const handleEmojiClick = React.useCallback(
+        (emoji: string) => {
+            // TODO: make this work (with backend)
+            console.log(emoji, 'added by', uid);
+        },
+        [uid]
+    );
+
     return (
         <div className="AddReactionButton">
             <IconButton

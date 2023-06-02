@@ -107,21 +107,20 @@
     .IconButton {
         background-color: var(--bg-light);
     }
-}
-
-.EmojiList {
-    background: var(--bg);
-    margin-top: 6px;
-    border: var(--border);
-    border-radius: var(--border-radius-sm);
-    box-shadow: var(--box-shadow-sm);
-    padding: var(--padding-sm);
-    position: relative;
-    min-width: 20px;
-    min-height: 20px;
-    font-size: var(--med-text-size);
-    cursor: default;
-    .Emoji {
-        cursor: pointer;
+    .EmojiList {
+        background: var(--bg);
+        margin-top: 6px;
+        border: var(--border);
+        border-radius: var(--border-radius-sm);
+        box-shadow: var(--box-shadow-sm);
+        padding: var(--padding-sm);
+        position: relative;
+        min-width: 20px;
+        min-height: 20px;
+        font-size: var(--med-text-size);
+        cursor: default;
+        .Emoji {
+            cursor: pointer;
+        }
     }
 }

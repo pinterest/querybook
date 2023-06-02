@@ -19,7 +19,7 @@ interface IProps {
     uid: number;
     createdAt: number;
     reactions: IReaction[];
-    editComment: () => void;
+    editComment: (text: DraftJs.ContentState) => void;
 }
 
 export const Comment: React.FunctionComponent<IProps> = ({
@@ -50,7 +50,7 @@ export const Comment: React.FunctionComponent<IProps> = ({
                                 size={18}
                                 tooltip="Edit Comment"
                                 tooltipPos="left"
-                                onClick={editComment}
+                                onClick={() => editComment(text)}
                             />
                         </div>
                     ) : null}

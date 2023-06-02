@@ -1,12 +1,11 @@
 import * as DraftJs from 'draft-js';
-import { Formik } from 'formik';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import { useEvent } from 'hooks/useEvent';
 import { fromNow } from 'lib/utils/datetime';
-import { KeyMap, matchKeyMap } from 'lib/utils/keyboard';
+import { matchKeyMap } from 'lib/utils/keyboard';
 import { IStoreState } from 'redux/store/types';
 import { Comment } from 'ui/Comment/Comment';
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
@@ -98,8 +97,8 @@ export const Comments: React.FunctionComponent = () => {
         commentId: number,
         commentText: DraftJs.ContentState
     ) => {
-        setCurrentComment(commentText);
         setEditingCommentId(commentId);
+        setCurrentComment(commentText);
     };
 
     const handleCommentSave = React.useCallback(() => {
@@ -114,7 +113,12 @@ export const Comments: React.FunctionComponent = () => {
 
     const onEnterPress = React.useCallback(
         (evt: KeyboardEvent) => {
-            if (matchKeyMap(evt, KeyMap.overallUI.confirmModal)) {
+            if (
+                matchKeyMap(evt, {
+                    key: 'Enter',
+                    name: 'Comment',
+                })
+            ) {
                 handleCommentSave();
             }
         },
@@ -131,26 +135,20 @@ export const Comments: React.FunctionComponent = () => {
             uid={comment.uid}
             createdAt={comment.created_at}
             reactions={comment.reactions}
-            editComment={() =>
-                handleEditComment(
-                    comment.id,
-                    DraftJs.ContentState.createFromText(comment.text as string)
-                    // comment.text
-                )
-            }
+            editComment={(text) => handleEditComment(comment.id, text)}
         />
     );
 
-    const handleOpenThread = (threadId: number) => {
+    const handleOpenThread = React.useCallback((threadId: number) => {
         setOpenThreadIds((curr) => new Set([...curr, threadId]));
-    };
+    }, []);
 
     const renderThreadCommentDOM = (
-        parent_comment_id: number,
+        parentCommentId: number,
         comments: IComment[]
     ) => {
-        if (openThreadIds.has(parent_comment_id)) {
-            return comments.map((comment) => renderFlatCommentDOM(comment));
+        if (openThreadIds.has(parentCommentId)) {
+            return comments.map(renderFlatCommentDOM);
         }
         const uids = Array.from(
             new Set(comments.map((comment) => comment.uid))
@@ -160,7 +158,7 @@ export const Comments: React.FunctionComponent = () => {
                 <div className="flex-row mr8">
                     {uids.map((uid) => (
                         <UserAvatar
-                            key={`thread-avatar-${uid}-${parent_comment_id}`}
+                            key={`thread-avatar-${uid}-${parentCommentId}`}
                             uid={uid}
                             tiny
                         />
@@ -221,12 +219,7 @@ export const Comments: React.FunctionComponent = () => {
             >
                 Editing Comment
             </StyledText>
-            <div
-                onClick={() => {
-                    setEditingCommentId(null);
-                    setCurrentComment(initialCommentValue);
-                }}
-            >
+            <div onClick={() => handleEditComment(null, initialCommentValue)}>
                 <StyledText
                     size="xsmall"
                     color="lightest"
@@ -251,15 +244,13 @@ export const Comments: React.FunctionComponent = () => {
             {editingCommentId ? renderEditingCommentWarning() : null}
             <div className="Comment-form flex-row pv12 ph16">
                 <UserAvatar uid={userInfo?.uid} tiny />
-                <Formik initialValues={{}} onSubmit={() => null}>
-                    <RichTextEditor
-                        value={currentComment}
-                        onChange={(editorState) =>
-                            setCurrentComment(editorState.getCurrentContent())
-                        }
-                        placeholder={comments.length ? 'Reply' : 'Comment'}
-                    />
-                </Formik>
+                <RichTextEditor
+                    value={currentComment}
+                    onChange={(editorState) =>
+                        setCurrentComment(editorState.getCurrentContent())
+                    }
+                    placeholder={comments.length ? 'Reply' : 'Comment'}
+                />
             </div>
         </div>
     );
