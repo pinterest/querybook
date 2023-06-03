@@ -130,3 +130,6 @@ class QuerybookSettings(object):
 
     # Stats Logging
     STATS_LOGGER_NAME = get_env_config("STATS_LOGGER_NAME") or "null"
+
+    # OpenAI API Key
+    OPENAI_API_KEY = get_env_config("OPENAI_API_KEY") or "null"

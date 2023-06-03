@@ -1,0 +1,14 @@
+.AIAssistantView {
+    .code-wrapper {
+        overflow: auto;
+
+        &.code-error {
+            border: 1px solid var(--color-false);
+        }
+    }
+
+    .Button {
+        margin-bottom: 3px;
+    }
+
+}

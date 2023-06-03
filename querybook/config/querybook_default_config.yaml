@@ -84,3 +84,6 @@ EVENT_LOGGER_NAME: ~
 
 # --------------- Stats Logging ---------------
 STATS_LOGGER_NAME: ~
+
+# --------------- OPENAI API Key ---------------
+OPENAI_API_KEY: ~

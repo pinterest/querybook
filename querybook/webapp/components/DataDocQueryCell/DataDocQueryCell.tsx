@@ -58,6 +58,7 @@ import { ISelectedRange } from './common';
 import { ErrorQueryCell } from './ErrorQueryCell';
 
 import './DataDocQueryCell.scss';
+import {AIAssistantView, SQL2TextView, Text2SQLView} from "../AIAssistantView/AIAssistantView";
 
 const ON_CHANGE_DEBOUNCE_MS = 500;
 const FORMAT_QUERY_SHORTCUT = getShortcutSymbols(
@@ -104,6 +105,8 @@ interface IState {
     showQuerySnippetModal: boolean;
     showRenderedTemplateModal: boolean;
     showUDFModal: boolean;
+    showSQL2TextModal: boolean;
+    showText2SQLModal: boolean;
     hasLintError: boolean;
 
     transpilerConfig?: {
@@ -128,6 +131,8 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             showQuerySnippetModal: false,
             showRenderedTemplateModal: false,
             showUDFModal: false,
+            showSQL2TextModal: false,
+            showText2SQLModal: false,
             hasLintError: false,
         };
     }
@@ -515,14 +520,30 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                     },
                 ],
             });
-            additionalButtons.push({
-                name: 'Explain Query',
-                onClick: this.explainQuery,
-                icon: 'Info',
-                tooltip: 'Run query as explain',
-                tooltipPos: 'left',
-            });
+            // additionalButtons.push({
+            //     name: 'Explain Query',
+            //     onClick: this.explainQuery,
+            //     icon: 'Info',
+            //     tooltip: 'Run query as explain',
+            //     tooltipPos: 'left',
+            // });
+
         }
+
+        additionalButtons.push({
+            name: 'Explain Query with AI',
+            onClick: this.toggleSQL2TextModal,
+            icon: 'Info',
+            tooltip: 'Use AI to explain query',
+            tooltipPos: 'left',
+        });
+         additionalButtons.push({
+            name: 'Compose Query with AI',
+            onClick: this.toggleText2SQLModal,
+            icon: 'Edit',
+            tooltip: 'Use AI to compose query',
+            tooltipPos: 'left',
+        });
 
         additionalButtons.push({
             name: 'Render template',
@@ -603,6 +624,20 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     public toggleShowRenderedTemplateModal() {
         this.setState(({ showRenderedTemplateModal }) => ({
             showRenderedTemplateModal: !showRenderedTemplateModal,
+        }));
+    }
+
+    @bind
+    public toggleSQL2TextModal() {
+        this.setState(({ showSQL2TextModal }) => ({
+            showSQL2TextModal: !showSQL2TextModal,
+        }));
+    }
+
+    @bind
+    public toggleText2SQLModal() {
+        this.setState(({ showText2SQLModal }) => ({
+            showText2SQLModal: !showText2SQLModal,
         }));
     }
 
@@ -712,6 +747,8 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             showQuerySnippetModal,
             showRenderedTemplateModal,
             showUDFModal,
+            showSQL2TextModal,
+            showText2SQLModal,
             transpilerConfig,
         } = this.state;
         const queryEngine = queryEngineById[this.engineId];
@@ -796,6 +833,29 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             </Modal>
         ) : null;
 
+        const sql2TextModal = showSQL2TextModal ? (
+            <Modal
+                title="AI assistant"
+                onHide={() => this.setState({ showSQL2TextModal: false })}
+            >
+                <AIAssistantView
+                    userInput={query}
+                    viewType='sql2Text'
+                />
+            </Modal>
+        ) : null;
+
+        const text2SQLModal = showText2SQLModal ? (
+            <Modal
+                title="AI assistant"
+                onHide={() => this.setState({ showText2SQLModal: false })}
+            >
+                <AIAssistantView
+                    viewType='text2SQL'
+                />
+            </Modal>
+        ) : null;
+
         const transpilerModal = transpilerConfig ? (
             <TranspileQueryModal
                 query={query}
@@ -813,6 +873,8 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 {insertQuerySnippetModalDOM}
                 {templatedQueryViewModalDOM}
                 {UDFModal}
+                {sql2TextModal}
+                {text2SQLModal}
                 {transpilerModal}
             </>
         );
