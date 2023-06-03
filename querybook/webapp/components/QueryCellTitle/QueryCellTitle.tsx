@@ -20,7 +20,7 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
     placeholder,
     onChange,
 }) => {
-    const [loading, setLoading] = useState(false);
+    const [generating, setGenerating] = useState(false);
 
     const titleGenerationEnabled =
         AIAssistantConfig.provider &&
@@ -30,7 +30,7 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
     const generateTitle = useCallback(
         (query) => {
             onChange('');
-            setLoading(true);
+            setGenerating(true);
 
             ds.stream(
                 '/ds/ai/query_title/',
@@ -38,7 +38,7 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
                     query,
                 },
                 onChange,
-                () => setLoading(false)
+                () => setGenerating(false)
             );
         },
         [onChange]
@@ -48,7 +48,7 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
         <div className="QueryCellTitle">
             {titleGenerationEnabled && (
                 <IconButton
-                    icon={loading ? 'Loading' : 'Hash'}
+                    icon={generating ? 'Loading' : 'Hash'}
                     size={18}
                     tooltip="AI: generate title"
                     color={!value && query ? 'accent' : undefined}
@@ -59,7 +59,7 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
                 value={value}
                 onChange={onChange}
                 transparent
-                placeholder={loading ? 'Generating...' : placeholder}
+                placeholder={generating ? 'Generating...' : placeholder}
                 className={`Title ${titleGenerationEnabled ? 'with-icon' : ''}`}
             />
         </div>

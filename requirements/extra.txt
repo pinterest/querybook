@@ -27,4 +27,4 @@
 -r platform/gcp.txt
 
 # AI Assistant
--r ai/openai.txt
+-r ai/langchain.txt

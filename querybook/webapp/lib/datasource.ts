@@ -156,11 +156,19 @@ export function uploadDatasource<T = null>(
     return syncDatasource<T>('POST', urlOptions, null, options);
 }
 
+/**
+ * Stream data from a datasource.
+ *
+ * @param url The url to stream from
+ * @param data The data to send to the url
+ * @param onStraming Callback when data is received. The data is the accumulated data.
+ * @param onStramingEnd Callback when the stream ends
+ */
 async function streamDatasource(
     url: string,
     data?: Record<string, unknown>,
-    onData?: (data: string) => void,
-    onEnd?: () => void
+    onStraming?: (data: string) => void,
+    onStramingEnd?: () => void
 ) {
     const resp = await fetch(url, {
         method: 'POST',
@@ -179,11 +187,11 @@ async function streamDatasource(
     while (true) {
         const { done, value } = await reader.read();
         if (done) {
-            onEnd?.();
+            onStramingEnd?.();
             break;
         }
         dataStream += decoder.decode(value);
-        onData?.(dataStream);
+        onStraming?.(dataStream);
     }
 
     return dataStream;
