@@ -11,6 +11,7 @@ import { copy, sleep, titleize } from 'lib/utils';
 import { getShortcutSymbols, KeyMap } from 'lib/utils/keyboard';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { SoftButton } from 'ui/Button/Button';
+import { CommentButton } from 'ui/Comment/CommentButton';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { IListMenuItem, ListMenu } from 'ui/Menu/ListMenu';
 
@@ -144,6 +145,8 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                 icon: 'Clipboard',
             });
         }
+
+        rightButtons.push(<CommentButton key="comment" />);
     }
 
     if (isEditable) {

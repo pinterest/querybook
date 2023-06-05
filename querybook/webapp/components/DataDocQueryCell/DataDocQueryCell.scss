@@ -131,4 +131,11 @@
             right: 42px;
         }
     }
+
+    .execution-selector-section,
+    .StatementExecutionPicker {
+        * {
+            white-space: nowrap;
+        }
+    }
 }
