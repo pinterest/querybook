@@ -14,11 +14,11 @@ def get_comments_by_cell_id(data_cell_id: int):
 
 
 @register(
-    "/comment/<int:table_id>/",
+    "/comment/<int:data_table_id>/",
     methods=["GET"],
 )
-def get_comments_by_table_id(table_id: int):
-    return logic.get_comments_by_data_table_id(table_id=table_id)
+def get_comments_by_table_id(data_table_id: int):
+    return logic.get_comments_by_data_table_id(data_table_id=data_table_id)
 
 
 @register(
