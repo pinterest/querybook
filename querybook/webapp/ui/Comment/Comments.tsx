@@ -3,6 +3,7 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
+import { IComment } from 'const/comment';
 import { fromNow } from 'lib/utils/datetime';
 import { IStoreState } from 'redux/store/types';
 import { IconButton } from 'ui/Button/IconButton';
@@ -60,24 +61,6 @@ const comments = [
         ],
     },
 ];
-
-export interface IComment {
-    id: number;
-    // TODO: clean this
-    text: string | DraftJs.ContentState;
-    uid: number;
-    created_at: number;
-    updated_at: number;
-
-    child_comments?: IComment[];
-
-    reactions: IReaction[];
-}
-
-export interface IReaction {
-    reaction: string;
-    uid: number;
-}
 
 const emptyCommentValue = DraftJs.ContentState.createFromText('');
 const MAX_THREAD_AVATAR_COUNT = 5;

@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import { UserName } from 'components/UserBadge/UserName';
+import { IComment } from 'const/comment';
 import { fromNow } from 'lib/utils/datetime';
 import { IStoreState } from 'redux/store/types';
 import { IconButton } from 'ui/Button/IconButton';
@@ -11,7 +12,6 @@ import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
 import { StyledText } from 'ui/StyledText/StyledText';
 
 import { AddReactionButton } from './AddReactionButton';
-import { IComment } from './Comments';
 import { Reactions } from './Reactions';
 
 interface IProps {
