@@ -20,7 +20,7 @@ import {
     IScheduledDoc,
     ITransformedScheduledDocFilters,
 } from 'redux/scheduledDataDoc/types';
-import { ITag } from "../const/tag";
+import { ITag } from '../const/tag';
 
 export const DataDocResource = {
     getAll: (filterMode: string, environmentId: number) =>
