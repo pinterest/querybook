@@ -142,7 +142,9 @@ def delete_tag_from_table(
 def delete_tag_from_datadoc(
     datadoc_id, tag_name, user_is_admin=False, commit=True, session=None
 ):
-    tag_item = DataDocTagItem.get(datadoc_id=datadoc_id, tag_name=tag_name, session=session)
+    tag_item = DataDocTagItem.get(
+        datadoc_id=datadoc_id, tag_name=tag_name, session=session
+    )
     tag = tag_item.tag
 
     tag.count = tag_item.tag.count - 1
@@ -204,10 +206,10 @@ def create_table_tags(
 
 @with_session
 def create_datadoc_tags(
-        datadoc_id: int,
-        tags: list[DataTag] = [],
-        commit=True,
-        session=None,
+    datadoc_id: int,
+    tags: list[DataTag] = [],
+    commit=True,
+    session=None,
 ):
     """This function is used for loading datadoc tags from metastore."""
     # delete all tags from the table
