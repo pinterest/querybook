@@ -26,7 +26,12 @@ export const Comment: React.FunctionComponent<IProps> = ({
     isBeingEdited,
 }) => {
     const userInfo = useSelector((state: IStoreState) => state.user.myUserInfo);
-    const { text, uid, created_at: createdAt, reactions } = comment;
+    const {
+        text,
+        uid,
+        created_at: createdAt,
+        reactions,
+    } = React.useMemo(() => comment, [comment]);
     const textContentState = DraftJS.ContentState.createFromText(
         text as string
     );

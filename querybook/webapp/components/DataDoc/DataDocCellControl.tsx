@@ -146,7 +146,7 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
             });
         }
 
-        rightButtons.push(<CommentButton key="commentbutton+id" />);
+        rightButtons.push(<CommentButton key="comment" />);
     }
 
     if (isEditable) {
