@@ -247,7 +247,7 @@ class DataDocTestCase(TestCase):
     DATADOC_TITLE = "Test DataDoc"
     SCHEDULED = True
 
-    TAGS = [type('', (object,), {"tag_name": "1"})()]
+    TAGS = [type("", (object,), {"tag_name": "1"})()]
 
     def _get_datadoc_cells_mock(self):
         return [
