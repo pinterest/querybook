@@ -84,18 +84,20 @@ declare module 'config/color_palette.yaml' {
     export default data;
 }
 
-declare module 'config/ai_assistant.yaml' {
+declare module 'config/querybook_public_config.yaml' {
     const data: {
-        provider: string;
-        query_title_generation: {
+        ai_assistant: {
             enabled: boolean;
-        };
-        query_generation: {
-            enabled: boolean;
-        };
+            query_title_generation: {
+                enabled: boolean;
+            };
+            query_generation: {
+                enabled: boolean;
+            };
 
-        query_error_fix_enabled: {
-            enabled: boolean;
+            query_error_fix_enabled: {
+                enabled: boolean;
+            };
         };
     };
     export default data;

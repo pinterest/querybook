@@ -1,12 +1,11 @@
-from lib.config import get_config_value
+from env import QuerybookSettings
 
-AI_ASSISTANT_CONFIG = get_config_value("ai_assistant", {})
 
-provider = AI_ASSISTANT_CONFIG.get("provider")
-
-if provider:
+if QuerybookSettings.AI_ASSISTANT_PROVIDER:
     from .ai_assistant import AIAssistant
 
-    ai_assistant = AIAssistant(provider, AI_ASSISTANT_CONFIG.get("config", {}))
+    ai_assistant = AIAssistant(
+        QuerybookSettings.AI_ASSISTANT_PROVIDER, QuerybookSettings.AI_ASSISTANT_CONFIG
+    )
 else:
     ai_assistant = None

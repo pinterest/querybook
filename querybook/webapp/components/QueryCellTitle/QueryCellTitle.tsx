@@ -1,11 +1,13 @@
 import React, { useCallback, useState } from 'react';
 
-import AIAssistantConfig from 'config/ai_assistant.yaml';
+import PublicConfig from 'config/querybook_public_config.yaml';
 import ds from 'lib/datasource';
 import { IconButton } from 'ui/Button/IconButton';
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
 
 import './QueryCellTitle.scss';
+
+const AIAssistantConfig = PublicConfig.ai_assistant;
 
 interface IQueryCellTitleProps {
     value: string;
@@ -23,7 +25,7 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
     const [generating, setGenerating] = useState(false);
 
     const titleGenerationEnabled =
-        AIAssistantConfig.provider &&
+        AIAssistantConfig.enabled &&
         AIAssistantConfig.query_title_generation.enabled &&
         query;
 
