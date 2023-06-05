@@ -49,7 +49,9 @@ export const DataDocTags: React.FunctionComponent<IProps> = ({
     );
 
     const tags = useRankedTags(
-        useSelector((state: IStoreState) => tagsInDataDocSelector(state, datadocId))
+        useSelector((state: IStoreState) => 
+            tagsInDataDocSelector(state, datadocId)
+        )
     );
 
     React.useEffect(() => {
