@@ -156,10 +156,52 @@ export function uploadDatasource<T = null>(
     return syncDatasource<T>('POST', urlOptions, null, options);
 }
 
+/**
+ * Stream data from a datasource.
+ *
+ * @param url The url to stream from
+ * @param data The data to send to the url
+ * @param onStraming Callback when data is received. The data is the accumulated data.
+ * @param onStramingEnd Callback when the stream ends
+ */
+async function streamDatasource(
+    url: string,
+    data?: Record<string, unknown>,
+    onStraming?: (data: string) => void,
+    onStramingEnd?: () => void
+) {
+    const resp = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+        },
+        body: JSON.stringify(data),
+    });
+    if (resp.status !== 200) {
+        console.error(resp);
+        return;
+    }
+    const decoder = new TextDecoder();
+    const reader = resp.body.getReader();
+    let dataStream = '';
+    while (true) {
+        const { done, value } = await reader.read();
+        if (done) {
+            onStramingEnd?.();
+            break;
+        }
+        dataStream += decoder.decode(value);
+        onStraming?.(dataStream);
+    }
+
+    return dataStream;
+}
+
 export default {
     fetch: fetchDatasource,
     save: saveDatasource,
     update: updateDatasource,
     delete: deleteDatasource,
     upload: uploadDatasource,
+    stream: streamDatasource,
 };

@@ -64,7 +64,7 @@
         "localforage": "^1.10.0",
         "lodash": "4.17.21",
         "lodash-decorators": "6.0.1",
-        "lucide-react": "^0.17.13",
+        "lucide-react": "^0.187.0",
         "markdown-to-jsx": "^7.1.0",
         "memoize-one": "^6.0.0",
         "mini-css-extract-plugin": "^2.7.2",

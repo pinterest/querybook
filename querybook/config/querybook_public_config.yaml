@@ -1,0 +1,12 @@
+# --------------- AI Assistant ---------------
+ai_assistant:
+    enabled: false
+
+    query_title_generation:
+        enabled: true
+
+    query_generation:
+        enabled: false
+
+    query_error_fix:
+        enabled: false
