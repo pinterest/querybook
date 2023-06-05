@@ -6,7 +6,7 @@ ALL_PLUGIN_AI_ASSISTANTS = import_module_with_default(
     default=[],
 )
 
-ALL_AI_ASSISTANTS = [] + ALL_PLUGIN_AI_ASSISTANTS
+ALL_AI_ASSISTANTS = ALL_PLUGIN_AI_ASSISTANTS
 
 
 def get_ai_assistant_class(name: str):
