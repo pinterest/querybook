@@ -1,5 +1,6 @@
 from querybook.server.app.db import with_session
 from models.comment import Comment, CommentReaction, DataTableComment, DataCellComment
+from querybook.server.const.comment import CommentDict
 
 
 @with_session
@@ -8,7 +9,7 @@ def get_comment_by_id(comment_id: int, session=None):
 
 
 @with_session
-def get_all_comment_data_dict_by_id(comment_id: int, session=None):
+def get_all_comment_data_dict_by_id(comment_id: int, session=None) -> CommentDict:
     comment = Comment.get(id=comment_id, session=session)
     child_comments = (
         session.query(Comment)
