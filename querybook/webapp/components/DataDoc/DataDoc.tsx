@@ -65,8 +65,8 @@ import { DataDocHeader } from './DataDocHeader';
 import { DataDocLoading } from './DataDocLoading';
 
 import './DataDoc.scss';
-import { AccentText } from "../../ui/StyledText/StyledText";
-import { DataDocTags } from "../DataDocTags/DataDocTags";
+import { AccentText } from '../../ui/StyledText/StyledText';
+import { DataDocTags } from '../DataDocTags/DataDocTags';
 
 interface IOwnProps {
     docId: number;
@@ -756,7 +756,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                         >
                             Tags
                         </AccentText>
-                        <DataDocTags datadocId={dataDoc.id}/>
+                        <DataDocTags datadocId={dataDoc.id} />
                     </div>
                     <div className={docClassName}>
                         <DataDocTemplateCell
