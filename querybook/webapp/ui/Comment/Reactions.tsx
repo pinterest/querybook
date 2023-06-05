@@ -2,11 +2,11 @@ import clsx from 'clsx';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 
+import { IReaction } from 'const/comment';
 import { IStoreState } from 'redux/store/types';
 import { StyledText } from 'ui/StyledText/StyledText';
 
 import { AddReactionButton } from './AddReactionButton';
-import { IReaction } from './Comments';
 
 interface IProps {
     reactions: IReaction[];
