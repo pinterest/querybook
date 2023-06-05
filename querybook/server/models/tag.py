@@ -89,7 +89,9 @@ class DataDocTagItem(CRUDMixin, Base):
 
     tag = relationship(
         "Tag",
-        backref=backref("data_doc_tag_item", cascade="all, delete", passive_deletes=True),
+        backref=backref(
+            "data_doc_tag_item", cascade="all, delete", passive_deletes=True
+        ),
         foreign_keys=[tag_name],
     )
     datadoc = relationship(
