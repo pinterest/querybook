@@ -22,16 +22,11 @@ export const Reactions: React.FunctionComponent<IProps> = ({
 
     const formatReactions = React.useCallback((reactions: IReaction[]) => {
         const formattedReactions = {};
-        for (const reaction of reactions) {
-            if (reaction.reaction in formattedReactions) {
-                formattedReactions[reaction.reaction] = [
-                    ...formattedReactions[reaction.reaction],
-                    reaction.uid,
-                ];
-            } else {
-                formattedReactions[reaction.reaction] = [reaction.uid];
-            }
-        }
+        reactions.forEach((reaction) => {
+            formattedReactions[reaction.reaction] =
+                formattedReactions[reaction.reaction] ?? [];
+            formattedReactions[reaction.reaction].push(reaction.uid);
+        });
         return formattedReactions;
     }, []);
 

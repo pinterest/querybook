@@ -3,10 +3,9 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
-import { useEvent } from 'hooks/useEvent';
 import { fromNow } from 'lib/utils/datetime';
-import { matchKeyMap } from 'lib/utils/keyboard';
 import { IStoreState } from 'redux/store/types';
+import { IconButton } from 'ui/Button/IconButton';
 import { Comment } from 'ui/Comment/Comment';
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
 import { EmptyText, StyledText } from 'ui/StyledText/StyledText';
@@ -62,7 +61,7 @@ const comments = [
     },
 ];
 
-interface IComment {
+export interface IComment {
     id: number;
     // TODO: clean this
     text: string | DraftJs.ContentState;
@@ -80,7 +79,8 @@ export interface IReaction {
     uid: number;
 }
 
-const initialCommentValue = DraftJs.ContentState.createFromText('');
+const emptyCommentValue = DraftJs.ContentState.createFromText('');
+const MAX_THREAD_AVATAR_COUNT = 1;
 
 export const Comments: React.FunctionComponent = () => {
     const userInfo = useSelector((state: IStoreState) => state.user.myUserInfo);
@@ -89,17 +89,17 @@ export const Comments: React.FunctionComponent = () => {
         new Set()
     );
     const [currentComment, setCurrentComment] =
-        React.useState<DraftJs.ContentState>(initialCommentValue);
+        React.useState<DraftJs.ContentState>(emptyCommentValue);
     const [editingCommentId, setEditingCommentId] =
         React.useState<number>(null);
 
-    const handleEditComment = (
-        commentId: number,
-        commentText: DraftJs.ContentState
-    ) => {
-        setEditingCommentId(commentId);
-        setCurrentComment(commentText);
-    };
+    const handleEditComment = React.useCallback(
+        (commentId: number, commentText: DraftJs.ContentState) => {
+            setEditingCommentId(commentId);
+            setCurrentComment(commentText);
+        },
+        []
+    );
 
     const handleCommentSave = React.useCallback(() => {
         if (editingCommentId) {
@@ -108,34 +108,15 @@ export const Comments: React.FunctionComponent = () => {
         } else {
             // TODO: save comment
         }
-        setCurrentComment(initialCommentValue);
+        setCurrentComment(emptyCommentValue);
     }, [editingCommentId]);
-
-    const onEnterPress = React.useCallback(
-        (evt: KeyboardEvent) => {
-            if (
-                matchKeyMap(evt, {
-                    key: 'Enter',
-                    name: 'Comment',
-                })
-            ) {
-                handleCommentSave();
-            }
-        },
-        [handleCommentSave]
-    );
-
-    useEvent('keydown', onEnterPress);
 
     const renderFlatCommentDOM = (comment: IComment) => (
         <Comment
             key={comment.id}
-            text={DraftJs.ContentState.createFromText(comment.text as string)}
-            // text={comment.text}
-            uid={comment.uid}
-            createdAt={comment.created_at}
-            reactions={comment.reactions}
+            comment={comment}
             editComment={(text) => handleEditComment(comment.id, text)}
+            isBeingEdited={editingCommentId === comment.id}
         />
     );
 
@@ -143,71 +124,79 @@ export const Comments: React.FunctionComponent = () => {
         setOpenThreadIds((curr) => new Set([...curr, threadId]));
     }, []);
 
-    const renderThreadCommentDOM = (
-        parentCommentId: number,
-        comments: IComment[]
-    ) => {
-        if (openThreadIds.has(parentCommentId)) {
-            return comments.map(renderFlatCommentDOM);
+    const renderThreadCommentDOM = (comment: IComment) => {
+        if (openThreadIds.has(comment.id)) {
+            return comment.child_comments.map(renderFlatCommentDOM);
         }
         const uids = Array.from(
-            new Set(comments.map((comment) => comment.uid))
+            new Set(comment.child_comments.map((comment) => comment.uid))
         );
         return (
-            <div className="ClosedCommentThread flex-row">
-                <div className="flex-row mr8">
-                    {uids.map((uid) => (
-                        <UserAvatar
-                            key={`thread-avatar-${uid}-${parentCommentId}`}
-                            uid={uid}
-                            tiny
-                        />
-                    ))}
-                </div>
-                <StyledText
-                    className="ThreadCount mr8"
-                    size="xsmall"
-                    color="accent"
-                    cursor="default"
+            <>
+                {renderFlatCommentDOM(comment)}
+                <div
+                    className="CommentThread mt12"
+                    onClick={() => handleOpenThread(comment.id)}
                 >
-                    {comments.length}{' '}
-                    {comments.length === 1 ? 'Reply' : 'Replies'}
-                </StyledText>
-                <span className="LastReplyDate">
-                    <StyledText size="xsmall" color="lightest" cursor="default">
-                        Last reply{' '}
-                        {fromNow(comments[comments.length - 1].updated_at)}
-                    </StyledText>
-                </span>
-                <span className="HoverText">
-                    <StyledText size="xsmall" color="lightest" cursor="default">
-                        View Thread
-                    </StyledText>
-                </span>
-            </div>
+                    <div className="ClosedCommentThread flex-row">
+                        <div className="flex-row mr8">
+                            {uids
+                                .slice(0, MAX_THREAD_AVATAR_COUNT)
+                                .map((uid) => (
+                                    <UserAvatar
+                                        key={`thread-avatar-${uid}-${comment.id}`}
+                                        uid={uid}
+                                        tiny
+                                    />
+                                ))}
+                            {uids.length - 1 >= MAX_THREAD_AVATAR_COUNT ? (
+                                <div className="NumberAvatar">
+                                    {uids.length - MAX_THREAD_AVATAR_COUNT}
+                                </div>
+                            ) : null}
+                        </div>
+                        <StyledText
+                            className="ThreadCount mr8"
+                            size="xsmall"
+                            color="accent"
+                            cursor="default"
+                        >
+                            {comments.length}{' '}
+                            {comments.length === 1 ? 'Reply' : 'Replies'}
+                        </StyledText>
+                        <span className="LastReplyDate">
+                            <StyledText
+                                size="xsmall"
+                                color="lightest"
+                                cursor="default"
+                            >
+                                Last reply{' '}
+                                {fromNow(
+                                    comments[comments.length - 1].updated_at
+                                )}
+                            </StyledText>
+                        </span>
+                        <span className="HoverText">
+                            <StyledText
+                                size="xsmall"
+                                color="lightest"
+                                cursor="default"
+                            >
+                                View Thread
+                            </StyledText>
+                        </span>
+                    </div>
+                </div>
+            </>
         );
     };
 
     const renderCommentDOM = () =>
-        comments.map((comment: IComment) => {
-            if (comment.child_comments) {
-                return (
-                    <>
-                        {renderFlatCommentDOM(comment)}
-                        <div
-                            className="CommentThread mt12"
-                            onClick={() => handleOpenThread(comment.id)}
-                        >
-                            {renderThreadCommentDOM(
-                                comment.id,
-                                comment.child_comments
-                            )}
-                        </div>
-                    </>
-                );
-            }
-            return renderFlatCommentDOM(comment);
-        });
+        comments.map((comment: IComment) =>
+            comment.child_comments
+                ? renderThreadCommentDOM(comment)
+                : renderFlatCommentDOM(comment)
+        );
 
     const renderEditingCommentWarning = () => (
         <div className="Comments-edit-warning flex-row ml48 mb4">
@@ -219,7 +208,7 @@ export const Comments: React.FunctionComponent = () => {
             >
                 Editing Comment
             </StyledText>
-            <div onClick={() => handleEditComment(null, initialCommentValue)}>
+            <div onClick={() => handleEditComment(null, emptyCommentValue)}>
                 <StyledText
                     size="xsmall"
                     color="lightest"
@@ -250,6 +239,16 @@ export const Comments: React.FunctionComponent = () => {
                         setCurrentComment(editorState.getCurrentContent())
                     }
                     placeholder={comments.length ? 'Reply' : 'Comment'}
+                />
+                <IconButton
+                    icon="Send"
+                    onClick={handleCommentSave}
+                    noPadding
+                    size={18}
+                    className="mr4"
+                    tooltip="Comment"
+                    tooltipPos="left"
+                    disabled={currentComment.getPlainText().length === 0}
                 />
             </div>
         </div>

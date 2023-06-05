@@ -44,12 +44,30 @@
                 }
             }
             cursor: pointer;
-            .UserAvatar + .UserAvatar {
+            .UserAvatar + .UserAvatar,
+            .NumberAvatar {
                 margin-left: 4px;
+            }
+            .NumberAvatar {
+                background-color: var(--bg-light);
+                font-size: var(--xxsmall-text-size);
+                color: var(--text-lightest);
+                height: 20px;
+                width: 20px;
+                text-align: center;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 100%;
             }
         }
     }
     .Comment {
+        &.edit-mode {
+            .Comment-edit {
+                display: none;
+            }
+        }
         + .Comment {
             margin-top: 16px;
         }
@@ -70,6 +88,12 @@
             }
 
             .Comment-top-right {
+                .Editing-text {
+                    font-style: italic;
+                    cursor: default;
+                }
+            }
+            .Comment-top-right-buttons {
                 display: none;
                 .Comment-edit {
                     .IconButton {
@@ -85,7 +109,7 @@
             margin-left: 32px;
         }
         &:hover {
-            .Comment-top-right {
+            .Comment-top-right-buttons {
                 display: flex;
             }
         }
