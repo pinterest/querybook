@@ -80,7 +80,7 @@ export interface IReaction {
 }
 
 const emptyCommentValue = DraftJs.ContentState.createFromText('');
-const MAX_THREAD_AVATAR_COUNT = 1;
+const MAX_THREAD_AVATAR_COUNT = 5;
 
 export const Comments: React.FunctionComponent = () => {
     const userInfo = useSelector((state: IStoreState) => state.user.myUserInfo);
