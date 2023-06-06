@@ -219,6 +219,7 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> =
                 <div className={'data-doc-cell-divider-container'}>
                     <DataDocCellControl
                         index={idx}
+                        cellId={cell.id}
                         numberOfCells={numberOfCells}
                         moveCellAt={handleMoveCell}
                         pasteCellAt={pasteCellAt}

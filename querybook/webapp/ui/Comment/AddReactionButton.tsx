@@ -1,11 +1,19 @@
 import * as React from 'react';
+import { useDispatch } from 'react-redux';
 
 import { TooltipDirection } from 'const/tooltip';
+import {
+    addReactionForCellComment,
+    addReactionForTableComment,
+} from 'redux/comment/action';
+import { Dispatch } from 'redux/store/types';
 import { IconButton } from 'ui/Button/IconButton';
 import { Popover, PopoverLayout } from 'ui/Popover/Popover';
 
 interface IProps {
-    uid: number;
+    cellId?: number;
+    tableId?: number;
+    commentId: number;
     popoverLayout?: PopoverLayout;
     tooltipPos?: TooltipDirection;
 }
@@ -30,20 +38,33 @@ const EmojiList: React.FunctionComponent<IEmojiListProps> = ({ onClick }) => (
 );
 
 export const AddReactionButton: React.FunctionComponent<IProps> = ({
-    uid,
+    cellId,
+    tableId,
+    commentId,
     popoverLayout = ['bottom', 'right'],
     tooltipPos = 'down',
 }) => {
+    const dispatch: Dispatch = useDispatch();
     const addReactionButtonRef = React.useRef<HTMLAnchorElement>();
 
     const [showEmojis, setShowEmojis] = React.useState(false);
 
+    // TODO: refactor to custom hook + add support for child comment reaction
+    const addEmoji = React.useCallback(
+        (emoji) =>
+            cellId
+                ? dispatch(addReactionForCellComment(cellId, commentId, emoji))
+                : dispatch(
+                      addReactionForTableComment(tableId, commentId, emoji)
+                  ),
+        [cellId, commentId, dispatch, tableId]
+    );
+
     const handleEmojiClick = React.useCallback(
         (emoji: string) => {
-            // TODO: make this work (with backend)
-            console.log(emoji, 'added by', uid);
+            addEmoji(emoji);
         },
-        [uid]
+        [addEmoji]
     );
 
     return (

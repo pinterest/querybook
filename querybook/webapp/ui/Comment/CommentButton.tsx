@@ -5,7 +5,15 @@ import { Popover } from 'ui/Popover/Popover';
 
 import { Comments } from './Comments';
 
-export const CommentButton: React.FunctionComponent = () => {
+interface IProps {
+    cellId?: number;
+    tableId?: number;
+}
+
+export const CommentButton: React.FunctionComponent<IProps> = ({
+    cellId,
+    tableId,
+}) => {
     const [showComments, setShowComments] = React.useState(false);
     const commentButtonRef = React.useRef<HTMLAnchorElement>();
     return (
@@ -26,7 +34,7 @@ export const CommentButton: React.FunctionComponent = () => {
                     hideArrow
                     noPadding
                 >
-                    <Comments />
+                    <Comments cellId={cellId} tableId={tableId} />
                 </Popover>
             ) : null}
         </>

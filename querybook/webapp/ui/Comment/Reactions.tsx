@@ -1,20 +1,33 @@
 import clsx from 'clsx';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { IReaction } from 'const/comment';
-import { IStoreState } from 'redux/store/types';
+import {
+    addReactionForCellComment,
+    addReactionForTableComment,
+    deleteReactionForCellComment,
+    deleteReactionForTableComment,
+} from 'redux/comment/action';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { StyledText } from 'ui/StyledText/StyledText';
 
 import { AddReactionButton } from './AddReactionButton';
 
 interface IProps {
+    cellId?: number;
+    tableId?: number;
+    commentId: number;
     reactions: IReaction[];
 }
 
 export const Reactions: React.FunctionComponent<IProps> = ({
+    cellId,
+    tableId,
+    commentId,
     reactions: reactionsProp,
 }) => {
+    const dispatch: Dispatch = useDispatch();
     const [uidsByReaction, setUidsByReaction] = React.useState<
         Record<string, number[]>
     >({});
@@ -36,29 +49,37 @@ export const Reactions: React.FunctionComponent<IProps> = ({
         }
     }, [formatReactions, reactionsProp]);
 
+    // TODO: refactor to custom hook + add support for child comment reaction
+    const addEmoji = React.useCallback(
+        (emoji) =>
+            cellId
+                ? dispatch(addReactionForCellComment(cellId, commentId, emoji))
+                : dispatch(
+                      addReactionForTableComment(tableId, commentId, emoji)
+                  ),
+        [cellId, commentId, dispatch, tableId]
+    );
+    const deleteEmoji = React.useCallback(
+        (emoji) =>
+            cellId
+                ? dispatch(
+                      deleteReactionForCellComment(cellId, commentId, emoji)
+                  )
+                : dispatch(
+                      deleteReactionForTableComment(tableId, commentId, emoji)
+                  ),
+        [cellId, commentId, dispatch, tableId]
+    );
+
     const handleReactionClick = (reaction: string) => {
         // TODO: make this work (with backend)
         const uidIdx = uidsByReaction[reaction].findIndex(
             (uid) => uid === userInfo.uid
         );
         if (uidIdx === -1) {
-            setUidsByReaction((curr) => ({
-                ...curr,
-                [reaction]: [...curr[reaction], userInfo.uid],
-            }));
+            addEmoji(reaction);
         } else {
-            setUidsByReaction((curr) => {
-                if (curr[reaction].length > 1) {
-                    return {
-                        ...curr,
-                        [reaction]: curr[reaction].filter(
-                            (uid) => uid !== userInfo.uid
-                        ),
-                    };
-                }
-                const { [reaction]: _, ...rest } = curr;
-                return rest;
-            });
+            deleteEmoji(reaction);
         }
     };
 
@@ -92,9 +113,11 @@ export const Reactions: React.FunctionComponent<IProps> = ({
                 );
             })}
             <AddReactionButton
-                uid={userInfo.uid}
                 popoverLayout={['bottom', 'left']}
                 tooltipPos="right"
+                cellId={cellId}
+                tableId={tableId}
+                commentId={commentId}
             />
         </div>
     );

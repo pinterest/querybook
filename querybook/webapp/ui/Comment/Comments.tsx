@@ -1,11 +1,23 @@
 import * as DraftJs from 'draft-js';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import { IComment } from 'const/comment';
 import { fromNow } from 'lib/utils/datetime';
-import { IStoreState } from 'redux/store/types';
+import {
+    createCellChildComment,
+    createCellComment,
+    createTableChildComment,
+    createTableComment,
+    fetchCommentsByCellIfNeeded,
+    fetchCommentsByTableIfNeeded,
+    updateChildCommentByCell,
+    updateChildCommentByTable,
+    updateCommentByCell,
+    updateCommentByTable,
+} from 'redux/comment/action';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { IconButton } from 'ui/Button/IconButton';
 import { Comment } from 'ui/Comment/Comment';
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
@@ -13,72 +25,100 @@ import { EmptyText, StyledText } from 'ui/StyledText/StyledText';
 
 import './Comments.scss';
 
-const comments = [
-    {
-        id: 1,
-        text: 'this is my comment. this is my comment. this is my comment. this is my comment.',
-        uid: 11,
-        created_at: 1683662936,
-        updated_at: 1683662936,
-        reactions: [
-            { reaction: '🩵', uid: 10 },
-            { reaction: '🩵', uid: 11 },
-            { reaction: '🤍', uid: 10 },
-        ],
-    },
-    {
-        id: 2,
-        text: 'memewowmew',
-        uid: 10,
-        created_at: 1684662936,
-        updated_at: 1683662936,
-        reactions: [
-            { reaction: '🩵', uid: 10 },
-            { reaction: '🩵', uid: 11 },
-            { reaction: '🤍', uid: 10 },
-        ],
-        child_comments: [
-            {
-                id: 4,
-                text: 'this is my comment. this is my comment. this is my comment. this is my comment.',
-                uid: 11,
-                created_at: 1683662936,
-                updated_at: 1683662936,
-                reactions: [],
-            },
-            {
-                id: 31,
-                text: 'this is my comment. this is my comment. this is my comment. this is my comment.',
-                uid: 10,
-                created_at: 1683662936,
-                updated_at: 1683662936,
-                reactions: [
-                    { reaction: '🩵', uid: 10 },
-                    { reaction: '🩵', uid: 11 },
-                    { reaction: '🤍', uid: 10 },
-                ],
-            },
-        ],
-    },
-];
+interface IProps {
+    cellId?: number;
+    tableId?: number;
+}
 
 const emptyCommentValue = DraftJs.ContentState.createFromText('');
 const MAX_THREAD_AVATAR_COUNT = 5;
 
-export const Comments: React.FunctionComponent = () => {
-    const userInfo = useSelector((state: IStoreState) => state.user.myUserInfo);
+export const Comments: React.FunctionComponent<IProps> = ({
+    cellId,
+    tableId,
+}) => {
+    const dispatch: Dispatch = useDispatch();
+
+    const { userInfo, comments } = useSelector((state: IStoreState) => ({
+        userInfo: state.user.myUserInfo,
+        comments: cellId
+            ? state.comment.cellIdToComment[cellId]
+            : state.comment.tableIdToComment[tableId],
+    }));
 
     const [openThreadIds, setOpenThreadIds] = React.useState<Set<number>>(
         new Set()
     );
     const [currentComment, setCurrentComment] =
         React.useState<DraftJs.ContentState>(emptyCommentValue);
+    const [editingCommentParentId, setEditingCommentParentId] =
+        React.useState<number>(null);
     const [editingCommentId, setEditingCommentId] =
         React.useState<number>(null);
 
+    const loadComments = React.useCallback(
+        () =>
+            cellId
+                ? dispatch(fetchCommentsByCellIfNeeded(cellId))
+                : dispatch(fetchCommentsByTableIfNeeded(tableId)),
+
+        [cellId, dispatch, tableId]
+    );
+
+    const createComment = React.useCallback(
+        (text, parentCommentId) => {
+            if (parentCommentId) {
+                const createAction = cellId
+                    ? createCellChildComment
+                    : createTableChildComment;
+                dispatch(
+                    createAction(cellId || tableId, parentCommentId, text)
+                );
+            } else {
+                const createAction = cellId
+                    ? createCellComment
+                    : createTableComment;
+                dispatch(createAction(cellId || tableId, text));
+            }
+        },
+        [cellId, dispatch, tableId]
+    );
+    const editComment = React.useCallback(
+        (commentId, text, parentCommentId) => {
+            if (parentCommentId) {
+                const updateAction = cellId
+                    ? updateChildCommentByCell
+                    : updateChildCommentByTable;
+                dispatch(
+                    updateAction(
+                        cellId || tableId,
+                        parentCommentId,
+                        commentId,
+                        text
+                    )
+                );
+            } else {
+                const updateAction = cellId
+                    ? updateCommentByCell
+                    : updateCommentByTable;
+                dispatch(updateAction(cellId || tableId, commentId, text));
+            }
+        },
+        [cellId, dispatch, tableId]
+    );
+
+    React.useEffect(() => {
+        loadComments();
+    }, [loadComments]);
+
     const handleEditComment = React.useCallback(
-        (commentId: number, commentText: DraftJs.ContentState) => {
+        (
+            commentId: number,
+            commentText: DraftJs.ContentState,
+            parentCommentId?: number
+        ) => {
             setEditingCommentId(commentId);
+            setEditingCommentParentId(parentCommentId || null);
             setCurrentComment(commentText);
         },
         []
@@ -86,20 +126,33 @@ export const Comments: React.FunctionComponent = () => {
 
     const handleCommentSave = React.useCallback(() => {
         if (editingCommentId) {
-            // TODO: edit comment
+            editComment(
+                editingCommentId,
+                currentComment,
+                editingCommentParentId
+            );
             setEditingCommentId(null);
         } else {
-            // TODO: save comment
+            createComment(currentComment, editingCommentParentId);
         }
         setCurrentComment(emptyCommentValue);
-    }, [editingCommentId]);
+    }, [
+        createComment,
+        currentComment,
+        editComment,
+        editingCommentId,
+        editingCommentParentId,
+    ]);
 
-    const renderFlatCommentDOM = (comment: IComment) => (
+    const renderFlatCommentDOM = (comment: IComment, isChild: boolean) => (
         <Comment
             key={comment.id}
             comment={comment}
             editComment={(text) => handleEditComment(comment.id, text)}
             isBeingEdited={editingCommentId === comment.id}
+            isChild={isChild}
+            createChildComment={() => setEditingCommentParentId(comment.id)}
+            isBeingRepliedTo={editingCommentParentId === comment.id}
         />
     );
 
@@ -109,14 +162,16 @@ export const Comments: React.FunctionComponent = () => {
 
     const renderThreadCommentDOM = (comment: IComment) => {
         if (openThreadIds.has(comment.id)) {
-            return comment.child_comments.map(renderFlatCommentDOM);
+            return comment.child_comments.map((comment) =>
+                renderFlatCommentDOM(comment, true)
+            );
         }
         const uids = Array.from(
             new Set(comment.child_comments.map((comment) => comment.uid))
         );
         return (
             <>
-                {renderFlatCommentDOM(comment)}
+                {renderFlatCommentDOM(comment, false)}
                 <div
                     className="CommentThread mt12"
                     onClick={() => handleOpenThread(comment.id)}
@@ -178,7 +233,7 @@ export const Comments: React.FunctionComponent = () => {
         comments.map((comment: IComment) =>
             comment.child_comments
                 ? renderThreadCommentDOM(comment)
-                : renderFlatCommentDOM(comment)
+                : renderFlatCommentDOM(comment, false)
         );
 
     const renderEditingCommentWarning = () => (
