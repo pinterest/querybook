@@ -44,7 +44,7 @@ def add_comment_to_table(data_table_id: int, text):
 
 
 @register(
-    "/comment/<int:parent_comment_id>/",
+    "/comment/thread/<int:parent_comment_id>/",
     methods=["POST"],
 )
 def add_thread_comment(parent_comment_id: int, text):
@@ -75,7 +75,7 @@ def remove_comment(comment_id: int):
 
 # reactions
 @register(
-    "/comment/<int:comment_id>/",
+    "/comment/<int:comment_id>/reaction/",
     methods=["POST"],
 )
 def add_reaction(comment_id: int, reaction):
@@ -86,7 +86,7 @@ def add_reaction(comment_id: int, reaction):
 
 
 @register(
-    "/comment/<int:reaction_id>/",
+    "/comment/<int:reaction_id>/reaction/",
     methods=["DELETE"],
 )
 def remove_reaction(reaction_id: int):

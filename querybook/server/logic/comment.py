@@ -80,7 +80,7 @@ def add_comment_to_data_cell(
         commit=commit,
         session=session,
     )
-    return comment.id
+    return comment
 
 
 @with_session
@@ -95,7 +95,7 @@ def add_comment_to_data_table(
         commit=commit,
         session=session,
     )
-    return comment.id
+    return comment
 
 
 @with_session
@@ -107,7 +107,7 @@ def add_thread_comment(
         commit=commit,
         session=session,
     )
-    return comment.id
+    return comment
 
 
 @with_session
@@ -135,7 +135,7 @@ def add_reaction(comment_id: int, reaction: str, commit=True, session=None):
         commit=commit,
         session=session,
     )
-    return reaction.id
+    return reaction
 
 
 @with_session
