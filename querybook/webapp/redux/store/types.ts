@@ -2,6 +2,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { AdhocQueryAction, AdhocQueryState } from 'redux/adhocQuery/types';
 import { BoardAction, IBoardState } from 'redux/board/types';
+import { CommentAction, ICommentState } from 'redux/comment/types';
 import { DataDocAction, IDataDocState } from 'redux/dataDoc/types';
 import { DataSourcesAction, IDataSourcesState } from 'redux/dataSources/types';
 import {
@@ -51,6 +52,7 @@ export interface IStoreState {
     readonly globalState: IGlobalStateState;
     readonly tag: ITagState;
     readonly scheduledDocs: IScheduledDataDocState;
+    readonly comment: ICommentState;
 }
 
 export type AllAction =
@@ -70,6 +72,7 @@ export type AllAction =
     | BoardAction
     | GlobalStateAction
     | TagAction
+    | CommentAction
     | ScheduledDataDocAction;
 
 export type Dispatch = ThunkDispatch<IStoreState, null, AllAction>;
