@@ -112,12 +112,13 @@ def add_thread_comment(
 
 @with_session
 def edit_comment(comment_id: int, text, commit=True, session=None):
-    return Comment.update(
+    comment = Comment.update(
         id=comment_id,
         text=text,
         commit=commit,
         session=session,
     )
+    return get_all_comment_data_dict_by_id(comment.id)
 
 
 @with_session
