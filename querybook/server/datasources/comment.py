@@ -6,7 +6,7 @@ from querybook.server.logic.comment_permission import assert_can_edit_and_delete
 
 
 @register(
-    "/comment/<int:data_cell_id>/",
+    "/comment/data_cell/<int:data_cell_id>/",
     methods=["GET"],
 )
 def get_comments_by_cell_id(data_cell_id: int):
@@ -14,7 +14,7 @@ def get_comments_by_cell_id(data_cell_id: int):
 
 
 @register(
-    "/comment/<int:data_table_id>/",
+    "/comment/data_table/<int:data_table_id>/",
     methods=["GET"],
 )
 def get_comments_by_table_id(data_table_id: int):
@@ -22,7 +22,7 @@ def get_comments_by_table_id(data_table_id: int):
 
 
 @register(
-    "/comment/<int:data_cell_id>/",
+    "/comment/data_cell/<int:data_cell_id>/",
     methods=["POST"],
 )
 def add_comment_to_cell(data_cell_id: int, text):
@@ -32,7 +32,7 @@ def add_comment_to_cell(data_cell_id: int, text):
 
 
 @register(
-    "/comment/<int:data_table_id>/",
+    "/comment/data_table/<int:data_table_id>/",
     methods=["POST"],
 )
 def add_comment_to_table(data_table_id: int, text):
