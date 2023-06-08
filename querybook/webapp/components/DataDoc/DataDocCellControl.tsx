@@ -22,7 +22,7 @@ const cellTypes = DatadocConfig.cell_types;
 
 interface IProps {
     index?: number;
-    cellId: number;
+    cellId?: number;
     isHeader: boolean;
 
     numberOfCells: number;
@@ -148,7 +148,9 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
             });
         }
 
-        rightButtons.push(<CommentButton key="comment" cellId={cellId} />);
+        if (cellId) {
+            rightButtons.push(<CommentButton key="comment" cellId={cellId} />);
+        }
     }
 
     if (isEditable) {
