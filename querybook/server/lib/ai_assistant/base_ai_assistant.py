@@ -58,7 +58,7 @@ class BaseAIAssistant(ABC):
 
     @abstractmethod
     def generate_title_from_query(
-        self, query, stream=False, callback_handler: ChainStreamHandler = None
+        self, query, stream=False, callback_handler: ChainStreamHandler = None, user_id=None
     ):
         """Generate title from SQL query.
 

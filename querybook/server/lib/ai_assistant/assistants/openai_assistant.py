@@ -40,7 +40,9 @@ class OpenAIAssistant(BaseAIAssistant):
     def generate_sql_query(self):
         pass
 
-    def generate_title_from_query(self, query, stream=True, callback_handler=None):
+    def generate_title_from_query(
+        self, query, stream=True, callback_handler=None, user_id=None
+    ):
         """Generate title from SQL query using OpenAI's chat model."""
         messages = self.title_generation_prompt_template.format_prompt(
             query=query
