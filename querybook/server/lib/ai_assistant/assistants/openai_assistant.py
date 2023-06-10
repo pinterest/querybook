@@ -8,6 +8,7 @@ from langchain.prompts.chat import (
     SystemMessagePromptTemplate,
     HumanMessagePromptTemplate,
 )
+import openai
 
 LOG = get_logger(__file__)
 
@@ -21,6 +22,12 @@ class OpenAIAssistant(BaseAIAssistant):
     def name(self) -> str:
         return "openai"
 
+    def _get_error_msg(self, error) -> str:
+        if isinstance(error, openai.error.AuthenticationError):
+            return "Invalid OpenAI API key"
+
+        return super()._get_error_msg(error)
+
     @property
     def title_generation_prompt_template(self) -> str:
         system_template = "You are a helpful assistant that can summerize SQL queries."
@@ -29,7 +36,7 @@ class OpenAIAssistant(BaseAIAssistant):
         )
         human_template = (
             "Generate a concise summary with no more than 8 words for the query below. "
-            "Only respond the title without any explanation or leading words.\n"
+            "Only respond the title without any explanation or final period.\n"
             "```\n{query}\n```\nTitle:"
         )
         human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
@@ -40,7 +47,7 @@ class OpenAIAssistant(BaseAIAssistant):
     def generate_sql_query(self):
         pass
 
-    def generate_title_from_query(
+    def _generate_title_from_query(
         self, query, stream=True, callback_handler=None, user_id=None
     ):
         """Generate title from SQL query using OpenAI's chat model."""

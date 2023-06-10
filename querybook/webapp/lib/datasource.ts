@@ -157,44 +157,37 @@ export function uploadDatasource<T = null>(
 }
 
 /**
- * Stream data from a datasource.
+ * Stream data from a datasource using EventSource
  *
  * @param url The url to stream from
- * @param data The data to send to the url
+ * @param params The data to send to the url
  * @param onStraming Callback when data is received. The data is the accumulated data.
  * @param onStramingEnd Callback when the stream ends
  */
-async function streamDatasource(
+function streamDatasource(
     url: string,
-    data?: Record<string, unknown>,
+    params?: Record<string, unknown>,
     onStraming?: (data: string) => void,
     onStramingEnd?: () => void
 ) {
-    const resp = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json; charset=utf-8',
-        },
-        body: JSON.stringify(data),
-    });
-    if (resp.status !== 200) {
-        console.error(resp);
-        return;
-    }
-    const decoder = new TextDecoder();
-    const reader = resp.body.getReader();
+    const evtSource = new EventSource(`${url}?params=${JSON.stringify(params)}`);
     let dataStream = '';
-    while (true) {
-        const { done, value } = await reader.read();
-        if (done) {
-            onStramingEnd?.();
-            break;
-        }
-        dataStream += decoder.decode(value);
+    evtSource.addEventListener('message', (e) => {
+        dataStream += e.data
         onStraming?.(dataStream);
-    }
-
-    return dataStream;
+    });
+    evtSource.addEventListener('error', (e) => {
+        console.error(e);
+        evtSource.close();
+        onStramingEnd?.();
+        if (e instanceof MessageEvent) {
+            toast.error(e.data);
+        }
+    });
+    evtSource.addEventListener('close', (e) => {
+        evtSource.close();
+        onStramingEnd?.();
+    });
 }
 
 export default {
