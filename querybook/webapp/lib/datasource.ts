@@ -170,10 +170,12 @@ function streamDatasource(
     onStraming?: (data: string) => void,
     onStramingEnd?: () => void
 ) {
-    const evtSource = new EventSource(`${url}?params=${JSON.stringify(params)}`);
+    const evtSource = new EventSource(
+        `${url}?params=${JSON.stringify(params)}`
+    );
     let dataStream = '';
     evtSource.addEventListener('message', (e) => {
-        dataStream += e.data
+        dataStream += e.data;
         onStraming?.(dataStream);
     });
     evtSource.addEventListener('error', (e) => {
