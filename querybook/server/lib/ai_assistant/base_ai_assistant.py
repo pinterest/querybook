@@ -69,18 +69,21 @@ class BaseAIAssistant(ABC):
                 return func(self, *args, **kwargs)
             except Exception as e:
                 LOG.error(e, exc_info=True)
+                err_msg = self._get_error_msg(e)
                 callback_handler = kwargs.get("callback_handler")
-                err_msg = self._get_error_msg(e) or str(e.args[0])
-                callback_handler.stream.send_error(err_msg)
-                return None
+                if callback_handler:
+                    callback_handler.stream.send_error(err_msg)
+                else:
+                    raise Exception(err_msg)
 
         return wrapper
 
     def _get_error_msg(self, error) -> str:
+        """Override this method to return specific error messages for your own assistant."""
         if isinstance(error, ValidationError):
             return error.errors()[0].get("msg")
 
-        return None
+        return str(error.args[0])
 
     @abstractmethod
     def generate_sql_query(
@@ -100,8 +103,8 @@ class BaseAIAssistant(ABC):
 
         Args:
             query (str): SQL query
-            stream (bool, optional): Whether to stream the result. Defaults to False.
-            callback_handler (CallbackHandler, optional): Callback handler to handle the straming result. Defaults to None.
+            stream (bool, optional): Whether to stream the result. Defaults to True.
+            callback_handler (CallbackHandler, optional): Callback handler to handle the straming result. Required if stream is True.
         """
         return self._generate_title_from_query(
             query=query,

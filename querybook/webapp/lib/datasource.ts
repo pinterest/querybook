@@ -167,28 +167,28 @@ export function uploadDatasource<T = null>(
 function streamDatasource(
     url: string,
     params?: Record<string, unknown>,
-    onStraming?: (data: string) => void,
-    onStramingEnd?: () => void
+    onStreaming?: (data: string) => void,
+    onStreamingEnd?: () => void
 ) {
-    const evtSource = new EventSource(
+    const eventSource = new EventSource(
         `${url}?params=${JSON.stringify(params)}`
     );
     let dataStream = '';
-    evtSource.addEventListener('message', (e) => {
+    eventSource.addEventListener('message', (e) => {
         dataStream += e.data;
-        onStraming?.(dataStream);
+        onStreaming?.(dataStream);
     });
-    evtSource.addEventListener('error', (e) => {
+    eventSource.addEventListener('error', (e) => {
         console.error(e);
-        evtSource.close();
-        onStramingEnd?.();
+        eventSource.close();
+        onStreamingEnd?.();
         if (e instanceof MessageEvent) {
             toast.error(e.data);
         }
     });
-    evtSource.addEventListener('close', (e) => {
-        evtSource.close();
-        onStramingEnd?.();
+    eventSource.addEventListener('close', (e) => {
+        eventSource.close();
+        onStreamingEnd?.();
     });
 }
 
