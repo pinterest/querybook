@@ -1,7 +1,7 @@
 import threading
 
 from .all_ai_assistants import get_ai_assistant_class
-from .base_ai_assistant import ThreadedGenerator, ChainStreamHandler
+from .base_ai_assistant import ChainStreamHandler, EventStream
 
 
 class AIAssistant:
@@ -10,12 +10,12 @@ class AIAssistant:
         self._assisant.set_config(config)
 
     def _get_streaming_result(self, fn, kwargs):
-        g = ThreadedGenerator()
-        callback_handler = ChainStreamHandler(g)
+        event_stream = EventStream()
+        callback_handler = ChainStreamHandler(event_stream)
         kwargs["callback_handler"] = callback_handler
         thread = threading.Thread(target=fn, kwargs=kwargs)
         thread.start()
-        return g
+        return event_stream
 
     def generate_title_from_query(self, query, user_id=None):
         return self._get_streaming_result(
