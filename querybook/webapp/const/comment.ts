@@ -1,5 +1,7 @@
 import * as DraftJs from 'draft-js';
 
+import { CellCommentResource, TableCommentResource } from 'resource/comment';
+
 export interface IComment {
     id: number;
     text: DraftJs.ContentState;
@@ -8,10 +10,9 @@ export interface IComment {
     updated_at: number;
 
     parent_commment_id?: number;
-    child_comments?: IComment[];
-    child_comment_count?: number;
+    child_comment_ids?: number[];
 
-    reactions?: IReaction[];
+    reactions: IReaction[];
 }
 
 export interface IReaction {
@@ -19,3 +20,18 @@ export interface IReaction {
     reaction: string;
     uid: number;
 }
+
+export enum CommentEntityType {
+    CELL = 'cell',
+    TABLE = 'table',
+}
+
+export const commentResourceByEntityType = {
+    [CommentEntityType.CELL]: CellCommentResource,
+    [CommentEntityType.TABLE]: TableCommentResource,
+};
+
+export const commentStateKeyByEntityType = {
+    [CommentEntityType.CELL]: 'cellIdToCommentIds',
+    [CommentEntityType.TABLE]: 'tableIdToCommentIds',
+};

@@ -11,8 +11,8 @@ def get_comment_by_id(comment_id: int, session=None):
 @with_session
 def get_all_comment_data_dict_by_id(comment_id: int, session=None) -> CommentDict:
     comment = Comment.get(id=comment_id, session=session).order_by(Comment.created_at)
-    child_comment_count = (
-        session.query(Comment).filter(Comment.parent_comment_id == comment_id).count()
+    child_comments = session.query(Comment).filter(
+        Comment.parent_comment_id == comment_id
     )
     reactions = (
         session.query(CommentReaction)
@@ -21,7 +21,9 @@ def get_all_comment_data_dict_by_id(comment_id: int, session=None) -> CommentDic
     )
 
     comment_dict = comment.to_dict()
-    comment_dict["child_comment_count"] = child_comment_count
+    comment_dict["child_comment_ids"] = [
+        child_comment.id for child_comment in child_comments
+    ]
     comment_dict["reactions"] = [reaction.to_dict() for reaction in reactions]
 
     return comment_dict

@@ -1,250 +1,84 @@
 import { produce } from 'immer';
 
+import { commentStateKeyByEntityType, IComment } from 'const/comment';
+
 import { CommentAction, ICommentState } from './types';
 
 const initialState: ICommentState = {
-    cellIdToComment: {},
-    tableIdToComment: {},
+    cellIdToCommentIds: {},
+    tableIdToCommentIds: {},
+    commentsById: {},
 };
 
 function commentReducer(state = initialState, action: CommentAction) {
     return produce(state, (draft) => {
         switch (action.type) {
-            case '@@comment/RECEIVE_COMMENTS_BY_CELL': {
-                const { cellId, comments } = action.payload;
+            case '@@comment/RECEIVE_COMMENTS': {
+                const { comments } = action.payload;
 
-                draft.cellIdToComment[cellId] = comments;
-                return;
-            }
-            case '@@comment/RECEIVE_COMMENTS_BY_TABLE': {
-                const { tableId, comments } = action.payload;
-
-                draft.tableIdToComment[tableId] = comments;
-
-                return;
-            }
-            case '@@comment/RECEIVE_COMMENT_BY_CELL': {
-                const { cellId, comment: newComment } = action.payload;
-                draft.cellIdToComment[cellId] = draft.cellIdToComment[
-                    cellId
-                ].filter((comment) =>
-                    comment.id === newComment.id ? newComment : comment
+                const receivedComments: Record<number, IComment> = {};
+                comments.forEach(
+                    (comment: IComment) =>
+                        (receivedComments[comment.id] = comment)
                 );
 
+                draft.commentsById = {
+                    ...draft.commentsById,
+                    ...receivedComments,
+                };
                 return;
             }
-
-            case '@@comment/RECEIVE_COMMENT_BY_TABLE': {
-                const { tableId, comment: newComment } = action.payload;
-                draft.tableIdToComment[tableId] = draft.tableIdToComment[
-                    tableId
-                ].map((comment) =>
-                    comment.id === newComment.id ? newComment : comment
-                );
+            case '@@comment/RECEIVE_NEW_CHILD_COMMENT_ID': {
+                const { parentCommentId, childCommentId } = action.payload;
+                draft.commentsById[parentCommentId].child_comment_ids = [
+                    ...draft.commentsById[parentCommentId].child_comment_ids,
+                    childCommentId,
+                ];
 
                 return;
             }
-            case '@@comment/RECEIVE_CHILD_COMMENT_BY_CELL': {
+            case '@@comment/RECEIVE_REACTION_BY_COMMENT_ID': {
+                const { commentId, reaction } = action.payload;
+
+                draft.commentsById[commentId].reactions = [
+                    ...draft.commentsById[commentId].reactions,
+                    reaction,
+                ];
+                return;
+            }
+            case '@@comment/REMOVE_REACTION_BY_COMMENT_ID': {
+                const { commentId, reactionId } = action.payload;
+
+                draft.commentsById[commentId].reactions = draft.commentsById[
+                    commentId
+                ].reactions.filter((reaction) => reaction.id !== reactionId);
+                return;
+            }
+            case '@@comment/RECEIVE_COMMENT_IDS_BY_ENTITY_ID': {
+                const { entityType, entityId, commentIds } = action.payload;
+
+                const draftIdToCommentIds =
+                    draft[commentStateKeyByEntityType[entityType]];
+
+                draftIdToCommentIds[entityId] = [
+                    ...draftIdToCommentIds[entityId],
+                    ...commentIds,
+                ];
+                return;
+            }
+            case '@@comment/REMOVE_COMMENT_BY_ENTITY_ID': {
                 const {
-                    cellId,
-                    parentCommentId,
-                    comment: childComment,
+                    entityType,
+                    entityId,
+                    commentId: removedCommentId,
                 } = action.payload;
-                draft.cellIdToComment[cellId] = draft.cellIdToComment[
-                    cellId
-                ].map((comment) => {
-                    if (comment.id !== parentCommentId) {
-                        return comment;
-                    }
-                    const updatedChildren = (comment.child_comments || []).map(
-                        (existingChildren) =>
-                            existingChildren.id === childComment.id
-                                ? childComment
-                                : existingChildren
-                    );
-                    return { ...comment, child_comments: updatedChildren };
-                });
 
-                return;
-            }
-            case '@@comment/RECEIVE_CHILD_COMMENT_BY_TABLE': {
-                const {
-                    tableId,
-                    parentCommentId,
-                    comment: childComment,
-                } = action.payload;
-                draft.tableIdToComment[tableId] = draft.tableIdToComment[
-                    tableId
-                ].map((comment) => {
-                    if (comment.id !== parentCommentId) {
-                        return comment;
-                    }
-                    const updatedChildren = (comment.child_comments || []).map(
-                        (existingChildren) =>
-                            existingChildren.id === childComment.id
-                                ? childComment
-                                : existingChildren
-                    );
-                    return { ...comment, child_comments: updatedChildren };
-                });
+                const draftIdToCommentIds =
+                    draft[commentStateKeyByEntityType[entityType]];
 
-                return;
-            }
-            case '@@comment/RECEIVE_CHILD_COMMENTS_BY_CELL': {
-                const {
-                    cellId,
-                    parentCommentId,
-                    comments: childComments,
-                } = action.payload;
-                draft.cellIdToComment[cellId] = draft.cellIdToComment[
-                    cellId
-                ].map((comment) =>
-                    comment.id !== parentCommentId
-                        ? comment
-                        : {
-                              ...comment,
-                              child_comment_count: childComments.length,
-                              child_comments: childComments,
-                          }
-                );
-
-                return;
-            }
-            case '@@comment/RECEIVE_CHILD_COMMENTS_BY_TABLE': {
-                const {
-                    tableId,
-                    parentCommentId,
-                    comments: childComments,
-                } = action.payload;
-                draft.tableIdToComment[tableId] = draft.tableIdToComment[
-                    tableId
-                ].map((comment) =>
-                    comment.id !== parentCommentId
-                        ? comment
-                        : {
-                              ...comment,
-                              child_comment_count: childComments.length,
-                              child_comments: childComments,
-                          }
-                );
-
-                return;
-            }
-            case '@@comment/REMOVE_COMMENT_BY_CELL': {
-                const { cellId, commentId } = action.payload;
-
-                draft.cellIdToComment[cellId] = draft.cellIdToComment[
-                    cellId
-                ].filter((comment) => comment.id !== commentId);
-
-                return;
-            }
-            case '@@comment/REMOVE_COMMENT_BY_TABLE': {
-                const { tableId, commentId } = action.payload;
-
-                draft.tableIdToComment[tableId] = draft.tableIdToComment[
-                    tableId
-                ].filter((comment) => comment.id !== commentId);
-
-                return;
-            }
-            case '@@comment/RECEIVE_REACTIONS_BY_CELL': {
-                const { cellId, commentId, reactions } = action.payload;
-
-                draft.cellIdToComment[cellId] = draft.cellIdToComment[
-                    cellId
-                ].map((comment) =>
-                    comment.id !== commentId
-                        ? comment
-                        : { ...comment, reactions }
-                );
-
-                return;
-            }
-            case '@@comment/RECEIVE_REACTIONS_BY_TABLE': {
-                const { tableId, commentId, reactions } = action.payload;
-
-                draft.tableIdToComment[tableId] = draft.tableIdToComment[
-                    tableId
-                ].map((comment) =>
-                    comment.id !== commentId
-                        ? comment
-                        : { ...comment, reactions }
-                );
-
-                return;
-            }
-            case '@@comment/RECEIVE_REACTION_BY_CELL': {
-                const { cellId, commentId, reaction } = action.payload;
-
-                draft.cellIdToComment[cellId] = draft.cellIdToComment[
-                    cellId
-                ].map((comment) => {
-                    if (comment.id !== commentId) {
-                        return comment;
-                    }
-                    const updatedReactions = (comment.reactions || []).map(
-                        (existingReaction) =>
-                            existingReaction.id === reaction.id
-                                ? reaction
-                                : existingReaction
-                    );
-                    return { ...comment, reactions: updatedReactions };
-                });
-
-                return;
-            }
-            case '@@comment/RECEIVE_REACTION_BY_TABLE': {
-                const { tableId, commentId, reaction } = action.payload;
-
-                draft.tableIdToComment[tableId] = draft.tableIdToComment[
-                    tableId
-                ].map((comment) => {
-                    if (comment.id !== commentId) {
-                        return comment;
-                    }
-                    const updatedReactions = (comment.reactions || []).map(
-                        (existingReaction) =>
-                            existingReaction.id === reaction.id
-                                ? reaction
-                                : existingReaction
-                    );
-                    return { ...comment, reactions: updatedReactions };
-                });
-
-                return;
-            }
-            case '@@comment/REMOVE_REACTION_BY_CELL': {
-                const { cellId, commentId, reactionId } = action.payload;
-
-                draft.cellIdToComment[cellId] = draft.cellIdToComment[
-                    cellId
-                ].map((comment) => {
-                    if (comment.id !== commentId) {
-                        return comment;
-                    }
-                    const updatedReactions = comment.reactions.filter(
-                        (existingReaction) => existingReaction.id !== reactionId
-                    );
-                    return { ...comment, reactions: updatedReactions };
-                });
-
-                return;
-            }
-            case '@@comment/REMOVE_REACTION_BY_TABLE': {
-                const { tableId, commentId, reactionId } = action.payload;
-
-                draft.tableIdToComment[tableId] = draft.tableIdToComment[
-                    tableId
-                ].map((comment) => {
-                    if (comment.id !== commentId) {
-                        return comment;
-                    }
-                    const updatedReactions = comment.reactions.filter(
-                        (existingReaction) => existingReaction.id !== reactionId
-                    );
-                    return { ...comment, reactions: updatedReactions };
-                });
+                draftIdToCommentIds[entityId] = draftIdToCommentIds[
+                    entityId
+                ].filter((commentId) => commentId !== removedCommentId);
 
                 return;
             }

@@ -3,19 +3,17 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
-import { IComment } from 'const/comment';
-import { fromNow } from 'lib/utils/datetime';
 import {
-    createCellChildComment,
-    createCellComment,
-    createTableChildComment,
-    createTableComment,
-    fetchCommentsByCellIfNeeded,
-    fetchCommentsByTableIfNeeded,
-    updateChildCommentByCell,
-    updateChildCommentByTable,
-    updateCommentByCell,
-    updateCommentByTable,
+    CommentEntityType,
+    commentStateKeyByEntityType,
+    IComment,
+} from 'const/comment';
+import {
+    createChildComment,
+    createComment,
+    fetchChildCommentsByParentCommentIdIfNeeded,
+    fetchCommentsByEntityIdIfNeeded,
+    updateComment,
 } from 'redux/comment/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import { IconButton } from 'ui/Button/IconButton';
@@ -26,25 +24,28 @@ import { EmptyText, StyledText } from 'ui/StyledText/StyledText';
 import './Comments.scss';
 
 interface IProps {
-    cellId?: number;
-    tableId?: number;
+    entityType: CommentEntityType;
+    entityId: number;
 }
 
 const emptyCommentValue = DraftJs.ContentState.createFromText('');
-const MAX_THREAD_AVATAR_COUNT = 5;
 
 export const Comments: React.FunctionComponent<IProps> = ({
-    cellId,
-    tableId,
+    entityType,
+    entityId,
 }) => {
     const dispatch: Dispatch = useDispatch();
 
-    const { userInfo, comments } = useSelector((state: IStoreState) => ({
-        userInfo: state.user.myUserInfo,
-        comments: cellId
-            ? state.comment.cellIdToComment[cellId]
-            : state.comment.tableIdToComment[tableId],
-    }));
+    const { userInfo, commentIds, commentsById } = useSelector(
+        (state: IStoreState) => ({
+            userInfo: state.user.myUserInfo,
+            commentIds:
+                state.comment[commentStateKeyByEntityType[entityType]][
+                    entityId
+                ],
+            commentsById: state.comment.commentsById,
+        })
+    );
 
     const [openThreadIds, setOpenThreadIds] = React.useState<Set<number>>(
         new Set()
@@ -57,54 +58,26 @@ export const Comments: React.FunctionComponent<IProps> = ({
         React.useState<number>(null);
 
     const loadComments = React.useCallback(
-        () =>
-            cellId
-                ? dispatch(fetchCommentsByCellIfNeeded(cellId))
-                : dispatch(fetchCommentsByTableIfNeeded(tableId)),
+        () => dispatch(fetchCommentsByEntityIdIfNeeded(entityType, entityId)),
 
-        [cellId, dispatch, tableId]
+        [dispatch, entityId, entityType]
     );
 
-    const createComment = React.useCallback(
+    const handleCreateComment = React.useCallback(
         (text, parentCommentId) => {
             if (parentCommentId) {
-                const createAction = cellId
-                    ? createCellChildComment
-                    : createTableChildComment;
-                dispatch(
-                    createAction(cellId || tableId, parentCommentId, text)
-                );
+                dispatch(createChildComment(parentCommentId, text));
             } else {
-                const createAction = cellId
-                    ? createCellComment
-                    : createTableComment;
-                dispatch(createAction(cellId || tableId, text));
+                dispatch(createComment(entityType, entityId, text));
             }
         },
-        [cellId, dispatch, tableId]
+        [dispatch, entityId, entityType]
     );
     const editComment = React.useCallback(
-        (commentId, text, parentCommentId) => {
-            if (parentCommentId) {
-                const updateAction = cellId
-                    ? updateChildCommentByCell
-                    : updateChildCommentByTable;
-                dispatch(
-                    updateAction(
-                        cellId || tableId,
-                        parentCommentId,
-                        commentId,
-                        text
-                    )
-                );
-            } else {
-                const updateAction = cellId
-                    ? updateCommentByCell
-                    : updateCommentByTable;
-                dispatch(updateAction(cellId || tableId, commentId, text));
-            }
+        (commentId, text) => {
+            dispatch(updateComment(commentId, text));
         },
-        [cellId, dispatch, tableId]
+        [dispatch]
     );
 
     React.useEffect(() => {
@@ -126,18 +99,14 @@ export const Comments: React.FunctionComponent<IProps> = ({
 
     const handleCommentSave = React.useCallback(() => {
         if (editingCommentId) {
-            editComment(
-                editingCommentId,
-                currentComment,
-                editingCommentParentId
-            );
+            editComment(editingCommentId, currentComment);
             setEditingCommentId(null);
         } else {
-            createComment(currentComment, editingCommentParentId);
+            handleCreateComment(currentComment, editingCommentParentId);
         }
         setCurrentComment(emptyCommentValue);
     }, [
-        createComment,
+        handleCreateComment,
         currentComment,
         editComment,
         editingCommentId,
@@ -156,64 +125,58 @@ export const Comments: React.FunctionComponent<IProps> = ({
         />
     );
 
-    const handleOpenThread = React.useCallback((threadId: number) => {
-        setOpenThreadIds((curr) => new Set([...curr, threadId]));
-    }, []);
+    const handleOpenThread = React.useCallback(
+        (parentCommentId: number, childCommentIds: number[] = []) => {
+            dispatch(
+                fetchChildCommentsByParentCommentIdIfNeeded(
+                    parentCommentId,
+                    childCommentIds
+                )
+            );
+            setOpenThreadIds((curr) => new Set([...curr, parentCommentId]));
+        },
+        [dispatch]
+    );
+
+    const loadingCommentDOM = React.useMemo(
+        () => (
+            <div className="Comment">
+                <EmptyText>Loading Comment</EmptyText>
+            </div>
+        ),
+        []
+    );
 
     const renderThreadCommentDOM = (comment: IComment) => {
         if (openThreadIds.has(comment.id)) {
-            return comment.child_comments.map((comment) =>
-                renderFlatCommentDOM(comment, true)
+            return comment.child_comment_ids?.map((commentId) =>
+                commentsById[commentId]
+                    ? renderFlatCommentDOM(commentsById[commentId], true)
+                    : loadingCommentDOM
             );
         }
-        const uids = Array.from(
-            new Set(comment.child_comments.map((comment) => comment.uid))
-        );
+
         return (
             <>
                 {renderFlatCommentDOM(comment, false)}
                 <div
                     className="CommentThread mt12"
-                    onClick={() => handleOpenThread(comment.id)}
+                    onClick={() =>
+                        handleOpenThread(comment.id, comment.child_comment_ids)
+                    }
                 >
                     <div className="ClosedCommentThread flex-row">
-                        <div className="flex-row mr8">
-                            {uids
-                                .slice(0, MAX_THREAD_AVATAR_COUNT)
-                                .map((uid) => (
-                                    <UserAvatar
-                                        key={`thread-avatar-${uid}-${comment.id}`}
-                                        uid={uid}
-                                        tiny
-                                    />
-                                ))}
-                            {uids.length - 1 >= MAX_THREAD_AVATAR_COUNT ? (
-                                <div className="NumberAvatar">
-                                    {uids.length - MAX_THREAD_AVATAR_COUNT}
-                                </div>
-                            ) : null}
-                        </div>
                         <StyledText
                             className="ThreadCount mr8"
                             size="xsmall"
                             color="accent"
                             cursor="default"
                         >
-                            {comments.length}{' '}
-                            {comments.length === 1 ? 'Reply' : 'Replies'}
+                            {comment.child_comment_ids.length}{' '}
+                            {comment.child_comment_ids.length === 1
+                                ? 'Reply'
+                                : 'Replies'}
                         </StyledText>
-                        <span className="LastReplyDate">
-                            <StyledText
-                                size="xsmall"
-                                color="lightest"
-                                cursor="default"
-                            >
-                                Last reply{' '}
-                                {fromNow(
-                                    comments[comments.length - 1].updated_at
-                                )}
-                            </StyledText>
-                        </span>
                         <span className="HoverText">
                             <StyledText
                                 size="xsmall"
@@ -230,10 +193,10 @@ export const Comments: React.FunctionComponent<IProps> = ({
     };
 
     const renderCommentDOM = () =>
-        comments.map((comment: IComment) =>
-            comment.child_comments
-                ? renderThreadCommentDOM(comment)
-                : renderFlatCommentDOM(comment, false)
+        commentIds.map((commentId: number) =>
+            commentsById[commentId]?.child_comment_ids?.length
+                ? renderThreadCommentDOM(commentsById[commentId])
+                : renderFlatCommentDOM(commentsById[commentId], false)
         );
 
     const renderEditingCommentWarning = () => (
@@ -262,7 +225,7 @@ export const Comments: React.FunctionComponent<IProps> = ({
     return (
         <div className="Comments">
             <div className="Comments-list p16">
-                {comments.length ? (
+                {commentIds.length ? (
                     renderCommentDOM()
                 ) : (
                     <EmptyText>No Comments</EmptyText>
@@ -276,7 +239,7 @@ export const Comments: React.FunctionComponent<IProps> = ({
                     onChange={(editorState) =>
                         setCurrentComment(editorState.getCurrentContent())
                     }
-                    placeholder={comments.length ? 'Reply' : 'Comment'}
+                    placeholder={commentIds.length ? 'Reply' : 'Comment'}
                 />
                 <IconButton
                     icon="Send"
