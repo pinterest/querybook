@@ -7,10 +7,22 @@ from querybook.server.const.datasources import (
 )
 
 from logic import comment as logic
+from querybook.server.logic.datadoc_permission import assert_can_read
+from querybook.server.models.datadoc import DataDocDataCell
 
 
 class CommentDoesNotExist(Exception):
     pass
+
+
+@with_session
+def assert_can_read_datadoc(data_cell_id, session=None):
+    data_cell = (
+        session.query(DataDocDataCell)
+        .filter(DataDocDataCell.data_cell_id == data_cell_id)
+        .first()
+    )
+    assert_can_read(data_cell.data_doc_id)
 
 
 @with_session

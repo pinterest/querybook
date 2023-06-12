@@ -3,9 +3,9 @@ from app.datasource import register
 from logic import comment as logic
 from querybook.server.app.auth.permission import verify_data_table_permission
 from querybook.server.app.db import DBSession
-from querybook.server.logic.comment_permission import assert_can_edit_and_delete
-from querybook.server.logic.datadoc_permission import (
-    assert_can_read as assert_can_read_datadoc,
+from querybook.server.logic.comment_permission import (
+    assert_can_edit_and_delete,
+    assert_can_read_datadoc,
 )
 
 
@@ -29,9 +29,9 @@ def get_comments_by_table_id(data_table_id: int):
     "/data_cell/<int:data_cell_id>/comment/",
     methods=["POST"],
 )
-def add_comment_to_cell(data_cell_id: int, datadoc_id: int, text):
+def add_comment_to_cell(data_cell_id: int, int, text):
     with DBSession() as session:
-        assert_can_read_datadoc(datadoc_id=datadoc_id, session=session)
+        assert_can_read_datadoc(data_cell_id=data_cell_id, session=session)
         return logic.add_comment_to_data_cell(
             data_cell_id=data_cell_id, uid=current_user.id, text=text
         )
