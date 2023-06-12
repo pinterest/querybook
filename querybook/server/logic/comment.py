@@ -60,9 +60,10 @@ def add_comment_to_data_cell(data_cell_id: int, uid: int, text, session=None):
     comment = Comment.create({"created_by": uid, "text": text}, session=session)
     DataCellComment.create(
         {"data_cell_id": data_cell_id, "comment_id": comment.id},
-        commit=True,
+        commit=False,
         session=session,
     )
+    session.commit()
     return comment
 
 
@@ -71,9 +72,10 @@ def add_comment_to_data_table(data_table_id: int, uid: int, text, session=None):
     comment = Comment.create({"created_by": uid, "text": text}, session=session)
     DataTableComment.create(
         {"data_table_id": data_table_id, "comment_id": comment.id},
-        commit=True,
+        commit=False,
         session=session,
     )
+    session.commit()
     return comment
 
 
@@ -91,7 +93,6 @@ def get_thread_comment(parent_comment_id: int, uid: int, text, session=None):
 def add_thread_comment(parent_comment_id: int, uid: int, text, session=None):
     comment = Comment.create(
         {"created_by": uid, "text": text, "parent_comment_id": parent_comment_id},
-        commit=True,
         session=session,
     )
     return comment
@@ -102,7 +103,6 @@ def edit_comment(comment_id: int, text, session=None):
     comment = Comment.update(
         id=comment_id,
         text=text,
-        commit=True,
         session=session,
     )
     return get_all_comment_data_dict_by_id(comment.id)
@@ -121,7 +121,6 @@ def remove_comment(comment_id: int, session=None):
 def add_reaction(comment_id: int, reaction: str, session=None):
     reaction = CommentReaction.create(
         {"comment_id": comment_id, "reaction": reaction},
-        commit=True,
         session=session,
     )
     return reaction
