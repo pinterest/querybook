@@ -74,7 +74,7 @@ class BaseAIAssistant(ABC):
                 if callback_handler:
                     callback_handler.stream.send_error(err_msg)
                 else:
-                    raise Exception(err_msg)
+                    raise Exception(err_msg) from e
 
         return wrapper
 
