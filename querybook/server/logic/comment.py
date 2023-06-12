@@ -57,7 +57,9 @@ def get_comments_by_data_table_id(data_table_id: int, session=None):
 
 @with_session
 def add_comment_to_data_cell(data_cell_id: int, uid: int, text, session=None):
-    comment = Comment.create({"created_by": uid, "text": text}, session=session)
+    comment = Comment.create(
+        {"created_by": uid, "text": text}, commit=False, session=session
+    )
     DataCellComment.create(
         {"data_cell_id": data_cell_id, "comment_id": comment.id},
         commit=False,
@@ -69,7 +71,9 @@ def add_comment_to_data_cell(data_cell_id: int, uid: int, text, session=None):
 
 @with_session
 def add_comment_to_data_table(data_table_id: int, uid: int, text, session=None):
-    comment = Comment.create({"created_by": uid, "text": text}, session=session)
+    comment = Comment.create(
+        {"created_by": uid, "text": text}, commit=False, session=session
+    )
     DataTableComment.create(
         {"data_table_id": data_table_id, "comment_id": comment.id},
         commit=False,
@@ -80,7 +84,7 @@ def add_comment_to_data_table(data_table_id: int, uid: int, text, session=None):
 
 
 @with_session
-def get_thread_comment(parent_comment_id: int, uid: int, text, session=None):
+def get_thread_comment(parent_comment_id: int, text, session=None):
     return (
         session.query(Comment)
         .filter(Comment.parent_comment_id == parent_comment_id)

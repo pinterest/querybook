@@ -53,9 +53,7 @@ def add_comment_to_table(data_table_id: int, text):
     methods=["POST"],
 )
 def get_thread_comment(parent_comment_id: int, text):
-    return logic.get_thread_comment(
-        parent_comment_id=parent_comment_id, uid=current_user.id, text=text
-    )
+    return logic.get_thread_comment(parent_comment_id=parent_comment_id, text=text)
 
 
 @register(
