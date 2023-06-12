@@ -90,6 +90,46 @@ function commentReducer(state = initialState, action: CommentAction) {
 
                 return;
             }
+            case '@@comment/RECEIVE_CHILD_COMMENTS_BY_CELL': {
+                const {
+                    cellId,
+                    parentCommentId,
+                    comments: childComments,
+                } = action.payload;
+                draft.cellIdToComment[cellId] = draft.cellIdToComment[
+                    cellId
+                ].map((comment) =>
+                    comment.id !== parentCommentId
+                        ? comment
+                        : {
+                              ...comment,
+                              child_comment_count: childComments.length,
+                              child_comments: childComments,
+                          }
+                );
+
+                return;
+            }
+            case '@@comment/RECEIVE_CHILD_COMMENTS_BY_TABLE': {
+                const {
+                    tableId,
+                    parentCommentId,
+                    comments: childComments,
+                } = action.payload;
+                draft.tableIdToComment[tableId] = draft.tableIdToComment[
+                    tableId
+                ].map((comment) =>
+                    comment.id !== parentCommentId
+                        ? comment
+                        : {
+                              ...comment,
+                              child_comment_count: childComments.length,
+                              child_comments: childComments,
+                          }
+                );
+
+                return;
+            }
             case '@@comment/REMOVE_COMMENT_BY_CELL': {
                 const { cellId, commentId } = action.payload;
 
@@ -105,6 +145,32 @@ function commentReducer(state = initialState, action: CommentAction) {
                 draft.tableIdToComment[tableId] = draft.tableIdToComment[
                     tableId
                 ].filter((comment) => comment.id !== commentId);
+
+                return;
+            }
+            case '@@comment/RECEIVE_REACTIONS_BY_CELL': {
+                const { cellId, commentId, reactions } = action.payload;
+
+                draft.cellIdToComment[cellId] = draft.cellIdToComment[
+                    cellId
+                ].map((comment) =>
+                    comment.id !== commentId
+                        ? comment
+                        : { ...comment, reactions }
+                );
+
+                return;
+            }
+            case '@@comment/RECEIVE_REACTIONS_BY_TABLE': {
+                const { tableId, commentId, reactions } = action.payload;
+
+                draft.tableIdToComment[tableId] = draft.tableIdToComment[
+                    tableId
+                ].map((comment) =>
+                    comment.id !== commentId
+                        ? comment
+                        : { ...comment, reactions }
+                );
 
                 return;
             }

@@ -8,6 +8,7 @@ export interface IComment {
     updated_at: number;
 
     child_comments?: IComment[];
+    child_comment_count?: number;
 
     reactions?: IReaction[];
 }

@@ -58,7 +58,7 @@ export function createCellChildComment(
 ): ThunkResult<Promise<IComment>> {
     return async (dispatch) => {
         try {
-            const { data } = await CommentResource.create_thread(
+            const { data } = await CommentResource.create(
                 parentCommentId,
                 text
             );
@@ -122,7 +122,7 @@ export function createTableChildComment(
 ): ThunkResult<Promise<IComment>> {
     return async (dispatch) => {
         try {
-            const { data } = await CommentResource.create_thread(
+            const { data } = await CommentResource.create(
                 parentCommentId,
                 text
             );
@@ -217,6 +217,34 @@ export function updateCommentByTable(
     };
 }
 
+export function fetchChildCommentByCell(
+    cellId: number,
+    parentCommentId: number
+): ThunkResult<Promise<IComment[]>> {
+    return async (dispatch) => {
+        const { data } = await CommentResource.get(parentCommentId);
+        dispatch({
+            type: '@@comment/RECEIVE_CHILD_COMMENTS_BY_CELL',
+            payload: { cellId, parentCommentId, comments: data },
+        });
+        return data;
+    };
+}
+
+export function fetchChildCommentByTable(
+    tableId: number,
+    parentCommentId: number
+): ThunkResult<Promise<IComment[]>> {
+    return async (dispatch) => {
+        const { data } = await CommentResource.get(parentCommentId);
+        dispatch({
+            type: '@@comment/RECEIVE_CHILD_COMMENTS_BY_TABLE',
+            payload: { tableId, parentCommentId, comments: data },
+        });
+        return data;
+    };
+}
+
 export function updateChildCommentByCell(
     cellId: number,
     parentCommentId: number,
@@ -264,6 +292,34 @@ export function updateChildCommentByTable(
         });
 
         return newComment;
+    };
+}
+
+export function fetchReactionsByCell(
+    cellId: number,
+    commentId: number
+): ThunkResult<Promise<IReaction[]>> {
+    return async (dispatch) => {
+        const { data } = await ReactionResource.get(commentId);
+        dispatch({
+            type: '@@comment/RECEIVE_REACTIONS_BY_CELL',
+            payload: { cellId, commentId, reactions: data },
+        });
+        return data;
+    };
+}
+
+export function fetchReactionsByTable(
+    tableId: number,
+    commentId: number
+): ThunkResult<Promise<IReaction[]>> {
+    return async (dispatch) => {
+        const { data } = await ReactionResource.get(commentId);
+        dispatch({
+            type: '@@comment/RECEIVE_REACTIONS_BY_TABLE',
+            payload: { tableId, commentId, reactions: data },
+        });
+        return data;
     };
 }
 

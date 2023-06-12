@@ -51,6 +51,22 @@ export interface IRecieveChildCommentByTable extends Action {
         comment: IComment;
     };
 }
+export interface IRecieveChildCommentsByCell extends Action {
+    type: '@@comment/RECEIVE_CHILD_COMMENTS_BY_CELL';
+    payload: {
+        cellId: number;
+        parentCommentId: number;
+        comments: IComment[];
+    };
+}
+export interface IRecieveChildCommentsByTable extends Action {
+    type: '@@comment/RECEIVE_CHILD_COMMENTS_BY_TABLE';
+    payload: {
+        tableId: number;
+        parentCommentId: number;
+        comments: IComment[];
+    };
+}
 
 export interface IRemoveCommentByCell extends Action {
     type: '@@comment/REMOVE_COMMENT_BY_CELL';
@@ -68,6 +84,23 @@ export interface IRemoveCommentByTable extends Action {
     };
 }
 
+export interface IRecieveReactionsByCell extends Action {
+    type: '@@comment/RECEIVE_REACTIONS_BY_CELL';
+    payload: {
+        cellId: number;
+        commentId: number;
+        reactions: IReaction[];
+    };
+}
+
+export interface IRecieveReactionsByTable extends Action {
+    type: '@@comment/RECEIVE_REACTIONS_BY_TABLE';
+    payload: {
+        tableId: number;
+        commentId: number;
+        reactions: IReaction[];
+    };
+}
 export interface IRecieveReactionByCell extends Action {
     type: '@@comment/RECEIVE_REACTION_BY_CELL';
     payload: {
@@ -110,8 +143,12 @@ export type CommentAction =
     | IRecieveCommentByTable
     | IRecieveChildCommentByCell
     | IRecieveChildCommentByTable
+    | IRecieveChildCommentsByCell
+    | IRecieveChildCommentsByTable
     | IRemoveCommentByCell
     | IRemoveCommentByTable
+    | IRecieveReactionsByCell
+    | IRecieveReactionsByTable
     | IRecieveReactionByCell
     | IRecieveReactionByTable
     | IRemoveReactionByCell

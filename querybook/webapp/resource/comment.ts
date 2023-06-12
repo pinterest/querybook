@@ -4,8 +4,10 @@ import { IComment, IReaction } from 'const/comment';
 import ds from 'lib/datasource';
 
 export const CommentResource = {
-    create_thread: (parentCommentId: number, text: ContentState) =>
-        ds.save<IComment>(`/comment/thread/${parentCommentId}/`, { text }),
+    get: (parentCommentId: number) =>
+        ds.fetch<IComment[]>(`/comment/${parentCommentId}/thread/`),
+    create: (parentCommentId: number, text: ContentState) =>
+        ds.save<IComment>(`/comment/${parentCommentId}/thread/`, { text }),
     update: (commentId: number, text: IComment) =>
         ds.update<IComment>(`/comment/${commentId}/`, {
             text,
@@ -15,19 +17,21 @@ export const CommentResource = {
 
 export const CellCommentResource = {
     get: (cellId: number) =>
-        ds.fetch<IComment[]>(`/comment/data_cell/${cellId}/`),
+        ds.fetch<IComment[]>(`/data_cell/${cellId}/comment/`),
     create: (cellId: number, text: ContentState) =>
-        ds.save<IComment>(`/comment/data_cell/${cellId}/`, { text }),
+        ds.save<IComment>(`/data_cell/${cellId}/comment/`, { text }),
 };
 
 export const TableCommentResource = {
     get: (tableId: number) =>
-        ds.fetch<IComment[]>(`/comment/data_table/${tableId}/`),
+        ds.fetch<IComment[]>(`/data_table/${tableId}/comment/`),
     create: (tableId: number, text: ContentState) =>
-        ds.save<IComment>(`/comment/data_table/${tableId}/`, { text }),
+        ds.save<IComment>(`/data_table/${tableId}/comment/`, { text }),
 };
 
 export const ReactionResource = {
+    get: (commentId: number) =>
+        ds.fetch<IReaction[]>(`/comment/${commentId}/reaction/`),
     create: (commentId: number, reaction: string) =>
         ds.save<IReaction>(`/comment/${commentId}/reaction/`, { reaction }),
     delete: (reactionId: number) =>
