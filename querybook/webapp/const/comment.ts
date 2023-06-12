@@ -7,6 +7,7 @@ export interface IComment {
     created_at: number;
     updated_at: number;
 
+    parent_commment_id?: number;
     child_comments?: IComment[];
     child_comment_count?: number;
 

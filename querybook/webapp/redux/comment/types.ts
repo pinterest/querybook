@@ -162,6 +162,7 @@ export type ThunkResult<R> = ThunkAction<
 >;
 
 export interface ICommentState {
-    cellIdToComment: Record<number, IComment[]>;
-    tableIdToComment: Record<number, IComment[]>;
+    cellIdToCommentIds: Record<number, number[]>;
+    tableIdToCommentIds: Record<number, number[]>;
+    commentsById: Record<number, IComment>;
 }
