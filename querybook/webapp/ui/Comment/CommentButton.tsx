@@ -20,7 +20,6 @@ export const CommentButton: React.FunctionComponent<IProps> = ({
     return (
         <>
             <SoftButton
-                key={'button' + entityType + entityId}
                 className="block-crud-button"
                 onClick={() => setShowComments((curr) => !curr)}
                 icon="MessageSquare"
@@ -30,18 +29,13 @@ export const CommentButton: React.FunctionComponent<IProps> = ({
             />
             {showComments ? (
                 <Popover
-                    key={'popover' + entityType + entityId}
                     onHide={() => setShowComments(false)}
                     anchor={commentButtonRef.current}
                     layout={['bottom', 'right']}
                     hideArrow
                     noPadding
                 >
-                    <Comments
-                        key={'comment' + entityType + entityId}
-                        entityType={entityType}
-                        entityId={entityId}
-                    />
+                    <Comments entityType={entityType} entityId={entityId} />
                 </Popover>
             ) : null}
         </>

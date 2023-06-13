@@ -72,7 +72,6 @@ export type AllAction =
     | BoardAction
     | GlobalStateAction
     | TagAction
-    | CommentAction
     | ScheduledDataDocAction
     | CommentAction;
 
