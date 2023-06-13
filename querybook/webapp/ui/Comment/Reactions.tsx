@@ -4,10 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { IReaction } from 'const/comment';
 import {
-    addReactionForCellComment,
-    addReactionForTableComment,
-    deleteReactionForCellComment,
-    deleteReactionForTableComment,
+    addReactionByCommentId,
+    deleteReactionByCommentId,
 } from 'redux/comment/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import { StyledText } from 'ui/StyledText/StyledText';
@@ -15,15 +13,11 @@ import { StyledText } from 'ui/StyledText/StyledText';
 import { AddReactionButton } from './AddReactionButton';
 
 interface IProps {
-    cellId?: number;
-    tableId?: number;
     commentId: number;
     reactions: IReaction[];
 }
 
 export const Reactions: React.FunctionComponent<IProps> = ({
-    cellId,
-    tableId,
     commentId,
     reactions: reactionsProp,
 }) => {
@@ -38,7 +32,7 @@ export const Reactions: React.FunctionComponent<IProps> = ({
         reactions.forEach((reaction) => {
             formattedReactions[reaction.reaction] =
                 formattedReactions[reaction.reaction] ?? [];
-            formattedReactions[reaction.reaction].push(reaction.uid);
+            formattedReactions[reaction.reaction].push(reaction.created_by);
         });
         return formattedReactions;
     }, []);
@@ -49,29 +43,26 @@ export const Reactions: React.FunctionComponent<IProps> = ({
         }
     }, [formatReactions, reactionsProp]);
 
-    // TODO: refactor to custom hook + add support for child comment reaction
     const addEmoji = React.useCallback(
-        (emoji) =>
-            cellId
-                ? dispatch(addReactionForCellComment(cellId, commentId, emoji))
-                : dispatch(
-                      addReactionForTableComment(tableId, commentId, emoji)
-                  ),
-        [cellId, commentId, dispatch, tableId]
+        (emoji: string) => dispatch(addReactionByCommentId(commentId, emoji)),
+        [commentId, dispatch]
     );
     const deleteEmoji = React.useCallback(
-        (emoji) =>
-            cellId
-                ? dispatch(
-                      deleteReactionForCellComment(cellId, commentId, emoji)
-                  )
-                : dispatch(
-                      deleteReactionForTableComment(tableId, commentId, emoji)
-                  ),
-        [cellId, commentId, dispatch, tableId]
+        (emoji, uid) => {
+            const reactionToDelete = reactionsProp.find(
+                (reaction) =>
+                    reaction.reaction === emoji && reaction.created_by === uid
+            );
+            if (reactionToDelete) {
+                dispatch(
+                    deleteReactionByCommentId(commentId, reactionToDelete.id)
+                );
+            }
+        },
+        [commentId, dispatch, reactionsProp]
     );
 
-    const handleReactionClick = (reaction: string) => {
+    const handleReactionClick = (reaction: string, uid: number) => {
         // TODO: make this work (with backend)
         const uidIdx = uidsByReaction[reaction].findIndex(
             (uid) => uid === userInfo.uid
@@ -79,7 +70,7 @@ export const Reactions: React.FunctionComponent<IProps> = ({
         if (uidIdx === -1) {
             addEmoji(reaction);
         } else {
-            deleteEmoji(reaction);
+            deleteEmoji(reaction, uid);
         }
     };
 
@@ -97,7 +88,7 @@ export const Reactions: React.FunctionComponent<IProps> = ({
                     <div
                         className={reactionClassnames}
                         key={emoji}
-                        onClick={() => handleReactionClick(emoji)}
+                        onClick={() => handleReactionClick(emoji, userInfo.uid)}
                     >
                         <StyledText size="smedium">{emoji}</StyledText>
                         <StyledText
@@ -115,8 +106,6 @@ export const Reactions: React.FunctionComponent<IProps> = ({
             <AddReactionButton
                 popoverLayout={['bottom', 'left']}
                 tooltipPos="right"
-                cellId={cellId}
-                tableId={tableId}
                 commentId={commentId}
             />
         </div>

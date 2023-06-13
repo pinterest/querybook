@@ -1,32 +1,39 @@
-import type { ContentState } from 'draft-js';
+import { ContentState } from 'draft-js';
 
-import { IComment, IReaction } from 'const/comment';
+import { ICommentRaw, IReaction } from 'const/comment';
 import ds from 'lib/datasource';
+import { convertIfContentStateToHTML } from 'lib/richtext/serialize';
 
 export const CommentResource = {
     get: (parentCommentId: number) =>
-        ds.fetch<IComment[]>(`/comment/${parentCommentId}/thread/`),
+        ds.fetch<ICommentRaw[]>(`/comment/${parentCommentId}/thread/`),
     create: (parentCommentId: number, text: ContentState) =>
-        ds.save<IComment>(`/comment/${parentCommentId}/thread/`, { text }),
-    update: (commentId: number, text: IComment) =>
-        ds.update<IComment>(`/comment/${commentId}/`, {
-            text,
+        ds.save<ICommentRaw>(`/comment/${parentCommentId}/thread/`, {
+            text: convertIfContentStateToHTML(text),
+        }),
+    update: (commentId: number, text: ContentState) =>
+        ds.update<ICommentRaw>(`/comment/${commentId}/`, {
+            text: convertIfContentStateToHTML(text),
         }),
     delete: (commentId: number) => ds.delete(`/comment/${commentId}`),
 };
 
 export const CellCommentResource = {
     get: (cellId: number) =>
-        ds.fetch<IComment[]>(`/data_cell/${cellId}/comment/`),
+        ds.fetch<ICommentRaw[]>(`/data_cell/${cellId}/comment/`),
     create: (cellId: number, text: ContentState) =>
-        ds.save<IComment>(`/data_cell/${cellId}/comment/`, { text }),
+        ds.save<ICommentRaw>(`/data_cell/${cellId}/comment/`, {
+            text: convertIfContentStateToHTML(text),
+        }),
 };
 
 export const TableCommentResource = {
     get: (tableId: number) =>
-        ds.fetch<IComment[]>(`/data_table/${tableId}/comment/`),
+        ds.fetch<ICommentRaw[]>(`/data_table/${tableId}/comment/`),
     create: (tableId: number, text: ContentState) =>
-        ds.save<IComment>(`/data_table/${tableId}/comment/`, { text }),
+        ds.save<ICommentRaw>(`/data_table/${tableId}/comment/`, {
+            text: convertIfContentStateToHTML(text),
+        }),
 };
 
 export const ReactionResource = {

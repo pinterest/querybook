@@ -1,6 +1,11 @@
 import { produce } from 'immer';
 
-import { commentStateKeyByEntityType, IComment } from 'const/comment';
+import {
+    commentStateKeyByEntityType,
+    IComment,
+    ICommentRaw,
+} from 'const/comment';
+import { convertRawToContentState } from 'lib/richtext/serialize';
 
 import { CommentAction, ICommentState } from './types';
 
@@ -18,8 +23,11 @@ function commentReducer(state = initialState, action: CommentAction) {
 
                 const receivedComments: Record<number, IComment> = {};
                 comments.forEach(
-                    (comment: IComment) =>
-                        (receivedComments[comment.id] = comment)
+                    (comment: ICommentRaw) =>
+                        (receivedComments[comment.id] = {
+                            ...comment,
+                            text: convertRawToContentState(comment.text),
+                        })
                 );
 
                 draft.commentsById = {
@@ -61,7 +69,7 @@ function commentReducer(state = initialState, action: CommentAction) {
                     draft[commentStateKeyByEntityType[entityType]];
 
                 draftIdToCommentIds[entityId] = [
-                    ...draftIdToCommentIds[entityId],
+                    ...(draftIdToCommentIds[entityId] || []),
                     ...commentIds,
                 ];
                 return;

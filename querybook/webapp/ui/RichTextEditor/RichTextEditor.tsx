@@ -134,7 +134,6 @@ export const RichTextEditor = React.forwardRef<
                     decorator ?? compositeDecorator
                 )
         );
-
         const [toolBarStyle, setToolBarStyle] = useState<IToolBarStyle>({
             top: 0,
             left: 0,

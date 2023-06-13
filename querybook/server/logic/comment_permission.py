@@ -1,14 +1,14 @@
 from flask_login import current_user
-from querybook.server.app.datasource import api_assert
-from querybook.server.app.db import with_session
-from querybook.server.const.datasources import (
+from app.datasource import api_assert
+from app.db import with_session
+from const.datasources import (
     RESOURCE_NOT_FOUND_STATUS_CODE,
     UNAUTHORIZED_STATUS_CODE,
 )
 
 from logic import comment as logic
-from querybook.server.logic.datadoc_permission import assert_can_read
-from querybook.server.models.datadoc import DataDocDataCell
+from logic.datadoc_permission import assert_can_read
+from models.datadoc import DataDocDataCell
 
 
 class CommentDoesNotExist(Exception):
@@ -32,7 +32,7 @@ def assert_can_edit_and_delete(comment_id, session=None):
         if comment is None:
             raise CommentDoesNotExist
         api_assert(
-            comment.uid == current_user.id,
+            comment.created_by == current_user.id,
             "NOT_COMMENT_AUTHOR",
             UNAUTHORIZED_STATUS_CODE,
         )

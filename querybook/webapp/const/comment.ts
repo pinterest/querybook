@@ -2,10 +2,9 @@ import * as DraftJs from 'draft-js';
 
 import { CellCommentResource, TableCommentResource } from 'resource/comment';
 
-export interface IComment {
+export interface ICommentBase {
     id: number;
-    text: DraftJs.ContentState;
-    uid: number;
+    created_by: number;
     created_at: number;
     updated_at: number;
 
@@ -15,10 +14,18 @@ export interface IComment {
     reactions: IReaction[];
 }
 
+export interface ICommentRaw extends ICommentBase {
+    text: string;
+}
+
+export interface IComment extends ICommentBase {
+    text: DraftJs.ContentState;
+}
+
 export interface IReaction {
     id: number;
     reaction: string;
-    uid: number;
+    created_by: number;
 }
 
 export enum CommentEntityType {

@@ -1,7 +1,11 @@
 .Comments {
-    width: 480px;
+    width: 600px;
     border-radius: var(--border-radius-sm);
     overflow: hidden;
+    .Comments-list {
+        max-height: 480px;
+        overflow: auto;
+    }
     .Comment-form {
         width: 100%;
         background-color: var(--bg-lightest);
@@ -10,7 +14,10 @@
             margin-right: 12px;
         }
         .RichTextEditor {
-            flex-grow: 1;
+            flex: 1 0 auto;
+            max-height: 120px;
+            overflow: auto;
+            margin-right: 8px;
             input {
                 background-color: transparent;
             }
@@ -95,12 +102,10 @@
             }
             .Comment-top-right-buttons {
                 display: none;
-                .Comment-edit {
-                    .IconButton {
-                        background-color: var(--bg-light);
-                        svg {
-                            padding: 2px;
-                        }
+                .IconButton {
+                    background-color: var(--bg-light);
+                    svg {
+                        padding: 2px;
                     }
                 }
             }
@@ -131,20 +136,21 @@
     .IconButton {
         background-color: var(--bg-light);
     }
-    .EmojiList {
-        background: var(--bg);
-        margin-top: 6px;
-        border: var(--border);
-        border-radius: var(--border-radius-sm);
-        box-shadow: var(--box-shadow-sm);
-        padding: var(--padding-sm);
-        position: relative;
-        min-width: 20px;
-        min-height: 20px;
-        font-size: var(--med-text-size);
-        cursor: default;
-        .Emoji {
-            cursor: pointer;
-        }
+}
+
+.EmojiList {
+    background: var(--bg);
+    margin-top: 6px;
+    border: var(--border);
+    border-radius: var(--border-radius-sm);
+    box-shadow: var(--box-shadow-sm);
+    padding: var(--padding-sm);
+    position: relative;
+    min-width: 20px;
+    min-height: 20px;
+    font-size: var(--med-text-size);
+    cursor: default;
+    .Emoji {
+        cursor: pointer;
     }
 }

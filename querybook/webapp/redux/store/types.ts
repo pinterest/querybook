@@ -73,6 +73,7 @@ export type AllAction =
     | GlobalStateAction
     | TagAction
     | CommentAction
-    | ScheduledDataDocAction;
+    | ScheduledDataDocAction
+    | CommentAction;
 
 export type Dispatch = ThunkDispatch<IStoreState, null, AllAction>;

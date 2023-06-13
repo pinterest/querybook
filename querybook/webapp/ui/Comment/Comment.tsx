@@ -21,9 +21,6 @@ interface IProps {
     isBeingRepliedTo: boolean;
     isChild: boolean;
     createChildComment: () => void;
-
-    cellId?: number;
-    tableId?: number;
 }
 
 export const Comment: React.FunctionComponent<IProps> = ({
@@ -33,11 +30,16 @@ export const Comment: React.FunctionComponent<IProps> = ({
     isBeingRepliedTo,
     isChild,
     createChildComment,
-    cellId,
-    tableId,
 }) => {
     const userInfo = useSelector((state: IStoreState) => state.user.myUserInfo);
-    const { id, text, uid, created_at: createdAt, reactions } = comment;
+    const {
+        id,
+        text,
+        created_by: uid,
+        created_at: createdAt,
+        updated_at: updatedAt,
+        reactions,
+    } = comment;
 
     return (
         <div className="Comment">
@@ -48,22 +50,36 @@ export const Comment: React.FunctionComponent<IProps> = ({
                     <StyledText size="xsmall" color="lightest" cursor="default">
                         {fromNow(createdAt)}
                     </StyledText>
+                    {createdAt === updatedAt ? null : (
+                        <StyledText
+                            size="xsmall"
+                            color="lightest-0"
+                            cursor="default"
+                            isItalic
+                        >
+                            updated {fromNow(updatedAt)}
+                        </StyledText>
+                    )}
                 </div>
                 <div className="Comment-top-right flex-row">
                     {isBeingEdited ? (
                         <StyledText
-                            className="Editing-text mr4"
+                            className="mr4"
                             color="accent"
                             weight="bold"
+                            isItalic
+                            cursor="default"
                         >
                             editing
                         </StyledText>
                     ) : null}
                     {isBeingRepliedTo ? (
                         <StyledText
-                            className="Editing-text mr4"
+                            className="mr4"
                             color="accent"
                             weight="bold"
+                            isItalic
+                            cursor="default"
                         >
                             replying to
                         </StyledText>
@@ -82,21 +98,19 @@ export const Comment: React.FunctionComponent<IProps> = ({
                             </div>
                         ) : null}
                         {isChild ? null : (
-                            <IconButton
-                                icon="MessageCircle"
-                                invertCircle
-                                size={18}
-                                tooltip="Reply to comment"
-                                tooltipPos="left"
-                                onClick={createChildComment}
-                            />
+                            <div className="ml8">
+                                <IconButton
+                                    icon="MessageCircle"
+                                    invertCircle
+                                    size={18}
+                                    tooltip="Reply to comment"
+                                    tooltipPos="left"
+                                    onClick={createChildComment}
+                                />
+                            </div>
                         )}
                         <div className="mh8">
-                            <AddReactionButton
-                                commentId={id}
-                                cellId={cellId}
-                                tableId={tableId}
-                            />
+                            <AddReactionButton commentId={id} />
                         </div>
                     </div>
                 </div>
@@ -104,12 +118,7 @@ export const Comment: React.FunctionComponent<IProps> = ({
             <div className="Comment-text mt4">
                 <RichTextEditor value={text} readOnly={true} />
                 {reactions.length ? (
-                    <Reactions
-                        reactions={reactions}
-                        commentId={id}
-                        cellId={cellId}
-                        tableId={tableId}
-                    />
+                    <Reactions reactions={reactions} commentId={id} />
                 ) : null}
             </div>
         </div>

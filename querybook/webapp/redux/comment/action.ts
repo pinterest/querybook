@@ -4,7 +4,7 @@ import {
     CommentEntityType,
     commentResourceByEntityType,
     commentStateKeyByEntityType,
-    IComment,
+    ICommentRaw,
     IReaction,
 } from 'const/comment';
 import { CommentResource, ReactionResource } from 'resource/comment';
@@ -14,7 +14,7 @@ import { ThunkResult } from './types';
 function fetchCommentsByEntityId(
     entityType: CommentEntityType,
     entityId: number
-): ThunkResult<Promise<IComment[]>> {
+): ThunkResult<Promise<ICommentRaw[]>> {
     return async (dispatch) => {
         const { data: comments } = await commentResourceByEntityType[
             entityType
@@ -24,7 +24,7 @@ function fetchCommentsByEntityId(
             payload: {
                 entityType,
                 entityId,
-                commentIds: comments.map((comment: IComment) => comment.id),
+                commentIds: comments.map((comment: ICommentRaw) => comment.id),
             },
         });
         dispatch({
@@ -44,7 +44,7 @@ export function fetchCommentsByEntityIdIfNeeded(
     return (dispatch, getState) => {
         const state = getState();
         const comments =
-            state.comment[commentStateKeyByEntityType[entityType]][entityId];
+            state.comment[commentStateKeyByEntityType[entityType]]?.[entityId];
         if (!comments) {
             return dispatch(fetchCommentsByEntityId(entityType, entityId));
         }
@@ -53,7 +53,7 @@ export function fetchCommentsByEntityIdIfNeeded(
 
 function fetchChildCommentsByParentCommentId(
     parentCommentId: number
-): ThunkResult<Promise<IComment[]>> {
+): ThunkResult<Promise<ICommentRaw[]>> {
     return async (dispatch) => {
         const { data: comments } = await CommentResource.get(parentCommentId);
         dispatch({
@@ -78,7 +78,7 @@ export function fetchChildCommentsByParentCommentIdIfNeeded(
                 ? null
                 : (isMissingChildComments = true)
         );
-        if (!isMissingChildComments) {
+        if (isMissingChildComments) {
             return dispatch(
                 fetchChildCommentsByParentCommentId(parentCommentId)
             );
@@ -90,7 +90,7 @@ export function createComment(
     entityType: CommentEntityType,
     entityId: number,
     text: ContentState
-): ThunkResult<Promise<IComment>> {
+): ThunkResult<Promise<ICommentRaw>> {
     return async (dispatch) => {
         try {
             const { data: comment } = await commentResourceByEntityType[
@@ -99,6 +99,12 @@ export function createComment(
             dispatch({
                 type: '@@comment/RECEIVE_COMMENT_IDS_BY_ENTITY_ID',
                 payload: { entityType, entityId, commentIds: [comment.id] },
+            });
+            dispatch({
+                type: '@@comment/RECEIVE_COMMENTS',
+                payload: {
+                    comments: [comment],
+                },
             });
             return comment;
         } catch (e) {
@@ -110,7 +116,7 @@ export function createComment(
 export function createChildComment(
     parentCommentId: number,
     text: ContentState
-): ThunkResult<Promise<IComment>> {
+): ThunkResult<Promise<ICommentRaw>> {
     return async (dispatch) => {
         try {
             const { data: childComment } = await CommentResource.create(
@@ -155,8 +161,8 @@ export function deleteCommentByEntityId(
 
 export function updateComment(
     commentId: number,
-    text: IComment
-): ThunkResult<Promise<IComment>> {
+    text: ContentState
+): ThunkResult<Promise<ICommentRaw>> {
     return async (dispatch) => {
         const { data: newComment } = await CommentResource.update(
             commentId,

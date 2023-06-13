@@ -40,7 +40,7 @@ export const Comments: React.FunctionComponent<IProps> = ({
         (state: IStoreState) => ({
             userInfo: state.user.myUserInfo,
             commentIds:
-                state.comment[commentStateKeyByEntityType[entityType]][
+                state.comment[commentStateKeyByEntityType[entityType]]?.[
                     entityId
                 ],
             commentsById: state.comment.commentsById,
@@ -112,18 +112,24 @@ export const Comments: React.FunctionComponent<IProps> = ({
         editingCommentId,
         editingCommentParentId,
     ]);
+    const handleCommentClear = React.useCallback(() => {
+        setEditingCommentId(null);
+        setEditingCommentParentId(null);
+        setCurrentComment(emptyCommentValue);
+    }, []);
 
-    const renderFlatCommentDOM = (comment: IComment, isChild: boolean) => (
-        <Comment
-            key={comment.id}
-            comment={comment}
-            editComment={(text) => handleEditComment(comment.id, text)}
-            isBeingEdited={editingCommentId === comment.id}
-            isChild={isChild}
-            createChildComment={() => setEditingCommentParentId(comment.id)}
-            isBeingRepliedTo={editingCommentParentId === comment.id}
-        />
-    );
+    const renderFlatCommentDOM = (comment: IComment, isChild: boolean) =>
+        comment ? (
+            <Comment
+                key={comment.id}
+                comment={comment}
+                editComment={(text) => handleEditComment(comment.id, text)}
+                isBeingEdited={editingCommentId === comment.id}
+                isChild={isChild}
+                createChildComment={() => setEditingCommentParentId(comment.id)}
+                isBeingRepliedTo={editingCommentParentId === comment.id}
+            />
+        ) : null;
 
     const handleOpenThread = React.useCallback(
         (parentCommentId: number, childCommentIds: number[] = []) => {
@@ -140,31 +146,39 @@ export const Comments: React.FunctionComponent<IProps> = ({
 
     const loadingCommentDOM = React.useMemo(
         () => (
-            <div className="Comment">
-                <EmptyText>Loading Comment</EmptyText>
+            <div className="Comment mv8">
+                <StyledText
+                    size="xsmall"
+                    color="lightest"
+                    cursor="default"
+                    isItalic
+                >
+                    Loading Comment
+                </StyledText>
             </div>
         ),
         []
     );
 
-    const renderThreadCommentDOM = (comment: IComment) => {
-        if (openThreadIds.has(comment.id)) {
-            return comment.child_comment_ids?.map((commentId) =>
-                commentsById[commentId]
-                    ? renderFlatCommentDOM(commentsById[commentId], true)
-                    : loadingCommentDOM
-            );
-        }
-
-        return (
-            <>
-                {renderFlatCommentDOM(comment, false)}
-                <div
-                    className="CommentThread mt12"
-                    onClick={() =>
-                        handleOpenThread(comment.id, comment.child_comment_ids)
-                    }
-                >
+    const renderThreadCommentDOM = (comment: IComment) => (
+        <>
+            {renderFlatCommentDOM(comment, false)}
+            <div
+                className="CommentThread mt16 mb12"
+                onClick={() =>
+                    handleOpenThread(comment.id, comment.child_comment_ids)
+                }
+            >
+                {openThreadIds.has(comment.id) ? (
+                    comment.child_comment_ids?.map((commentId) =>
+                        commentsById[commentId]
+                            ? renderFlatCommentDOM(
+                                  commentsById[commentId],
+                                  true
+                              )
+                            : loadingCommentDOM
+                    )
+                ) : (
                     <div className="ClosedCommentThread flex-row">
                         <StyledText
                             className="ThreadCount mr8"
@@ -181,16 +195,16 @@ export const Comments: React.FunctionComponent<IProps> = ({
                             <StyledText
                                 size="xsmall"
                                 color="lightest"
-                                cursor="default"
+                                cursor="pointer"
                             >
                                 View Thread
                             </StyledText>
                         </span>
                     </div>
-                </div>
-            </>
-        );
-    };
+                )}
+            </div>
+        </>
+    );
 
     const renderCommentDOM = () =>
         commentIds.map((commentId: number) =>
@@ -209,20 +223,10 @@ export const Comments: React.FunctionComponent<IProps> = ({
             >
                 Editing Comment
             </StyledText>
-            <div onClick={() => handleEditComment(null, emptyCommentValue)}>
-                <StyledText
-                    size="xsmall"
-                    color="lightest"
-                    cursor="pointer"
-                    weight="bold"
-                >
-                    Clear
-                </StyledText>
-            </div>
         </div>
     );
 
-    return (
+    return commentIds ? (
         <div className="Comments">
             <div className="Comments-list p16">
                 {commentIds.length ? (
@@ -242,6 +246,16 @@ export const Comments: React.FunctionComponent<IProps> = ({
                     placeholder={commentIds.length ? 'Reply' : 'Comment'}
                 />
                 <IconButton
+                    icon="XCircle"
+                    onClick={handleCommentClear}
+                    noPadding
+                    size={18}
+                    className="mr12"
+                    tooltip="Clear"
+                    tooltipPos="left"
+                    disabled={currentComment.getPlainText().length === 0}
+                />
+                <IconButton
                     icon="Send"
                     onClick={handleCommentSave}
                     noPadding
@@ -253,5 +267,5 @@ export const Comments: React.FunctionComponent<IProps> = ({
                 />
             </div>
         </div>
-    );
+    ) : null;
 };

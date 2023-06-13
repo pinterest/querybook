@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 
 import DatadocConfig from 'config/datadoc.yaml';
 import { ComponentType, ElementType } from 'const/analytics';
+import { CommentEntityType } from 'const/comment';
 import { IDataCellMeta } from 'const/datadoc';
 import { useBoundFunc } from 'hooks/useBoundFunction';
 import { trackClick } from 'lib/analytics';
@@ -149,7 +150,13 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
         }
 
         if (cellId) {
-            rightButtons.push(<CommentButton key="comment" cellId={cellId} />);
+            rightButtons.push(
+                <CommentButton
+                    key="comment"
+                    entityType={CommentEntityType.CELL}
+                    entityId={cellId}
+                />
+            );
         }
     }
 

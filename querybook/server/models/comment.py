@@ -1,7 +1,6 @@
 import sqlalchemy as sql
 from app import db
 from lib.sqlalchemy import CRUDMixin
-from sqlalchemy.orm import relationship
 from const.db import mediumtext_length, name_length, now
 
 Base = db.Base
@@ -29,6 +28,15 @@ class Comment(CRUDMixin, Base):
 
 class CommentReaction(CRUDMixin, Base):
     __tablename__ = "comment_reaction"
+    # TODO: add this to alembic
+    __table_args__ = (
+        sql.UniqueConstraint(
+            "comment_id",
+            "created_by",
+            "reaction",
+            name="unique_comment_reaction",
+        ),
+    )
 
     id = sql.Column(sql.Integer, primary_key=True, autoincrement=True)
     comment_id = sql.Column(
@@ -57,8 +65,6 @@ class DataTableComment(CRUDMixin, Base):
         nullable=False,
     )
 
-    comment = relationship("Comment", uselist=False)
-
 
 class DataCellComment(CRUDMixin, Base):
     __tablename__ = "data_cell_comment"
@@ -74,5 +80,3 @@ class DataCellComment(CRUDMixin, Base):
         sql.ForeignKey("comment.id", ondelete="CASCADE"),
         nullable=False,
     )
-
-    comment = relationship("Comment", uselist=False)

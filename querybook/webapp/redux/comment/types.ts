@@ -1,7 +1,12 @@
 import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
-import { CommentEntityType, IComment, IReaction } from 'const/comment';
+import {
+    CommentEntityType,
+    IComment,
+    ICommentRaw,
+    IReaction,
+} from 'const/comment';
 import { IStoreState } from 'redux/store/types';
 
 export interface IRecieveCommentIdsByEntityId extends Action {
@@ -16,7 +21,7 @@ export interface IRecieveCommentIdsByEntityId extends Action {
 export interface IRecieveComments extends Action {
     type: '@@comment/RECEIVE_COMMENTS';
     payload: {
-        comments: IComment[];
+        comments: ICommentRaw[];
     };
 }
 export interface IRecieveNewChildCommentId extends Action {
