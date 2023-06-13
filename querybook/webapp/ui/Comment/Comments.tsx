@@ -225,7 +225,6 @@ export const Comments: React.FunctionComponent<IProps> = ({
             </StyledText>
         </div>
     );
-    console.log('currentComment.getPlainText()', currentComment.getPlainText());
     return commentIds ? (
         <div className="Comments">
             <div className="Comments-list p16">
@@ -239,12 +238,8 @@ export const Comments: React.FunctionComponent<IProps> = ({
             <div className="Comment-form flex-row pv12 ph16">
                 <UserAvatar uid={userInfo?.uid} tiny />
                 <RichTextEditor
-                    // there's issues with clearing
-                    value={
-                        currentComment.getPlainText().length === 0
-                            ? emptyCommentValue
-                            : currentComment
-                    }
+                    // TODO: fix issues with clearing
+                    value={currentComment}
                     onChange={(editorState) =>
                         setCurrentComment(editorState.getCurrentContent())
                     }
