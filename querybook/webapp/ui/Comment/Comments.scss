@@ -12,11 +12,12 @@
         .UserAvatar {
             align-self: flex-start;
             margin-right: 12px;
+            min-width: 20px;
         }
         .RichTextEditor {
-            flex: 1 0 auto;
+            flex-grow: 1;
+            min-width: 0;
             max-height: 120px;
-            overflow: auto;
             margin-right: 8px;
             input {
                 background-color: transparent;

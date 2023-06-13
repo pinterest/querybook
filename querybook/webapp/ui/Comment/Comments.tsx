@@ -28,7 +28,7 @@ interface IProps {
     entityId: number;
 }
 
-const emptyCommentValue = DraftJs.ContentState.createFromText('');
+const emptyCommentValue = DraftJs.ContentState.createFromText(' ');
 
 export const Comments: React.FunctionComponent<IProps> = ({
     entityType,
@@ -253,7 +253,10 @@ export const Comments: React.FunctionComponent<IProps> = ({
                     className="mr12"
                     tooltip="Clear"
                     tooltipPos="left"
-                    disabled={currentComment.getPlainText().length === 0}
+                    disabled={
+                        currentComment.getPlainText().length === 0 &&
+                        editingCommentId === null
+                    }
                 />
                 <IconButton
                     icon="Send"
