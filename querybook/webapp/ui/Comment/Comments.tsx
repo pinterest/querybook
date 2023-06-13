@@ -28,7 +28,7 @@ interface IProps {
     entityId: number;
 }
 
-const emptyCommentValue = DraftJs.ContentState.createFromText(' ');
+const emptyCommentValue = DraftJs.ContentState.createFromText('');
 
 export const Comments: React.FunctionComponent<IProps> = ({
     entityType,
@@ -225,7 +225,7 @@ export const Comments: React.FunctionComponent<IProps> = ({
             </StyledText>
         </div>
     );
-
+    console.log('currentComment.getPlainText()', currentComment.getPlainText());
     return commentIds ? (
         <div className="Comments">
             <div className="Comments-list p16">
@@ -239,7 +239,12 @@ export const Comments: React.FunctionComponent<IProps> = ({
             <div className="Comment-form flex-row pv12 ph16">
                 <UserAvatar uid={userInfo?.uid} tiny />
                 <RichTextEditor
-                    value={currentComment}
+                    // there's issues with clearing
+                    value={
+                        currentComment.getPlainText().length === 0
+                            ? emptyCommentValue
+                            : currentComment
+                    }
                     onChange={(editorState) =>
                         setCurrentComment(editorState.getCurrentContent())
                     }
