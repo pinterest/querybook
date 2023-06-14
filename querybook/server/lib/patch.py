@@ -29,6 +29,16 @@ def monkey_patch_disable_watchdog():
     reloader_loops["auto"] = reloader_loops["stat"]
 
 
+def monkey_patch_plugin():
+    """This enables monkey patching any module or function through the monkey_patch_plugin"""
+    from lib.utils.import_helper import import_module_with_default
+
+    patch = import_module_with_default("monkey_patch_plugin", "patch", default=None)
+    if patch is not None:
+        patch()
+
+
 def patch_all():
     monkey_patch_gevent_websocket()
     monkey_patch_disable_watchdog()
+    monkey_patch_plugin()
