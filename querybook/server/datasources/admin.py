@@ -3,7 +3,6 @@ from flask_login import current_user
 from app.datasource import register, admin_only, api_assert
 from app.db import DBSession
 from const.admin import AdminOperation, AdminItemType
-from const.schedule import ScheduleTaskType
 from datasources.admin_audit_log import with_admin_audit_log
 from env import QuerybookSettings
 
@@ -21,11 +20,8 @@ from lib.query_analysis.validation.all_validators import ALL_QUERY_VALIDATORS_BY
 from logic import admin as logic
 from logic import user as user_logic
 from logic import environment as environment_logic
-from logic import schedule as schedule_logic
-from logic import metastore as metastore_logic
 from logic import demo as demo_logic
 from models.admin import Announcement, QueryMetastore, QueryEngine, AdminAuditLog
-from models.schedule import TaskSchedule
 
 
 @register(
