@@ -30,12 +30,8 @@ def monkey_patch_disable_watchdog():
 
 
 def monkey_patch_plugin():
-    """This enables monkey patching any module or function through the monkey_patch_plugin"""
-    from lib.utils.import_helper import import_module_with_default
-
-    patch = import_module_with_default("monkey_patch_plugin", "patch", default=None)
-    if patch is not None:
-        patch()
+    """This enables monkey patching any module or function through the monkey_patch_plugin."""
+    import monkey_patch_plugin
 
 
 def patch_all():
