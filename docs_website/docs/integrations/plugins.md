@@ -70,12 +70,12 @@ DAG Exporters allow users to create a workflow from Query Cells in DataDocs. Que
 
 ### API Plugin
 
-API plugin allows you to add new or override existing API endpoints. Please check the folder of `querybook/plugins/api_plugin` for example.
+The API plugin enables you to create new or modify existing API endpoints. For examples of its usage, please refer to the `querybook/plugins/api_plugin` folder.
 
 
 ### Monkey Patch Plugin
 
-Similar to API plugin, monkey patch plugin allows you to override an existing API module or function. Please check the folder of `querybook/plugins/monkey_patch_plugin` for example.
+Similar to the API plugin, the monkey patch plugin allows you to override or modify existing modules or functions. To see examples of how it works, please check the `querybook/plugins/monkey_patch_plugin` folder.
 
 
 ## Installing Plugins

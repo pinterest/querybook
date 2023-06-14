@@ -31,7 +31,7 @@ def monkey_patch_disable_watchdog():
 
 def monkey_patch_plugin():
     """This enables monkey patching any module or function through the monkey_patch_plugin."""
-    import monkey_patch_plugin
+    import monkey_patch_plugin  # noqa: F401
 
 
 def patch_all():
