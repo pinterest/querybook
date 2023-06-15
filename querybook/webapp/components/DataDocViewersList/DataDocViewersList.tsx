@@ -70,7 +70,10 @@ export const DataDocViewersList: React.FunctionComponent<
 
     const onUserSelect = React.useCallback(
         (uid: number) => {
-            if (uid in editorsByUid || uid === dataDoc.owner_uid) {
+            if (
+                uid === dataDoc.owner_uid ||
+                (uid in editorsByUid && editorsByUid[uid].id != null)
+            ) {
                 toast.error('User already added.');
             } else {
                 const newUserPermission = dataDoc.public

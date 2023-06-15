@@ -140,16 +140,24 @@ export const canCurrentUserEditSelector = createSelector(
 export const boardEditorInfosSelector = createSelector(
     currentBoardSelector,
     boardEditorByUidSelector,
-    (board, editorsByUserId) => {
+    (state: IStoreState) => state.user.myUserInfo.uid,
+    (board, editorsByUserId, uid) => {
+        const newEditorsByUserId = Object.fromEntries(
+            Object.entries(editorsByUserId).filter(
+                // Filter out any editors inherited from groups
+                // (i.e. editors with a uid but no id)
+                ([_userId, editor]) => editor.id != null || editor.uid === uid
+            )
+        );
         const allUserIds = [
             ...new Set(
                 [board.owner_uid].concat(
-                    Object.keys(editorsByUserId).map(Number)
+                    Object.keys(newEditorsByUserId).map(Number)
                 )
             ),
         ];
         return allUserIds.map((uid) =>
-            getEditorInfo(uid, editorsByUserId, board)
+            getEditorInfo(uid, newEditorsByUserId, board)
         );
     }
 );
@@ -164,9 +172,9 @@ export function getEditorInfo(
         editor ? editor.read : false,
         editor ? editor.write : false,
         board.owner_uid === uid,
-        board.public
+        board.public,
+        0 // Do not want to show [INHERITED] permissions for lists
     );
-
     return {
         editorId: editor?.id,
         uid,

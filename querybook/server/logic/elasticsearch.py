@@ -740,10 +740,8 @@ def _bulk_insert_users():
     index_name = ES_CONFIG["users"]["index_name"]
 
     for user in get_users_iter():
-        # skip indexing user groups before having the correct permission setup for it.
-        if not user.is_group:
-            expanded_user = user_to_es(user, fields=None)
-            _insert(index_name, expanded_user["id"], expanded_user)
+        expanded_user = user_to_es(user, fields=None)
+        _insert(index_name, expanded_user["id"], expanded_user)
 
 
 def _bulk_update_users(fields: Set[str] = None):

@@ -80,7 +80,10 @@ export const BoardViewersList: React.FunctionComponent<IProps> = ({
 
     const handleUserSelect = React.useCallback(
         (uid: number) => {
-            if (uid in editorsByUid || uid === board.owner_uid) {
+            if (
+                uid === board.owner_uid ||
+                (uid in editorsByUid && editorsByUid[uid].id != null)
+            ) {
                 toast.error('User already added.');
             } else {
                 const newUserPermission = board.public

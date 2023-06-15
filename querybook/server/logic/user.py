@@ -194,6 +194,8 @@ def create_or_update_user_group(user_group: UserGroup, commit=True, session=None
             [UserGroupMember(gid=group.id, uid=user_id) for user_id in members_to_add]
         )
 
+    update_es_users_by_id(group.id)
+
     if commit:
         session.commit()
     else:
