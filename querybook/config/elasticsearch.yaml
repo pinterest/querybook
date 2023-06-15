@@ -166,6 +166,8 @@ tables:
                         tokenizer: standard
                         char_filter:
                             - html_strip
+                        filter:
+                            - lowercase
                     table_name_lowercase:
                         type: custom
                         tokenizer: alphanum_tokenizer
@@ -266,6 +268,8 @@ boards:
                         tokenizer: standard
                         char_filter:
                             - html_strip
+                        filter:
+                            - lowercase
                 normalizer:
                     case_insensitive:
                         type: custom
