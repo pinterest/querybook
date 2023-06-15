@@ -18,7 +18,10 @@ from . import data_element
 from . import ai_assistant
 
 # Keep this at the end of imports to make sure the plugin APIs override the default ones
-import api_plugin
+try:
+    import api_plugin
+except ImportError:
+    pass  # No api_plugin found
 
 # Flake8 :(
 admin
