@@ -25,7 +25,12 @@ from logic import (
     schedule as schedule_logic,
     user as user_logic,
 )
-from logic.datadoc_permission import assert_can_read, assert_can_write, assert_is_owner
+from logic.datadoc_permission import (
+    assert_can_read,
+    assert_can_write,
+    assert_is_owner,
+    assert_is_not_group,
+)
 from logic.query_execution import get_query_execution_by_id
 from logic.schedule import (
     run_and_log_scheduled_task,
@@ -622,6 +627,7 @@ def update_datadoc_owner(doc_id, next_owner_id, originator=None):
     with DBSession() as session:
         # Add previous owner as an editor to the doc
         assert_is_owner(doc_id, session=session)
+        assert_is_not_group(next_owner_id, session=session)
         current_owner_editor = logic.create_data_doc_editor(
             data_doc_id=doc_id,
             uid=current_user.id,

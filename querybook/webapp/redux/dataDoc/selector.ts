@@ -165,17 +165,35 @@ export const dataDocViewerInfosSelector = createSelector(
     dataDocSelector,
     dataDocEditorByUidSelector,
     dataDocViewerIdsSelector,
-    (dataDoc, editorsByUserId, viewerIds) => {
+    (state: IStoreState) => state.user.myUserInfo.uid,
+    (dataDoc, editorsByUserId, viewerIds, uid) => {
+        const newEditorsByUserId = Object.fromEntries(
+            Object.entries(editorsByUserId).filter(
+                // Filter out any editors inherited from groups
+                // (i.e. editors with a uid but no id)
+                ([_userId, editor]) => editor.id != null || editor.uid === uid
+            )
+        );
         const allUserIds = [
             ...new Set(
                 [dataDoc.owner_uid]
                     .concat(viewerIds)
-                    .concat(Object.keys(editorsByUserId).map(Number))
+                    .concat(Object.keys(newEditorsByUserId).map(Number))
             ),
         ];
+        const nonExplicitEditorPermissions = {};
+        for (const viewerId of viewerIds) {
+            nonExplicitEditorPermissions[viewerId] = editorsByUserId[viewerId];
+        }
         return sortViewersInfo(
             allUserIds.map((uid) =>
-                getViewerInfo(uid, editorsByUserId, dataDoc, viewerIds)
+                getViewerInfo(
+                    uid,
+                    newEditorsByUserId,
+                    dataDoc,
+                    viewerIds,
+                    nonExplicitEditorPermissions
+                )
             )
         );
     }
@@ -189,13 +207,13 @@ export const canCurrentUserEditSelector = createSelector(
         if (!dataDoc) {
             return false;
         }
-
         const editor = uid in editorsByUserId ? editorsByUserId[uid] : null;
         const permission = readWriteToPermission(
             editor ? editor.read : false,
             editor ? editor.write : false,
             dataDoc.owner_uid === uid,
-            dataDoc.public
+            dataDoc.public,
+            editor ? editor.id : -1
         );
         return permissionToReadWrite(permission).write;
     }
