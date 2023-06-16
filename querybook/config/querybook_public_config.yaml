@@ -9,4 +9,4 @@ ai_assistant:
         enabled: false
 
     query_error_fix:
-        enabled: false
+        enabled: true

@@ -39,7 +39,7 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
                 {
                     query,
                 },
-                onChange,
+                (data) => onChange(data['data']),
                 () => setGenerating(false)
             );
         },
