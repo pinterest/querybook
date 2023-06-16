@@ -1,18 +1,22 @@
 /**
  * This is a parser for the delta stream from AI assistant streaming. The stream format is as follows:
  *
+ * ```
  * some data
  * <@key1@>
  * value1
  * <@key2@>
  * value2
+ * ```
  *
  * Key names are wrapped in <@ and @>. The parser will parse the stream into a JSON object:
+ * ```
  * {
  *    key1: 'value1',
  *    key2: 'value2',
  *    data: 'some data'
  * }
+ * ```
  *
  * "some data" and key/value pairs are all optional. E.g.
  *  - Without any key/value pairs, the stream will be parsed into: { data: 'some data' }
@@ -30,7 +34,7 @@ export class DeltaStreamParser {
     private _currentValue: string;
     private _isPartialKey: boolean;
 
-    constructor() {
+    public constructor() {
         this._buffer = '';
         this._result = {};
         this._currentKey = 'data';

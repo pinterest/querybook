@@ -162,9 +162,11 @@ export function uploadDatasource<T = null>(
  * Stream data from a datasource using EventSource
  *
  * The data is streamed in the form of deltas. Each delta is a JSON object
+ * ```
  * {
  *   data: The data of the delta
  * }
+ * ```
  *
  * @param url The url to stream from
  * @param params The data to send to the url
