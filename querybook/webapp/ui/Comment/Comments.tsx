@@ -1,6 +1,6 @@
 import * as DraftJs from 'draft-js';
 import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import {
@@ -8,10 +8,10 @@ import {
     commentStateKeyByEntityType,
     IComment,
 } from 'const/comment';
+import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import {
     createChildComment,
     createComment,
-    fetchChildCommentsByParentCommentIdIfNeeded,
     fetchCommentsByEntityIdIfNeeded,
     updateComment,
 } from 'redux/comment/action';
@@ -20,6 +20,8 @@ import { IconButton } from 'ui/Button/IconButton';
 import { Comment } from 'ui/Comment/Comment';
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
 import { EmptyText, StyledText } from 'ui/StyledText/StyledText';
+
+import { ThreadComment } from './ThreadComment';
 
 import './Comments.scss';
 
@@ -36,7 +38,7 @@ export const Comments: React.FunctionComponent<IProps> = ({
 }) => {
     const dispatch: Dispatch = useDispatch();
 
-    const { userInfo, commentIds, commentsById } = useSelector(
+    const { userInfo, commentIds, commentsById } = useShallowSelector(
         (state: IStoreState) => ({
             userInfo: state.user.myUserInfo,
             commentIds:
@@ -131,78 +133,13 @@ export const Comments: React.FunctionComponent<IProps> = ({
             />
         ) : null;
 
-    const handleOpenThread = React.useCallback(
-        (parentCommentId: number, childCommentIds: number[] = []) => {
-            dispatch(
-                fetchChildCommentsByParentCommentIdIfNeeded(
-                    parentCommentId,
-                    childCommentIds
-                )
-            );
-            setOpenThreadIds((curr) => new Set([...curr, parentCommentId]));
-        },
-        [dispatch]
-    );
-
-    const loadingCommentDOM = React.useMemo(
-        () => (
-            <div className="Comment mv8">
-                <StyledText
-                    size="xsmall"
-                    color="lightest"
-                    cursor="default"
-                    isItalic
-                >
-                    Loading Comment
-                </StyledText>
-            </div>
-        ),
-        []
-    );
-
     const renderThreadCommentDOM = (comment: IComment) => (
         <>
             {renderFlatCommentDOM(comment, false)}
-            <div
-                className="CommentThread mt16 mb12"
-                onClick={() =>
-                    handleOpenThread(comment.id, comment.child_comment_ids)
-                }
-            >
-                {openThreadIds.has(comment.id) ? (
-                    comment.child_comment_ids?.map((commentId) =>
-                        commentsById[commentId]
-                            ? renderFlatCommentDOM(
-                                  commentsById[commentId],
-                                  true
-                              )
-                            : loadingCommentDOM
-                    )
-                ) : (
-                    <div className="ClosedCommentThread flex-row">
-                        <StyledText
-                            className="ThreadCount mr8"
-                            size="xsmall"
-                            color="accent"
-                            cursor="default"
-                        >
-                            {comment.child_comment_ids.length}{' '}
-                            {comment.child_comment_ids.length === 1
-                                ? 'Reply'
-                                : 'Replies'}
-                        </StyledText>
-                        <span className="HoverText">
-                            <StyledText
-                                size="xsmall"
-                                color="lightest"
-                                cursor="pointer"
-                            >
-                                View Thread
-                            </StyledText>
-                        </span>
-                    </div>
-                )}
-            </div>
+            <ThreadComment
+                comment={comment}
+                renderFlatCommentDOM={renderFlatCommentDOM}
+            />
         </>
     );
 

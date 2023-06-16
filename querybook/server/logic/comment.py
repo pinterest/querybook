@@ -38,7 +38,7 @@ def get_comments_by_data_cell_id(data_cell_id: int, session=None):
     )
 
     return [
-        get_all_comment_data_dict_by_id(cell_comment.id, session=session)
+        get_all_comment_data_dict_by_id(cell_comment.comment_id, session=session)
         for cell_comment in cell_comments
     ]
 
@@ -52,7 +52,7 @@ def get_comments_by_data_table_id(data_table_id: int, session=None):
     )
 
     return [
-        get_all_comment_data_dict_by_id(table_comment.id, session=session)
+        get_all_comment_data_dict_by_id(table_comment.comment_id, session=session)
         for table_comment in table_comments
     ]
 

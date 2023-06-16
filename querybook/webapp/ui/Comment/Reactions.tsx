@@ -48,7 +48,7 @@ export const Reactions: React.FunctionComponent<IProps> = ({
         [commentId, dispatch]
     );
     const deleteEmoji = React.useCallback(
-        (emoji, uid) => {
+        (emoji: string, uid: number) => {
             const reactionToDelete = reactionsProp.find(
                 (reaction) =>
                     reaction.reaction === emoji && reaction.created_by === uid

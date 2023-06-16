@@ -72,11 +72,8 @@ export function fetchChildCommentsByParentCommentIdIfNeeded(
 ): ThunkResult<Promise<any>> {
     return (dispatch, getState) => {
         const state = getState();
-        let isMissingChildComments = false;
-        childCommentIds.forEach((id) =>
-            state.comment.commentsById[id]
-                ? null
-                : (isMissingChildComments = true)
+        const isMissingChildComments = childCommentIds.some(
+            (id) => !state.comment.commentsById[id]
         );
         if (isMissingChildComments) {
             return dispatch(

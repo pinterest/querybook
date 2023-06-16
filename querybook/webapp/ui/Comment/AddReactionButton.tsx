@@ -42,16 +42,11 @@ export const AddReactionButton: React.FunctionComponent<IProps> = ({
 
     const [showEmojis, setShowEmojis] = React.useState(false);
 
-    const addEmoji = React.useCallback(
-        (emoji: string) => dispatch(addReactionByCommentId(commentId, emoji)),
-        [commentId, dispatch]
-    );
-
     const handleEmojiClick = React.useCallback(
         (emoji: string) => {
-            addEmoji(emoji);
+            dispatch(addReactionByCommentId(commentId, emoji));
         },
-        [addEmoji]
+        [commentId, dispatch]
     );
 
     return (

@@ -30,28 +30,26 @@ function commentReducer(state = initialState, action: CommentAction) {
                         })
                 );
 
-                draft.commentsById = {
-                    ...draft.commentsById,
-                    ...receivedComments,
-                };
+                comments.forEach((comment: ICommentRaw) => {
+                    draft.commentsById[comment.id] = {
+                        ...comment,
+                        text: convertRawToContentState(comment.text),
+                    };
+                });
                 return;
             }
             case '@@comment/RECEIVE_NEW_CHILD_COMMENT_ID': {
                 const { parentCommentId, childCommentId } = action.payload;
-                draft.commentsById[parentCommentId].child_comment_ids = [
-                    ...draft.commentsById[parentCommentId].child_comment_ids,
-                    childCommentId,
-                ];
+                draft.commentsById[parentCommentId].child_comment_ids.push(
+                    childCommentId
+                );
 
                 return;
             }
             case '@@comment/RECEIVE_REACTION_BY_COMMENT_ID': {
                 const { commentId, reaction } = action.payload;
+                draft.commentsById[commentId].reactions.push(reaction);
 
-                draft.commentsById[commentId].reactions = [
-                    ...draft.commentsById[commentId].reactions,
-                    reaction,
-                ];
                 return;
             }
             case '@@comment/REMOVE_REACTION_BY_COMMENT_ID': {
