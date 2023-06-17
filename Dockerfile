@@ -16,7 +16,7 @@ RUN rm -rf /var/lib/apt/lists/* \
     build-essential \
     libssl-dev \
     libldap2-dev \
-    && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
     && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y --allow-downgrades --allow-remove-essential --allow-change-held-packages \
     nodejs \
     && apt-get clean
