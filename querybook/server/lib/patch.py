@@ -40,4 +40,4 @@ def monkey_patch_plugin():
 def patch_all():
     monkey_patch_gevent_websocket()
     monkey_patch_disable_watchdog()
-    monkey_patch_plugin()
+    # monkey_patch_plugin()
