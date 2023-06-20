@@ -70,7 +70,7 @@ export const OpenThreadComment: React.FunctionComponent<IProps> = ({
         <>
             {loading
                 ? loadingCommentDOM
-                : childCommentIds?.map((commentId) =>
+                : childCommentIds.map((commentId) =>
                       renderFlatCommentDOM(commentsById[commentId], true)
                   )}
         </>
