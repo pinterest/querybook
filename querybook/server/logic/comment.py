@@ -3,11 +3,8 @@ from models.comment import Comment, CommentReaction, DataTableComment, DataCellC
 
 
 @with_session
-def get_comment_dict_by_id(comment_id: int, session=None):
-    comment = Comment.get(id=comment_id, session=session)
-    if not comment:
-        return None
-    return Comment.get(id=comment_id, session=session).to_dict()
+def get_comment_by_id(comment_id: int, session=None):
+    return Comment.get(id=comment_id, session=session)
 
 
 @with_session
@@ -19,7 +16,7 @@ def get_comments_by_data_cell_id(data_cell_id: int, session=None):
     )
 
     return [
-        get_comment_dict_by_id(cell_comment.comment_id, session=session)
+        get_comment_by_id(cell_comment.comment_id, session=session)
         for cell_comment in cell_comments
     ]
 
@@ -33,7 +30,7 @@ def get_comments_by_data_table_id(data_table_id: int, session=None):
     )
 
     return [
-        get_comment_dict_by_id(table_comment.comment_id, session=session)
+        get_comment_by_id(table_comment.comment_id, session=session)
         for table_comment in table_comments
     ]
 
@@ -49,7 +46,7 @@ def add_comment_to_data_cell(data_cell_id: int, uid: int, text, session=None):
         session=session,
     )
     session.commit()
-    return comment.to_dict()
+    return comment
 
 
 @with_session
@@ -63,7 +60,7 @@ def add_comment_to_data_table(data_table_id: int, uid: int, text, session=None):
         session=session,
     )
     session.commit()
-    return comment.to_dict()
+    return comment
 
 
 @with_session
@@ -74,7 +71,7 @@ def get_thread_comments(parent_comment_id: int, session=None):
         .order_by(Comment.created_at)
         .all()
     )
-    return [comment.to_dict() for comment in comments]
+    return [comment for comment in comments]
 
 
 @with_session
@@ -83,7 +80,7 @@ def add_thread_comment(parent_comment_id: int, uid: int, text, session=None):
         {"created_by": uid, "text": text, "parent_comment_id": parent_comment_id},
         session=session,
     )
-    return comment.to_dict()
+    return comment
 
 
 @with_session
@@ -95,7 +92,7 @@ def edit_comment(comment_id: int, session=None, **fields):
         commit=True,
         session=session,
     )
-    return comment.to_dict()
+    return comment
 
 
 @with_session
