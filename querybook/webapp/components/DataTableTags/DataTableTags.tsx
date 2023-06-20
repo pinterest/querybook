@@ -1,8 +1,10 @@
+import { lowerCase } from 'lodash';
 import qs from 'qs';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { ITag } from 'const/tag';
+import { titleize } from 'lib/utils';
 import { stopPropagationAndDefault } from 'lib/utils/noop';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { useRankedTags } from 'lib/utils/tag';
@@ -145,7 +147,7 @@ export const TableTag: React.FC<{
             <HoverIconTag
                 key={tag.id}
                 name={tag.name}
-                type={tagMeta.type}
+                type={titleize(lowerCase(tagMeta.type), '_', ' ')}
                 icon={tagMeta.icon}
                 iconOnHover={canUserDelete ? 'X' : null}
                 onIconHoverClick={canUserDelete ? handleDeleteTag : null}
