@@ -65,34 +65,31 @@ def add_comment_to_data_table(data_table_id: int, uid: int, text, session=None):
 
 @with_session
 def get_thread_comments(parent_comment_id: int, session=None):
-    comments = (
+    return (
         session.query(Comment)
         .filter(Comment.parent_comment_id == parent_comment_id)
         .order_by(Comment.created_at)
         .all()
     )
-    return [comment for comment in comments]
 
 
 @with_session
 def add_thread_comment(parent_comment_id: int, uid: int, text, session=None):
-    comment = Comment.create(
+    return Comment.create(
         {"created_by": uid, "text": text, "parent_comment_id": parent_comment_id},
         session=session,
     )
-    return comment
 
 
 @with_session
 def edit_comment(comment_id: int, session=None, **fields):
-    comment = Comment.update(
+    return Comment.update(
         id=comment_id,
         fields=fields,
         field_names=["text"],
         commit=True,
         session=session,
     )
-    return comment
 
 
 @with_session
@@ -106,11 +103,10 @@ def remove_comment(comment_id: int, session=None):
 
 @with_session
 def add_reaction(comment_id: int, reaction: str, uid: int, session=None):
-    reaction = CommentReaction.create(
+    return CommentReaction.create(
         {"comment_id": comment_id, "reaction": reaction, "created_by": uid},
         session=session,
     )
-    return reaction
 
 
 @with_session
