@@ -1,11 +1,9 @@
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
 
 import { IComment } from 'const/comment';
-import { useShallowSelector } from 'hooks/redux/useShallowSelector';
-import { fetchChildCommentsByParentCommentIdIfNeeded } from 'redux/comment/action';
-import { Dispatch, IStoreState } from 'redux/store/types';
 import { StyledText } from 'ui/StyledText/StyledText';
+
+import { OpenThreadComment } from './OpenThreadComment';
 
 interface IProps {
     comment: IComment;
@@ -16,57 +14,25 @@ export const ThreadComment: React.FunctionComponent<IProps> = ({
     comment,
     renderFlatCommentDOM,
 }) => {
-    const dispatch: Dispatch = useDispatch();
-
-    const commentsById = useShallowSelector(
-        (state: IStoreState) => state.comment.commentsById
-    );
-
     const [openThreadIds, setOpenThreadIds] = React.useState<Set<number>>(
         new Set()
     );
 
-    const handleOpenThread = React.useCallback(
-        (parentCommentId: number, childCommentIds: number[] = []) => {
-            dispatch(
-                fetchChildCommentsByParentCommentIdIfNeeded(
-                    parentCommentId,
-                    childCommentIds
-                )
-            );
-            setOpenThreadIds((curr) => new Set([...curr, parentCommentId]));
-        },
-        [dispatch]
-    );
-    const loadingCommentDOM = React.useMemo(
-        () => (
-            <div className="Comment mv8">
-                <StyledText
-                    size="xsmall"
-                    color="lightest"
-                    cursor="default"
-                    isItalic
-                >
-                    Loading Comment
-                </StyledText>
-            </div>
-        ),
-        []
-    );
+    const handleOpenThread = React.useCallback((parentCommentId: number) => {
+        setOpenThreadIds((curr) => new Set([...curr, parentCommentId]));
+    }, []);
 
     return (
         <div
             className="CommentThread mt16 mb12"
-            onClick={() =>
-                handleOpenThread(comment.id, comment.child_comment_ids)
-            }
+            onClick={() => handleOpenThread(comment.id)}
         >
             {openThreadIds.has(comment.id) ? (
-                comment.child_comment_ids?.map((commentId) =>
-                    commentsById[commentId]
-                        ? renderFlatCommentDOM(commentsById[commentId], true)
-                        : loadingCommentDOM
-                )
+                <OpenThreadComment
+                    childCommentIds={comment.child_comment_ids}
+                    parentCommentId={comment.id}
+                    renderFlatCommentDOM={renderFlatCommentDOM}
+                />
             ) : (
                 <div className="ClosedCommentThread flex-row">
                     <StyledText

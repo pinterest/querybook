@@ -49,9 +49,6 @@ export const Comments: React.FunctionComponent<IProps> = ({
         })
     );
 
-    const [openThreadIds, setOpenThreadIds] = React.useState<Set<number>>(
-        new Set()
-    );
     const [currentComment, setCurrentComment] =
         React.useState<DraftJs.ContentState>(emptyCommentValue);
     const [editingCommentParentId, setEditingCommentParentId] =
