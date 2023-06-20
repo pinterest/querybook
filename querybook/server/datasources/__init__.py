@@ -15,6 +15,7 @@ from . import table_upload
 from . import tag
 from . import event_log
 from . import data_element
+from . import comment
 
 # Flake8 :(
 admin
@@ -34,3 +35,4 @@ table_upload
 tag
 event_log
 data_element
+comment

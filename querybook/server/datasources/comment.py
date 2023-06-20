@@ -1,8 +1,8 @@
 from flask_login import current_user
 from app.datasource import register
 from logic import comment as logic
-from querybook.server.app.auth.permission import verify_data_table_permission
-from querybook.server.logic.comment_permission import (
+from app.auth.permission import verify_data_table_permission
+from logic.comment_permission import (
     assert_can_edit_and_delete,
     assert_can_read_datadoc,
 )
@@ -50,10 +50,10 @@ def add_comment_to_table(data_table_id: int, text):
 
 @register(
     "/comment/<int:parent_comment_id>/thread/",
-    methods=["POST"],
+    methods=["GET"],
 )
-def get_thread_comment(parent_comment_id: int, text):
-    return logic.get_thread_comment(parent_comment_id=parent_comment_id, text=text)
+def get_thread_comments(parent_comment_id: int):
+    return logic.get_thread_comments(parent_comment_id=parent_comment_id)
 
 
 @register(
@@ -70,9 +70,9 @@ def add_thread_comment(parent_comment_id: int, text):
     "/comment/<int:comment_id>/",
     methods=["PUT"],
 )
-def edit_comment(comment_id: int, text: str):
+def edit_comment(comment_id: int, **fields):
     assert_can_edit_and_delete(comment_id=comment_id)
-    return logic.edit_comment(comment_id=comment_id, text=text)
+    return logic.edit_comment(comment_id=comment_id, **fields)
 
 
 @register(
@@ -93,6 +93,7 @@ def add_reaction(comment_id: int, reaction: str):
     return logic.add_reaction(
         comment_id=comment_id,
         reaction=reaction,
+        uid=current_user.id,
     )
 
 

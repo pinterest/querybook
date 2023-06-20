@@ -9,5 +9,5 @@ class CommentDict(TypedDict):
     created_by: str
     text: str
     parent_comment_id: Optional[int]
-    child_comment_count: int
+    child_comment_ids: Optional[List[int]]
     reactions: List[CommentReaction]

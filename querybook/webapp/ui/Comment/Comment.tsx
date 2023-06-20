@@ -18,19 +18,28 @@ interface IProps {
     comment: IComment;
     editComment: (text: DraftJS.ContentState) => void;
     isBeingEdited: boolean;
+    isBeingRepliedTo: boolean;
+    isChild: boolean;
+    createChildComment: () => void;
 }
 
 export const Comment: React.FunctionComponent<IProps> = ({
     comment,
     editComment,
     isBeingEdited,
+    isBeingRepliedTo,
+    isChild,
+    createChildComment,
 }) => {
     const userInfo = useSelector((state: IStoreState) => state.user.myUserInfo);
-    const { text, uid, created_at: createdAt, reactions } = comment;
-    const textContentState = React.useMemo(
-        () => DraftJS.ContentState.createFromText(text as string),
-        [text]
-    );
+    const {
+        id,
+        text,
+        created_by: uid,
+        created_at: createdAt,
+        updated_at: updatedAt,
+        reactions,
+    } = comment;
 
     return (
         <div className="Comment">
@@ -41,15 +50,38 @@ export const Comment: React.FunctionComponent<IProps> = ({
                     <StyledText size="xsmall" color="lightest" cursor="default">
                         {fromNow(createdAt)}
                     </StyledText>
+                    {createdAt === updatedAt ? null : (
+                        <StyledText
+                            size="xsmall"
+                            color="lightest-0"
+                            cursor="default"
+                            isItalic
+                        >
+                            updated {fromNow(updatedAt)}
+                        </StyledText>
+                    )}
                 </div>
                 <div className="Comment-top-right flex-row">
                     {isBeingEdited ? (
                         <StyledText
-                            className="Editing-text mr4"
+                            className="mr4"
                             color="accent"
                             weight="bold"
+                            isItalic
+                            cursor="default"
                         >
                             editing
+                        </StyledText>
+                    ) : null}
+                    {isBeingRepliedTo ? (
+                        <StyledText
+                            className="mr4"
+                            color="accent"
+                            weight="bold"
+                            isItalic
+                            cursor="default"
+                        >
+                            replying to
                         </StyledText>
                     ) : null}
                     <div className="Comment-top-right-buttons flex-row">
@@ -61,21 +93,33 @@ export const Comment: React.FunctionComponent<IProps> = ({
                                     size={18}
                                     tooltip="Edit Comment"
                                     tooltipPos="left"
-                                    onClick={() =>
-                                        editComment(textContentState)
-                                    }
+                                    onClick={() => editComment(text)}
                                 />
                             </div>
                         ) : null}
+                        {isChild ? null : (
+                            <div className="ml8">
+                                <IconButton
+                                    icon="MessageCircle"
+                                    invertCircle
+                                    size={18}
+                                    tooltip="Reply to comment"
+                                    tooltipPos="left"
+                                    onClick={createChildComment}
+                                />
+                            </div>
+                        )}
                         <div className="mh8">
-                            <AddReactionButton uid={userInfo.uid} />
+                            <AddReactionButton commentId={id} />
                         </div>
                     </div>
                 </div>
             </div>
             <div className="Comment-text mt4">
-                <RichTextEditor value={textContentState} readOnly={true} />
-                {reactions.length ? <Reactions reactions={reactions} /> : null}
+                <RichTextEditor value={text} readOnly={true} />
+                {reactions.length ? (
+                    <Reactions reactions={reactions} commentId={id} />
+                ) : null}
             </div>
         </div>
     );

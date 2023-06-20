@@ -1,11 +1,20 @@
 import * as React from 'react';
 
+import { CommentEntityType } from 'const/comment';
 import { SoftButton } from 'ui/Button/Button';
 import { Popover } from 'ui/Popover/Popover';
 
 import { Comments } from './Comments';
 
-export const CommentButton: React.FunctionComponent = () => {
+interface IProps {
+    entityType: CommentEntityType;
+    entityId: number;
+}
+
+export const CommentButton: React.FunctionComponent<IProps> = ({
+    entityType,
+    entityId,
+}) => {
     const [showComments, setShowComments] = React.useState(false);
     const commentButtonRef = React.useRef<HTMLAnchorElement>();
     return (
@@ -26,7 +35,7 @@ export const CommentButton: React.FunctionComponent = () => {
                     hideArrow
                     noPadding
                 >
-                    <Comments />
+                    <Comments entityType={entityType} entityId={entityId} />
                 </Popover>
             ) : null}
         </>
