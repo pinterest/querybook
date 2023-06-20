@@ -30,3 +30,11 @@ Create chart name and version as used by the chart label.
 {{- define "querybook.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
+
+{{/*
+Return secret name to be used based on provided values.
+*/}}
+{{- define "querybook.secrets" -}}
+{{- $inputSecret := print (include "querybook.fullname" .) "-secret" -}}
+{{- default $inputSecret .Values.existingSecret | quote -}}
+{{- end -}}
