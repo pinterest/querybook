@@ -7,7 +7,9 @@ import {
     useState,
 } from 'react';
 
+import { CommentEntityType } from 'const/comment';
 import { ICancelablePromise } from 'lib/datasource';
+import { CellCommentResource, TableCommentResource } from 'resource/comment';
 import { IResource } from 'resource/types';
 
 interface IDataFetchState<T> {
@@ -16,6 +18,11 @@ interface IDataFetchState<T> {
     data: T;
     error: any;
 }
+
+export const commentResourceByEntityType = {
+    [CommentEntityType.CELL]: CellCommentResource,
+    [CommentEntityType.TABLE]: TableCommentResource,
+};
 
 function dataFetchReducer<T>(state: IDataFetchState<T>, action) {
     switch (action.type) {

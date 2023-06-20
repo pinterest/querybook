@@ -1,11 +1,14 @@
 import * as React from 'react';
+import { useDispatch } from 'react-redux';
 
 import { TooltipDirection } from 'const/tooltip';
+import { addReactionByCommentId } from 'redux/comment/action';
+import { Dispatch } from 'redux/store/types';
 import { IconButton } from 'ui/Button/IconButton';
 import { Popover, PopoverLayout } from 'ui/Popover/Popover';
 
 interface IProps {
-    uid: number;
+    commentId: number;
     popoverLayout?: PopoverLayout;
     tooltipPos?: TooltipDirection;
 }
@@ -30,20 +33,20 @@ const EmojiList: React.FunctionComponent<IEmojiListProps> = ({ onClick }) => (
 );
 
 export const AddReactionButton: React.FunctionComponent<IProps> = ({
-    uid,
+    commentId,
     popoverLayout = ['bottom', 'right'],
     tooltipPos = 'down',
 }) => {
+    const dispatch: Dispatch = useDispatch();
     const addReactionButtonRef = React.useRef<HTMLAnchorElement>();
 
     const [showEmojis, setShowEmojis] = React.useState(false);
 
     const handleEmojiClick = React.useCallback(
         (emoji: string) => {
-            // TODO: make this work (with backend)
-            console.log(emoji, 'added by', uid);
+            dispatch(addReactionByCommentId(commentId, emoji));
         },
-        [uid]
+        [commentId, dispatch]
     );
 
     return (

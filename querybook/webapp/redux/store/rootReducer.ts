@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 
 import adhocQuery from '../adhocQuery/reducer';
 import board from '../board/reducer';
+import comment from '../comment/reducer';
 import dataDoc from '../dataDoc/reducer';
 import dataSources from '../dataSources/reducer';
 import dataTableSearch from '../dataTableSearch/reducer';
@@ -36,4 +37,5 @@ export default combineReducers({
     user,
     tag,
     scheduledDocs,
+    comment,
 });

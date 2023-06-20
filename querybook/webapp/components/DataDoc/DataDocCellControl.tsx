@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 
 import DatadocConfig from 'config/datadoc.yaml';
 import { ComponentType, ElementType } from 'const/analytics';
+import { CommentEntityType } from 'const/comment';
 import { IDataCellMeta } from 'const/datadoc';
 import { useBoundFunc } from 'hooks/useBoundFunction';
 import { trackClick } from 'lib/analytics';
@@ -22,6 +23,7 @@ const cellTypes = DatadocConfig.cell_types;
 
 interface IProps {
     index?: number;
+    cellId?: number;
     isHeader: boolean;
 
     numberOfCells: number;
@@ -49,6 +51,7 @@ interface IProps {
 
 export const DataDocCellControl: React.FunctionComponent<IProps> = ({
     index,
+    cellId,
     isHeader,
 
     numberOfCells,
@@ -146,7 +149,15 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
             });
         }
 
-        rightButtons.push(<CommentButton key="comment" />);
+        if (cellId) {
+            rightButtons.push(
+                <CommentButton
+                    key="comment"
+                    entityType={CommentEntityType.CELL}
+                    entityId={cellId}
+                />
+            );
+        }
     }
 
     if (isEditable) {
