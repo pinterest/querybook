@@ -2,11 +2,11 @@ import { ContentState } from 'draft-js';
 
 import {
     CommentEntityType,
-    commentResourceByEntityType,
     commentStateKeyByEntityType,
     ICommentRaw,
     IReaction,
 } from 'const/comment';
+import { commentResourceByEntityType } from 'hooks/useResource';
 import { CommentResource, ReactionResource } from 'resource/comment';
 
 import { ThunkResult } from './types';

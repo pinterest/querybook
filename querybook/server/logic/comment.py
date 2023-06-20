@@ -1,32 +1,13 @@
 from app.db import with_session
 from models.comment import Comment, CommentReaction, DataTableComment, DataCellComment
-from const.comment import CommentDict
 
 
 @with_session
-def get_comment_by_id(comment_id: int, session=None):
-    return Comment.get(id=comment_id, session=session)
-
-
-@with_session
-def get_all_comment_data_dict_by_id(comment_id: int, session=None) -> CommentDict:
+def get_comment_dict_by_id(comment_id: int, session=None):
     comment = Comment.get(id=comment_id, session=session)
-    child_comments = session.query(Comment).filter(
-        Comment.parent_comment_id == comment_id
-    )
-    reactions = (
-        session.query(CommentReaction)
-        .filter(CommentReaction.comment_id == comment_id)
-        .all()
-    )
-
-    comment_dict = comment.to_dict()
-    comment_dict["child_comment_ids"] = [
-        child_comment.id for child_comment in child_comments
-    ]
-    comment_dict["reactions"] = [reaction.to_dict() for reaction in reactions]
-
-    return comment_dict
+    if not comment:
+        return None
+    return Comment.get(id=comment_id, session=session).to_dict()
 
 
 @with_session
@@ -38,7 +19,7 @@ def get_comments_by_data_cell_id(data_cell_id: int, session=None):
     )
 
     return [
-        get_all_comment_data_dict_by_id(cell_comment.comment_id, session=session)
+        get_comment_dict_by_id(cell_comment.comment_id, session=session)
         for cell_comment in cell_comments
     ]
 
@@ -52,7 +33,7 @@ def get_comments_by_data_table_id(data_table_id: int, session=None):
     )
 
     return [
-        get_all_comment_data_dict_by_id(table_comment.comment_id, session=session)
+        get_comment_dict_by_id(table_comment.comment_id, session=session)
         for table_comment in table_comments
     ]
 
@@ -68,7 +49,7 @@ def add_comment_to_data_cell(data_cell_id: int, uid: int, text, session=None):
         session=session,
     )
     session.commit()
-    return get_all_comment_data_dict_by_id(comment.id, session=session)
+    return comment.to_dict()
 
 
 @with_session
@@ -82,7 +63,7 @@ def add_comment_to_data_table(data_table_id: int, uid: int, text, session=None):
         session=session,
     )
     session.commit()
-    return get_all_comment_data_dict_by_id(comment.id, session=session)
+    return comment.to_dict()
 
 
 @with_session
@@ -93,10 +74,7 @@ def get_thread_comments(parent_comment_id: int, session=None):
         .order_by(Comment.created_at)
         .all()
     )
-    return [
-        get_all_comment_data_dict_by_id(comment.id, session=session)
-        for comment in comments
-    ]
+    return [comment.to_dict() for comment in comments]
 
 
 @with_session
@@ -105,7 +83,7 @@ def add_thread_comment(parent_comment_id: int, uid: int, text, session=None):
         {"created_by": uid, "text": text, "parent_comment_id": parent_comment_id},
         session=session,
     )
-    return get_all_comment_data_dict_by_id(comment.id, session=session)
+    return comment.to_dict()
 
 
 @with_session
@@ -117,7 +95,7 @@ def edit_comment(comment_id: int, session=None, **fields):
         commit=True,
         session=session,
     )
-    return get_all_comment_data_dict_by_id(comment.id)
+    return comment.to_dict()
 
 
 @with_session

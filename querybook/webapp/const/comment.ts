@@ -1,7 +1,5 @@
 import * as DraftJs from 'draft-js';
 
-import { CellCommentResource, TableCommentResource } from 'resource/comment';
-
 export interface ICommentBase {
     id: number;
     created_by: number;
@@ -32,11 +30,6 @@ export enum CommentEntityType {
     CELL = 'cell',
     TABLE = 'table',
 }
-
-export const commentResourceByEntityType = {
-    [CommentEntityType.CELL]: CellCommentResource,
-    [CommentEntityType.TABLE]: TableCommentResource,
-};
 
 export const commentStateKeyByEntityType = {
     [CommentEntityType.CELL]: 'cellIdToCommentIds',

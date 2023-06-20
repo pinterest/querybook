@@ -2,6 +2,7 @@ import sqlalchemy as sql
 from app import db
 from lib.sqlalchemy import CRUDMixin
 from const.db import mediumtext_length, name_length, now
+from sqlalchemy.orm import relationship
 
 Base = db.Base
 
@@ -24,6 +25,26 @@ class Comment(CRUDMixin, Base):
         sql.ForeignKey("comment.id", ondelete="CASCADE"),
         nullable=True,
     )
+
+    children = relationship(
+        "Comment",
+        primaryjoin="Comment.id == Comment.parent_comment_id",
+        remote_side=[parent_comment_id],
+        uselist=True,
+    )
+    reactions = relationship("CommentReaction", backref="comment", uselist=True)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+            "created_by": self.created_by,
+            "text": self.text,
+            "parent_comment_id": self.parent_comment_id,
+            "child_comment_ids": [child.to_dict()["id"] for child in self.children],
+            "reactions": [reaction.to_dict() for reaction in self.reactions],
+        }
 
 
 class CommentReaction(CRUDMixin, Base):

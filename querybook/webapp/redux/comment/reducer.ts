@@ -1,10 +1,6 @@
 import { produce } from 'immer';
 
-import {
-    commentStateKeyByEntityType,
-    IComment,
-    ICommentRaw,
-} from 'const/comment';
+import { commentStateKeyByEntityType, ICommentRaw } from 'const/comment';
 import { convertRawToContentState } from 'lib/richtext/serialize';
 
 import { CommentAction, ICommentState } from './types';
@@ -20,15 +16,6 @@ function commentReducer(state = initialState, action: CommentAction) {
         switch (action.type) {
             case '@@comment/RECEIVE_COMMENTS': {
                 const { comments } = action.payload;
-
-                const receivedComments: Record<number, IComment> = {};
-                comments.forEach(
-                    (comment: ICommentRaw) =>
-                        (receivedComments[comment.id] = {
-                            ...comment,
-                            text: convertRawToContentState(comment.text),
-                        })
-                );
 
                 comments.forEach((comment: ICommentRaw) => {
                     draft.commentsById[comment.id] = {
