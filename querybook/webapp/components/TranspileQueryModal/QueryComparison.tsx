@@ -10,12 +10,18 @@ import './QueryComparison.scss';
 export const QueryComparison: React.FC<{
     fromQuery: string;
     toQuery: string;
-    fromTag?: string;
-    toTag?: string;
-    highlight?: boolean;
-}> = ({ fromQuery, toQuery, fromTag, toTag, highlight = true }) => {
+    fromQueryTitle?: string;
+    toQueryTitle?: string;
+    disableHighlight?: boolean;
+}> = ({
+    fromQuery,
+    toQuery,
+    fromQueryTitle,
+    toQueryTitle,
+    disableHighlight,
+}) => {
     const [addedRanges, removedRanges] = useMemo(() => {
-        if (!highlight) {
+        if (disableHighlight) {
             return [[], []];
         }
 
@@ -46,14 +52,13 @@ export const QueryComparison: React.FC<{
                 currentRemovedIdx += diffLen;
             }
         }
-        console.log(added, removed);
         return [added, removed];
-    }, [fromQuery, toQuery, highlight]);
+    }, [fromQuery, toQuery, disableHighlight]);
 
     return (
         <div className="QueryComparison">
             <div className="mr8 flex1">
-                {fromTag && <Tag>{fromTag}</Tag>}
+                {fromQueryTitle && <Tag>{fromQueryTitle}</Tag>}
                 <ThemedCodeHighlightWithMark
                     highlightRanges={removedRanges}
                     query={fromQuery}
@@ -62,7 +67,7 @@ export const QueryComparison: React.FC<{
                 />
             </div>
             <div className="flex1">
-                {toTag && <Tag>{toTag}</Tag>}
+                {toQueryTitle && <Tag>{toQueryTitle}</Tag>}
                 <ThemedCodeHighlightWithMark
                     highlightRanges={addedRanges}
                     query={toQuery}

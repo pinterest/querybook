@@ -38,6 +38,7 @@ interface IProps {
     queryError: IQueryError;
     queryExecution: IQueryExecution;
     statementExecutions: IStatementExecution[];
+    readonly?: boolean;
     changeCellContext?: (context: string) => void;
 }
 
@@ -130,6 +131,7 @@ export const QueryError: React.FunctionComponent<IProps> = ({
     queryExecution,
     statementExecutions,
     queryEngine,
+    readonly,
     changeCellContext,
 }) => {
     const {
@@ -179,18 +181,13 @@ export const QueryError: React.FunctionComponent<IProps> = ({
     }
 
     const errorTitleDOM = (
-        <span
-            style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-            }}
-        >
-            <span className="QueryError-title flex-row">
+        <div className="horizontal-space-between">
+            <div className="QueryError-title flex-row">
                 <Icon name="AlertOctagon" size={20} className="mr8" />
                 {errorTitle}
-            </span>
-            {AIAssistantConfig.enabled &&
+            </div>
+            {!readonly &&
+                AIAssistantConfig.enabled &&
                 AIAssistantConfig.query_auto_fix.enabled && (
                     <AutoFixButton
                         query={queryExecution.query}
@@ -198,7 +195,7 @@ export const QueryError: React.FunctionComponent<IProps> = ({
                         onUpdateQuery={changeCellContext}
                     />
                 )}
-        </span>
+        </div>
     );
 
     return (
@@ -222,8 +219,9 @@ export const QueryError: React.FunctionComponent<IProps> = ({
 export const QueryErrorWrapper: React.FunctionComponent<{
     queryExecution: IQueryExecution;
     statementExecutions: IStatementExecution[];
+    readonly?: boolean;
     changeCellContext?: (context: string) => void;
-}> = ({ queryExecution, statementExecutions, changeCellContext }) => {
+}> = ({ queryExecution, statementExecutions, readonly, changeCellContext }) => {
     const queryError = useSelector(
         (state: IStoreState) =>
             state.queryExecutions.queryErrorById[queryExecution.id]
@@ -250,6 +248,7 @@ export const QueryErrorWrapper: React.FunctionComponent<{
                 queryExecution={queryExecution}
                 statementExecutions={statementExecutions}
                 queryEngine={queryEngine}
+                readonly={readonly}
                 changeCellContext={changeCellContext}
             />
         </Loader>

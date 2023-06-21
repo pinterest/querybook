@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 
 import { QueryComparison } from 'components/TranspileQueryModal/QueryComparison';
-import ds from 'lib/datasource';
+import { useStream } from 'hooks/useStream';
 import { Button } from 'ui/Button/Button';
 import { Message } from 'ui/Message/Message';
 import { Modal } from 'ui/Modal/Modal';
@@ -19,41 +19,24 @@ export const AutoFixButton = ({
     onUpdateQuery,
 }: IProps) => {
     const [show, setShow] = useState(false);
-    const [isStreaming, setIsStreaming] = useState(false);
 
-    const [response, setResponse] = useState<{
-        explanation: string;
-        suggestion: string;
-        fixedQuery: string;
-    } | null>(null);
+    const { isStreaming, startStream, data } = useStream(
+        '/ds/ai/query_auto_fix/',
+        {
+            query_execution_id: queryExecutionId,
+        }
+    );
 
-    const { explanation, suggestion, fixedQuery } = response ?? {};
+    const {
+        explanation,
+        fix_suggestion: suggestion,
+        fixed_query: fixedQuery,
+    } = data || {};
 
-    const handleClickAutoFix = useCallback(async () => {
-        setIsStreaming(true);
-
-        ds.stream(
-            '/ds/ai/query_auto_fix/',
-            {
-                query_execution_id: queryExecutionId,
-            },
-            (data) => {
-                setResponse({
-                    explanation: data['explanation'] ?? '',
-                    suggestion: data['fix_suggestion'] ?? '',
-                    fixedQuery: data['fixed_query'] ?? '',
-                });
-            },
-            () => {
-                setIsStreaming(false);
-            }
-        );
-    }, [queryExecutionId]);
-
-    const bottomDOM = response?.fixedQuery && (
+    const bottomDOM = fixedQuery && (
         <div className="right-align mb16">
             <Button
-                title="Cancel"
+                title="Reject"
                 color="cancel"
                 onClick={() => {
                     setShow(false);
@@ -63,7 +46,7 @@ export const AutoFixButton = ({
                 title="Apply"
                 color="confirm"
                 onClick={() => {
-                    onUpdateQuery?.(response?.fixedQuery);
+                    onUpdateQuery?.(fixedQuery);
                     setShow(false);
                 }}
             />
@@ -76,8 +59,8 @@ export const AutoFixButton = ({
                 title="Auto fix"
                 onClick={() => {
                     setShow(true);
-                    if (!response) {
-                        handleClickAutoFix();
+                    if (!data) {
+                        startStream();
                     }
                 }}
             />
@@ -89,10 +72,10 @@ export const AutoFixButton = ({
                     bottomDOM={bottomDOM}
                 >
                     <Message
-                        message="Note: This AI-powered auto fix may not always be 100% accurate. Please use your own judgement and verify the result."
+                        message="Note: This AI-powered auto fix may not be 100% accurate. Please use your own judgement and verify the result."
                         type="warning"
                     />
-                    {!response && <AccentText>Thinking...</AccentText>}
+                    {!data && <AccentText>Thinking...</AccentText>}
                     {explanation && (
                         <div>
                             <AccentText size="med" weight="bold">

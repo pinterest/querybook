@@ -176,7 +176,7 @@ export function uploadDatasource<T = null>(
 function streamDatasource(
     url: string,
     params?: Record<string, unknown>,
-    onStreaming?: (data: object) => void,
+    onStreaming?: (data: { [key: string]: string }) => void,
     onStreamingEnd?: () => void
 ) {
     const eventSource = new EventSource(

@@ -11,6 +11,7 @@ from lib.logger import get_logger
 from logic import query_execution as qe_logic
 from lib.query_analysis.lineage import process_query
 from logic import metastore as m_logic
+from models.query_execution import QueryExecution
 
 LOG = get_logger(__file__)
 
@@ -141,6 +142,16 @@ class BaseAIAssistant(ABC):
 
         return prompt
 
+    def _get_query_execution_error(self, query_execution: QueryExecution) -> str:
+        """Get error message from query execution. If the error message is too long, only return the first 1000 characters."""
+        error = (
+            query_execution.error.error_message_extracted
+            or query_execution.error.error_message
+            or ""
+        )
+
+        return error[:1000]
+
     @abstractmethod
     def generate_sql_query(
         self, metastore_id: int, query_engine_id: int, question: str, tables: list[str]
@@ -202,20 +213,11 @@ class BaseAIAssistant(ABC):
         query = query_execution.query
         language = query_execution.engine.language
 
-        # get error message
-        error = (
-            query_execution.error.error_message_extracted
-            or query_execution.error.error_message
-            or ""
-        )
-        # sometimes the error messge is huge, only take the first 1000 chars
-        error = error[:1000]
-
         # get table names
         table_names, _ = process_query(query=query, language=language)
 
         metastore_id = query_execution.engine.metastore_id
-        tables = self._generate_table_schema_prompt(
+        table_schemas = self._generate_table_schema_prompt(
             metastore_id=metastore_id,
             table_names=[
                 table for statement_tables in table_names for table in statement_tables
@@ -225,9 +227,9 @@ class BaseAIAssistant(ABC):
 
         return self._query_auto_fix(
             language=language,
-            query=query,
-            error=error,
-            tables=tables,
+            query=query_execution.query,
+            error=self._get_query_execution_error(query_execution),
+            table_schemas=table_schemas,
             stream=stream,
             callback_handler=callback_handler,
             user_id=user_id,
@@ -239,7 +241,7 @@ class BaseAIAssistant(ABC):
         language: str,
         query: str,
         error: str,
-        tables: str,
+        table_schemas: str,
         stream: bool,
         callback_handler: ChainStreamHandler,
         user_id=None,
