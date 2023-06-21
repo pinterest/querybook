@@ -138,7 +138,6 @@ export function createChildComment(
     };
 }
 
-// TODO: update this to show archived comments in UI
 export function deleteComment(commentId: number): ThunkResult<Promise<void>> {
     return async (dispatch) => {
         try {

@@ -90,18 +90,18 @@ export const Comments: React.FunctionComponent<IProps> = ({
 
     const handleEditComment = React.useCallback(
         (
-            commentId?: number,
-            commentText?: DraftJs.ContentState,
-            parentCommentId?: number
+            commentId: number = null,
+            commentText: DraftJs.ContentState = emptyCommentValue,
+            parentCommentId: number = null
         ) => {
-            setEditingCommentId(commentId || null);
-            setEditingCommentParentId(parentCommentId || null);
-            setCurrentComment(commentText || emptyCommentValue);
-            if (parentCommentId) {
+            setEditingCommentId(commentId);
+            setCurrentComment(commentText);
+            setEditingCommentParentId(parentCommentId);
+            if (parentCommentId && !openThreadIds.has(parentCommentId)) {
                 setOpenThreadIds((ids) => new Set(ids).add(parentCommentId));
             }
         },
-        []
+        [openThreadIds]
     );
 
     const handleCommentSave = React.useCallback(
@@ -140,8 +140,6 @@ export const Comments: React.FunctionComponent<IProps> = ({
         [dispatch]
     );
 
-    console.log('editingCommentParentId', editingCommentParentId);
-
     const renderFlatCommentDOM = (
         comment: IComment,
         parentCommentId?: number
@@ -157,7 +155,7 @@ export const Comments: React.FunctionComponent<IProps> = ({
                 isBeingEdited={editingCommentId === comment.id}
                 isChild={Boolean(parentCommentId)}
                 editChildComment={() =>
-                    handleEditComment(null, null, comment.id)
+                    handleEditComment(undefined, undefined, comment.id)
                 }
                 isBeingRepliedTo={editingCommentParentId === comment.id}
             />
@@ -178,7 +176,6 @@ export const Comments: React.FunctionComponent<IProps> = ({
         </React.Fragment>
     );
 
-    console.log('op', openThreadIds);
     const renderCommentDOM = () =>
         commentIds.map((commentId: number) =>
             commentsById[commentId]?.child_comment_ids?.length

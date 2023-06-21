@@ -44,7 +44,7 @@ export const Comment: React.FunctionComponent<IProps> = ({
         reactions,
         archived,
     } = comment;
-    const canEdit = React.useMemo(
+    const isAuthor = React.useMemo(
         () => uid === userInfo.uid,
         [uid, userInfo.uid]
     );
@@ -100,7 +100,7 @@ export const Comment: React.FunctionComponent<IProps> = ({
                     ) : null}
                     {archived ? null : (
                         <div className="Comment-top-right-buttons flex-row">
-                            {canEdit && !isBeingEdited ? (
+                            {isAuthor && !isBeingEdited ? (
                                 <>
                                     <div className="Comment-edit">
                                         <IconButton

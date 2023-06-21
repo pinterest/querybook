@@ -94,7 +94,6 @@ def edit_comment(comment_id: int, session=None, **fields):
 
 @with_session
 def remove_comment(comment_id: int, session=None):
-    # TODO: update to archive - will do as last pr before merge (bc alembic)
     Comment.delete(
         comment_id,
         session=session,

@@ -64,7 +64,6 @@ export const Reactions: React.FunctionComponent<IProps> = ({
     );
 
     const handleReactionClick = (reaction: string, uid: number) => {
-        // TODO: make this work (with backend)
         const uidIdx = uidsByReaction[reaction].findIndex(
             (uid) => uid === userInfo.uid
         );

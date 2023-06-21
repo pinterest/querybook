@@ -168,11 +168,6 @@ export const PopoverContainer = React.forwardRef<
                     newWrapperStyle.left =
                         box.left + box.width - contentBox.width;
                     newArrowStyle.left = contentBox.width - 3 * ARROW_SIZE;
-                    // console.log(
-                    //     'contentBox.width',
-                    //     contentBox.width,
-                    //     ARROW_SIZE
-                    // );
                 } else {
                     newWrapperStyle.left =
                         middle(box.left, box.width) -
