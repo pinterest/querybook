@@ -42,7 +42,7 @@ class Comment(CRUDMixin, Base):
             "created_by": self.created_by,
             "text": self.text,
             "parent_comment_id": self.parent_comment_id,
-            "child_comment_ids": [child.to_dict()["id"] for child in self.children],
+            "child_comment_ids": [child.id for child in self.children],
             "reactions": [reaction.to_dict() for reaction in self.reactions],
         }
 
