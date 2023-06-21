@@ -57,18 +57,14 @@ export const Comments: React.FunctionComponent<IProps> = ({
         React.useState<number>(null);
     const [editingCommentId, setEditingCommentId] =
         React.useState<number>(null);
+    const [openThreadIds, setOpenThreadIds] = React.useState<Set<number>>(
+        new Set()
+    );
 
     const loadComments = React.useCallback(
         () => dispatch(fetchCommentsByEntityIdIfNeeded(entityType, entityId)),
 
         [dispatch, entityId, entityType]
-    );
-
-    const handleArchiveComment = React.useCallback(
-        (commentId: number) => {
-            dispatch(deleteComment(commentId));
-        },
-        [dispatch]
     );
 
     const handleCreateComment = React.useCallback(
@@ -94,13 +90,16 @@ export const Comments: React.FunctionComponent<IProps> = ({
 
     const handleEditComment = React.useCallback(
         (
-            commentId: number,
-            commentText: DraftJs.ContentState,
+            commentId?: number,
+            commentText?: DraftJs.ContentState,
             parentCommentId?: number
         ) => {
-            setEditingCommentId(commentId);
+            setEditingCommentId(commentId || null);
             setEditingCommentParentId(parentCommentId || null);
-            setCurrentComment(commentText);
+            setCurrentComment(commentText || emptyCommentValue);
+            if (parentCommentId) {
+                setOpenThreadIds((ids) => new Set(ids).add(parentCommentId));
+            }
         },
         []
     );
@@ -109,56 +108,82 @@ export const Comments: React.FunctionComponent<IProps> = ({
         (values: { text: DraftJs.ContentState }, { resetForm }) => {
             if (editingCommentId) {
                 editComment(editingCommentId, values.text);
-                setEditingCommentId(null);
             } else {
                 handleCreateComment(values.text, editingCommentParentId);
             }
-            setCurrentComment(emptyCommentValue);
+            handleEditComment();
             resetForm();
         },
         [
-            handleCreateComment,
-            editComment,
             editingCommentId,
+            handleEditComment,
+            editComment,
+            handleCreateComment,
             editingCommentParentId,
         ]
     );
 
-    const handleCommentClear = React.useCallback(() => {
-        setEditingCommentId(null);
-        setEditingCommentParentId(null);
-        setCurrentComment(emptyCommentValue);
-    }, []);
+    const handleCommentClear = React.useCallback(
+        (clearTextValue: () => void) => {
+            setEditingCommentId(null);
+            setEditingCommentParentId(null);
+            clearTextValue();
+            setCurrentComment(emptyCommentValue);
+        },
+        []
+    );
 
-    const renderFlatCommentDOM = (comment: IComment, isChild: boolean) =>
+    const handleArchiveComment = React.useCallback(
+        (commentId: number) => {
+            dispatch(deleteComment(commentId));
+        },
+        [dispatch]
+    );
+
+    console.log('editingCommentParentId', editingCommentParentId);
+
+    const renderFlatCommentDOM = (
+        comment: IComment,
+        parentCommentId?: number
+    ) =>
         comment ? (
             <Comment
                 key={comment.id}
                 comment={comment}
-                editComment={(text) => handleEditComment(comment.id, text)}
+                editComment={(text) =>
+                    handleEditComment(comment.id, text, parentCommentId)
+                }
                 deleteComment={() => handleArchiveComment(comment.id)}
                 isBeingEdited={editingCommentId === comment.id}
-                isChild={isChild}
-                createChildComment={() => setEditingCommentParentId(comment.id)}
+                isChild={Boolean(parentCommentId)}
+                editChildComment={() =>
+                    handleEditComment(null, null, comment.id)
+                }
                 isBeingRepliedTo={editingCommentParentId === comment.id}
             />
         ) : null;
 
     const renderThreadCommentDOM = (comment: IComment) => (
         <React.Fragment key={comment.id + 'thread'}>
-            {renderFlatCommentDOM(comment, false)}
+            {renderFlatCommentDOM(comment)}
             <ThreadComment
+                key={comment.id + 'thread comments'}
                 comment={comment}
                 renderFlatCommentDOM={renderFlatCommentDOM}
+                isOpen={openThreadIds.has(comment.id)}
+                openThread={() =>
+                    setOpenThreadIds((ids) => new Set(ids).add(comment.id))
+                }
             />
         </React.Fragment>
     );
 
+    console.log('op', openThreadIds);
     const renderCommentDOM = () =>
         commentIds.map((commentId: number) =>
             commentsById[commentId]?.child_comment_ids?.length
                 ? renderThreadCommentDOM(commentsById[commentId])
-                : renderFlatCommentDOM(commentsById[commentId], false)
+                : renderFlatCommentDOM(commentsById[commentId])
         );
 
     const renderEditingCommentWarning = () => (
@@ -192,13 +217,19 @@ export const Comments: React.FunctionComponent<IProps> = ({
                             initialValues={{ text: currentComment }}
                             onSubmit={handleCommentSave}
                         >
-                            {({ submitForm, values }) => (
+                            {({ submitForm, values, setValues }) => (
                                 <>
                                     <UserAvatar uid={userInfo?.uid} tiny />
                                     <RichTextField name="text" />
                                     <IconButton
                                         icon="XCircle"
-                                        onClick={handleCommentClear}
+                                        onClick={() =>
+                                            handleCommentClear(() =>
+                                                setValues({
+                                                    text: emptyCommentValue,
+                                                })
+                                            )
+                                        }
                                         noPadding
                                         size={18}
                                         className="mr12"

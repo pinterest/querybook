@@ -71,6 +71,9 @@
         }
     }
     .Comment {
+        &.archived {
+            opacity: 0.5;
+        }
         &.edit-mode {
             .Comment-edit {
                 display: none;

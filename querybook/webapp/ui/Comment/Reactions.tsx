@@ -44,8 +44,9 @@ export const Reactions: React.FunctionComponent<IProps> = ({
     }, [formatReactions, reactionsProp]);
 
     const addEmoji = React.useCallback(
-        (emoji: string) => dispatch(addReactionByCommentId(commentId, emoji)),
-        [commentId, dispatch]
+        (emoji: string) =>
+            dispatch(addReactionByCommentId(commentId, emoji, userInfo.uid)),
+        [commentId, dispatch, userInfo.uid]
     );
     const deleteEmoji = React.useCallback(
         (emoji: string, uid: number) => {
@@ -107,6 +108,7 @@ export const Reactions: React.FunctionComponent<IProps> = ({
                 popoverLayout={['bottom', 'left']}
                 tooltipPos="right"
                 commentId={commentId}
+                uid={userInfo.uid}
             />
         </div>
     );

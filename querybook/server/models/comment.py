@@ -52,15 +52,6 @@ class Comment(CRUDMixin, Base):
 
 class CommentReaction(CRUDMixin, Base):
     __tablename__ = "comment_reaction"
-    # TODO: add this to alembic
-    __table_args__ = (
-        sql.UniqueConstraint(
-            "comment_id",
-            "created_by",
-            "reaction",
-            name="unique_comment_reaction",
-        ),
-    )
 
     id = sql.Column(sql.Integer, primary_key=True, autoincrement=True)
     comment_id = sql.Column(

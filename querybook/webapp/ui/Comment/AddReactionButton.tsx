@@ -11,6 +11,7 @@ interface IProps {
     commentId: number;
     popoverLayout?: PopoverLayout;
     tooltipPos?: TooltipDirection;
+    uid: number;
 }
 interface IEmojiListProps {
     onClick: (emoji: string) => void;
@@ -34,6 +35,7 @@ const EmojiList: React.FunctionComponent<IEmojiListProps> = ({ onClick }) => (
 
 export const AddReactionButton: React.FunctionComponent<IProps> = ({
     commentId,
+    uid,
     popoverLayout = ['bottom', 'right'],
     tooltipPos = 'down',
 }) => {
@@ -44,9 +46,9 @@ export const AddReactionButton: React.FunctionComponent<IProps> = ({
 
     const handleEmojiClick = React.useCallback(
         (emoji: string) => {
-            dispatch(addReactionByCommentId(commentId, emoji));
+            dispatch(addReactionByCommentId(commentId, emoji, uid));
         },
-        [commentId, dispatch]
+        [commentId, dispatch, uid]
     );
 
     return (

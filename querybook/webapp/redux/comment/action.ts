@@ -142,7 +142,7 @@ export function createChildComment(
 export function deleteComment(commentId: number): ThunkResult<Promise<void>> {
     return async (dispatch) => {
         try {
-            const { data: newComment } = await CommentResource.delete(
+            const { data: newComment } = await CommentResource.update(
                 commentId
             );
             dispatch({
@@ -180,9 +180,19 @@ export function updateComment(
 
 export function addReactionByCommentId(
     commentId: number,
-    reaction: string
+    reaction: string,
+    uid: number
 ): ThunkResult<Promise<IReaction>> {
-    return async (dispatch) => {
+    return async (dispatch, getState) => {
+        // checking for dup here bc backend can't tell the difference between emojis
+        const state = getState();
+        const comment = state.comment.commentsById[commentId];
+        const isDuplicate = comment.reactions.find(
+            (re) => re.reaction === reaction && re.created_by === uid
+        );
+        if (isDuplicate) {
+            return;
+        }
         const { data } = await ReactionResource.create(commentId, reaction);
 
         dispatch({

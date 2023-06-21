@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import * as DraftJS from 'draft-js';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
@@ -21,7 +22,7 @@ interface IProps {
     isBeingEdited: boolean;
     isBeingRepliedTo: boolean;
     isChild: boolean;
-    createChildComment: () => void;
+    editChildComment: () => void;
 }
 
 export const Comment: React.FunctionComponent<IProps> = ({
@@ -31,7 +32,7 @@ export const Comment: React.FunctionComponent<IProps> = ({
     isBeingEdited,
     isBeingRepliedTo,
     isChild,
-    createChildComment,
+    editChildComment,
 }) => {
     const userInfo = useSelector((state: IStoreState) => state.user.myUserInfo);
     const {
@@ -49,7 +50,12 @@ export const Comment: React.FunctionComponent<IProps> = ({
     );
 
     return (
-        <div className="Comment">
+        <div
+            className={clsx({
+                Comment: true,
+                archived,
+            })}
+        >
             <div className="Comment-top horizontal-space-between">
                 <div className="Comment-top-left flex-row">
                     <UserAvatar uid={uid} tiny />
@@ -64,7 +70,8 @@ export const Comment: React.FunctionComponent<IProps> = ({
                             cursor="default"
                             isItalic
                         >
-                            updated {fromNow(updatedAt)}
+                            {archived ? 'deleted' : 'updated'}{' '}
+                            {fromNow(updatedAt)}
                         </StyledText>
                     )}
                 </div>
@@ -82,7 +89,7 @@ export const Comment: React.FunctionComponent<IProps> = ({
                     ) : null}
                     {isBeingRepliedTo ? (
                         <StyledText
-                            className="mr4"
+                            className="mr8"
                             color="accent"
                             weight="bold"
                             isItalic
@@ -91,58 +98,62 @@ export const Comment: React.FunctionComponent<IProps> = ({
                             replying to
                         </StyledText>
                     ) : null}
-                    <div className="Comment-top-right-buttons flex-row">
-                        {canEdit && !isBeingEdited ? (
-                            <>
-                                <div className="Comment-edit">
+                    {archived ? null : (
+                        <div className="Comment-top-right-buttons flex-row">
+                            {canEdit && !isBeingEdited ? (
+                                <>
+                                    <div className="Comment-edit">
+                                        <IconButton
+                                            icon="Edit"
+                                            invertCircle
+                                            size={18}
+                                            tooltip="Edit Comment"
+                                            tooltipPos="left"
+                                            onClick={() => editComment(text)}
+                                        />
+                                        <IconButton
+                                            className="ml8"
+                                            icon="Trash"
+                                            invertCircle
+                                            size={18}
+                                            tooltip="Delete Comment"
+                                            tooltipPos="left"
+                                            onClick={deleteComment}
+                                        />
+                                    </div>
+                                </>
+                            ) : null}
+                            {isChild ? null : (
+                                <div className="ml8">
                                     <IconButton
-                                        icon="Edit"
+                                        icon="MessageCircle"
                                         invertCircle
                                         size={18}
-                                        tooltip="Edit Comment"
+                                        tooltip="Reply to comment"
                                         tooltipPos="left"
-                                        onClick={() => editComment(text)}
+                                        onClick={editChildComment}
                                     />
                                 </div>
-                                <div className="Comment-delete">
-                                    <IconButton
-                                        icon="Trash"
-                                        invertCircle
-                                        size={18}
-                                        tooltip="Delete Comment"
-                                        tooltipPos="left"
-                                        onClick={deleteComment}
-                                    />
-                                </div>
-                            </>
-                        ) : null}
-                        {isChild ? null : (
-                            <div className="ml8">
-                                <IconButton
-                                    icon="MessageCircle"
-                                    invertCircle
-                                    size={18}
-                                    tooltip="Reply to comment"
-                                    tooltipPos="left"
-                                    onClick={createChildComment}
+                            )}
+                            <div className="mh8">
+                                <AddReactionButton
+                                    commentId={id}
+                                    uid={userInfo.uid}
                                 />
                             </div>
-                        )}
-                        <div className="mh8">
-                            <AddReactionButton commentId={id} />
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
             <div className="Comment-text mt4">
                 {archived ? (
                     <StyledText
                         className="mr4"
-                        color="light"
+                        color="lightest"
                         isItalic
                         cursor="default"
                     >
-                        'deleted'
+                        this comment has been deleted
                     </StyledText>
                 ) : (
                     <>

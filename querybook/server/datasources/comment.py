@@ -75,15 +75,6 @@ def edit_comment(comment_id: int, **fields):
     return logic.edit_comment(comment_id=comment_id, **fields)
 
 
-@register(
-    "/comment/<int:comment_id>/",
-    methods=["DELETE"],
-)
-def remove_comment(comment_id: int, **fields):
-    assert_can_edit_and_delete(comment_id=comment_id)
-    return logic.edit_comment(comment_id=comment_id, **fields)
-
-
 # reactions
 @register(
     "/comment/<int:comment_id>/reaction/",
