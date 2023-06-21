@@ -164,55 +164,61 @@ export const Comments: React.FunctionComponent<IProps> = ({
         </div>
     );
 
-    return commentIds ? (
+    return (
         <div className="Comments">
-            <div className="Comments-list p16">
-                {commentIds.length ? (
-                    renderCommentDOM()
-                ) : (
-                    <EmptyText>No Comments</EmptyText>
-                )}
-            </div>
-            {editingCommentId ? renderEditingCommentWarning() : null}
-            <div className="Comment-form flex-row pv12 ph16">
-                <Formik
-                    enableReinitialize
-                    initialValues={{ text: currentComment }}
-                    onSubmit={handleCommentSave}
-                >
-                    {({ submitForm }) => (
-                        <>
-                            <UserAvatar uid={userInfo?.uid} tiny />
-                            <RichTextField name="text" />
-                            <IconButton
-                                icon="XCircle"
-                                onClick={handleCommentClear}
-                                noPadding
-                                size={18}
-                                className="mr12"
-                                tooltip="Clear"
-                                tooltipPos="left"
-                                disabled={
-                                    currentComment.getPlainText().length ===
-                                        0 && editingCommentId === null
-                                }
-                            />
-                            <IconButton
-                                icon="Send"
-                                onClick={submitForm}
-                                noPadding
-                                size={18}
-                                className="mr4"
-                                tooltip="Comment"
-                                tooltipPos="left"
-                                // disabled={
-                                //     currentComment.getPlainText().length === 0
-                                // }
-                            />
-                        </>
-                    )}
-                </Formik>
-            </div>
+            {commentIds ? (
+                <>
+                    <div className="Comments-list p16">
+                        {commentIds.length ? (
+                            renderCommentDOM()
+                        ) : (
+                            <EmptyText>No Comments</EmptyText>
+                        )}
+                    </div>
+                    {editingCommentId ? renderEditingCommentWarning() : null}
+                    <div className="Comment-form flex-row pv12 ph16">
+                        <Formik
+                            enableReinitialize
+                            initialValues={{ text: currentComment }}
+                            onSubmit={handleCommentSave}
+                        >
+                            {({ submitForm, values }) => (
+                                <>
+                                    <UserAvatar uid={userInfo?.uid} tiny />
+                                    <RichTextField name="text" />
+                                    <IconButton
+                                        icon="XCircle"
+                                        onClick={handleCommentClear}
+                                        noPadding
+                                        size={18}
+                                        className="mr12"
+                                        tooltip="Clear"
+                                        tooltipPos="left"
+                                        disabled={
+                                            values.text.getPlainText()
+                                                .length === 0 &&
+                                            editingCommentId === null
+                                        }
+                                    />
+                                    <IconButton
+                                        icon="Send"
+                                        onClick={submitForm}
+                                        noPadding
+                                        size={18}
+                                        className="mr4"
+                                        tooltip="Comment"
+                                        tooltipPos="left"
+                                        disabled={
+                                            values.text.getPlainText()
+                                                .length === 0
+                                        }
+                                    />
+                                </>
+                            )}
+                        </Formik>
+                    </div>
+                </>
+            ) : null}
         </div>
-    ) : null;
+    );
 };
