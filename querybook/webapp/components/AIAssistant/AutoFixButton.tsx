@@ -97,9 +97,9 @@ export const AutoFixButton = ({
                             <QueryComparison
                                 fromQuery={query}
                                 toQuery={fixedQuery}
-                                fromTag="Original"
-                                toTag="Fixed"
-                                highlight={!isStreaming}
+                                fromQueryTitle="Original"
+                                toQueryTitle="Fixed"
+                                disableHighlight={isStreaming}
                             />
                         </div>
                     )}
