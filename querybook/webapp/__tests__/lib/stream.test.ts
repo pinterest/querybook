@@ -22,7 +22,11 @@ describe('DeltaStreamParser', () => {
 
     it('Works for stream with only key/value pairs', () => {
         const parser = new DeltaStreamParser();
-        expect(parser.parse('<@some_key@>\nsome value\n')).toEqual({
+        expect(parser.parse('<@some_key@>')).toEqual({
+            data: '',
+            some_key: '',
+        });
+        expect(parser.parse('\nsome value\n')).toEqual({
             data: '',
             some_key: 'some value\n',
         });

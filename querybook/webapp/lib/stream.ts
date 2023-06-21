@@ -43,6 +43,12 @@ export class DeltaStreamParser {
     }
 
     public parse(delta: string): { [key: string]: string } {
+        this._parse(delta);
+        // make a copy of the result to avoid modifying the original result by the caller
+        return { ...this._result };
+    }
+
+    private _parse(delta: string): { [key: string]: string } {
         this._buffer += delta;
         // This is to make sure we always have complete <@ and @> in the buffer
         if (
@@ -50,8 +56,7 @@ export class DeltaStreamParser {
             this._buffer.endsWith('<') ||
             this._buffer.endsWith('@')
         ) {
-            // make a copy of the result to avoid modifying the original result by the caller
-            return { ...this._result };
+            return;
         }
 
         let i = 0;
@@ -77,10 +82,12 @@ export class DeltaStreamParser {
         }
 
         // handle the last char
-        if (this._isPartialKey) {
-            this._currentKey += this._buffer[i];
-        } else {
-            this._currentValue += this._buffer[i];
+        if (i < this._buffer.length) {
+            if (this._isPartialKey) {
+                this._currentKey += this._buffer[i];
+            } else {
+                this._currentValue += this._buffer[i];
+            }
         }
 
         if (!this._isPartialKey) {
@@ -88,7 +95,5 @@ export class DeltaStreamParser {
         }
 
         this._buffer = '';
-        // make a copy of the result to avoid modifying the original result by the caller
-        return { ...this._result };
     }
 }
