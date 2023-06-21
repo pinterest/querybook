@@ -26,6 +26,8 @@ class Comment(CRUDMixin, Base):
         nullable=True,
     )
 
+    archived = sql.Column(sql.Boolean, default=False, nullable=False)
+
     children = relationship(
         "Comment",
         primaryjoin="Comment.id == Comment.parent_comment_id",
@@ -42,6 +44,7 @@ class Comment(CRUDMixin, Base):
             "created_by": self.created_by,
             "text": self.text,
             "parent_comment_id": self.parent_comment_id,
+            "archived": self.archived,
             "child_comment_ids": [child.id for child in self.children],
             "reactions": [reaction.to_dict() for reaction in self.reactions],
         }

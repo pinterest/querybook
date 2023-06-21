@@ -17,6 +17,7 @@ import { Reactions } from './Reactions';
 interface IProps {
     comment: IComment;
     editComment: (text: DraftJS.ContentState) => void;
+    deleteComment: () => void;
     isBeingEdited: boolean;
     isBeingRepliedTo: boolean;
     isChild: boolean;
@@ -26,6 +27,7 @@ interface IProps {
 export const Comment: React.FunctionComponent<IProps> = ({
     comment,
     editComment,
+    deleteComment,
     isBeingEdited,
     isBeingRepliedTo,
     isChild,
@@ -39,7 +41,12 @@ export const Comment: React.FunctionComponent<IProps> = ({
         created_at: createdAt,
         updated_at: updatedAt,
         reactions,
+        archived,
     } = comment;
+    const canEdit = React.useMemo(
+        () => uid === userInfo.uid,
+        [uid, userInfo.uid]
+    );
 
     return (
         <div className="Comment">
@@ -85,17 +92,29 @@ export const Comment: React.FunctionComponent<IProps> = ({
                         </StyledText>
                     ) : null}
                     <div className="Comment-top-right-buttons flex-row">
-                        {uid === userInfo.uid && !isBeingEdited ? (
-                            <div className="Comment-edit">
-                                <IconButton
-                                    icon="Edit"
-                                    invertCircle
-                                    size={18}
-                                    tooltip="Edit Comment"
-                                    tooltipPos="left"
-                                    onClick={() => editComment(text)}
-                                />
-                            </div>
+                        {canEdit && !isBeingEdited ? (
+                            <>
+                                <div className="Comment-edit">
+                                    <IconButton
+                                        icon="Edit"
+                                        invertCircle
+                                        size={18}
+                                        tooltip="Edit Comment"
+                                        tooltipPos="left"
+                                        onClick={() => editComment(text)}
+                                    />
+                                </div>
+                                <div className="Comment-delete">
+                                    <IconButton
+                                        icon="Trash"
+                                        invertCircle
+                                        size={18}
+                                        tooltip="Delete Comment"
+                                        tooltipPos="left"
+                                        onClick={deleteComment}
+                                    />
+                                </div>
+                            </>
                         ) : null}
                         {isChild ? null : (
                             <div className="ml8">
@@ -116,10 +135,23 @@ export const Comment: React.FunctionComponent<IProps> = ({
                 </div>
             </div>
             <div className="Comment-text mt4">
-                <RichTextEditor value={text} readOnly={true} />
-                {reactions.length ? (
-                    <Reactions reactions={reactions} commentId={id} />
-                ) : null}
+                {archived ? (
+                    <StyledText
+                        className="mr4"
+                        color="light"
+                        isItalic
+                        cursor="default"
+                    >
+                        'deleted'
+                    </StyledText>
+                ) : (
+                    <>
+                        <RichTextEditor value={text} readOnly={true} />
+                        {reactions.length ? (
+                            <Reactions reactions={reactions} commentId={id} />
+                        ) : null}
+                    </>
+                )}
             </div>
         </div>
     );

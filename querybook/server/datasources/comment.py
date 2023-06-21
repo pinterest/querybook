@@ -79,9 +79,9 @@ def edit_comment(comment_id: int, **fields):
     "/comment/<int:comment_id>/",
     methods=["DELETE"],
 )
-def remove_comment(comment_id: int):
+def remove_comment(comment_id: int, **fields):
     assert_can_edit_and_delete(comment_id=comment_id)
-    return logic.remove_comment(comment_id=comment_id)
+    return logic.edit_comment(comment_id=comment_id, **fields)
 
 
 # reactions

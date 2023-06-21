@@ -13,6 +13,7 @@ import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import {
     createChildComment,
     createComment,
+    deleteComment,
     fetchCommentsByEntityIdIfNeeded,
     updateComment,
 } from 'redux/comment/action';
@@ -61,6 +62,13 @@ export const Comments: React.FunctionComponent<IProps> = ({
         () => dispatch(fetchCommentsByEntityIdIfNeeded(entityType, entityId)),
 
         [dispatch, entityId, entityType]
+    );
+
+    const handleArchiveComment = React.useCallback(
+        (commentId: number) => {
+            dispatch(deleteComment(commentId));
+        },
+        [dispatch]
     );
 
     const handleCreateComment = React.useCallback(
@@ -115,6 +123,7 @@ export const Comments: React.FunctionComponent<IProps> = ({
             editingCommentParentId,
         ]
     );
+
     const handleCommentClear = React.useCallback(() => {
         setEditingCommentId(null);
         setEditingCommentParentId(null);
@@ -127,6 +136,7 @@ export const Comments: React.FunctionComponent<IProps> = ({
                 key={comment.id}
                 comment={comment}
                 editComment={(text) => handleEditComment(comment.id, text)}
+                deleteComment={() => handleArchiveComment(comment.id)}
                 isBeingEdited={editingCommentId === comment.id}
                 isChild={isChild}
                 createChildComment={() => setEditingCommentParentId(comment.id)}

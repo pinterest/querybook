@@ -139,17 +139,17 @@ export function createChildComment(
 }
 
 // TODO: update this to show archived comments in UI
-export function deleteCommentByEntityId(
-    entityType: CommentEntityType,
-    entityId: number,
-    commentId: number
-): ThunkResult<Promise<void>> {
+export function deleteComment(commentId: number): ThunkResult<Promise<void>> {
     return async (dispatch) => {
         try {
-            await CommentResource.delete(commentId);
+            const { data: newComment } = await CommentResource.delete(
+                commentId
+            );
             dispatch({
-                type: '@@comment/REMOVE_COMMENT_BY_ENTITY_ID',
-                payload: { entityType, entityId, commentId },
+                type: '@@comment/RECEIVE_COMMENTS',
+                payload: {
+                    comments: [newComment],
+                },
             });
         } catch (e) {
             console.error(e);

@@ -15,7 +15,8 @@ export const CommentResource = {
         ds.update<ICommentRaw>(`/comment/${commentId}/`, {
             text: convertIfContentStateToHTML(text),
         }),
-    delete: (commentId: number) => ds.delete(`/comment/${commentId}`),
+    delete: (commentId: number) =>
+        ds.delete(`/comment/${commentId}`, { archived: true }),
 };
 
 export const CellCommentResource = {

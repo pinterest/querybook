@@ -86,7 +86,7 @@ def edit_comment(comment_id: int, session=None, **fields):
     return Comment.update(
         id=comment_id,
         fields=fields,
-        field_names=["text"],
+        field_names=["text", "archived"],
         commit=True,
         session=session,
     )

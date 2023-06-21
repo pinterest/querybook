@@ -59,22 +59,6 @@ function commentReducer(state = initialState, action: CommentAction) {
                 ];
                 return;
             }
-            case '@@comment/REMOVE_COMMENT_BY_ENTITY_ID': {
-                const {
-                    entityType,
-                    entityId,
-                    commentId: removedCommentId,
-                } = action.payload;
-
-                const draftIdToCommentIds =
-                    draft[commentStateKeyByEntityType[entityType]];
-
-                draftIdToCommentIds[entityId] = draftIdToCommentIds[
-                    entityId
-                ].filter((commentId) => commentId !== removedCommentId);
-
-                return;
-            }
         }
     });
 }

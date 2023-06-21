@@ -46,23 +46,13 @@ export interface IRemoveReactionByCommentId extends Action {
     };
 }
 
-export interface IRemoveCommentByEntityId extends Action {
-    type: '@@comment/REMOVE_COMMENT_BY_ENTITY_ID';
-    payload: {
-        entityType: CommentEntityType;
-        entityId: number;
-        commentId: number;
-    };
-}
-
 export type CommentAction =
     | IRecieveComments
     | IRecieveComments
     | IRecieveNewChildCommentId
     | IRecieveReactionByCommentId
     | IRemoveReactionByCommentId
-    | IRecieveCommentIdsByEntityId
-    | IRemoveCommentByEntityId;
+    | IRecieveCommentIdsByEntityId;
 
 export type ThunkResult<R> = ThunkAction<
     R,
