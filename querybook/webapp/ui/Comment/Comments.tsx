@@ -1,4 +1,5 @@
 import * as DraftJs from 'draft-js';
+import { Formik } from 'formik';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -18,7 +19,7 @@ import {
 import { Dispatch, IStoreState } from 'redux/store/types';
 import { IconButton } from 'ui/Button/IconButton';
 import { Comment } from 'ui/Comment/Comment';
-import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
+import { RichTextField } from 'ui/FormikField/RichTextField';
 import { EmptyText, StyledText } from 'ui/StyledText/StyledText';
 
 import { ThreadComment } from './ThreadComment';
@@ -63,7 +64,7 @@ export const Comments: React.FunctionComponent<IProps> = ({
     );
 
     const handleCreateComment = React.useCallback(
-        (text, parentCommentId) => {
+        (text: DraftJs.ContentState, parentCommentId: number) => {
             if (parentCommentId) {
                 dispatch(createChildComment(parentCommentId, text));
             } else {
@@ -73,7 +74,7 @@ export const Comments: React.FunctionComponent<IProps> = ({
         [dispatch, entityId, entityType]
     );
     const editComment = React.useCallback(
-        (commentId, text) => {
+        (commentId: number, text: DraftJs.ContentState) => {
             dispatch(updateComment(commentId, text));
         },
         [dispatch]
@@ -96,21 +97,24 @@ export const Comments: React.FunctionComponent<IProps> = ({
         []
     );
 
-    const handleCommentSave = React.useCallback(() => {
-        if (editingCommentId) {
-            editComment(editingCommentId, currentComment);
-            setEditingCommentId(null);
-        } else {
-            handleCreateComment(currentComment, editingCommentParentId);
-        }
-        setCurrentComment(emptyCommentValue);
-    }, [
-        handleCreateComment,
-        currentComment,
-        editComment,
-        editingCommentId,
-        editingCommentParentId,
-    ]);
+    const handleCommentSave = React.useCallback(
+        (values: { text: DraftJs.ContentState }, { resetForm }) => {
+            if (editingCommentId) {
+                editComment(editingCommentId, values.text);
+                setEditingCommentId(null);
+            } else {
+                handleCreateComment(values.text, editingCommentParentId);
+            }
+            setCurrentComment(emptyCommentValue);
+            resetForm();
+        },
+        [
+            handleCreateComment,
+            editComment,
+            editingCommentId,
+            editingCommentParentId,
+        ]
+    );
     const handleCommentClear = React.useCallback(() => {
         setEditingCommentId(null);
         setEditingCommentParentId(null);
@@ -131,13 +135,13 @@ export const Comments: React.FunctionComponent<IProps> = ({
         ) : null;
 
     const renderThreadCommentDOM = (comment: IComment) => (
-        <>
+        <React.Fragment key={comment.id + 'thread'}>
             {renderFlatCommentDOM(comment, false)}
             <ThreadComment
                 comment={comment}
                 renderFlatCommentDOM={renderFlatCommentDOM}
             />
-        </>
+        </React.Fragment>
     );
 
     const renderCommentDOM = () =>
@@ -159,6 +163,7 @@ export const Comments: React.FunctionComponent<IProps> = ({
             </StyledText>
         </div>
     );
+
     return commentIds ? (
         <div className="Comments">
             <div className="Comments-list p16">
@@ -170,38 +175,43 @@ export const Comments: React.FunctionComponent<IProps> = ({
             </div>
             {editingCommentId ? renderEditingCommentWarning() : null}
             <div className="Comment-form flex-row pv12 ph16">
-                <UserAvatar uid={userInfo?.uid} tiny />
-                <RichTextEditor
-                    // TODO: fix issues with clearing
-                    value={currentComment}
-                    onChange={(editorState) =>
-                        setCurrentComment(editorState.getCurrentContent())
-                    }
-                    placeholder={commentIds.length ? 'Reply' : 'Comment'}
-                />
-                <IconButton
-                    icon="XCircle"
-                    onClick={handleCommentClear}
-                    noPadding
-                    size={18}
-                    className="mr12"
-                    tooltip="Clear"
-                    tooltipPos="left"
-                    disabled={
-                        currentComment.getPlainText().length === 0 &&
-                        editingCommentId === null
-                    }
-                />
-                <IconButton
-                    icon="Send"
-                    onClick={handleCommentSave}
-                    noPadding
-                    size={18}
-                    className="mr4"
-                    tooltip="Comment"
-                    tooltipPos="left"
-                    disabled={currentComment.getPlainText().length === 0}
-                />
+                <Formik
+                    enableReinitialize
+                    initialValues={{ text: currentComment }}
+                    onSubmit={handleCommentSave}
+                >
+                    {({ submitForm }) => (
+                        <>
+                            <UserAvatar uid={userInfo?.uid} tiny />
+                            <RichTextField name="text" />
+                            <IconButton
+                                icon="XCircle"
+                                onClick={handleCommentClear}
+                                noPadding
+                                size={18}
+                                className="mr12"
+                                tooltip="Clear"
+                                tooltipPos="left"
+                                disabled={
+                                    currentComment.getPlainText().length ===
+                                        0 && editingCommentId === null
+                                }
+                            />
+                            <IconButton
+                                icon="Send"
+                                onClick={submitForm}
+                                noPadding
+                                size={18}
+                                className="mr4"
+                                tooltip="Comment"
+                                tooltipPos="left"
+                                // disabled={
+                                //     currentComment.getPlainText().length === 0
+                                // }
+                            />
+                        </>
+                    )}
+                </Formik>
             </div>
         </div>
     ) : null;

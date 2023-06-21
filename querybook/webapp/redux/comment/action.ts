@@ -80,6 +80,7 @@ export function fetchChildCommentsByParentCommentIdIfNeeded(
                 fetchChildCommentsByParentCommentId(parentCommentId)
             );
         }
+        return Promise.resolve(null);
     };
 }
 
