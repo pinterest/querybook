@@ -28,11 +28,11 @@ def assert_can_read_datadoc(data_cell_id, session=None):
 @with_session
 def assert_can_edit_and_delete(comment_id, session=None):
     try:
-        comment = logic.get_comment_dict_by_id(comment_id=comment_id, session=session)
+        comment = logic.get_comment_by_id(comment_id=comment_id, session=session)
         if comment is None:
             raise CommentDoesNotExist
         api_assert(
-            comment["created_by"] == current_user.id,
+            comment.created_by == current_user.id,
             "NOT_COMMENT_AUTHOR",
             UNAUTHORIZED_STATUS_CODE,
         )
