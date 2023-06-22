@@ -8,6 +8,7 @@ import React from 'react';
 import toast from 'react-hot-toast';
 import { connect } from 'react-redux';
 
+import { QueryGenerationButton } from 'components/AIAssistant/QueryGenerationButton';
 import { DataDocQueryExecutions } from 'components/DataDocQueryExecutions/DataDocQueryExecutions';
 import { QueryCellTitle } from 'components/QueryCellTitle/QueryCellTitle';
 import { runQuery, transformQuery } from 'components/QueryComposer/RunQuery';
@@ -728,6 +729,18 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
         const editorDOM = !queryCollapsed && (
             <div className="editor">
+                <QueryGenerationButton
+                    dataCellId={cellId}
+                    query={query}
+                    engineId={this.engineId}
+                    onUpdateQuery={this.handleChange}
+                    queryEngineById={queryEngineById}
+                    queryEngines={this.props.queryEngines}
+                    onUpdateEngineId={this.handleMetaChange.bind(
+                        this,
+                        'engine'
+                    )}
+                />
                 <BoundQueryEditor
                     value={query}
                     lineWrapping={true}

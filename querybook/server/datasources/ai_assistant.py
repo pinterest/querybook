@@ -22,3 +22,18 @@ def query_auto_fix(query_execution_id):
     )
 
     return Response(res_stream, mimetype="text/event-stream")
+
+
+@register("/ai/generate_query/", custom_response=True)
+def generate_sql_query(
+    query_engine_id: int, tables: list[str], question: str, data_cell_id: int = None
+):
+    res_stream = ai_assistant.generate_sql_query(
+        query_engine_id=query_engine_id,
+        tables=tables,
+        question=question,
+        data_cell_id=data_cell_id,
+        user_id=current_user.id,
+    )
+
+    return Response(res_stream, mimetype="text/event-stream")

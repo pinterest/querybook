@@ -66,6 +66,11 @@ class OpenAIAssistant(BaseAIAssistant):
             "{error}\n\n"
             "===Table schemas\n"
             "{table_schemas}\n\n"
+            "===Response format\n"
+            "<@key-1@>\n"
+            "value-1\n\n"
+            "<@key-2@>\n"
+            "value-2\n\n"
             "===Response restrictions\n"
             "1. Only include SQL queries in the fixed_query section, no additional comments or information.\n"
             "2. If there isn't enough information or context to address the query error, you may leave the fixed_query section blank or provide a general suggestion instead.\n"
@@ -83,8 +88,48 @@ class OpenAIAssistant(BaseAIAssistant):
             [system_message_prompt, human_message_prompt]
         )
 
-    def generate_sql_query(self):
-        pass
+    @property
+    def generate_sql_query_prompt_template(self) -> str:
+        system_message_prompt = SystemMessage(
+            content=(
+                "You are a SQL expert that can help generating SQL query.\n\n"
+                "Please follow the format below for your response:\n"
+                "<@key-1@>\n"
+                "value-1\n\n"
+                "<@key-2@>\n"
+                "value-2\n\n"
+            )
+        )
+        human_template = (
+            "Please help to generate a new SQL query or edit the original query for below question based ONLY on the given context. \n\n"
+            "===SQL Dialect\n"
+            "{dialect}\n\n"
+            "===Tables\n"
+            "{table_schemas}\n\n"
+            "===Original Query\n"
+            "{original_query}\n\n"
+            "===Question\n"
+            "{question}\n\n"
+            "===Response format\n"
+            "<@key-1@>\n"
+            "value-1\n\n"
+            "<@key-2@>\n"
+            "value-2\n\n"
+            "===Response Restrictions\n"
+            "1. If there is enough information and context to generate/edit the query, please respond only with the new query without any explanation.\n"
+            "2. If there isn't enough information or context to generate/edit the query, provide an explanation for the missing context.\n"
+            "===Example Response:\n"
+            "Example 1: Insufficient Context\n"
+            "<@explanation@>\n"
+            "An explanation of the missing context is provided here.\n\n"
+            "Example 2: Query Generation Possible\n"
+            "<@query@>\n"
+            "Generated SQL query based on provided context is provided here.\n\n"
+        )
+        human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
+        return ChatPromptTemplate.from_messages(
+            [system_message_prompt, human_message_prompt]
+        )
 
     def _generate_title_from_query(
         self, query, stream=True, callback_handler=None, user_id=None
@@ -114,6 +159,31 @@ class OpenAIAssistant(BaseAIAssistant):
         """Query auto fix using OpenAI's chat model."""
         messages = self.query_auto_fix_prompt_template.format_prompt(
             dialect=language, query=query, error=error, table_schemas=table_schemas
+        ).to_messages()
+        chat = ChatOpenAI(
+            **self._config,
+            streaming=stream,
+            callback_manager=CallbackManager([callback_handler]),
+        )
+        ai_message = chat(messages)
+        return ai_message.content
+
+    def _generate_sql_query(
+        self,
+        language: str,
+        table_schemas: str,
+        question: str,
+        original_query: str,
+        stream,
+        callback_handler,
+        user_id=None,
+    ):
+        """Generate SQL query using OpenAI's chat model."""
+        messages = self.generate_sql_query_prompt_template.format_prompt(
+            dialect=language,
+            question=question,
+            table_schemas=table_schemas,
+            original_query=original_query,
         ).to_messages()
         chat = ChatOpenAI(
             **self._config,
