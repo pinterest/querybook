@@ -1,8 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 import PublicConfig from 'config/querybook_public_config.yaml';
-import { useStream } from 'hooks/useStream';
-import ds from 'lib/datasource';
+import { StreamStatus, useStream } from 'hooks/useStream';
 import { IconButton } from 'ui/Button/IconButton';
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
 
@@ -28,13 +27,13 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
         AIAssistantConfig.query_title_generation.enabled &&
         query;
 
-    const { isStreaming, startStream, data } = useStream(
+    const { streamStatus, startStream, streamData } = useStream(
         '/ds/ai/query_title/',
         {
             query,
         }
     );
-    const { data: title } = data || {};
+    const { data: title } = streamData;
 
     useEffect(() => {
         onChange(title);
@@ -44,7 +43,11 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
         <div className="QueryCellTitle">
             {titleGenerationEnabled && (
                 <IconButton
-                    icon={isStreaming ? 'Loading' : 'Hash'}
+                    icon={
+                        streamStatus === StreamStatus.STREAMING
+                            ? 'Loading'
+                            : 'Hash'
+                    }
                     size={18}
                     tooltip="AI: generate title"
                     color={!value && query ? 'accent' : undefined}
@@ -55,7 +58,11 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
                 value={value}
                 onChange={onChange}
                 transparent
-                placeholder={isStreaming ? 'Generating...' : placeholder}
+                placeholder={
+                    streamStatus === StreamStatus.STREAMING
+                        ? 'Generating...'
+                        : placeholder
+                }
                 className={`Title ${titleGenerationEnabled ? 'with-icon' : ''}`}
             />
         </div>
