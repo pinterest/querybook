@@ -827,34 +827,34 @@ export function getEditorLines(statements: IToken[][]): Line[] {
     //      FROM main.products;
     //
     // And return value would be:
-    [
-        { // line 0
-            "statements": [[0, 0]], // statement 0 of the query starts at character 0
-            "contexts": [
-                [0, "none"], // char 0-7: neither ('SELECT ')
-                [7, "column"], // char 7-14: column ('* FROM')
-                [14, "table"], // etc. 
-                [28, "none"],
-                [39, "table"],
-                [53, "none"]
-            ]
-        },
-        { // line 1
-            "statements": [[0, 1]], // statement 1 of the query starts at character 0
-            "contexts": [
-                [0, "none"], // char 0-7: neither
-                [7, "column"] // char 7-end: column
-            ]
-        },
-        { // line 2
-            "statements": [[0, 1]], // statement 2 of the query starts at character 0
-            "contexts": [
-                [0, "column"], // char 0-4: column name
-                [5, "table"], // char 5-19: table name
-                [19, "none"] // char 19-end: neither
-            ]
-        }
-    ]
+    // [
+    //     { // line 0
+    //         "statements": [[0, 0]], // statement 0 of the query starts at character 0
+    //         "contexts": [
+    //             [0, "none"], // char 0-7: neither ('SELECT ')
+    //             [7, "column"], // char 7-14: column ('* FROM')
+    //             [14, "table"], // etc. 
+    //             [28, "none"],
+    //             [39, "table"],
+    //             [53, "none"]
+    //         ]
+    //     },
+    //     { // line 1
+    //         "statements": [[0, 1]], // statement 1 of the query starts at character 0
+    //         "contexts": [
+    //             [0, "none"], // char 0-7: neither
+    //             [7, "column"] // char 7-end: column
+    //         ]
+    //     },
+    //     { // line 2
+    //         "statements": [[0, 1]], // statement 2 of the query starts at character 0
+    //         "contexts": [
+    //             [0, "column"], // char 0-4: column name
+    //             [5, "table"], // char 5-19: table name
+    //             [19, "none"] // char 19-end: neither
+    //         ]
+    //     }
+    // ]
 
 
     const lines: Line[] = [];
