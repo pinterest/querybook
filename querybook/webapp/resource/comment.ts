@@ -12,11 +12,11 @@ export const CommentResource = {
             text: convertIfContentStateToHTML(text),
         }),
     update: (commentId: number, text: ContentState) =>
-        ds.update<ICommentRaw>(`/comment/${commentId}/`, {
+        ds.update<ICommentRaw>(`/comment/${commentId}/text/`, {
             text: convertIfContentStateToHTML(text),
         }),
     softDelete: (commentId: number) =>
-        ds.update<null>(`/comment/${commentId}/`, { archived: true }),
+        ds.update<null>(`/comment/${commentId}/archive/`, { archived: true }),
 };
 
 export const CellCommentResource = {
