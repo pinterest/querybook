@@ -2,36 +2,42 @@ import { useCallback, useState } from 'react';
 
 import ds from 'lib/datasource';
 
+export enum StreamStatus {
+    NOT_STARTED,
+    STREAMING,
+    FINISHED,
+}
+
 export function useStream(
     url: string,
     params: Record<string, unknown> = {}
 ): {
-    isStreaming: boolean;
-    data: { [key: string]: string } | null;
+    streamStatus: StreamStatus;
+    streamData: { [key: string]: string };
     startStream: () => void;
+    resetStream: () => void;
 } {
-    const [isStreaming, setIsStreaming] = useState(false);
-    const [data, setData] = useState<{ [key: string]: string } | null>(null);
+    const [streamStatus, setSteamStatus] = useState(StreamStatus.NOT_STARTED);
+    const [data, setData] = useState<{ [key: string]: string }>({});
 
     const startStream = useCallback(() => {
-        setIsStreaming(true);
+        setSteamStatus(StreamStatus.STREAMING);
         setData({});
 
-        ds.stream(
-            url,
-            params,
-            (data: { [key: string]: string }) => {
-                setData(data);
-            },
-            () => {
-                setIsStreaming(false);
-            }
-        );
+        ds.stream(url, params, setData, () => {
+            setSteamStatus(StreamStatus.FINISHED);
+        });
     }, [url, params]);
 
+    const resetStream = useCallback(() => {
+        setSteamStatus(StreamStatus.NOT_STARTED);
+        setData({});
+    }, []);
+
     return {
-        isStreaming,
-        data,
+        streamStatus,
+        streamData: data,
         startStream,
+        resetStream,
     };
 }

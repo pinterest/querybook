@@ -1,7 +1,7 @@
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 
 import { QueryComparison } from 'components/TranspileQueryModal/QueryComparison';
-import { useStream } from 'hooks/useStream';
+import { StreamStatus, useStream } from 'hooks/useStream';
 import { Button } from 'ui/Button/Button';
 import { Message } from 'ui/Message/Message';
 import { Modal } from 'ui/Modal/Modal';
@@ -20,7 +20,7 @@ export const AutoFixButton = ({
 }: IProps) => {
     const [show, setShow] = useState(false);
 
-    const { isStreaming, startStream, data } = useStream(
+    const { streamStatus, startStream, streamData } = useStream(
         '/ds/ai/query_auto_fix/',
         {
             query_execution_id: queryExecutionId,
@@ -31,7 +31,7 @@ export const AutoFixButton = ({
         explanation,
         fix_suggestion: suggestion,
         fixed_query: fixedQuery,
-    } = data || {};
+    } = streamData;
 
     const bottomDOM = fixedQuery && (
         <div className="right-align mb16">
@@ -59,7 +59,7 @@ export const AutoFixButton = ({
                 title="Auto fix"
                 onClick={() => {
                     setShow(true);
-                    if (!data) {
+                    if (streamStatus === StreamStatus.NOT_STARTED) {
                         startStream();
                     }
                 }}
@@ -75,7 +75,9 @@ export const AutoFixButton = ({
                         message="Note: This AI-powered auto fix may not be 100% accurate. Please use your own judgement and verify the result."
                         type="warning"
                     />
-                    {!data && <AccentText>Thinking...</AccentText>}
+                    {streamStatus === StreamStatus.NOT_STARTED && (
+                        <AccentText>Thinking...</AccentText>
+                    )}
                     {explanation && (
                         <div>
                             <AccentText size="med" weight="bold">
@@ -99,7 +101,9 @@ export const AutoFixButton = ({
                                 toQuery={fixedQuery}
                                 fromQueryTitle="Original"
                                 toQueryTitle="Fixed"
-                                disableHighlight={isStreaming}
+                                disableHighlight={
+                                    streamStatus === StreamStatus.STREAMING
+                                }
                             />
                         </div>
                     )}
