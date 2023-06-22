@@ -1,7 +1,7 @@
-import React, { useCallback, useState } from 'react';
+import React, { useEffect } from 'react';
 
 import PublicConfig from 'config/querybook_public_config.yaml';
-import ds from 'lib/datasource';
+import { StreamStatus, useStream } from 'hooks/useStream';
 import { IconButton } from 'ui/Button/IconButton';
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
 
@@ -22,46 +22,47 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
     placeholder,
     onChange,
 }) => {
-    const [generating, setGenerating] = useState(false);
-
     const titleGenerationEnabled =
         AIAssistantConfig.enabled &&
         AIAssistantConfig.query_title_generation.enabled &&
         query;
 
-    const generateTitle = useCallback(
-        (query) => {
-            onChange('');
-            setGenerating(true);
-
-            ds.stream(
-                '/ds/ai/query_title/',
-                {
-                    query,
-                },
-                onChange,
-                () => setGenerating(false)
-            );
-        },
-        [onChange]
+    const { streamStatus, startStream, streamData } = useStream(
+        '/ds/ai/query_title/',
+        {
+            query,
+        }
     );
+    const { data: title } = streamData;
+
+    useEffect(() => {
+        onChange(title);
+    }, [title]);
 
     return (
         <div className="QueryCellTitle">
             {titleGenerationEnabled && (
                 <IconButton
-                    icon={generating ? 'Loading' : 'Hash'}
+                    icon={
+                        streamStatus === StreamStatus.STREAMING
+                            ? 'Loading'
+                            : 'Hash'
+                    }
                     size={18}
                     tooltip="AI: generate title"
                     color={!value && query ? 'accent' : undefined}
-                    onClick={() => generateTitle(query)}
+                    onClick={startStream}
                 />
             )}
             <ResizableTextArea
                 value={value}
                 onChange={onChange}
                 transparent
-                placeholder={generating ? 'Generating...' : placeholder}
+                placeholder={
+                    streamStatus === StreamStatus.STREAMING
+                        ? 'Generating...'
+                        : placeholder
+                }
                 className={`Title ${titleGenerationEnabled ? 'with-icon' : ''}`}
             />
         </div>

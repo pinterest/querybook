@@ -1,7 +1,9 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { AutoFixButton } from 'components/AIAssistant/AutoFixButton';
 import { ErrorSuggestion } from 'components/DataDocStatementExecution/ErrorSuggestion';
+import PublicConfig from 'config/querybook_public_config.yaml';
 import { IQueryEngine } from 'const/queryEngine';
 import {
     IQueryError,
@@ -29,11 +31,15 @@ import { ExecutedQueryCell } from './ExecutedQueryCell';
 
 import './QueryError.scss';
 
+const AIAssistantConfig = PublicConfig.ai_assistant;
+
 interface IProps {
     queryEngine: IQueryEngine;
     queryError: IQueryError;
     queryExecution: IQueryExecution;
     statementExecutions: IStatementExecution[];
+    readonly?: boolean;
+    changeCellContext?: (context: string) => void;
 }
 
 const queryErrorTypeToString: Record<number, string> = {
@@ -125,6 +131,8 @@ export const QueryError: React.FunctionComponent<IProps> = ({
     queryExecution,
     statementExecutions,
     queryEngine,
+    readonly,
+    changeCellContext,
 }) => {
     const {
         error_message: errorMessage,
@@ -172,6 +180,24 @@ export const QueryError: React.FunctionComponent<IProps> = ({
         errorContentDOM = <ShowMoreText text={errorMsg} length={500} />;
     }
 
+    const errorTitleDOM = (
+        <div className="horizontal-space-between">
+            <div className="QueryError-title flex-row">
+                <Icon name="AlertOctagon" size={20} className="mr8" />
+                {errorTitle}
+            </div>
+            {!readonly &&
+                AIAssistantConfig.enabled &&
+                AIAssistantConfig.query_auto_fix.enabled && (
+                    <AutoFixButton
+                        query={queryExecution.query}
+                        queryExecutionId={queryExecution.id}
+                        onUpdateQuery={changeCellContext}
+                    />
+                )}
+        </div>
+    );
+
     return (
         <div className="QueryError mt4">
             <ErrorSuggestion
@@ -180,16 +206,7 @@ export const QueryError: React.FunctionComponent<IProps> = ({
                 statementExecutions={statementExecutions}
                 queryEngine={queryEngine}
             />
-            <Message
-                type="error"
-                size="small"
-                title={
-                    <span className="QueryError-title flex-row">
-                        <Icon name="AlertOctagon" size={20} className="mr8" />
-                        {errorTitle}
-                    </span>
-                }
-            >
+            <Message type="error" size="small" title={errorTitleDOM}>
                 <div className="QueryError-top">
                     <div className="QueryError-tabs">{showRawTabs}</div>
                 </div>
@@ -202,7 +219,9 @@ export const QueryError: React.FunctionComponent<IProps> = ({
 export const QueryErrorWrapper: React.FunctionComponent<{
     queryExecution: IQueryExecution;
     statementExecutions: IStatementExecution[];
-}> = ({ queryExecution, statementExecutions }) => {
+    readonly?: boolean;
+    changeCellContext?: (context: string) => void;
+}> = ({ queryExecution, statementExecutions, readonly, changeCellContext }) => {
     const queryError = useSelector(
         (state: IStoreState) =>
             state.queryExecutions.queryErrorById[queryExecution.id]
@@ -229,6 +248,8 @@ export const QueryErrorWrapper: React.FunctionComponent<{
                 queryExecution={queryExecution}
                 statementExecutions={statementExecutions}
                 queryEngine={queryEngine}
+                readonly={readonly}
+                changeCellContext={changeCellContext}
             />
         </Loader>
     );

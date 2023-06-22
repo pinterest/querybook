@@ -22,3 +22,12 @@ class AIAssistant:
             self._assisant.generate_title_from_query,
             {"query": query, "user_id": user_id},
         )
+
+    def query_auto_fix(self, query_execution_id, user_id=None):
+        return self._get_streaming_result(
+            self._assisant.query_auto_fix,
+            {
+                "query_execution_id": query_execution_id,
+                "user_id": user_id,
+            },
+        )

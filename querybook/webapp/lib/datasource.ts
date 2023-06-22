@@ -4,6 +4,8 @@ import toast from 'react-hot-toast';
 import { setSessionExpired } from 'lib/querybookUI';
 import { formatError } from 'lib/utils/error';
 
+import { DeltaStreamParser } from './stream';
+
 export interface ICancelablePromise<T> extends Promise<T> {
     cancel?: Canceler;
 }
@@ -159,6 +161,13 @@ export function uploadDatasource<T = null>(
 /**
  * Stream data from a datasource using EventSource
  *
+ * The data is streamed in the form of deltas. Each delta is a JSON object
+ * ```
+ * {
+ *   data: The data of the delta
+ * }
+ * ```
+ *
  * @param url The url to stream from
  * @param params The data to send to the url
  * @param onStraming Callback when data is received. The data is the accumulated data.
@@ -167,23 +176,24 @@ export function uploadDatasource<T = null>(
 function streamDatasource(
     url: string,
     params?: Record<string, unknown>,
-    onStreaming?: (data: string) => void,
+    onStreaming?: (data: { [key: string]: string }) => void,
     onStreamingEnd?: () => void
 ) {
     const eventSource = new EventSource(
         `${url}?params=${JSON.stringify(params)}`
     );
-    let dataStream = '';
+    const parser = new DeltaStreamParser();
     eventSource.addEventListener('message', (e) => {
-        dataStream += e.data;
-        onStreaming?.(dataStream);
+        const newToken = JSON.parse(e.data).data;
+        const data = parser.parse(newToken);
+        onStreaming?.(data);
     });
     eventSource.addEventListener('error', (e) => {
         console.error(e);
         eventSource.close();
         onStreamingEnd?.();
         if (e instanceof MessageEvent) {
-            toast.error(e.data);
+            toast.error(JSON.parse(e.data).data);
         }
     });
     eventSource.addEventListener('close', (e) => {

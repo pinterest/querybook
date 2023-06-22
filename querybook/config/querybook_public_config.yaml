@@ -8,5 +8,5 @@ ai_assistant:
     query_generation:
         enabled: false
 
-    query_error_fix:
-        enabled: false
+    query_auto_fix:
+        enabled: true

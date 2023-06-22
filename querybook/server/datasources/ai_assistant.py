@@ -12,3 +12,13 @@ def generate_query_title(query):
     )
 
     return Response(title_stream, mimetype="text/event-stream")
+
+
+@register("/ai/query_auto_fix/", custom_response=True)
+def query_auto_fix(query_execution_id):
+    res_stream = ai_assistant.query_auto_fix(
+        query_execution_id=query_execution_id,
+        user_id=current_user.id,
+    )
+
+    return Response(res_stream, mimetype="text/event-stream")

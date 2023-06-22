@@ -95,7 +95,7 @@ declare module 'config/querybook_public_config.yaml' {
                 enabled: boolean;
             };
 
-            query_error_fix_enabled: {
+            query_auto_fix: {
                 enabled: boolean;
             };
         };

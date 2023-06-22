@@ -1,10 +1,8 @@
 import { diffWordsWithSpace } from 'diff';
 import React, { useMemo } from 'react';
 
-import { IQueryEngine } from 'const/queryEngine';
 import { ThemedCodeHighlightWithMark } from 'ui/CodeHighlight/ThemedCodeHighlightWithMark';
 import { IHighlightRange } from 'ui/CodeHighlight/types';
-import { AccentText } from 'ui/StyledText/StyledText';
 import { Tag } from 'ui/Tag/Tag';
 
 import './QueryComparison.scss';
@@ -12,10 +10,21 @@ import './QueryComparison.scss';
 export const QueryComparison: React.FC<{
     fromQuery: string;
     toQuery: string;
-    fromEngine: IQueryEngine;
-    toEngine: IQueryEngine;
-}> = ({ fromQuery, toQuery, fromEngine, toEngine }) => {
+    fromQueryTitle?: string;
+    toQueryTitle?: string;
+    disableHighlight?: boolean;
+}> = ({
+    fromQuery,
+    toQuery,
+    fromQueryTitle,
+    toQueryTitle,
+    disableHighlight,
+}) => {
     const [addedRanges, removedRanges] = useMemo(() => {
+        if (disableHighlight) {
+            return [[], []];
+        }
+
         const added: IHighlightRange[] = [];
         const removed: IHighlightRange[] = [];
         const diffObjects = diffWordsWithSpace(fromQuery, toQuery);
@@ -44,15 +53,12 @@ export const QueryComparison: React.FC<{
             }
         }
         return [added, removed];
-    }, [fromQuery, toQuery]);
+    }, [fromQuery, toQuery, disableHighlight]);
 
     return (
         <div className="QueryComparison">
             <div className="mr8 flex1">
-                <div className="center-align">
-                    <AccentText weight="bold">Original</AccentText>
-                </div>
-                <Tag>{fromEngine.name}</Tag>
+                {fromQueryTitle && <Tag>{fromQueryTitle}</Tag>}
                 <ThemedCodeHighlightWithMark
                     highlightRanges={removedRanges}
                     query={fromQuery}
@@ -61,10 +67,7 @@ export const QueryComparison: React.FC<{
                 />
             </div>
             <div className="flex1">
-                <div className="center-align">
-                    <AccentText weight="bold">Transpiled</AccentText>
-                </div>
-                <Tag>{toEngine.name}</Tag>
+                {toQueryTitle && <Tag>{toQueryTitle}</Tag>}
                 <ThemedCodeHighlightWithMark
                     highlightRanges={addedRanges}
                     query={toQuery}
