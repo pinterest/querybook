@@ -31,6 +31,12 @@ export interface IRecieveNewChildCommentId extends Action {
         childCommentId: number;
     };
 }
+export interface IArchiveCommentByCommentId extends Action {
+    type: '@@comment/ARCHIVE_COMMENT';
+    payload: {
+        commentId: number;
+    };
+}
 export interface IRecieveReactionByCommentId extends Action {
     type: '@@comment/RECEIVE_REACTION_BY_COMMENT_ID';
     payload: {
@@ -52,7 +58,8 @@ export type CommentAction =
     | IRecieveNewChildCommentId
     | IRecieveReactionByCommentId
     | IRemoveReactionByCommentId
-    | IRecieveCommentIdsByEntityId;
+    | IRecieveCommentIdsByEntityId
+    | IArchiveCommentByCommentId;
 
 export type ThunkResult<R> = ThunkAction<
     R,

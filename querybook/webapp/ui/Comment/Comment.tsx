@@ -22,7 +22,7 @@ interface IProps {
     isBeingEdited: boolean;
     isBeingRepliedTo: boolean;
     isChild: boolean;
-    editChildComment: () => void;
+    onCreateChildComment: () => void;
 }
 
 export const Comment: React.FunctionComponent<IProps> = ({
@@ -32,7 +32,7 @@ export const Comment: React.FunctionComponent<IProps> = ({
     isBeingEdited,
     isBeingRepliedTo,
     isChild,
-    editChildComment,
+    onCreateChildComment,
 }) => {
     const userInfo = useSelector((state: IStoreState) => state.user.myUserInfo);
     const {
@@ -101,27 +101,25 @@ export const Comment: React.FunctionComponent<IProps> = ({
                     {archived ? null : (
                         <div className="Comment-top-right-buttons flex-row">
                             {isAuthor && !isBeingEdited ? (
-                                <>
-                                    <div className="Comment-edit">
-                                        <IconButton
-                                            icon="Edit"
-                                            invertCircle
-                                            size={18}
-                                            tooltip="Edit Comment"
-                                            tooltipPos="left"
-                                            onClick={() => editComment(text)}
-                                        />
-                                        <IconButton
-                                            className="ml8"
-                                            icon="Trash"
-                                            invertCircle
-                                            size={18}
-                                            tooltip="Delete Comment"
-                                            tooltipPos="left"
-                                            onClick={deleteComment}
-                                        />
-                                    </div>
-                                </>
+                                <div className="Comment-edit">
+                                    <IconButton
+                                        icon="Edit"
+                                        invertCircle
+                                        size={18}
+                                        tooltip="Edit Comment"
+                                        tooltipPos="left"
+                                        onClick={() => editComment(text)}
+                                    />
+                                    <IconButton
+                                        className="ml8"
+                                        icon="Trash"
+                                        invertCircle
+                                        size={18}
+                                        tooltip="Delete Comment"
+                                        tooltipPos="left"
+                                        onClick={deleteComment}
+                                    />
+                                </div>
                             ) : null}
                             {isChild ? null : (
                                 <div className="ml8">
@@ -131,7 +129,7 @@ export const Comment: React.FunctionComponent<IProps> = ({
                                         size={18}
                                         tooltip="Reply to comment"
                                         tooltipPos="left"
-                                        onClick={editChildComment}
+                                        onClick={onCreateChildComment}
                                     />
                                 </div>
                             )}

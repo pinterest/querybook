@@ -67,12 +67,22 @@ def add_thread_comment(parent_comment_id: int, text):
 
 
 @register(
-    "/comment/<int:comment_id>/",
+    "/comment/<int:comment_id>/text/",
     methods=["PUT"],
 )
-def edit_comment(comment_id: int, **fields):
+def edit_comment_text(comment_id: int, **fields):
     assert_can_edit_and_delete(comment_id=comment_id)
     return logic.edit_comment(comment_id=comment_id, **fields)
+
+
+@register(
+    "/comment/<int:comment_id>/archive/",
+    methods=["PUT"],
+)
+def archive_comment(comment_id: int, **fields):
+    assert_can_edit_and_delete(comment_id=comment_id)
+    logic.edit_comment(comment_id=comment_id, **fields)
+    return
 
 
 # reactions

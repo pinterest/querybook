@@ -196,9 +196,9 @@ export const RichTextEditor = React.forwardRef<
 
         useEffect(() => {
             if (value.getPlainText().length === 0) {
-                setEditorState(getResetEditorState(editorState));
+                setEditorState(getResetEditorState);
             }
-        }, [editorState, setEditorState, value]);
+        }, [setEditorState, value]);
 
         const handleChange = useCallback(
             (newEditorState: DraftJs.EditorState) => {

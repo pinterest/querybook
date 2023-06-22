@@ -93,14 +93,6 @@ def edit_comment(comment_id: int, session=None, **fields):
 
 
 @with_session
-def remove_comment(comment_id: int, session=None):
-    Comment.delete(
-        comment_id,
-        session=session,
-    )
-
-
-@with_session
 def add_reaction(comment_id: int, reaction: str, uid: int, session=None):
     return CommentReaction.create(
         {"comment_id": comment_id, "reaction": reaction, "created_by": uid},

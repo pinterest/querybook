@@ -11,15 +11,12 @@ export const CommentResource = {
         ds.save<ICommentRaw>(`/comment/${parentCommentId}/thread/`, {
             text: convertIfContentStateToHTML(text),
         }),
-    update: (commentId: number, text?: ContentState) =>
-        ds.update<ICommentRaw>(
-            `/comment/${commentId}/`,
-            text
-                ? {
-                      text: convertIfContentStateToHTML(text),
-                  }
-                : { archived: true }
-        ),
+    update: (commentId: number, text: ContentState) =>
+        ds.update<ICommentRaw>(`/comment/${commentId}/`, {
+            text: convertIfContentStateToHTML(text),
+        }),
+    softDelete: (commentId: number) =>
+        ds.update<null>(`/comment/${commentId}/`, { archived: true }),
 };
 
 export const CellCommentResource = {

@@ -141,13 +141,11 @@ export function createChildComment(
 export function deleteComment(commentId: number): ThunkResult<Promise<void>> {
     return async (dispatch) => {
         try {
-            const { data: newComment } = await CommentResource.update(
-                commentId
-            );
+            await CommentResource.softDelete(commentId);
             dispatch({
-                type: '@@comment/RECEIVE_COMMENTS',
+                type: '@@comment/ARCHIVE_COMMENT',
                 payload: {
-                    comments: [newComment],
+                    commentId,
                 },
             });
         } catch (e) {

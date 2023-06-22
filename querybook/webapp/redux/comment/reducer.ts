@@ -30,13 +30,19 @@ function commentReducer(state = initialState, action: CommentAction) {
                 draft.commentsById[parentCommentId].child_comment_ids.push(
                     childCommentId
                 );
-
+                return;
+            }
+            case '@@comment/ARCHIVE_COMMENT': {
+                const { commentId } = action.payload;
+                draft.commentsById[commentId] = {
+                    ...draft.commentsById[commentId],
+                    archived: true,
+                };
                 return;
             }
             case '@@comment/RECEIVE_REACTION_BY_COMMENT_ID': {
                 const { commentId, reaction } = action.payload;
                 draft.commentsById[commentId].reactions.push(reaction);
-
                 return;
             }
             case '@@comment/REMOVE_REACTION_BY_COMMENT_ID': {
