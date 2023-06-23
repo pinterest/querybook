@@ -25,7 +25,7 @@ interface IProps {
     onCreateChildComment: () => void;
 }
 
-const formatReactions = (reactions: IReaction[]) => {
+const formatReactionsByUser = (reactions: IReaction[]) => {
     const formattedReactions = {};
     reactions.forEach((reaction) => {
         formattedReactions[reaction.reaction] =
@@ -62,7 +62,7 @@ export const Comment: React.FunctionComponent<IProps> = ({
     );
 
     const uidsByReaction = React.useMemo(
-        () => formatReactions(reactions),
+        () => formatReactionsByUser(reactions),
         [reactions]
     );
 
