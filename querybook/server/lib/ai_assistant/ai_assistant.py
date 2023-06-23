@@ -31,3 +31,22 @@ class AIAssistant:
                 "user_id": user_id,
             },
         )
+
+    def generate_sql_query(
+        self,
+        query_engine_id: int,
+        tables: list[str],
+        question: str,
+        original_query: str = None,
+        user_id=None,
+    ):
+        return self._get_streaming_result(
+            self._assisant.generate_sql_query,
+            {
+                "query_engine_id": query_engine_id,
+                "tables": tables,
+                "question": question,
+                "original_query": original_query,
+                "user_id": user_id,
+            },
+        )

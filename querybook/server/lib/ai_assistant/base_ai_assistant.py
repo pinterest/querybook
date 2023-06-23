@@ -10,6 +10,7 @@ from app.db import with_session
 from lib.logger import get_logger
 from logic import query_execution as qe_logic
 from lib.query_analysis.lineage import process_query
+from logic import admin as admin_logic
 from logic import metastore as m_logic
 from models.query_execution import QueryExecution
 
@@ -152,9 +153,45 @@ class BaseAIAssistant(ABC):
 
         return error[:1000]
 
-    @abstractmethod
+    @catch_error
+    @with_session
     def generate_sql_query(
-        self, metastore_id: int, query_engine_id: int, question: str, tables: list[str]
+        self,
+        query_engine_id: int,
+        tables: list[str],
+        question: str,
+        original_query: str = None,
+        stream=True,
+        callback_handler: ChainStreamHandler = None,
+        user_id=None,
+        session=None,
+    ):
+        query_engine = admin_logic.get_query_engine_by_id(
+            query_engine_id, session=session
+        )
+        table_schemas = self._generate_table_schema_prompt(
+            metastore_id=query_engine.metastore_id, table_names=tables, session=session
+        )
+        return self._generate_sql_query(
+            language=query_engine.language,
+            table_schemas=table_schemas,
+            question=question,
+            original_query=original_query,
+            stream=stream,
+            callback_handler=callback_handler,
+            user_id=user_id,
+        )
+
+    @abstractmethod
+    def _generate_sql_query(
+        self,
+        language: str,
+        table_schemas: str,
+        question: str,
+        original_query: str = None,
+        stream=True,
+        callback_handler: ChainStreamHandler = None,
+        user_id=None,
     ):
         raise NotImplementedError()
 

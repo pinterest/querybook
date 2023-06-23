@@ -13,15 +13,17 @@ export const QueryComparison: React.FC<{
     fromQueryTitle?: string;
     toQueryTitle?: string;
     disableHighlight?: boolean;
+    hideEmptyQuery?: boolean;
 }> = ({
     fromQuery,
     toQuery,
     fromQueryTitle,
     toQueryTitle,
     disableHighlight,
+    hideEmptyQuery,
 }) => {
     const [addedRanges, removedRanges] = useMemo(() => {
-        if (disableHighlight) {
+        if (disableHighlight || (hideEmptyQuery && (!fromQuery || !toQuery))) {
             return [[], []];
         }
 
@@ -53,28 +55,32 @@ export const QueryComparison: React.FC<{
             }
         }
         return [added, removed];
-    }, [fromQuery, toQuery, disableHighlight]);
+    }, [fromQuery, toQuery, disableHighlight, hideEmptyQuery]);
 
     return (
         <div className="QueryComparison">
-            <div className="mr8 flex1">
-                {fromQueryTitle && <Tag>{fromQueryTitle}</Tag>}
-                <ThemedCodeHighlightWithMark
-                    highlightRanges={removedRanges}
-                    query={fromQuery}
-                    maxEditorHeight={'40vh'}
-                    autoHeight={false}
-                />
-            </div>
-            <div className="flex1">
-                {toQueryTitle && <Tag>{toQueryTitle}</Tag>}
-                <ThemedCodeHighlightWithMark
-                    highlightRanges={addedRanges}
-                    query={toQuery}
-                    maxEditorHeight={'40vh'}
-                    autoHeight={false}
-                />
-            </div>
+            {!(hideEmptyQuery && !fromQuery) && (
+                <div className="mr8 flex1">
+                    {fromQueryTitle && <Tag>{fromQueryTitle}</Tag>}
+                    <ThemedCodeHighlightWithMark
+                        highlightRanges={removedRanges}
+                        query={fromQuery}
+                        maxEditorHeight={'40vh'}
+                        autoHeight={false}
+                    />
+                </div>
+            )}
+            {!(hideEmptyQuery && !toQuery) && (
+                <div className="flex1">
+                    {toQueryTitle && <Tag>{toQueryTitle}</Tag>}
+                    <ThemedCodeHighlightWithMark
+                        highlightRanges={addedRanges}
+                        query={toQuery}
+                        maxEditorHeight={'40vh'}
+                        autoHeight={false}
+                    />
+                </div>
+            )}
         </div>
     );
 };

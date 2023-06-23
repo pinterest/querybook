@@ -6,7 +6,7 @@ ai_assistant:
         enabled: true
 
     query_generation:
-        enabled: false
+        enabled: true
 
     query_auto_fix:
         enabled: true
