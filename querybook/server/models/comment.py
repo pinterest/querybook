@@ -42,7 +42,7 @@ class Comment(CRUDMixin, Base):
             "created_at": self.created_at,
             "updated_at": self.updated_at,
             "created_by": self.created_by,
-            "text": self.text,
+            "text": "" if self.archived else self.text,
             "parent_comment_id": self.parent_comment_id,
             "archived": self.archived,
             "child_comment_ids": [child.id for child in self.children],
