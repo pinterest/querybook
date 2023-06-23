@@ -1,7 +1,7 @@
 # Cannot upgrade to Python 3.10 until the following uWSGI release a new version:
 # https://github.com/unbit/uwsgi/pull/2363
 # This caused websocket to fail
-FROM python:3.9
+FROM python:3.9.16
 
 ARG PRODUCTION=true
 ARG EXTRA_PIP_INSTALLS=""
@@ -16,7 +16,7 @@ RUN rm -rf /var/lib/apt/lists/* \
     build-essential \
     libssl-dev \
     libldap2-dev \
-    && curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
+    && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
     && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y --allow-downgrades --allow-remove-essential --allow-change-held-packages \
     nodejs \
     && apt-get clean

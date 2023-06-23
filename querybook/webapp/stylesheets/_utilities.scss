@@ -58,6 +58,10 @@
     justify-content: flex-start;
 }
 
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
 .horizontal-space-between {
     display: flex;
     flex-direction: row;

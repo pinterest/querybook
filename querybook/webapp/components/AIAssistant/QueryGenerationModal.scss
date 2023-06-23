@@ -1,0 +1,60 @@
+.QueryGenerationModal {
+    .title {
+        font-size: var(--text-size);
+        font-weight: var(--bold-font);
+        margin-bottom: var(--margin);
+    }
+
+    .Modal-box {
+        .Modal-content {
+            min-height: 40vh;
+        }
+
+        .Modal-bottom {
+            margin-top: 0 !important;
+        }
+    }
+    .question-bar {
+        flex: 1;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        background-color: var(--bg-light);
+        border-radius: var(--border-radius-sm);
+        margin-top: 24px;
+
+        &:hover {
+            background-color: var(--bg-hover);
+        }
+
+        .stars-icon {
+            position: relative;
+            color: var(--icon);
+            padding: 8px;
+
+            display: flex;
+            align-items: center;
+        }
+
+        .text2sql-mode {
+            color: var(--color-pink-dark);
+        }
+
+        .DebouncedInput {
+            flex: 1;
+
+            input {
+                line-height: 1.8rem;
+                border-radius: 0;
+                background-color: transparent;
+            }
+        }
+    }
+
+    .action-buttons {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        margin-top: var(--margin);
+    }
+}
