@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 import PublicConfig from 'config/querybook_public_config.yaml';
+import { ComponentType, ElementType } from 'const/analytics';
 import { StreamStatus, useStream } from 'hooks/useStream';
+import { trackClick } from 'lib/analytics';
 import { IconButton } from 'ui/Button/IconButton';
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
 
@@ -39,6 +41,14 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
         onChange(title);
     }, [title]);
 
+    const handleOnClick = useCallback(() => {
+        startStream();
+        trackClick({
+            component: ComponentType.AI_ASSISTANT,
+            element: ElementType.QUERY_TITLE_GENERATION_BUTTON,
+        });
+    }, [startStream]);
+
     return (
         <div className="QueryCellTitle">
             {titleGenerationEnabled && (
@@ -51,7 +61,7 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
                     size={18}
                     tooltip="AI: generate title"
                     color={!value && query ? 'accent' : undefined}
-                    onClick={startStream}
+                    onClick={handleOnClick}
                 />
             )}
             <ResizableTextArea

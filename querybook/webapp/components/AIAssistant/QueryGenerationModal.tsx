@@ -3,8 +3,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { QueryEngineSelector } from 'components/QueryRunButton/QueryRunButton';
 import { QueryComparison } from 'components/TranspileQueryModal/QueryComparison';
+import { ComponentType, ElementType } from 'const/analytics';
 import { IQueryEngine } from 'const/queryEngine';
 import { StreamStatus, useStream } from 'hooks/useStream';
+import { trackClick } from 'lib/analytics';
 import { TableToken } from 'lib/sql-helper/sql-lexer';
 import { matchKeyPress } from 'lib/utils/keyboard';
 import { analyzeCode } from 'lib/web-worker';
@@ -92,6 +94,15 @@ export const QueryGenerationModal = ({
             if (matchKeyPress(event, 'Enter')) {
                 startStream();
                 inputRef.current.blur();
+                trackClick({
+                    component: ComponentType.AI_ASSISTANT,
+                    element: ElementType.QUERY_GENERATION_BUTTON,
+                    aux: {
+                        mode: textToSQLMode,
+                        question,
+                        tables,
+                    },
+                });
             }
         },
         [startStream]
@@ -154,6 +165,15 @@ export const QueryGenerationModal = ({
                 onClick={() => {
                     onUpdateQuery(newQuery);
                     setQuestion('');
+                    trackClick({
+                        component: ComponentType.AI_ASSISTANT,
+                        element: ElementType.QUERY_GENERATION_APPLY_BUTTON,
+                        aux: {
+                            mode: textToSQLMode,
+                            question,
+                            tables,
+                        },
+                    });
                     onHide();
                 }}
                 color="confirm"
