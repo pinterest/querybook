@@ -66,7 +66,7 @@ export const QueryGenerationModal = ({
     );
     const [question, setQuestion] = useState<string>('');
     const [tables, setTables] = useState(tablesInQuery);
-    const [aiMode, setAIMode] = useState(
+    const [textToSQLMode, setTextToSQLMode] = useState(
         !!query ? TextToSQLMode.EDIT : TextToSQLMode.GENERATE
     );
 
@@ -81,7 +81,7 @@ export const QueryGenerationModal = ({
             tables: tables,
             question: question,
             data_cell_id:
-                aiMode === TextToSQLMode.EDIT ? dataCellId : undefined,
+                textToSQLMode === TextToSQLMode.EDIT ? dataCellId : undefined,
         }
     );
 
@@ -109,15 +109,15 @@ export const QueryGenerationModal = ({
                     size={18}
                 />
             </span>
-            <div className="ai-mode">
+            <div className="text2sql-mode">
                 <TextToSQLModeSelector
-                    selectedMode={aiMode}
+                    selectedMode={textToSQLMode}
                     modes={
                         query
                             ? [TextToSQLMode.GENERATE, TextToSQLMode.EDIT]
                             : [TextToSQLMode.GENERATE]
                     }
-                    onModeSelect={setAIMode}
+                    onModeSelect={setTextToSQLMode}
                 />
             </div>
             <DebouncedInput
@@ -128,7 +128,7 @@ export const QueryGenerationModal = ({
                 transparent={false}
                 inputProps={{
                     placeholder:
-                        aiMode === TextToSQLMode.GENERATE
+                        textToSQLMode === TextToSQLMode.GENERATE
                             ? 'Ask AI to generate a new query'
                             : 'Ask AI to edit the query',
                     type: 'text',
@@ -216,7 +216,7 @@ export const QueryGenerationModal = ({
                             <div className="mt12">
                                 <QueryComparison
                                     fromQuery={
-                                        aiMode === TextToSQLMode.EDIT
+                                        textToSQLMode === TextToSQLMode.EDIT
                                             ? query
                                             : ''
                                     }
