@@ -3,31 +3,31 @@ import React from 'react';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { ListMenu } from 'ui/Menu/ListMenu';
 
-export enum AIMode {
+export enum TextToSQLMode {
     GENERATE = 'GENERATE',
     EDIT = 'EDIT',
 }
 
-interface IAIModeSelectorProps {
-    aiMode: AIMode;
-    aiModes: AIMode[];
-    onModeSelect: (mode: AIMode) => any;
+interface IProps {
+    selectedMode: TextToSQLMode;
+    modes: TextToSQLMode[];
+    onModeSelect: (mode: TextToSQLMode) => any;
 }
 
-export const AIModeSelector: React.FC<IAIModeSelectorProps> = ({
-    aiMode,
-    aiModes,
+export const TextToSQLModeSelector: React.FC<IProps> = ({
+    selectedMode,
+    modes,
     onModeSelect,
 }) => {
-    const engineItems = aiModes.map((mode) => ({
+    const engineItems = modes.map((mode) => ({
         name: <span>{mode}</span>,
         onClick: onModeSelect.bind(null, mode),
-        checked: aiMode === mode,
+        checked: selectedMode === mode,
     }));
 
     return (
         <Dropdown
-            customButtonRenderer={() => <div>{aiMode}</div>}
+            customButtonRenderer={() => <div>{selectedMode}</div>}
             layout={['bottom', 'left']}
             className="engine-selector-dropdown"
         >

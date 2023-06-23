@@ -3,6 +3,7 @@ from flask_login import current_user
 from app.datasource import register
 
 from lib.ai_assistant import ai_assistant
+from logic import datadoc as datadoc_logic
 
 
 @register("/ai/query_title/", custom_response=True)
@@ -28,11 +29,13 @@ def query_auto_fix(query_execution_id):
 def generate_sql_query(
     query_engine_id: int, tables: list[str], question: str, data_cell_id: int = None
 ):
+    data_cell = datadoc_logic.get_data_cell_by_id(data_cell_id)
+    original_query = data_cell.context if data_cell else None
     res_stream = ai_assistant.generate_sql_query(
         query_engine_id=query_engine_id,
         tables=tables,
         question=question,
-        data_cell_id=data_cell_id,
+        original_query=original_query,
         user_id=current_user.id,
     )
 

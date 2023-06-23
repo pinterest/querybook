@@ -11,7 +11,6 @@ from lib.logger import get_logger
 from logic import query_execution as qe_logic
 from lib.query_analysis.lineage import process_query
 from logic import admin as admin_logic
-from logic import datadoc as datadoc_logic
 from logic import metastore as m_logic
 from models.query_execution import QueryExecution
 
@@ -161,7 +160,7 @@ class BaseAIAssistant(ABC):
         query_engine_id: int,
         tables: list[str],
         question: str,
-        data_cell_id: int = None,
+        original_query: str = None,
         stream=True,
         callback_handler: ChainStreamHandler = None,
         user_id=None,
@@ -173,10 +172,6 @@ class BaseAIAssistant(ABC):
         table_schemas = self._generate_table_schema_prompt(
             metastore_id=query_engine.metastore_id, table_names=tables, session=session
         )
-
-        data_cell = datadoc_logic.get_data_cell_by_id(data_cell_id, session=session)
-        original_query = data_cell.context if data_cell else None
-
         return self._generate_sql_query(
             language=query_engine.language,
             table_schemas=table_schemas,

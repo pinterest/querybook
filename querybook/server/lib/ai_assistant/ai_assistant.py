@@ -37,7 +37,7 @@ class AIAssistant:
         query_engine_id: int,
         tables: list[str],
         question: str,
-        data_cell_id: int = None,
+        original_query: str = None,
         user_id=None,
     ):
         return self._get_streaming_result(
@@ -46,7 +46,7 @@ class AIAssistant:
                 "query_engine_id": query_engine_id,
                 "tables": tables,
                 "question": question,
-                "data_cell_id": data_cell_id,
+                "original_query": original_query,
                 "user_id": user_id,
             },
         )

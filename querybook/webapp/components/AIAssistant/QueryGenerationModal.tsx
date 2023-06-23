@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { uniq } from 'lodash';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { QueryEngineSelector } from 'components/QueryRunButton/QueryRunButton';
 import { QueryComparison } from 'components/TranspileQueryModal/QueryComparison';
@@ -14,8 +15,8 @@ import { Message } from 'ui/Message/Message';
 import { Modal } from 'ui/Modal/Modal';
 import { StyledText } from 'ui/StyledText/StyledText';
 
-import { AIMode, AIModeSelector } from './AIModeSelector';
 import { TableSelector } from './TableSelector';
+import { TextToSQLMode, TextToSQLModeSelector } from './TextToSQLModeSelector';
 
 import './QueryGenerationModal.scss';
 
@@ -66,11 +67,11 @@ export const QueryGenerationModal = ({
     const [question, setQuestion] = useState<string>('');
     const [tables, setTables] = useState(tablesInQuery);
     const [aiMode, setAIMode] = useState(
-        !!query ? AIMode.EDIT : AIMode.GENERATE
+        !!query ? TextToSQLMode.EDIT : TextToSQLMode.GENERATE
     );
 
     useEffect(() => {
-        setTables([...new Set([...tablesInQuery, ...tables])]);
+        setTables(uniq([...tablesInQuery, ...tables]));
     }, [tablesInQuery]);
 
     const { streamStatus, startStream, streamData } = useStream(
@@ -79,18 +80,22 @@ export const QueryGenerationModal = ({
             query_engine_id: engineId,
             tables: tables,
             question: question,
-            data_cell_id: aiMode === AIMode.EDIT ? dataCellId : undefined,
+            data_cell_id:
+                aiMode === TextToSQLMode.EDIT ? dataCellId : undefined,
         }
     );
 
     const { explanation, query: newQuery } = streamData;
 
-    const onKeyDown = (event: React.KeyboardEvent) => {
-        if (matchKeyPress(event, 'Enter')) {
-            startStream();
-            inputRef.current.blur();
-        }
-    };
+    const onKeyDown = useCallback(
+        (event: React.KeyboardEvent) => {
+            if (matchKeyPress(event, 'Enter')) {
+                startStream();
+                inputRef.current.blur();
+            }
+        },
+        [startStream]
+    );
 
     const questionBarDOM = (
         <div className="question-bar">
@@ -105,12 +110,12 @@ export const QueryGenerationModal = ({
                 />
             </span>
             <div className="ai-mode">
-                <AIModeSelector
-                    aiMode={aiMode}
-                    aiModes={
+                <TextToSQLModeSelector
+                    selectedMode={aiMode}
+                    modes={
                         query
-                            ? [AIMode.GENERATE, AIMode.EDIT]
-                            : [AIMode.GENERATE]
+                            ? [TextToSQLMode.GENERATE, TextToSQLMode.EDIT]
+                            : [TextToSQLMode.GENERATE]
                     }
                     onModeSelect={setAIMode}
                 />
@@ -123,7 +128,7 @@ export const QueryGenerationModal = ({
                 transparent={false}
                 inputProps={{
                     placeholder:
-                        aiMode === AIMode.GENERATE
+                        aiMode === TextToSQLMode.GENERATE
                             ? 'Ask AI to generate a new query'
                             : 'Ask AI to edit the query',
                     type: 'text',
@@ -135,7 +140,7 @@ export const QueryGenerationModal = ({
         </div>
     );
 
-    const bottomDOM = newQuery && (
+    const bottomDOM = newQuery && streamStatus === StreamStatus.FINISHED && (
         <div className="right-align mb16">
             <Button
                 title="Cancel"
@@ -143,7 +148,6 @@ export const QueryGenerationModal = ({
                 onClick={() => {
                     onHide();
                 }}
-                disabled={streamStatus === StreamStatus.STREAMING}
             />
             <Button
                 title="Apply"
@@ -153,7 +157,6 @@ export const QueryGenerationModal = ({
                     onHide();
                 }}
                 color="confirm"
-                disabled={streamStatus === StreamStatus.STREAMING}
             />
         </div>
     );
@@ -213,7 +216,9 @@ export const QueryGenerationModal = ({
                             <div className="mt12">
                                 <QueryComparison
                                     fromQuery={
-                                        aiMode === AIMode.EDIT ? query : ''
+                                        aiMode === TextToSQLMode.EDIT
+                                            ? query
+                                            : ''
                                     }
                                     toQuery={newQuery}
                                     fromQueryTitle="Original Query"
