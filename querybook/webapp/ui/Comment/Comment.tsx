@@ -63,7 +63,7 @@ export const Comment: React.FunctionComponent<IProps> = ({
         [uid, userInfo.uid]
     );
 
-    const reactionByEmoji: Record<number, IReaction[]> = React.useMemo(
+    const reactionsByEmoji: Record<number, IReaction[]> = React.useMemo(
         () => formatReactionsByEmoji(reactions),
         [reactions]
     );
@@ -154,7 +154,7 @@ export const Comment: React.FunctionComponent<IProps> = ({
                             )}
                             <div className="mh8">
                                 <AddReactionButton
-                                    reactionByEmoji={reactionByEmoji}
+                                    reactionsByEmoji={reactionsByEmoji}
                                     commentId={id}
                                     uid={userInfo.uid}
                                 />
@@ -178,7 +178,7 @@ export const Comment: React.FunctionComponent<IProps> = ({
                         <RichTextEditor value={text} readOnly={true} />
                         {reactions.length ? (
                             <Reactions
-                                reactionByEmoji={reactionByEmoji}
+                                reactionsByEmoji={reactionsByEmoji}
                                 commentId={id}
                             />
                         ) : null}

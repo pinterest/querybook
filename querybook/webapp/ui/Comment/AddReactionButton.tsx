@@ -16,7 +16,7 @@ interface IProps {
     popoverLayout?: PopoverLayout;
     tooltipPos?: TooltipDirection;
     uid: number;
-    reactionByEmoji: Record<number, IReaction[]>;
+    reactionsByEmoji: Record<number, IReaction[]>;
 }
 interface IEmojiListProps {
     onClick: (emoji: string) => void;
@@ -40,7 +40,7 @@ const EmojiList: React.FunctionComponent<IEmojiListProps> = ({ onClick }) => (
 
 export const AddReactionButton: React.FunctionComponent<IProps> = ({
     commentId,
-    reactionByEmoji,
+    reactionsByEmoji,
     uid,
     popoverLayout = ['bottom', 'right'],
     tooltipPos = 'down',
@@ -52,7 +52,7 @@ export const AddReactionButton: React.FunctionComponent<IProps> = ({
 
     const handleEmojiClick = React.useCallback(
         (emoji: string) => {
-            const existingReaction = reactionByEmoji[emoji]?.find(
+            const existingReaction = reactionsByEmoji[emoji]?.find(
                 (reaction) => reaction.created_by === uid
             );
             if (existingReaction) {
@@ -63,7 +63,7 @@ export const AddReactionButton: React.FunctionComponent<IProps> = ({
                 dispatch(addReactionByCommentId(commentId, emoji));
             }
         },
-        [commentId, dispatch, uid, reactionByEmoji]
+        [commentId, dispatch, uid, reactionsByEmoji]
     );
 
     return (

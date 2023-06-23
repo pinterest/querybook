@@ -14,12 +14,12 @@ import { AddReactionButton } from './AddReactionButton';
 
 interface IProps {
     commentId: number;
-    reactionByEmoji: Record<number, IReaction[]>;
+    reactionsByEmoji: Record<number, IReaction[]>;
 }
 
 export const Reactions: React.FunctionComponent<IProps> = ({
     commentId,
-    reactionByEmoji,
+    reactionsByEmoji,
 }) => {
     const dispatch: Dispatch = useDispatch();
     const userInfo = useSelector((state: IStoreState) => state.user.myUserInfo);
@@ -36,7 +36,7 @@ export const Reactions: React.FunctionComponent<IProps> = ({
     );
 
     const handleReactionClick = (emoji: string, uid: number) => {
-        const existingReaction = reactionByEmoji[emoji].find(
+        const existingReaction = reactionsByEmoji[emoji].find(
             (reaction) =>
                 reaction.reaction === emoji && reaction.created_by === uid
         );
@@ -49,7 +49,7 @@ export const Reactions: React.FunctionComponent<IProps> = ({
 
     return (
         <div className="Reactions mt8 flex-row">
-            {Object.entries(reactionByEmoji).map(([emoji, uids]) => {
+            {Object.entries(reactionsByEmoji).map(([emoji, uids]) => {
                 const reactionClassnames = clsx(
                     'Reaction',
                     'flex-row',
@@ -77,7 +77,7 @@ export const Reactions: React.FunctionComponent<IProps> = ({
                 );
             })}
             <AddReactionButton
-                reactionByEmoji={reactionByEmoji}
+                reactionsByEmoji={reactionsByEmoji}
                 popoverLayout={['bottom', 'left']}
                 tooltipPos="right"
                 commentId={commentId}
