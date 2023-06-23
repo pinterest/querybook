@@ -3,10 +3,12 @@ import { DeltaStreamParser } from 'lib/stream';
 describe('DeltaStreamParser', () => {
     it('Works for stream without key/value pairs', () => {
         const parser = new DeltaStreamParser();
-        expect(parser.parse('some data')).toEqual({
+        parser.parse('some data');
+        expect(parser.result).toEqual({
             data: 'some data',
         });
-        expect(parser.parse('\nsome more data')).toEqual({
+        parser.parse('\nsome more data');
+        expect(parser.result).toEqual({
             data: 'some data\nsome more data',
         });
     });
@@ -14,10 +16,12 @@ describe('DeltaStreamParser', () => {
     it('Works for stream ending with non empty buffer', () => {
         const parser = new DeltaStreamParser();
         parser.parse('201');
-        expect(parser.parse('9')).toEqual({
+        parser.parse('9');
+        expect(parser.result).toEqual({
             data: '201',
         });
-        expect(parser.getResult(true)).toEqual({
+        parser.close();
+        expect(parser.result).toEqual({
             data: '2019',
         });
     });
@@ -25,7 +29,8 @@ describe('DeltaStreamParser', () => {
     it('Works for stream with both data and key/value pairs', () => {
         const parser = new DeltaStreamParser();
         parser.parse('some data');
-        expect(parser.parse('\n<@some_key@>\nsome value')).toEqual({
+        parser.parse('\n<@some_key@>\nsome value');
+        expect(parser.result).toEqual({
             data: 'some data\n',
             some_key: 'some value',
         });
@@ -33,15 +38,21 @@ describe('DeltaStreamParser', () => {
 
     it('Works for stream with only key/value pairs', () => {
         const parser = new DeltaStreamParser();
-        expect(parser.parse('<@some_key@>')).toEqual({
+
+        parser.parse('<@some_key@>');
+        expect(parser.result).toEqual({
             data: '',
             some_key: '',
         });
-        expect(parser.parse('\nsome value\n')).toEqual({
+
+        parser.parse('\nsome value\n');
+        expect(parser.result).toEqual({
             data: '',
             some_key: 'some value\n',
         });
-        expect(parser.parse('<@another_key@>\nanother value')).toEqual({
+
+        parser.parse('<@another_key@>\nanother value');
+        expect(parser.result).toEqual({
             data: '',
             some_key: 'some value\n',
             another_key: 'another value',
@@ -50,44 +61,54 @@ describe('DeltaStreamParser', () => {
 
     it('Works for partial stream', () => {
         const parser = new DeltaStreamParser();
-        expect(parser.parse('some da')).toEqual({
+        parser.parse('some da');
+        expect(parser.result).toEqual({
             data: 'some da',
         });
         // wait for <@ to be complete before parsing
-        expect(parser.parse('ta<')).toEqual({
+        parser.parse('ta<');
+        expect(parser.result).toEqual({
             data: 'some da',
         });
         // the next char is not @, so it will be treated as data
-        expect(parser.parse('ta')).toEqual({
+        parser.parse('ta');
+        expect(parser.result).toEqual({
             data: 'some data<ta',
         });
 
         // wait for <@ to be complete before parsing
-        expect(parser.parse('<')).toEqual({
+        parser.parse('<');
+        expect(parser.result).toEqual({
             data: 'some data<ta',
         });
         // the next char is @, so the following will be treated as key
-        expect(parser.parse('@som')).toEqual({
+        parser.parse('@som');
+        expect(parser.result).toEqual({
             data: 'some data<ta',
         });
         // wait for @> to be complete before parsing
-        expect(parser.parse('e_key@')).toEqual({
+        parser.parse('e_key@');
+        expect(parser.result).toEqual({
             data: 'some data<ta',
         });
-        expect(parser.parse('>\n')).toEqual({
+        parser.parse('>\n');
+        expect(parser.result).toEqual({
             data: 'some data<ta',
             some_key: '',
         });
-        expect(parser.parse('som')).toEqual({
+        parser.parse('som');
+        expect(parser.result).toEqual({
             data: 'some data<ta',
             some_key: 'som',
         });
-        expect(parser.parse('e value')).toEqual({
+        parser.parse('e value');
+        expect(parser.result).toEqual({
             data: 'some data<ta',
             some_key: 'some value',
         });
         // ignore the last incomplete key
-        expect(parser.parse('<@ano')).toEqual({
+        parser.parse('<@ano');
+        expect(parser.result).toEqual({
             data: 'some data<ta',
             some_key: 'some value',
         });

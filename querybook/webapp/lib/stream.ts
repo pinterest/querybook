@@ -41,26 +41,12 @@ export class DeltaStreamParser {
         this._currentValue = '';
         this._isPartialKey = false;
     }
-
-    public parse(delta: string): { [key: string]: string } {
-        this._parse(delta);
+    public get result() {
         // make a copy of the result to avoid modifying the original result by the caller
         return { ...this._result };
     }
 
-    public getResult(ended: boolean): { [key: string]: string } {
-        // flush the buffer if the stream has ended
-        if (this._buffer.length > 0 && ended) {
-            if (!this._isPartialKey) {
-                this._currentValue += this._buffer;
-                this._result[this._currentKey] = this._currentValue.trimStart();
-                this._buffer = '';
-            }
-        }
-        return { ...this._result };
-    }
-
-    private _parse(delta: string): { [key: string]: string } {
+    public parse(delta: string) {
         this._buffer += delta;
         // This is to make sure we always have complete <@ and @> in the buffer
         if (
@@ -107,5 +93,16 @@ export class DeltaStreamParser {
         }
 
         this._buffer = '';
+    }
+
+    public close() {
+        // flush the buffer if the stream has ended
+        if (this._buffer.length) {
+            if (!this._isPartialKey) {
+                this._currentValue += this._buffer;
+                this._result[this._currentKey] = this._currentValue.trimStart();
+                this._buffer = '';
+            }
+        }
     }
 }
