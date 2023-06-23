@@ -177,7 +177,7 @@ function streamDatasource(
     url: string,
     params?: Record<string, unknown>,
     onStreaming?: (data: { [key: string]: string }) => void,
-    onStreamingEnd?: () => void
+    onStreamingEnd?: (data?: { [key: string]: string }) => void
 ) {
     const eventSource = new EventSource(
         `${url}?params=${JSON.stringify(params)}`
@@ -185,8 +185,8 @@ function streamDatasource(
     const parser = new DeltaStreamParser();
     eventSource.addEventListener('message', (e) => {
         const newToken = JSON.parse(e.data).data;
-        const data = parser.parse(newToken);
-        onStreaming?.(data);
+        parser.parse(newToken);
+        onStreaming?.(parser.result);
     });
     eventSource.addEventListener('error', (e) => {
         console.error(e);
@@ -198,7 +198,8 @@ function streamDatasource(
     });
     eventSource.addEventListener('close', (e) => {
         eventSource.close();
-        onStreamingEnd?.();
+        parser.close();
+        onStreamingEnd?.(parser.result);
     });
 }
 
