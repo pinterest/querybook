@@ -1,5 +1,5 @@
 .Comments {
-    width: 600px;
+    width: 720px;
     border-radius: var(--border-radius-sm);
     overflow: hidden;
     .Comments-list {
@@ -71,6 +71,9 @@
         }
     }
     .Comment {
+        &.archived {
+            opacity: 0.5;
+        }
         &.edit-mode {
             .Comment-edit {
                 display: none;

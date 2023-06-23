@@ -80,6 +80,7 @@ export function fetchChildCommentsByParentCommentIdIfNeeded(
                 fetchChildCommentsByParentCommentId(parentCommentId)
             );
         }
+        return Promise.resolve(null);
     };
 }
 
@@ -137,18 +138,15 @@ export function createChildComment(
     };
 }
 
-// TODO: update this to show archived comments in UI
-export function deleteCommentByEntityId(
-    entityType: CommentEntityType,
-    entityId: number,
-    commentId: number
-): ThunkResult<Promise<void>> {
+export function deleteComment(commentId: number): ThunkResult<Promise<void>> {
     return async (dispatch) => {
         try {
-            await CommentResource.delete(commentId);
+            await CommentResource.softDelete(commentId);
             dispatch({
-                type: '@@comment/REMOVE_COMMENT_BY_ENTITY_ID',
-                payload: { entityType, entityId, commentId },
+                type: '@@comment/ARCHIVE_COMMENT',
+                payload: {
+                    commentId,
+                },
             });
         } catch (e) {
             console.error(e);

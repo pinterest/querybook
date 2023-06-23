@@ -1,10 +1,11 @@
+import clsx from 'clsx';
 import * as DraftJS from 'draft-js';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import { UserName } from 'components/UserBadge/UserName';
-import { IComment } from 'const/comment';
+import { IComment, IReaction } from 'const/comment';
 import { fromNow } from 'lib/utils/datetime';
 import { IStoreState } from 'redux/store/types';
 import { IconButton } from 'ui/Button/IconButton';
@@ -17,21 +18,34 @@ import { Reactions } from './Reactions';
 interface IProps {
     comment: IComment;
     editComment: (text: DraftJS.ContentState) => void;
+    deleteComment: () => void;
     isBeingEdited: boolean;
     isBeingRepliedTo: boolean;
     isChild: boolean;
-    createChildComment: () => void;
+    onCreateChildComment: () => void;
 }
+
+const formatReactionsByUser = (reactions: IReaction[]) => {
+    const formattedReactions = {};
+    reactions.forEach((reaction) => {
+        formattedReactions[reaction.reaction] =
+            formattedReactions[reaction.reaction] ?? [];
+        formattedReactions[reaction.reaction].push(reaction.created_by);
+    });
+    return formattedReactions;
+};
 
 export const Comment: React.FunctionComponent<IProps> = ({
     comment,
     editComment,
+    deleteComment,
     isBeingEdited,
     isBeingRepliedTo,
     isChild,
-    createChildComment,
+    onCreateChildComment,
 }) => {
     const userInfo = useSelector((state: IStoreState) => state.user.myUserInfo);
+
     const {
         id,
         text,
@@ -39,10 +53,26 @@ export const Comment: React.FunctionComponent<IProps> = ({
         created_at: createdAt,
         updated_at: updatedAt,
         reactions,
+        archived,
     } = comment;
 
+    const isAuthor = React.useMemo(
+        () => uid === userInfo.uid,
+        [uid, userInfo.uid]
+    );
+
+    const uidsByReaction = React.useMemo(
+        () => formatReactionsByUser(reactions),
+        [reactions]
+    );
+
     return (
-        <div className="Comment">
+        <div
+            className={clsx({
+                Comment: true,
+                archived,
+            })}
+        >
             <div className="Comment-top horizontal-space-between">
                 <div className="Comment-top-left flex-row">
                     <UserAvatar uid={uid} tiny />
@@ -57,7 +87,8 @@ export const Comment: React.FunctionComponent<IProps> = ({
                             cursor="default"
                             isItalic
                         >
-                            updated {fromNow(updatedAt)}
+                            {archived ? 'deleted' : 'updated'}{' '}
+                            {fromNow(updatedAt)}
                         </StyledText>
                     )}
                 </div>
@@ -75,7 +106,7 @@ export const Comment: React.FunctionComponent<IProps> = ({
                     ) : null}
                     {isBeingRepliedTo ? (
                         <StyledText
-                            className="mr4"
+                            className="mr8"
                             color="accent"
                             weight="bold"
                             isItalic
@@ -84,42 +115,73 @@ export const Comment: React.FunctionComponent<IProps> = ({
                             replying to
                         </StyledText>
                     ) : null}
-                    <div className="Comment-top-right-buttons flex-row">
-                        {uid === userInfo.uid && !isBeingEdited ? (
-                            <div className="Comment-edit">
-                                <IconButton
-                                    icon="Edit"
-                                    invertCircle
-                                    size={18}
-                                    tooltip="Edit Comment"
-                                    tooltipPos="left"
-                                    onClick={() => editComment(text)}
+                    {archived ? null : (
+                        <div className="Comment-top-right-buttons flex-row">
+                            {isAuthor && !isBeingEdited ? (
+                                <div className="Comment-edit">
+                                    <IconButton
+                                        icon="Edit"
+                                        invertCircle
+                                        size={18}
+                                        tooltip="Edit Comment"
+                                        tooltipPos="left"
+                                        onClick={() => editComment(text)}
+                                    />
+                                    <IconButton
+                                        className="ml8"
+                                        icon="Trash"
+                                        invertCircle
+                                        size={18}
+                                        tooltip="Delete Comment"
+                                        tooltipPos="left"
+                                        onClick={deleteComment}
+                                    />
+                                </div>
+                            ) : null}
+                            {isChild ? null : (
+                                <div className="ml8">
+                                    <IconButton
+                                        icon="MessageCircle"
+                                        invertCircle
+                                        size={18}
+                                        tooltip="Reply to comment"
+                                        tooltipPos="left"
+                                        onClick={onCreateChildComment}
+                                    />
+                                </div>
+                            )}
+                            <div className="mh8">
+                                <AddReactionButton
+                                    uidsByReaction={uidsByReaction}
+                                    commentId={id}
+                                    uid={userInfo.uid}
                                 />
                             </div>
-                        ) : null}
-                        {isChild ? null : (
-                            <div className="ml8">
-                                <IconButton
-                                    icon="MessageCircle"
-                                    invertCircle
-                                    size={18}
-                                    tooltip="Reply to comment"
-                                    tooltipPos="left"
-                                    onClick={createChildComment}
-                                />
-                            </div>
-                        )}
-                        <div className="mh8">
-                            <AddReactionButton commentId={id} />
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
             <div className="Comment-text mt4">
-                <RichTextEditor value={text} readOnly={true} />
-                {reactions.length ? (
-                    <Reactions reactions={reactions} commentId={id} />
-                ) : null}
+                {archived ? (
+                    <StyledText
+                        className="mr4"
+                        color="lightest"
+                        isItalic
+                        cursor="default"
+                    >
+                        this comment has been deleted
+                    </StyledText>
+                ) : (
+                    <>
+                        <RichTextEditor value={text} readOnly={true} />
+                        {reactions.length ? (
+                            <Reactions
+                                uidsByReaction={uidsByReaction}
+                                commentId={id}
+                            />
+                        ) : null}
+                    </>
+                )}
             </div>
         </div>
     );

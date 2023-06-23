@@ -10,7 +10,10 @@ import { StyledText } from 'ui/StyledText/StyledText';
 interface IProps {
     parentCommentId: number;
     childCommentIds: number[];
-    renderFlatCommentDOM: (comment: IComment, isChild: boolean) => JSX.Element;
+    renderFlatCommentDOM: (
+        comment: IComment,
+        parentCommentId?: number
+    ) => JSX.Element;
 }
 
 export function useFetchChildCommentsByParentCommentId(
@@ -71,7 +74,10 @@ export const OpenThreadComment: React.FunctionComponent<IProps> = ({
             {loading
                 ? loadingCommentDOM
                 : childCommentIds.map((commentId) =>
-                      renderFlatCommentDOM(commentsById[commentId], true)
+                      renderFlatCommentDOM(
+                          commentsById[commentId],
+                          parentCommentId
+                      )
                   )}
         </>
     );

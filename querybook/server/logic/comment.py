@@ -86,17 +86,8 @@ def edit_comment(comment_id: int, session=None, **fields):
     return Comment.update(
         id=comment_id,
         fields=fields,
-        field_names=["text"],
+        field_names=["text", "archived"],
         commit=True,
-        session=session,
-    )
-
-
-@with_session
-def remove_comment(comment_id: int, session=None):
-    # TODO: update to archive - will do as last pr before merge (bc alembic)
-    Comment.delete(
-        comment_id,
         session=session,
     )
 

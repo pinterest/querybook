@@ -1,8 +1,10 @@
 .DataTableHeader {
     align-items: flex-start;
-    .DataTableHeader-top {
+    .DataTableHeader-top,
+    .TitleCommentBox {
         width: 100%;
     }
+
     .table-title {
         font-family: var(--font-accent);
     }

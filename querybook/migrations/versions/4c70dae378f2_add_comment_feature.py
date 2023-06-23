@@ -1,8 +1,8 @@
 """add comment feature
 
-Revision ID: 3d9f98ca7ec1
+Revision ID: 4c70dae378f2
 Revises: 7f6cdb3621f7
-Create Date: 2023-05-22 22:06:30.972865
+Create Date: 2023-06-21 19:45:30.708378
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import mysql
 
 # revision identifiers, used by Alembic.
-revision = "3d9f98ca7ec1"
+revision = "4c70dae378f2"
 down_revision = "7f6cdb3621f7"
 branch_labels = None
 depends_on = None
@@ -26,6 +26,7 @@ def upgrade():
         sa.Column("created_by", sa.Integer(), nullable=True),
         sa.Column("text", sa.Text(length=16777215), nullable=True),
         sa.Column("parent_comment_id", sa.Integer(), nullable=True),
+        sa.Column("archived", sa.Boolean(), nullable=False),
         sa.ForeignKeyConstraint(["created_by"], ["user.id"], ondelete="SET NULL"),
         sa.ForeignKeyConstraint(
             ["parent_comment_id"], ["comment.id"], ondelete="CASCADE"

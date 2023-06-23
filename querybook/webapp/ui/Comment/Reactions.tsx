@@ -14,34 +14,15 @@ import { AddReactionButton } from './AddReactionButton';
 
 interface IProps {
     commentId: number;
-    reactions: IReaction[];
+    uidsByReaction: Record<number, IReaction[]>;
 }
 
 export const Reactions: React.FunctionComponent<IProps> = ({
     commentId,
-    reactions: reactionsProp,
+    uidsByReaction,
 }) => {
     const dispatch: Dispatch = useDispatch();
-    const [uidsByReaction, setUidsByReaction] = React.useState<
-        Record<string, number[]>
-    >({});
     const userInfo = useSelector((state: IStoreState) => state.user.myUserInfo);
-
-    const formatReactions = React.useCallback((reactions: IReaction[]) => {
-        const formattedReactions = {};
-        reactions.forEach((reaction) => {
-            formattedReactions[reaction.reaction] =
-                formattedReactions[reaction.reaction] ?? [];
-            formattedReactions[reaction.reaction].push(reaction.created_by);
-        });
-        return formattedReactions;
-    }, []);
-
-    React.useEffect(() => {
-        if (reactionsProp) {
-            setUidsByReaction(formatReactions(reactionsProp));
-        }
-    }, [formatReactions, reactionsProp]);
 
     const addEmoji = React.useCallback(
         (emoji: string) => dispatch(addReactionByCommentId(commentId, emoji)),
@@ -49,7 +30,7 @@ export const Reactions: React.FunctionComponent<IProps> = ({
     );
     const deleteEmoji = React.useCallback(
         (emoji: string, uid: number) => {
-            const reactionToDelete = reactionsProp.find(
+            const reactionToDelete = uidsByReaction[uid]?.find(
                 (reaction) =>
                     reaction.reaction === emoji && reaction.created_by === uid
             );
@@ -59,11 +40,10 @@ export const Reactions: React.FunctionComponent<IProps> = ({
                 );
             }
         },
-        [commentId, dispatch, reactionsProp]
+        [uidsByReaction, dispatch, commentId]
     );
 
     const handleReactionClick = (reaction: string, uid: number) => {
-        // TODO: make this work (with backend)
         const uidIdx = uidsByReaction[reaction].findIndex(
             (uid) => uid === userInfo.uid
         );
@@ -104,9 +84,11 @@ export const Reactions: React.FunctionComponent<IProps> = ({
                 );
             })}
             <AddReactionButton
+                uidsByReaction={uidsByReaction}
                 popoverLayout={['bottom', 'left']}
                 tooltipPos="right"
                 commentId={commentId}
+                uid={userInfo.uid}
             />
         </div>
     );

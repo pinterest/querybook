@@ -10,6 +10,8 @@ export interface ICommentBase {
     child_comment_ids?: number[];
 
     reactions: IReaction[];
+
+    archived: boolean;
 }
 
 export interface ICommentRaw extends ICommentBase {

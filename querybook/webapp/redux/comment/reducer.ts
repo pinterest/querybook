@@ -30,13 +30,16 @@ function commentReducer(state = initialState, action: CommentAction) {
                 draft.commentsById[parentCommentId].child_comment_ids.push(
                     childCommentId
                 );
-
+                return;
+            }
+            case '@@comment/ARCHIVE_COMMENT': {
+                const { commentId } = action.payload;
+                draft.commentsById[commentId].archived = true;
                 return;
             }
             case '@@comment/RECEIVE_REACTION_BY_COMMENT_ID': {
                 const { commentId, reaction } = action.payload;
                 draft.commentsById[commentId].reactions.push(reaction);
-
                 return;
             }
             case '@@comment/REMOVE_REACTION_BY_COMMENT_ID': {
@@ -57,22 +60,6 @@ function commentReducer(state = initialState, action: CommentAction) {
                     ...(draftIdToCommentIds[entityId] || []),
                     ...commentIds,
                 ];
-                return;
-            }
-            case '@@comment/REMOVE_COMMENT_BY_ENTITY_ID': {
-                const {
-                    entityType,
-                    entityId,
-                    commentId: removedCommentId,
-                } = action.payload;
-
-                const draftIdToCommentIds =
-                    draft[commentStateKeyByEntityType[entityType]];
-
-                draftIdToCommentIds[entityId] = draftIdToCommentIds[
-                    entityId
-                ].filter((commentId) => commentId !== removedCommentId);
-
                 return;
             }
         }

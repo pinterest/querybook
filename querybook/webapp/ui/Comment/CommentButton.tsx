@@ -16,7 +16,8 @@ export const CommentButton: React.FunctionComponent<IProps> = ({
     entityId,
 }) => {
     const [showComments, setShowComments] = React.useState(false);
-    const commentButtonRef = React.useRef<HTMLAnchorElement>();
+    const selfRef = React.useRef<HTMLAnchorElement>(null);
+
     return (
         <>
             <SoftButton
@@ -25,12 +26,12 @@ export const CommentButton: React.FunctionComponent<IProps> = ({
                 icon="MessageSquare"
                 aria-label="Comments"
                 data-balloon-pos="left"
-                ref={commentButtonRef}
+                ref={selfRef}
             />
             {showComments ? (
                 <Popover
                     onHide={() => setShowComments(false)}
-                    anchor={commentButtonRef.current}
+                    anchor={selfRef.current}
                     layout={['bottom', 'right']}
                     hideArrow
                     noPadding
