@@ -15,7 +15,8 @@ export const CommentResource = {
         ds.update<ICommentRaw>(`/comment/${commentId}/`, {
             text: convertIfContentStateToHTML(text),
         }),
-    delete: (commentId: number) => ds.delete(`/comment/${commentId}`),
+    softDelete: (commentId: number) =>
+        ds.delete<null>(`/comment/${commentId}/`),
 };
 
 export const CellCommentResource = {

@@ -31,6 +31,12 @@ export interface IRecieveNewChildCommentId extends Action {
         childCommentId: number;
     };
 }
+export interface IArchiveCommentByCommentId extends Action {
+    type: '@@comment/ARCHIVE_COMMENT';
+    payload: {
+        commentId: number;
+    };
+}
 export interface IRecieveReactionByCommentId extends Action {
     type: '@@comment/RECEIVE_REACTION_BY_COMMENT_ID';
     payload: {
@@ -46,15 +52,6 @@ export interface IRemoveReactionByCommentId extends Action {
     };
 }
 
-export interface IRemoveCommentByEntityId extends Action {
-    type: '@@comment/REMOVE_COMMENT_BY_ENTITY_ID';
-    payload: {
-        entityType: CommentEntityType;
-        entityId: number;
-        commentId: number;
-    };
-}
-
 export type CommentAction =
     | IRecieveComments
     | IRecieveComments
@@ -62,7 +59,7 @@ export type CommentAction =
     | IRecieveReactionByCommentId
     | IRemoveReactionByCommentId
     | IRecieveCommentIdsByEntityId
-    | IRemoveCommentByEntityId;
+    | IArchiveCommentByCommentId;
 
 export type ThunkResult<R> = ThunkAction<
     R,

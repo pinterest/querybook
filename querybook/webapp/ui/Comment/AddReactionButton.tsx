@@ -1,8 +1,12 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 
+import { IReaction } from 'const/comment';
 import { TooltipDirection } from 'const/tooltip';
-import { addReactionByCommentId } from 'redux/comment/action';
+import {
+    addReactionByCommentId,
+    deleteReactionByCommentId,
+} from 'redux/comment/action';
 import { Dispatch } from 'redux/store/types';
 import { IconButton } from 'ui/Button/IconButton';
 import { Popover, PopoverLayout } from 'ui/Popover/Popover';
@@ -11,6 +15,8 @@ interface IProps {
     commentId: number;
     popoverLayout?: PopoverLayout;
     tooltipPos?: TooltipDirection;
+    uid: number;
+    uidsByReaction: Record<number, IReaction[]>;
 }
 interface IEmojiListProps {
     onClick: (emoji: string) => void;
@@ -34,6 +40,8 @@ const EmojiList: React.FunctionComponent<IEmojiListProps> = ({ onClick }) => (
 
 export const AddReactionButton: React.FunctionComponent<IProps> = ({
     commentId,
+    uidsByReaction,
+    uid,
     popoverLayout = ['bottom', 'right'],
     tooltipPos = 'down',
 }) => {
@@ -44,9 +52,19 @@ export const AddReactionButton: React.FunctionComponent<IProps> = ({
 
     const handleEmojiClick = React.useCallback(
         (emoji: string) => {
-            dispatch(addReactionByCommentId(commentId, emoji));
+            const existingReaction = uidsByReaction[uid]?.find(
+                (reaction) =>
+                    reaction.reaction === emoji && reaction.created_by === uid
+            );
+            if (existingReaction) {
+                dispatch(
+                    deleteReactionByCommentId(commentId, existingReaction.id)
+                );
+            } else {
+                dispatch(addReactionByCommentId(commentId, emoji));
+            }
         },
-        [commentId, dispatch]
+        [commentId, dispatch, uid, uidsByReaction]
     );
 
     return (

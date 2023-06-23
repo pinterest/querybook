@@ -26,6 +26,8 @@ class Comment(CRUDMixin, Base):
         nullable=True,
     )
 
+    archived = sql.Column(sql.Boolean, default=False, nullable=False)
+
     children = relationship(
         "Comment",
         primaryjoin="Comment.id == Comment.parent_comment_id",
@@ -40,8 +42,9 @@ class Comment(CRUDMixin, Base):
             "created_at": self.created_at,
             "updated_at": self.updated_at,
             "created_by": self.created_by,
-            "text": self.text,
+            "text": "" if self.archived else self.text,
             "parent_comment_id": self.parent_comment_id,
+            "archived": self.archived,
             "child_comment_ids": [child.id for child in self.children],
             "reactions": [reaction.to_dict() for reaction in self.reactions],
         }
@@ -49,15 +52,6 @@ class Comment(CRUDMixin, Base):
 
 class CommentReaction(CRUDMixin, Base):
     __tablename__ = "comment_reaction"
-    # TODO: add this to alembic
-    __table_args__ = (
-        sql.UniqueConstraint(
-            "comment_id",
-            "created_by",
-            "reaction",
-            name="unique_comment_reaction",
-        ),
-    )
 
     id = sql.Column(sql.Integer, primary_key=True, autoincrement=True)
     comment_id = sql.Column(
