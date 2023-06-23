@@ -177,7 +177,7 @@ function streamDatasource(
     url: string,
     params?: Record<string, unknown>,
     onStreaming?: (data: { [key: string]: string }) => void,
-    onStreamingEnd?: () => void
+    onStreamingEnd?: (data?: { [key: string]: string }) => void
 ) {
     const eventSource = new EventSource(
         `${url}?params=${JSON.stringify(params)}`
@@ -198,7 +198,7 @@ function streamDatasource(
     });
     eventSource.addEventListener('close', (e) => {
         eventSource.close();
-        onStreamingEnd?.();
+        onStreamingEnd?.(parser.getResult(true));
     });
 }
 

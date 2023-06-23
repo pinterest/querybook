@@ -11,6 +11,17 @@ describe('DeltaStreamParser', () => {
         });
     });
 
+    it('Works for stream ending with non empty buffer', () => {
+        const parser = new DeltaStreamParser();
+        parser.parse('201');
+        expect(parser.parse('9')).toEqual({
+            data: '201',
+        });
+        expect(parser.getResult(true)).toEqual({
+            data: '2019',
+        });
+    });
+
     it('Works for stream with both data and key/value pairs', () => {
         const parser = new DeltaStreamParser();
         parser.parse('some data');

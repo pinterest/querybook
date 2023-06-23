@@ -48,6 +48,18 @@ export class DeltaStreamParser {
         return { ...this._result };
     }
 
+    public getResult(ended: boolean): { [key: string]: string } {
+        // flush the buffer if the stream has ended
+        if (this._buffer.length > 0 && ended) {
+            if (!this._isPartialKey) {
+                this._currentValue += this._buffer;
+                this._result[this._currentKey] = this._currentValue.trimStart();
+                this._buffer = '';
+            }
+        }
+        return { ...this._result };
+    }
+
     private _parse(delta: string): { [key: string]: string } {
         this._buffer += delta;
         // This is to make sure we always have complete <@ and @> in the buffer
