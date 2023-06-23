@@ -177,7 +177,7 @@ function streamDatasource(
     url: string,
     params?: Record<string, unknown>,
     onStreaming?: (data: { [key: string]: string }) => void,
-    onStreamingEnd?: (data?: { [key: string]: string }) => void
+    onStreamingEnd?: (data: { [key: string]: string }) => void
 ) {
     const eventSource = new EventSource(
         `${url}?params=${JSON.stringify(params)}`
@@ -191,7 +191,7 @@ function streamDatasource(
     eventSource.addEventListener('error', (e) => {
         console.error(e);
         eventSource.close();
-        onStreamingEnd?.();
+        onStreamingEnd?.(parser.result);
         if (e instanceof MessageEvent) {
             toast.error(JSON.parse(e.data).data);
         }
