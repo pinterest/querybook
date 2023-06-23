@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 
 import PublicConfig from 'config/querybook_public_config.yaml';
+import { ComponentType, ElementType } from 'const/analytics';
 import { IQueryEngine } from 'const/queryEngine';
+import { trackClick } from 'lib/analytics';
 import { IconButton } from 'ui/Button/IconButton';
 
 import { QueryGenerationModal } from './QueryGenerationModal';
@@ -39,7 +41,14 @@ export const QueryGenerationButton = ({
                         size={18}
                         tooltip="AI: generate/edit query"
                         color={!query ? 'accent' : undefined}
-                        onClick={() => setShow(true)}
+                        onClick={() => {
+                            setShow(true);
+                            trackClick({
+                                component: ComponentType.AI_ASSISTANT,
+                                element:
+                                    ElementType.QUERY_GENERATION_MODAL_OPEN_BUTTON,
+                            });
+                        }}
                     />
                 )}
             {show && (

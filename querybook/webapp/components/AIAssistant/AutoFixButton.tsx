@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 
 import { QueryComparison } from 'components/TranspileQueryModal/QueryComparison';
+import { ComponentType, ElementType } from 'const/analytics';
 import { StreamStatus, useStream } from 'hooks/useStream';
+import { trackClick } from 'lib/analytics';
 import { Button } from 'ui/Button/Button';
 import { Message } from 'ui/Message/Message';
 import { Modal } from 'ui/Modal/Modal';
@@ -47,6 +49,10 @@ export const AutoFixButton = ({
                 color="confirm"
                 onClick={() => {
                     onUpdateQuery?.(fixedQuery);
+                    trackClick({
+                        component: ComponentType.AI_ASSISTANT,
+                        element: ElementType.QUERY_ERROR_AUTO_FIX_APPLY_BUTTON,
+                    });
                     setShow(false);
                 }}
             />
@@ -61,6 +67,10 @@ export const AutoFixButton = ({
                     setShow(true);
                     if (streamStatus === StreamStatus.NOT_STARTED) {
                         startStream();
+                        trackClick({
+                            component: ComponentType.AI_ASSISTANT,
+                            element: ElementType.QUERY_ERROR_AUTO_FIX_BUTTON,
+                        });
                     }
                 }}
             />
