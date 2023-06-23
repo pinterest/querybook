@@ -34,10 +34,7 @@ function commentReducer(state = initialState, action: CommentAction) {
             }
             case '@@comment/ARCHIVE_COMMENT': {
                 const { commentId } = action.payload;
-                draft.commentsById[commentId] = {
-                    ...draft.commentsById[commentId],
-                    archived: true,
-                };
+                draft.commentsById[commentId].archived = true;
                 return;
             }
             case '@@comment/RECEIVE_REACTION_BY_COMMENT_ID': {

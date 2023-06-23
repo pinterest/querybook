@@ -71,7 +71,7 @@ interface IToolBarStyle {
 }
 
 // https://github.com/jpuri/draftjs-utils/blob/master/js/block.js
-const removeSelectedBlocksStyle = (editorState) => {
+const removeSelectedBlocksStyle = (editorState: DraftJs.EditorState) => {
     const newContentState =
         DraftJs.RichUtils.tryToRemoveBlockStyle(editorState);
     if (newContentState) {
@@ -85,7 +85,7 @@ const removeSelectedBlocksStyle = (editorState) => {
 };
 
 // https://github.com/jpuri/draftjs-utils/blob/master/js/block.js
-export const getResetEditorState = (editorState) => {
+export const getResetEditorState = (editorState: DraftJs.EditorState) => {
     const blocks = editorState.getCurrentContent().getBlockMap().toList();
     const updatedSelection = editorState.getSelection().merge({
         anchorKey: blocks.first().get('key'),

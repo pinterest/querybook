@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import { UserName } from 'components/UserBadge/UserName';
-import { IComment } from 'const/comment';
+import { IComment, IReaction } from 'const/comment';
 import { fromNow } from 'lib/utils/datetime';
 import { IStoreState } from 'redux/store/types';
 import { IconButton } from 'ui/Button/IconButton';
@@ -25,6 +25,16 @@ interface IProps {
     onCreateChildComment: () => void;
 }
 
+const formatReactions = (reactions: IReaction[]) => {
+    const formattedReactions = {};
+    reactions.forEach((reaction) => {
+        formattedReactions[reaction.reaction] =
+            formattedReactions[reaction.reaction] ?? [];
+        formattedReactions[reaction.reaction].push(reaction.created_by);
+    });
+    return formattedReactions;
+};
+
 export const Comment: React.FunctionComponent<IProps> = ({
     comment,
     editComment,
@@ -35,6 +45,7 @@ export const Comment: React.FunctionComponent<IProps> = ({
     onCreateChildComment,
 }) => {
     const userInfo = useSelector((state: IStoreState) => state.user.myUserInfo);
+
     const {
         id,
         text,
@@ -44,9 +55,15 @@ export const Comment: React.FunctionComponent<IProps> = ({
         reactions,
         archived,
     } = comment;
+
     const isAuthor = React.useMemo(
         () => uid === userInfo.uid,
         [uid, userInfo.uid]
+    );
+
+    const uidsByReaction = React.useMemo(
+        () => formatReactions(reactions),
+        [reactions]
     );
 
     return (
@@ -135,6 +152,7 @@ export const Comment: React.FunctionComponent<IProps> = ({
                             )}
                             <div className="mh8">
                                 <AddReactionButton
+                                    uidsByReaction={uidsByReaction}
                                     commentId={id}
                                     uid={userInfo.uid}
                                 />
@@ -157,7 +175,10 @@ export const Comment: React.FunctionComponent<IProps> = ({
                     <>
                         <RichTextEditor value={text} readOnly={true} />
                         {reactions.length ? (
-                            <Reactions reactions={reactions} commentId={id} />
+                            <Reactions
+                                uidsByReaction={uidsByReaction}
+                                commentId={id}
+                            />
                         ) : null}
                     </>
                 )}

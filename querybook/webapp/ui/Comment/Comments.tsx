@@ -195,7 +195,7 @@ export const Comments: React.FunctionComponent<IProps> = ({
     return (
         <div className="Comments">
             <div className="Comments-list p16">
-                {commentIds.length ? (
+                {commentIds?.length ? (
                     renderCommentDOM()
                 ) : (
                     <EmptyText>No Comments</EmptyText>
