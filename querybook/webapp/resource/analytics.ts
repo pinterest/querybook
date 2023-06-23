@@ -1,6 +1,7 @@
 import { AnalyticsEvent } from 'const/analytics';
-import ds from 'lib/datasource';
 
 export const AnalyticsResource = {
-    create: (events: AnalyticsEvent[]) => ds.save(`/context_log/`, { events }),
+    create: (events: AnalyticsEvent[]) => {
+        navigator.sendBeacon(`/ds/context_log/`, JSON.stringify(events));
+    },
 };

@@ -43,7 +43,7 @@ export const Message: React.FunctionComponent<IMessageProps> = ({
     });
     const messageTitle = title ? (
         <div className="Message-header">
-            <p>{title}</p>
+            <div>{title}</div>
         </div>
     ) : null;
 

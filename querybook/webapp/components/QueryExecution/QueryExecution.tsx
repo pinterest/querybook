@@ -8,6 +8,7 @@ import { StatementExecutionBar } from 'components/StatementExecutionBar/Statemen
 import { QueryExecutionStatus } from 'const/queryExecution';
 import { useMakeSelector } from 'hooks/redux/useMakeSelector';
 import { useToggleState } from 'hooks/useToggleState';
+import { canCurrentUserEditSelector } from 'redux/dataDoc/selector';
 import * as queryExecutionsActions from 'redux/queryExecutions/action';
 import {
     makeStatementExecutionsSelector,
@@ -85,6 +86,10 @@ export const QueryExecution: React.FC<IProps> = ({
     docId,
     changeCellContext,
 }) => {
+    const isEditable = useSelector((state: IStoreState) =>
+        canCurrentUserEditSelector(state, docId)
+    );
+
     const [statementIndex, setStatementIndex] = useState(0);
     const [showExecutedQuery, , toggleShowExecutedQuery] =
         useToggleState(false);
@@ -222,6 +227,8 @@ export const QueryExecution: React.FC<IProps> = ({
                 <QueryErrorWrapper
                     queryExecution={queryExecution}
                     statementExecutions={statementExecutions}
+                    changeCellContext={changeCellContext}
+                    readonly={!isEditable}
                 />
             );
         }

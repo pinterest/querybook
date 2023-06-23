@@ -147,3 +147,7 @@ secret:
   database_conn: mysql+pymysql://test:passw0rd@mysql:3306/querybook2?charset=utf8mb4
   redis_url:  redis://redis:6379/0
   elasticsearch_host: elasticsearch:9200
+
+# existingSecret -- Use an existing Secret which contains the above secret values in the same format and base64 encoded.
+## If set, this parameter takes precedence over "secret".
+existingSecret:
