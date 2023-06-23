@@ -25,12 +25,14 @@ interface IProps {
     onCreateChildComment: () => void;
 }
 
-const formatReactionsByUser = (reactions: IReaction[]) => {
+const formatReactionsByEmoji = (
+    reactions: IReaction[]
+): Record<number, IReaction[]> => {
     const formattedReactions = {};
     reactions.forEach((reaction) => {
         formattedReactions[reaction.reaction] =
             formattedReactions[reaction.reaction] ?? [];
-        formattedReactions[reaction.reaction].push(reaction.created_by);
+        formattedReactions[reaction.reaction].push(reaction);
     });
     return formattedReactions;
 };
@@ -61,8 +63,8 @@ export const Comment: React.FunctionComponent<IProps> = ({
         [uid, userInfo.uid]
     );
 
-    const uidsByReaction = React.useMemo(
-        () => formatReactionsByUser(reactions),
+    const reactionByEmoji: Record<number, IReaction[]> = React.useMemo(
+        () => formatReactionsByEmoji(reactions),
         [reactions]
     );
 
@@ -152,7 +154,7 @@ export const Comment: React.FunctionComponent<IProps> = ({
                             )}
                             <div className="mh8">
                                 <AddReactionButton
-                                    uidsByReaction={uidsByReaction}
+                                    reactionByEmoji={reactionByEmoji}
                                     commentId={id}
                                     uid={userInfo.uid}
                                 />
@@ -176,7 +178,7 @@ export const Comment: React.FunctionComponent<IProps> = ({
                         <RichTextEditor value={text} readOnly={true} />
                         {reactions.length ? (
                             <Reactions
-                                uidsByReaction={uidsByReaction}
+                                reactionByEmoji={reactionByEmoji}
                                 commentId={id}
                             />
                         ) : null}

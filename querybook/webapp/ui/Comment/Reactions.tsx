@@ -14,12 +14,12 @@ import { AddReactionButton } from './AddReactionButton';
 
 interface IProps {
     commentId: number;
-    uidsByReaction: Record<number, IReaction[]>;
+    reactionByEmoji: Record<number, IReaction[]>;
 }
 
 export const Reactions: React.FunctionComponent<IProps> = ({
     commentId,
-    uidsByReaction,
+    reactionByEmoji,
 }) => {
     const dispatch: Dispatch = useDispatch();
     const userInfo = useSelector((state: IStoreState) => state.user.myUserInfo);
@@ -29,34 +29,27 @@ export const Reactions: React.FunctionComponent<IProps> = ({
         [commentId, dispatch]
     );
     const deleteEmoji = React.useCallback(
-        (emoji: string, uid: number) => {
-            const reactionToDelete = uidsByReaction[uid]?.find(
-                (reaction) =>
-                    reaction.reaction === emoji && reaction.created_by === uid
-            );
-            if (reactionToDelete) {
-                dispatch(
-                    deleteReactionByCommentId(commentId, reactionToDelete.id)
-                );
-            }
+        (reactionId) => {
+            dispatch(deleteReactionByCommentId(commentId, reactionId));
         },
-        [uidsByReaction, dispatch, commentId]
+        [dispatch, commentId]
     );
 
-    const handleReactionClick = (reaction: string, uid: number) => {
-        const uidIdx = uidsByReaction[reaction].findIndex(
-            (uid) => uid === userInfo.uid
+    const handleReactionClick = (emoji: string, uid: number) => {
+        const existingReaction = reactionByEmoji[emoji].find(
+            (reaction) =>
+                reaction.reaction === emoji && reaction.created_by === uid
         );
-        if (uidIdx === -1) {
-            addEmoji(reaction);
+        if (existingReaction) {
+            deleteEmoji(existingReaction.id);
         } else {
-            deleteEmoji(reaction, uid);
+            addEmoji(emoji);
         }
     };
 
     return (
         <div className="Reactions mt8 flex-row">
-            {Object.entries(uidsByReaction).map(([emoji, uids]) => {
+            {Object.entries(reactionByEmoji).map(([emoji, uids]) => {
                 const reactionClassnames = clsx(
                     'Reaction',
                     'flex-row',
@@ -84,7 +77,7 @@ export const Reactions: React.FunctionComponent<IProps> = ({
                 );
             })}
             <AddReactionButton
-                uidsByReaction={uidsByReaction}
+                reactionByEmoji={reactionByEmoji}
                 popoverLayout={['bottom', 'left']}
                 tooltipPos="right"
                 commentId={commentId}
