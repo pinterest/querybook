@@ -37,8 +37,7 @@ export const Reactions: React.FunctionComponent<IProps> = ({
 
     const handleReactionClick = (emoji: string, uid: number) => {
         const existingReaction = reactionsByEmoji[emoji].find(
-            (reaction) =>
-                reaction.reaction === emoji && reaction.created_by === uid
+            (reaction) => reaction.created_by === uid
         );
         if (existingReaction) {
             deleteEmoji(existingReaction.id);
