@@ -14,7 +14,7 @@ import { AddReactionButton } from './AddReactionButton';
 
 interface IProps {
     commentId: number;
-    reactionsByEmoji: Record<number, IReaction[]>;
+    reactionsByEmoji: Record<string, IReaction[]>;
 }
 
 export const Reactions: React.FunctionComponent<IProps> = ({
@@ -49,13 +49,14 @@ export const Reactions: React.FunctionComponent<IProps> = ({
 
     return (
         <div className="Reactions mt8 flex-row">
-            {Object.entries(reactionsByEmoji).map(([emoji, uids]) => {
+            {Object.entries(reactionsByEmoji).map(([emoji, reactions]) => {
+                const uids = reactions.map((reaction) => reaction.created_by);
                 const reactionClassnames = clsx(
                     'Reaction',
                     'flex-row',
                     'mr8',
                     'ph8',
-                    userInfo.uid in uids && 'active'
+                    uids.includes(userInfo.uid) && 'active'
                 );
                 return (
                     <div

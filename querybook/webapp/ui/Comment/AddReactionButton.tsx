@@ -16,7 +16,7 @@ interface IProps {
     popoverLayout?: PopoverLayout;
     tooltipPos?: TooltipDirection;
     uid: number;
-    reactionsByEmoji: Record<number, IReaction[]>;
+    reactionsByEmoji: Record<string, IReaction[]>;
 }
 interface IEmojiListProps {
     onClick: (emoji: string) => void;

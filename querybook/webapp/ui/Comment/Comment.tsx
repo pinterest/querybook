@@ -63,7 +63,7 @@ export const Comment: React.FunctionComponent<IProps> = ({
         [uid, userInfo.uid]
     );
 
-    const reactionsByEmoji: Record<number, IReaction[]> = React.useMemo(
+    const reactionsByEmoji: Record<string, IReaction[]> = React.useMemo(
         () => formatReactionsByEmoji(reactions),
         [reactions]
     );
