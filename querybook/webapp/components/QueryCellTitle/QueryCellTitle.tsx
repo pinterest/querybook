@@ -38,7 +38,7 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
     const { data: title } = streamData;
 
     useEffect(() => {
-        if (streamStatus === StreamStatus.STREAMING && title) {
+        if (streamStatus !== StreamStatus.NOT_STARTED && title) {
             onChange(title);
         }
     }, [streamStatus, title]);
