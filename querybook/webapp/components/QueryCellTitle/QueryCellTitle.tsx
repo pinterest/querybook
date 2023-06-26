@@ -38,8 +38,10 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
     const { data: title } = streamData;
 
     useEffect(() => {
-        onChange(title);
-    }, [title]);
+        if (streamStatus !== StreamStatus.NOT_STARTED && title) {
+            onChange(title);
+        }
+    }, [streamStatus, title]);
 
     const handleTitleGenerationClick = useCallback(() => {
         startStream();
