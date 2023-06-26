@@ -91,7 +91,10 @@ export const QueryGenerationModal = ({
 
     const onKeyDown = useCallback(
         (event: React.KeyboardEvent) => {
-            if (matchKeyPress(event, 'Enter')) {
+            if (
+                streamStatus !== StreamStatus.STREAMING &&
+                matchKeyPress(event, 'Enter')
+            ) {
                 startStream();
                 inputRef.current.blur();
                 trackClick({
@@ -105,7 +108,7 @@ export const QueryGenerationModal = ({
                 });
             }
         },
-        [startStream]
+        [streamStatus, startStream]
     );
 
     const questionBarDOM = (
