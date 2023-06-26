@@ -41,7 +41,7 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
         onChange(title);
     }, [title]);
 
-    const handleOnClick = useCallback(() => {
+    const handleTitleGenerationClick = useCallback(() => {
         startStream();
         trackClick({
             component: ComponentType.AI_ASSISTANT,
@@ -61,7 +61,7 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
                     size={18}
                     tooltip="AI: generate title"
                     color={!value && query ? 'accent' : undefined}
-                    onClick={handleOnClick}
+                    onClick={handleTitleGenerationClick}
                 />
             )}
             <ResizableTextArea
