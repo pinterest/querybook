@@ -117,12 +117,6 @@ class DataCell(Base):
         order_by="QueryExecution.id.desc()",
     )
 
-    comments = relationship(
-        "Comment",
-        secondary="data_cell_comment",
-        backref=backref("data_cell", uselist=False),
-    )
-
     def to_dict(self, with_query_executions=False):
         item = {
             "id": self.id,
