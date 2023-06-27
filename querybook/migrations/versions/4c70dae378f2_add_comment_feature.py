@@ -32,6 +32,8 @@ def upgrade():
             ["parent_comment_id"], ["comment.id"], ondelete="CASCADE"
         ),
         sa.PrimaryKeyConstraint("id"),
+        mysql_charset="utf8mb4",
+        mysql_engine="InnoDB",
     )
     op.create_table(
         "comment_reaction",
@@ -42,6 +44,8 @@ def upgrade():
         sa.ForeignKeyConstraint(["comment_id"], ["comment.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["created_by"], ["user.id"], ondelete="SET NULL"),
         sa.PrimaryKeyConstraint("id"),
+        mysql_charset="utf8mb4",
+        mysql_engine="InnoDB",
     )
     op.create_table(
         "data_cell_comment",
