@@ -9,6 +9,8 @@ import { Message } from 'ui/Message/Message';
 import { Modal } from 'ui/Modal/Modal';
 import { AccentText } from 'ui/StyledText/StyledText';
 
+import './AutoFixButton.scss';
+
 interface IProps {
     query: string;
     queryExecutionId: number;
@@ -22,7 +24,7 @@ export const AutoFixButton = ({
 }: IProps) => {
     const [show, setShow] = useState(false);
 
-    const { streamStatus, startStream, streamData } = useStream(
+    const { streamStatus, startStream, streamData, cancelStream } = useStream(
         '/ds/ai/query_auto_fix/',
         {
             query_execution_id: queryExecutionId,
@@ -35,29 +37,42 @@ export const AutoFixButton = ({
         fixed_query: fixedQuery,
     } = streamData;
 
-    const bottomDOM = fixedQuery && (
-        <div className="right-align mb16">
-            <Button
-                title="Reject"
-                color="cancel"
-                onClick={() => {
-                    setShow(false);
-                }}
-            />
-            <Button
-                title="Apply"
-                color="confirm"
-                onClick={() => {
-                    onUpdateQuery?.(fixedQuery);
-                    trackClick({
-                        component: ComponentType.AI_ASSISTANT,
-                        element: ElementType.QUERY_ERROR_AUTO_FIX_APPLY_BUTTON,
-                    });
-                    setShow(false);
-                }}
-            />
-        </div>
-    );
+    const bottomDOM =
+        streamStatus === StreamStatus.STREAMING ? (
+            <div className="right-align mb16">
+                <Button
+                    title="Stop Generating"
+                    color="light"
+                    onClick={cancelStream}
+                    className="mr8"
+                />
+            </div>
+        ) : (
+            fixedQuery && (
+                <div className="right-align mb16">
+                    <Button
+                        title="Reject"
+                        color="cancel"
+                        onClick={() => {
+                            setShow(false);
+                        }}
+                    />
+                    <Button
+                        title="Apply"
+                        color="confirm"
+                        onClick={() => {
+                            onUpdateQuery?.(fixedQuery);
+                            trackClick({
+                                component: ComponentType.AI_ASSISTANT,
+                                element:
+                                    ElementType.QUERY_ERROR_AUTO_FIX_APPLY_BUTTON,
+                            });
+                            setShow(false);
+                        }}
+                    />
+                </div>
+            )
+        );
     return (
         <>
             <Button
@@ -65,7 +80,10 @@ export const AutoFixButton = ({
                 title="Auto fix"
                 onClick={() => {
                     setShow(true);
-                    if (streamStatus === StreamStatus.NOT_STARTED) {
+                    if (
+                        streamStatus === StreamStatus.NOT_STARTED ||
+                        streamStatus === StreamStatus.CANCELLED
+                    ) {
                         startStream();
                         trackClick({
                             component: ComponentType.AI_ASSISTANT,
@@ -77,9 +95,11 @@ export const AutoFixButton = ({
             {show && (
                 <Modal
                     onHide={() => {
+                        cancelStream();
                         setShow(false);
                     }}
                     bottomDOM={bottomDOM}
+                    className="AutoFixModal"
                 >
                     <Message
                         message="Note: This AI-powered auto fix may not be 100% accurate. Please use your own judgement and verify the result."
