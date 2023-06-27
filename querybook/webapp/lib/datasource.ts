@@ -201,6 +201,8 @@ function streamDatasource(
         parser.close();
         onStreamingEnd?.(parser.result);
     });
+
+    return eventSource;
 }
 
 export default {

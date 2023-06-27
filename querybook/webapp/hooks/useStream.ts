@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import ds from 'lib/datasource';
 
@@ -6,6 +6,7 @@ export enum StreamStatus {
     NOT_STARTED,
     STREAMING,
     FINISHED,
+    CANCELLED,
 }
 
 export function useStream(
@@ -16,15 +17,17 @@ export function useStream(
     streamData: { [key: string]: string };
     startStream: () => void;
     resetStream: () => void;
+    cancelStream: () => void;
 } {
     const [streamStatus, setSteamStatus] = useState(StreamStatus.NOT_STARTED);
     const [data, setData] = useState<{ [key: string]: string }>({});
+    const streamRef = useRef<EventSource | null>(null);
 
     const startStream = useCallback(() => {
         setSteamStatus(StreamStatus.STREAMING);
         setData({});
 
-        ds.stream(url, params, setData, (data) => {
+        streamRef.current = ds.stream(url, params, setData, (data) => {
             setData(data);
             setSteamStatus(StreamStatus.FINISHED);
         });
@@ -35,10 +38,18 @@ export function useStream(
         setData({});
     }, []);
 
+    const cancelStream = useCallback(() => {
+        if (streamStatus === StreamStatus.STREAMING) {
+            streamRef.current?.close();
+            setSteamStatus(StreamStatus.CANCELLED);
+        }
+    }, [streamStatus]);
+
     return {
         streamStatus,
         streamData: data,
         startStream,
         resetStream,
+        cancelStream,
     };
 }

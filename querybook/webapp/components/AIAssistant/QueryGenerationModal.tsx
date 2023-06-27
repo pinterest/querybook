@@ -76,7 +76,7 @@ export const QueryGenerationModal = ({
         setTables(uniq([...tablesInQuery, ...tables]));
     }, [tablesInQuery]);
 
-    const { streamStatus, startStream, streamData } = useStream(
+    const { streamStatus, startStream, streamData, cancelStream } = useStream(
         '/ds/ai/generate_query/',
         {
             query_engine_id: engineId,
@@ -151,6 +151,14 @@ export const QueryGenerationModal = ({
                     autoFocus: true,
                 }}
             />
+            {streamStatus === StreamStatus.STREAMING && (
+                <Button
+                    title="Stop Generating"
+                    color="light"
+                    onClick={cancelStream}
+                    className="mr8"
+                />
+            )}
         </div>
     );
 
@@ -186,7 +194,10 @@ export const QueryGenerationModal = ({
 
     return (
         <Modal
-            onHide={onHide}
+            onHide={() => {
+                cancelStream();
+                onHide();
+            }}
             className="QueryGenerationModal"
             bottomDOM={bottomDOM}
         >
