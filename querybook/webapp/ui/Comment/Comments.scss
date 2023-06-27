@@ -1,0 +1,160 @@
+.Comments {
+    width: 720px;
+    border-radius: var(--border-radius-sm);
+    overflow: hidden;
+    .Comments-list {
+        max-height: 480px;
+        overflow: auto;
+    }
+    .Comment-form {
+        width: 100%;
+        background-color: var(--bg-lightest);
+        .UserAvatar {
+            align-self: flex-start;
+            margin-right: 12px;
+            min-width: 20px;
+        }
+        .RichTextEditor {
+            flex-grow: 1;
+            min-width: 0;
+            max-height: 120px;
+            margin-right: 8px;
+            input {
+                background-color: transparent;
+            }
+            ::placeholder {
+                color: var(--text-lightest-0);
+            }
+        }
+    }
+    .CommentThread {
+        margin-left: 32px;
+        .ClosedCommentThread {
+            margin-top: -4px;
+            background-color: var(--bg-lightest);
+            border-radius: var(--border-radius-sm);
+            padding: 8px;
+
+            .HoverText {
+                display: none;
+            }
+
+            &:hover {
+                background-color: var(--bg-light);
+                .ThreadCount {
+                    font-weight: var(--bold-font);
+                }
+                .LastReplyDate {
+                    display: none;
+                }
+                .HoverText {
+                    display: inline-flex;
+                }
+            }
+            cursor: pointer;
+            .UserAvatar + .UserAvatar,
+            .NumberAvatar {
+                margin-left: 4px;
+            }
+            .NumberAvatar {
+                background-color: var(--bg-light);
+                font-size: var(--xxsmall-text-size);
+                color: var(--text-lightest);
+                height: 20px;
+                width: 20px;
+                text-align: center;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 100%;
+            }
+        }
+    }
+    .Comment {
+        &.archived {
+            opacity: 0.5;
+        }
+        &.edit-mode {
+            .Comment-edit {
+                display: none;
+            }
+        }
+        + .Comment {
+            margin-top: 16px;
+        }
+        .Comment-top {
+            height: 28px;
+            .Comment-top-left {
+                > div,
+                > span {
+                    margin-right: 8px;
+                    white-space: nowrap;
+                }
+                .UserAvatar {
+                    margin-right: 12px;
+                }
+                .UserName {
+                    font-weight: var(--extra-bold-font);
+                }
+            }
+
+            .Comment-top-right {
+                .Editing-text {
+                    font-style: italic;
+                    cursor: default;
+                }
+            }
+            .Comment-top-right-buttons {
+                display: none;
+                .IconButton {
+                    background-color: var(--bg-light);
+                    svg {
+                        padding: 2px;
+                    }
+                }
+            }
+        }
+        .Comment-text {
+            margin-left: 32px;
+        }
+        &:hover {
+            .Comment-top-right-buttons {
+                display: flex;
+            }
+        }
+    }
+}
+
+.Reactions {
+    .Reaction {
+        background-color: var(--bg-light);
+        border-radius: var(--border-radius-sm);
+        cursor: default;
+        &.active {
+            background-color: var(--color-accent-lightest-0);
+        }
+    }
+}
+
+.AddReactionButton {
+    .IconButton {
+        background-color: var(--bg-light);
+    }
+}
+
+.EmojiList {
+    background: var(--bg);
+    margin-top: 6px;
+    border: var(--border);
+    border-radius: var(--border-radius-sm);
+    box-shadow: var(--box-shadow-sm);
+    padding: var(--padding-sm);
+    position: relative;
+    min-width: 20px;
+    min-height: 20px;
+    font-size: var(--med-text-size);
+    cursor: default;
+    .Emoji {
+        cursor: pointer;
+    }
+}

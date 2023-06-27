@@ -6,6 +6,7 @@ import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddBu
 import { DataTableTags } from 'components/DataTableTags/DataTableTags';
 import { ImpressionWidget } from 'components/ImpressionWidget/ImpressionWidget';
 import { UserBadge } from 'components/UserBadge/UserBadge';
+import { CommentEntityType } from 'const/comment';
 import {
     IDataTable,
     IQueryMetastore,
@@ -22,6 +23,7 @@ import {
 } from 'redux/dataSources/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import { IconButton } from 'ui/Button/IconButton';
+import { CommentButton } from 'ui/Comment/CommentButton';
 import { AccentText } from 'ui/StyledText/StyledText';
 import { Tag } from 'ui/Tag/Tag';
 import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
@@ -119,7 +121,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
     );
 
     const titleDOM = (
-        <AccentText className="mb8" color="text" size="xlarge" weight="bold">
+        <AccentText color="text" size="xlarge" weight="bold">
             {shortTableName}
         </AccentText>
     );
@@ -237,7 +239,13 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
     return (
         <div className="DataTableHeader flex-column mb16">
             {topDOM}
-            {titleDOM}
+            <div className="TitleCommentBox horizontal-space-between mb8">
+                {titleDOM}
+                <CommentButton
+                    entityType={CommentEntityType.TABLE}
+                    entityId={table.id}
+                />
+            </div>
             {metastore.config[MetadataType.OWNER] !== MetadataMode.WRITE_LOCAL
                 ? metastoreOwnerDOM
                 : ownerDOM}
