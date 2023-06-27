@@ -207,11 +207,6 @@ class DataTable(CRUDMixin, TruncateString("name", "type", "location"), Base):
     ownership = relationship(
         "DataTableOwnership", uselist=False, cascade="all, delete", passive_deletes=True
     )
-    comments = relationship(
-        "Comment",
-        secondary="data_table_comment",
-        backref=backref("data_table", uselist=False),
-    )
 
     def to_dict(
         self,

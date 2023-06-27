@@ -9,6 +9,7 @@ Base = db.Base
 
 class Comment(CRUDMixin, Base):
     __tablename__ = "comment"
+    __table_args__ = {"mysql_engine": "InnoDB", "mysql_charset": "utf8mb4"}
 
     id = sql.Column(sql.Integer, primary_key=True)
 
@@ -52,6 +53,7 @@ class Comment(CRUDMixin, Base):
 
 class CommentReaction(CRUDMixin, Base):
     __tablename__ = "comment_reaction"
+    __table_args__ = {"mysql_engine": "InnoDB", "mysql_charset": "utf8mb4"}
 
     id = sql.Column(sql.Integer, primary_key=True, autoincrement=True)
     comment_id = sql.Column(
