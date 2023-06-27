@@ -24,7 +24,8 @@ export function useStream(
         setSteamStatus(StreamStatus.STREAMING);
         setData({});
 
-        ds.stream(url, params, setData, () => {
+        ds.stream(url, params, setData, (data) => {
+            setData(data);
             setSteamStatus(StreamStatus.FINISHED);
         });
     }, [url, params]);
