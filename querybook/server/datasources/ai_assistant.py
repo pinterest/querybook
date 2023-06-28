@@ -7,7 +7,13 @@ from logic import datadoc as datadoc_logic
 
 
 @register("/ai/query_title/", custom_response=True)
-def generate_query_title(query):
+def generate_query_title(data_cell_id: int):
+    data_cell = datadoc_logic.get_data_cell_by_id(data_cell_id)
+    query = data_cell.context if data_cell else None
+
+    if not query:
+        return Response(None)
+
     title_stream = ai_assistant.generate_title_from_query(
         query=query, user_id=current_user.id
     )
@@ -16,7 +22,7 @@ def generate_query_title(query):
 
 
 @register("/ai/query_auto_fix/", custom_response=True)
-def query_auto_fix(query_execution_id):
+def query_auto_fix(query_execution_id: int):
     res_stream = ai_assistant.query_auto_fix(
         query_execution_id=query_execution_id,
         user_id=current_user.id,

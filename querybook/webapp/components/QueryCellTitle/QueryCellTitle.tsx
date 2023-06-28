@@ -14,6 +14,7 @@ const AIAssistantConfig = PublicConfig.ai_assistant;
 interface IQueryCellTitleProps {
     value: string;
     query: string;
+    cellId: number;
     placeholder: string;
     onChange: (value: string) => any;
 }
@@ -21,6 +22,7 @@ interface IQueryCellTitleProps {
 export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
     value,
     query,
+    cellId,
     placeholder,
     onChange,
 }) => {
@@ -32,7 +34,7 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
     const { streamStatus, startStream, streamData } = useStream(
         '/ds/ai/query_title/',
         {
-            query,
+            data_cell_id: cellId,
         }
     );
     const { data: title } = streamData;
@@ -48,6 +50,9 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
         trackClick({
             component: ComponentType.AI_ASSISTANT,
             element: ElementType.QUERY_TITLE_GENERATION_BUTTON,
+            aux: {
+                cellId,
+            },
         });
     }, [startStream]);
 

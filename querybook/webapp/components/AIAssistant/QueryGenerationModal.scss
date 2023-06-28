@@ -40,14 +40,12 @@
             color: var(--color-pink-dark);
         }
 
-        .DebouncedInput {
+        .question-text-area {
             flex: 1;
-
-            input {
-                line-height: 1.8rem;
-                border-radius: 0;
-                background-color: transparent;
-            }
+            min-width: auto;
+            line-height: 1.2rem;
+            overflow: hidden;
+            padding: 12px 8px;
         }
     }
 

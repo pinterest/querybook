@@ -35,9 +35,15 @@ class OpenAIAssistant(BaseAIAssistant):
             content="You are a helpful assistant that can summerize SQL queries."
         )
         human_template = (
-            "Generate a concise summary with no more than 8 words for the query below. "
-            "Only respond the title without any explanation or final period.\n"
-            "```\n{query}\n```\nTitle:"
+            "Generate a brief 10-word-maximum title for the SQL query below. "
+            "===Query\n"
+            "{query}\n\n"
+            "===Response Guidelines\n"
+            "1. Only respond with the title without any explanation\n"
+            "2. Dont wrap the title in double quotes\n"
+            "3. Dont add a final period to the title\n\n"
+            "===Example response\n"
+            "This is a title\n"
         )
         human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
         return ChatPromptTemplate.from_messages(
@@ -101,7 +107,7 @@ class OpenAIAssistant(BaseAIAssistant):
             )
         )
         human_template = (
-            "Please help to generate a new SQL query or edit the original query for below question based ONLY on the given context. \n\n"
+            "Please help to generate a new SQL query or modify the original query to answer the following question. Your response should ONLY be based on the given context.\n\n"
             "===SQL Dialect\n"
             "{dialect}\n\n"
             "===Tables\n"
@@ -110,21 +116,25 @@ class OpenAIAssistant(BaseAIAssistant):
             "{original_query}\n\n"
             "===Question\n"
             "{question}\n\n"
-            "===Response format\n"
+            "===Response Format\n"
             "<@key-1@>\n"
             "value-1\n\n"
             "<@key-2@>\n"
             "value-2\n\n"
-            "===Response Restrictions\n"
-            "1. If there is enough information and context to generate/edit the query, please respond only with the new query without any explanation.\n"
-            "2. If there isn't enough information or context to generate/edit the query, provide an explanation for the missing context.\n"
+            "===Response Guidelines\n"
+            "1. If the information and context provided are sufficient to create/modify the query, please respond with the new query. The query should start with a comment containing the question being asked.\n"
+            "2. If the information or context is insufficient to create/modify the query, please explain what information is missing.\n"
+            "3. If the original query is provided, please modify the query to answer the question. The original query may start with a comment containing a previously asked question. If you find such a comment, please use both the original question and the new question to modify the query accordingly.\n"
+            "4. If a query is generated, please also provide a brief 10-word-maximum title for the query.\n\n"
             "===Example Response:\n"
             "Example 1: Insufficient Context\n"
             "<@explanation@>\n"
             "An explanation of the missing context is provided here.\n\n"
             "Example 2: Query Generation Possible\n"
             "<@query@>\n"
-            "Generated SQL query based on provided context is provided here.\n\n"
+            "A generated SQL query based on the provided context with the asked question at the beginning is provided here.\n"
+            "<@title@>\n"
+            "A brief 10-word-maximum title of the generated SQL.\n\n"
         )
         human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
         return ChatPromptTemplate.from_messages(

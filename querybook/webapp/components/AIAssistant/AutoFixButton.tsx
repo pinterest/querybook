@@ -88,6 +88,9 @@ export const AutoFixButton = ({
                         trackClick({
                             component: ComponentType.AI_ASSISTANT,
                             element: ElementType.QUERY_ERROR_AUTO_FIX_BUTTON,
+                            aux: {
+                                queryExecutionId,
+                            },
                         });
                     }
                 }}

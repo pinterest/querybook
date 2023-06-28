@@ -350,6 +350,29 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
+    public handleChangeFromAI(
+        query: string,
+        title: string,
+        run: boolean = false
+    ) {
+        this.setState(
+            {
+                query,
+            },
+            () => {
+                // cant use onChangeDebounced here because title updating is also using debounce,
+                // sometimes the query will not get updated because of the debounce
+                this.props.onChange({ context: query });
+                // have to put this in the setState callback, otherwise it will run before the query is updated
+                if (run) {
+                    this.clickOnRunButton();
+                }
+            }
+        );
+        this.handleMetaTitleChange(title);
+    }
+
+    @bind
     public handleMetaChange<K extends keyof IDataQueryCellMeta>(
         field: K,
         value: IDataQueryCellMeta[K]
@@ -650,6 +673,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
     public renderCellHeaderDOM() {
         const {
+            cellId,
             queryEngines,
             queryEngineById,
 
@@ -663,6 +687,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 onChange={this.handleMetaTitleChange}
                 placeholder={this.defaultCellTitle}
                 query={query}
+                cellId={cellId}
             />
         ) : (
             <span className="p8">{this.dataCellTitle}</span>
@@ -733,7 +758,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                     dataCellId={cellId}
                     query={query}
                     engineId={this.engineId}
-                    onUpdateQuery={this.handleChange}
+                    onUpdate={this.handleChangeFromAI}
                     queryEngineById={queryEngineById}
                     queryEngines={this.props.queryEngines}
                     onUpdateEngineId={this.handleMetaChange.bind(
