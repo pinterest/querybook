@@ -30,7 +30,7 @@ class OpenAIAssistant(BaseAIAssistant):
         return super()._get_error_msg(error)
 
     @property
-    def title_generation_prompt_template(self) -> str:
+    def title_generation_prompt_template(self) -> ChatPromptTemplate:
         system_message_prompt = SystemMessage(
             content="You are a helpful assistant that can summerize SQL queries."
         )
@@ -51,7 +51,7 @@ class OpenAIAssistant(BaseAIAssistant):
         )
 
     @property
-    def query_auto_fix_prompt_template(self) -> str:
+    def query_auto_fix_prompt_template(self) -> ChatPromptTemplate:
         system_message_prompt = SystemMessage(
             content=(
                 "You are a SQL expert that can help fix SQL query errors.\n\n"
@@ -95,7 +95,7 @@ class OpenAIAssistant(BaseAIAssistant):
         )
 
     @property
-    def generate_sql_query_prompt_template(self) -> str:
+    def generate_sql_query_prompt_template(self) -> ChatPromptTemplate:
         system_message_prompt = SystemMessage(
             content=(
                 "You are a SQL expert that can help generating SQL query.\n\n"
