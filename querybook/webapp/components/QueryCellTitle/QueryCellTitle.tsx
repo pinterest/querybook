@@ -4,6 +4,7 @@ import PublicConfig from 'config/querybook_public_config.yaml';
 import { ComponentType, ElementType } from 'const/analytics';
 import { StreamStatus, useStream } from 'hooks/useStream';
 import { trackClick } from 'lib/analytics';
+import { DataDocResource } from 'resource/dataDoc';
 import { IconButton } from 'ui/Button/IconButton';
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
 
@@ -45,7 +46,10 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
         }
     }, [streamStatus, title]);
 
-    const handleTitleGenerationClick = useCallback(() => {
+    const handleTitleGenerationClick = useCallback(async () => {
+        // force save the query beforehand, as we're passing the cellId instead of the actual query for title generation
+        await DataDocResource.updateCell(cellId, { context: query });
+
         startStream();
         trackClick({
             component: ComponentType.AI_ASSISTANT,

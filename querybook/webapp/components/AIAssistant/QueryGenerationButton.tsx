@@ -16,7 +16,7 @@ interface IProps {
     engineId: number;
     queryEngines: IQueryEngine[];
     queryEngineById: Record<number, IQueryEngine>;
-    onUpdate: (query: string, title: string, run: boolean) => void;
+    onUpdateQuery: (query: string, run: boolean) => void;
     onUpdateEngineId: (engineId: number) => void;
 }
 
@@ -26,7 +26,7 @@ export const QueryGenerationButton = ({
     engineId,
     queryEngines,
     queryEngineById,
-    onUpdate,
+    onUpdateQuery,
     onUpdateEngineId,
 }: IProps) => {
     const [show, setShow] = useState(false);
@@ -58,7 +58,7 @@ export const QueryGenerationButton = ({
                     engineId={engineId}
                     queryEngines={queryEngines}
                     queryEngineById={queryEngineById}
-                    onUpdate={onUpdate}
+                    onUpdateQuery={onUpdateQuery}
                     onUpdateEngineId={onUpdateEngineId}
                     onHide={() => setShow(false)}
                 />

@@ -29,7 +29,7 @@ interface IProps {
     engineId: number;
     queryEngines: IQueryEngine[];
     queryEngineById: Record<number, IQueryEngine>;
-    onUpdate: (query: string, title: string, run: boolean) => void;
+    onUpdateQuery: (query: string, run: boolean) => void;
     onUpdateEngineId: (engineId: number) => void;
     onHide: () => void;
 }
@@ -58,7 +58,7 @@ export const QueryGenerationModal = ({
     engineId,
     queryEngines,
     queryEngineById,
-    onUpdate,
+    onUpdateQuery,
     onUpdateEngineId,
     onHide,
 }: IProps) => {
@@ -87,7 +87,7 @@ export const QueryGenerationModal = ({
         }
     );
 
-    const { explanation, query: newQuery, title } = streamData;
+    const { explanation, query: newQuery } = streamData;
 
     const onKeyDown = useCallback(
         (event: React.KeyboardEvent) => {
@@ -169,7 +169,7 @@ export const QueryGenerationModal = ({
             <Button
                 title="Apply"
                 onClick={() => {
-                    onUpdate(newQuery, title, false);
+                    onUpdateQuery(newQuery, false);
                     setQuestion('');
                     trackClick({
                         component: ComponentType.AI_ASSISTANT,
@@ -187,7 +187,7 @@ export const QueryGenerationModal = ({
             <Button
                 title="Apply and Run"
                 onClick={() => {
-                    onUpdate(newQuery, title, true);
+                    onUpdateQuery(newQuery, true);
                     setQuestion('');
                     trackClick({
                         component: ComponentType.AI_ASSISTANT,

@@ -14,7 +14,7 @@ import './AutoFixButton.scss';
 interface IProps {
     query: string;
     queryExecutionId: number;
-    onUpdateQuery?: (query: string) => any;
+    onUpdateQuery?: (query: string, run?: boolean) => any;
 }
 
 export const AutoFixButton = ({
@@ -52,7 +52,6 @@ export const AutoFixButton = ({
                 <div className="right-align mb16">
                     <Button
                         title="Reject"
-                        color="cancel"
                         onClick={() => {
                             setShow(false);
                         }}
@@ -61,11 +60,24 @@ export const AutoFixButton = ({
                         title="Apply"
                         color="confirm"
                         onClick={() => {
-                            onUpdateQuery?.(fixedQuery);
+                            onUpdateQuery?.(fixedQuery, false);
                             trackClick({
                                 component: ComponentType.AI_ASSISTANT,
                                 element:
                                     ElementType.QUERY_ERROR_AUTO_FIX_APPLY_BUTTON,
+                            });
+                            setShow(false);
+                        }}
+                    />
+                    <Button
+                        title="Apply and Run"
+                        color="accent"
+                        onClick={() => {
+                            onUpdateQuery?.(fixedQuery, true);
+                            trackClick({
+                                component: ComponentType.AI_ASSISTANT,
+                                element:
+                                    ElementType.QUERY_ERROR_AUTO_FIX_APPLY_AND_RUN_BUTTON,
                             });
                             setShow(false);
                         }}

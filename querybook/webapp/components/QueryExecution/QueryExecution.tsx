@@ -29,6 +29,7 @@ interface IProps {
     id: number;
     docId?: number;
     changeCellContext?: (context: string) => void;
+    onChangeFromAI?: (query: string, run: boolean) => void;
 }
 
 function useQueryExecutionReduxState(queryId: number) {
@@ -85,6 +86,7 @@ export const QueryExecution: React.FC<IProps> = ({
     id,
     docId,
     changeCellContext,
+    onChangeFromAI,
 }) => {
     const isEditable = useSelector((state: IStoreState) =>
         canCurrentUserEditSelector(state, docId)
@@ -227,8 +229,8 @@ export const QueryExecution: React.FC<IProps> = ({
                 <QueryErrorWrapper
                     queryExecution={queryExecution}
                     statementExecutions={statementExecutions}
-                    changeCellContext={changeCellContext}
                     readonly={!isEditable}
+                    onChangeFromAI={onChangeFromAI}
                 />
             );
         }
