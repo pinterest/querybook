@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 import PublicConfig from 'config/querybook_public_config.yaml';
 import { ComponentType, ElementType } from 'const/analytics';
 import { StreamStatus, useStream } from 'hooks/useStream';
 import { trackClick } from 'lib/analytics';
+import { Dispatch } from 'redux/store/types';
 import { IconButton } from 'ui/Button/IconButton';
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
 
@@ -12,18 +14,23 @@ import './QueryCellTitle.scss';
 const AIAssistantConfig = PublicConfig.ai_assistant;
 
 interface IQueryCellTitleProps {
+    cellId: number;
     value: string;
     query: string;
     placeholder: string;
     onChange: (value: string) => any;
+    forceSaveQuery: () => Promise<void>;
 }
 
 export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
+    cellId,
     value,
     query,
     placeholder,
     onChange,
+    forceSaveQuery,
 }) => {
+    const dispatch: Dispatch = useDispatch();
     const titleGenerationEnabled =
         AIAssistantConfig.enabled &&
         AIAssistantConfig.query_title_generation.enabled &&
@@ -32,7 +39,7 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
     const { streamStatus, startStream, streamData } = useStream(
         '/ds/ai/query_title/',
         {
-            query,
+            data_cell_id: cellId,
         }
     );
     const { data: title } = streamData;
@@ -43,11 +50,17 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
         }
     }, [streamStatus, title]);
 
-    const handleTitleGenerationClick = useCallback(() => {
+    const handleTitleGenerationClick = useCallback(async () => {
+        // force save the query beforehand, as we're passing the cellId instead of the actual query for title generation
+        await forceSaveQuery();
+
         startStream();
         trackClick({
             component: ComponentType.AI_ASSISTANT,
             element: ElementType.QUERY_TITLE_GENERATION_BUTTON,
+            aux: {
+                cellId,
+            },
         });
     }, [startStream]);
 

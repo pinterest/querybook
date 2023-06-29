@@ -28,7 +28,7 @@ import './QueryExecution.scss';
 interface IProps {
     id: number;
     docId?: number;
-    changeCellContext?: (context: string) => void;
+    changeCellContext?: (context: string, run: boolean) => void;
 }
 
 function useQueryExecutionReduxState(queryId: number) {
@@ -227,8 +227,8 @@ export const QueryExecution: React.FC<IProps> = ({
                 <QueryErrorWrapper
                     queryExecution={queryExecution}
                     statementExecutions={statementExecutions}
-                    changeCellContext={changeCellContext}
                     readonly={!isEditable}
+                    changeCellContext={changeCellContext}
                 />
             );
         }

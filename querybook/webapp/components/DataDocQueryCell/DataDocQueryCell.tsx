@@ -39,6 +39,7 @@ import { getPossibleTranspilers } from 'lib/templated-query/transpile';
 import { enableResizable } from 'lib/utils';
 import { getShortcutSymbols, KeyMap, matchKeyPress } from 'lib/utils/keyboard';
 import { doesLanguageSupportUDF } from 'lib/utils/udf';
+import * as dataDocActions from 'redux/dataDoc/action';
 import * as dataSourcesActions from 'redux/dataSources/action';
 import { setSidebarTableId } from 'redux/querybookUI/action';
 import {
@@ -340,13 +341,24 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
-    public handleChange(query: string) {
+    public handleChange(query: string, run: boolean = false) {
         this.setState(
             {
                 query,
             },
-            () => this.onChangeDebounced({ context: query })
+            () => {
+                this.onChangeDebounced({ context: query });
+                if (run) {
+                    this.clickOnRunButton();
+                }
+            }
         );
+    }
+
+    @bind
+    public async forceSaveQuery() {
+        this.props.onChange({ context: this.state.query });
+        await this.props.forceSaveDataCell(this.props.cellId);
     }
 
     @bind
@@ -650,6 +662,8 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
     public renderCellHeaderDOM() {
         const {
+            docId,
+            cellId,
             queryEngines,
             queryEngineById,
 
@@ -659,10 +673,12 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
         const queryTitleDOM = isEditable ? (
             <QueryCellTitle
+                cellId={cellId}
                 value={meta.title}
                 onChange={this.handleMetaTitleChange}
                 placeholder={this.defaultCellTitle}
                 query={query}
+                forceSaveQuery={this.forceSaveQuery}
             />
         ) : (
             <span className="p8">{this.dataCellTitle}</span>
@@ -959,6 +975,9 @@ function mapDispatchToProps(dispatch: Dispatch) {
         ) => dispatch(createQueryExecution(query, engineId, cellId)),
 
         setTableSidebarId: (id: number) => dispatch(setSidebarTableId(id)),
+
+        forceSaveDataCell: (cellId: number) =>
+            dispatch(dataDocActions.forceSaveDataDocCell(cellId)),
     };
 }
 

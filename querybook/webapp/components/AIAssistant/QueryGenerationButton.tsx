@@ -16,7 +16,7 @@ interface IProps {
     engineId: number;
     queryEngines: IQueryEngine[];
     queryEngineById: Record<number, IQueryEngine>;
-    onUpdateQuery?: (query: string) => void;
+    onUpdateQuery: (query: string, run: boolean) => void;
     onUpdateEngineId: (engineId: number) => void;
 }
 

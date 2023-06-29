@@ -15,6 +15,7 @@ import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { Icon } from 'ui/Icon/Icon';
 import { Message } from 'ui/Message/Message';
 import { Modal } from 'ui/Modal/Modal';
+import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
 import { StyledText } from 'ui/StyledText/StyledText';
 
 import { TableSelector } from './TableSelector';
@@ -28,7 +29,7 @@ interface IProps {
     engineId: number;
     queryEngines: IQueryEngine[];
     queryEngineById: Record<number, IQueryEngine>;
-    onUpdateQuery?: (query: string) => void;
+    onUpdateQuery: (query: string, run: boolean) => void;
     onUpdateEngineId: (engineId: number) => void;
     onHide: () => void;
 }
@@ -61,7 +62,6 @@ export const QueryGenerationModal = ({
     onUpdateEngineId,
     onHide,
 }: IProps) => {
-    const inputRef = React.useRef<HTMLInputElement>(null);
     const tablesInQuery = useTablesInQuery(
         query,
         queryEngineById[engineId]?.language
@@ -93,10 +93,10 @@ export const QueryGenerationModal = ({
         (event: React.KeyboardEvent) => {
             if (
                 streamStatus !== StreamStatus.STREAMING &&
-                matchKeyPress(event, 'Enter')
+                matchKeyPress(event, 'Enter') &&
+                !event.shiftKey
             ) {
                 startStream();
-                inputRef.current.blur();
                 trackClick({
                     component: ComponentType.AI_ASSISTANT,
                     element: ElementType.QUERY_GENERATION_BUTTON,
@@ -134,22 +134,18 @@ export const QueryGenerationModal = ({
                     onModeSelect={setTextToSQLMode}
                 />
             </div>
-            <DebouncedInput
-                debounceTime={0}
-                debounceMethod="debounce"
-                onChange={setQuestion}
+            <ResizableTextArea
                 value={question}
-                transparent={false}
-                inputProps={{
-                    placeholder:
-                        textToSQLMode === TextToSQLMode.GENERATE
-                            ? 'Ask AI to generate a new query'
-                            : 'Ask AI to edit the query',
-                    type: 'text',
-                    onKeyDown,
-                    ref: inputRef,
-                    autoFocus: true,
-                }}
+                onChange={setQuestion}
+                className="question-text-area"
+                placeholder={
+                    textToSQLMode === TextToSQLMode.GENERATE
+                        ? 'Ask AI to generate a new query'
+                        : 'Ask AI to edit the query'
+                }
+                onKeyDown={onKeyDown}
+                disabled={streamStatus === StreamStatus.STREAMING}
+                transparent
             />
             {streamStatus === StreamStatus.STREAMING && (
                 <Button
@@ -166,7 +162,6 @@ export const QueryGenerationModal = ({
         <div className="right-align mb16">
             <Button
                 title="Cancel"
-                color="cancel"
                 onClick={() => {
                     onHide();
                 }}
@@ -174,7 +169,7 @@ export const QueryGenerationModal = ({
             <Button
                 title="Apply"
                 onClick={() => {
-                    onUpdateQuery(newQuery);
+                    onUpdateQuery(newQuery, false);
                     setQuestion('');
                     trackClick({
                         component: ComponentType.AI_ASSISTANT,
@@ -188,6 +183,24 @@ export const QueryGenerationModal = ({
                     onHide();
                 }}
                 color="confirm"
+            />
+            <Button
+                title="Apply and Run"
+                onClick={() => {
+                    onUpdateQuery(newQuery, true);
+                    setQuestion('');
+                    trackClick({
+                        component: ComponentType.AI_ASSISTANT,
+                        element: ElementType.QUERY_GENERATION_APPLY_BUTTON,
+                        aux: {
+                            mode: textToSQLMode,
+                            question,
+                            tables,
+                        },
+                    });
+                    onHide();
+                }}
+                color="accent"
             />
         </div>
     );

@@ -14,7 +14,7 @@ import './ExecutedQueryCell.scss';
 interface IProps {
     queryExecution: IQueryExecution;
     highlightRange?: IHighlightRange;
-    changeCellContext?: (context: string) => void;
+    changeCellContext?: (context: string, run?: boolean) => void;
 
     maxEditorHeight?: string;
 }

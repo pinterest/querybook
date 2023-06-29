@@ -39,7 +39,7 @@ interface IProps {
     queryExecution: IQueryExecution;
     statementExecutions: IStatementExecution[];
     readonly?: boolean;
-    changeCellContext?: (context: string) => void;
+    changeCellContext?: (query: string, run?: boolean) => void;
 }
 
 const queryErrorTypeToString: Record<number, string> = {
@@ -220,8 +220,8 @@ export const QueryErrorWrapper: React.FunctionComponent<{
     queryExecution: IQueryExecution;
     statementExecutions: IStatementExecution[];
     readonly?: boolean;
-    changeCellContext?: (context: string) => void;
-}> = ({ queryExecution, statementExecutions, readonly, changeCellContext }) => {
+    changeCellContext?: (query: string, run?: boolean) => void;
+}> = ({ queryExecution, statementExecutions, changeCellContext, readonly }) => {
     const queryError = useSelector(
         (state: IStoreState) =>
             state.queryExecutions.queryErrorById[queryExecution.id]
