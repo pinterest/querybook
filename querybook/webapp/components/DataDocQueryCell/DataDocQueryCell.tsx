@@ -39,6 +39,7 @@ import { getPossibleTranspilers } from 'lib/templated-query/transpile';
 import { enableResizable } from 'lib/utils';
 import { getShortcutSymbols, KeyMap, matchKeyPress } from 'lib/utils/keyboard';
 import { doesLanguageSupportUDF } from 'lib/utils/udf';
+import * as dataDocActions from 'redux/dataDoc/action';
 import * as dataSourcesActions from 'redux/dataSources/action';
 import { setSidebarTableId } from 'redux/querybookUI/action';
 import {
@@ -340,31 +341,24 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
-    public handleChange(query: string) {
-        this.setState(
-            {
-                query,
-            },
-            () => this.onChangeDebounced({ context: query })
-        );
-    }
-
-    @bind
-    public handleChangeFromAI(query: string, run: boolean = false) {
+    public handleChange(query: string, run: boolean = false) {
         this.setState(
             {
                 query,
             },
             () => {
-                // cant use onChangeDebounced here because sometimes the query
-                // will not get updated because of the debounce before running
-                this.props.onChange({ context: query });
-                // have to put this in the setState callback, otherwise it will run before the query is updated
+                this.onChangeDebounced({ context: query });
                 if (run) {
                     this.clickOnRunButton();
                 }
             }
         );
+    }
+
+    @bind
+    public async forceSaveQuery() {
+        this.props.onChange({ context: this.state.query });
+        await this.props.forceSaveDataCell(this.props.cellId);
     }
 
     @bind
@@ -668,6 +662,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
     public renderCellHeaderDOM() {
         const {
+            docId,
             cellId,
             queryEngines,
             queryEngineById,
@@ -678,11 +673,12 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
         const queryTitleDOM = isEditable ? (
             <QueryCellTitle
+                cellId={cellId}
                 value={meta.title}
                 onChange={this.handleMetaTitleChange}
                 placeholder={this.defaultCellTitle}
                 query={query}
-                cellId={cellId}
+                forceSaveQuery={this.forceSaveQuery}
             />
         ) : (
             <span className="p8">{this.dataCellTitle}</span>
@@ -753,7 +749,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                     dataCellId={cellId}
                     query={query}
                     engineId={this.engineId}
-                    onUpdateQuery={this.handleChangeFromAI}
+                    onUpdateQuery={this.handleChange}
                     queryEngineById={queryEngineById}
                     queryEngines={this.props.queryEngines}
                     onUpdateEngineId={this.handleMetaChange.bind(
@@ -859,7 +855,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 cellId={cellId}
                 isQueryCollapsed={this.queryCollapsed}
                 changeCellContext={isEditable ? this.handleChange : null}
-                onChangeFromAI={this.handleChangeFromAI}
             />
         );
     }
@@ -980,6 +975,9 @@ function mapDispatchToProps(dispatch: Dispatch) {
         ) => dispatch(createQueryExecution(query, engineId, cellId)),
 
         setTableSidebarId: (id: number) => dispatch(setSidebarTableId(id)),
+
+        forceSaveDataCell: (cellId: number) =>
+            dispatch(dataDocActions.forceSaveDataDocCell(cellId)),
     };
 }
 

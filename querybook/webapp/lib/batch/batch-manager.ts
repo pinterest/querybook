@@ -73,14 +73,15 @@ export class BatchManager<T, M> {
         this.mergeFunction = mergeFunction;
     }
 
-    public forceProcess() {
+    public async forceProcess() {
+        console.log('force processing', this.batchStack);
         // Nothing to save
         if (this.batchStack.length === 0) {
             return;
         }
 
         clearInterval(this.processTimeout);
-        this.processBatch(++this.changeVersion, true);
+        await this.processBatch(++this.changeVersion, true);
     }
 
     public batch(data: T): Promise<void> {
@@ -121,6 +122,7 @@ export class BatchManager<T, M> {
             this.processRequest = this.processFunction(mergedData);
             await this.processRequest;
             onSuccess();
+            console.log('process batch succeeded');
         } catch (e) {
             onFailure(e);
         } finally {
