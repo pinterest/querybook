@@ -4,4 +4,16 @@
     .Tag {
         margin-bottom: 12px;
     }
+
+    .diff-side-view {
+        flex: 1;
+        // Calculating and specifying the width here:
+        // this is a workaround for the issue of code mirror somehow will use
+        // more than half of the parent's width when there are long lines.
+        width: calc(50% - 4px);
+    }
+
+    .diff-side-view:only-child {
+        width: 100%;
+    }
 }

@@ -59,11 +59,10 @@ export const QueryComparison: React.FC<{
         return [added, removed];
     }, [fromQuery, toQuery, disableHighlight, hideEmptyQuery]);
 
-    const width = hasHiddenQuery ? '100%' : 'calc(50% - 4px)';
     return (
         <div className="QueryComparison">
             {!(hideEmptyQuery && !fromQuery) && (
-                <div className="flex1" style={{ width }}>
+                <div className="diff-side-view">
                     {fromQueryTitle && <Tag>{fromQueryTitle}</Tag>}
                     <ThemedCodeHighlightWithMark
                         highlightRanges={removedRanges}
@@ -74,7 +73,7 @@ export const QueryComparison: React.FC<{
                 </div>
             )}
             {!(hideEmptyQuery && !toQuery) && (
-                <div className="flex1" style={{ width }}>
+                <div className="diff-side-view">
                     {toQueryTitle && <Tag>{toQueryTitle}</Tag>}
                     <ThemedCodeHighlightWithMark
                         highlightRanges={addedRanges}

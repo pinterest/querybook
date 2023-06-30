@@ -117,7 +117,9 @@ describe('DeltaStreamParser', () => {
 
 describe('trimQueryTitle', () => {
     it('Works for query title with quotes', () => {
+        expect(trimQueryTitle('"some title')).toEqual('some title');
         expect(trimQueryTitle('"some title"')).toEqual('some title');
+        expect(trimQueryTitle("'some title")).toEqual('some title');
         expect(trimQueryTitle("'some title'")).toEqual('some title');
     });
 
@@ -126,6 +128,7 @@ describe('trimQueryTitle', () => {
     });
 
     it('Works for query title with both', () => {
+        expect(trimQueryTitle('"some title.')).toEqual('some title');
         expect(trimQueryTitle('"some title."')).toEqual('some title');
         expect(trimQueryTitle("'some title.'")).toEqual('some title');
     });
@@ -133,10 +136,12 @@ describe('trimQueryTitle', () => {
 
 describe('trimSQLQuery', () => {
     it('Works for query with ``` ', () => {
+        expect(trimSQLQuery('```\nsome query')).toEqual('some query');
         expect(trimSQLQuery('```\nsome query```')).toEqual('some query');
     });
 
     it('Works for query with ```sql ', () => {
+        expect(trimSQLQuery('```sql\nsome query')).toEqual('some query');
         expect(trimSQLQuery('```sql\nsome query```')).toEqual('some query');
     });
 });
