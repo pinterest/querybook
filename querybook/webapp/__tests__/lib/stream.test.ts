@@ -1,4 +1,4 @@
-import { DeltaStreamParser } from 'lib/stream';
+import { DeltaStreamParser, trimQueryTitle, trimSQLQuery } from 'lib/stream';
 
 describe('DeltaStreamParser', () => {
     it('Works for stream without key/value pairs', () => {
@@ -112,5 +112,36 @@ describe('DeltaStreamParser', () => {
             data: 'some data<ta',
             some_key: 'some value',
         });
+    });
+});
+
+describe('trimQueryTitle', () => {
+    it('Works for query title with quotes', () => {
+        expect(trimQueryTitle('"some title')).toEqual('some title');
+        expect(trimQueryTitle('"some title"')).toEqual('some title');
+        expect(trimQueryTitle("'some title")).toEqual('some title');
+        expect(trimQueryTitle("'some title'")).toEqual('some title');
+    });
+
+    it('Works for query title with trailing period', () => {
+        expect(trimQueryTitle('some title.')).toEqual('some title');
+    });
+
+    it('Works for query title with both', () => {
+        expect(trimQueryTitle('"some title.')).toEqual('some title');
+        expect(trimQueryTitle('"some title."')).toEqual('some title');
+        expect(trimQueryTitle("'some title.'")).toEqual('some title');
+    });
+});
+
+describe('trimSQLQuery', () => {
+    it('Works for query with ``` ', () => {
+        expect(trimSQLQuery('```\nsome query')).toEqual('some query');
+        expect(trimSQLQuery('```\nsome query```')).toEqual('some query');
+    });
+
+    it('Works for query with ```sql ', () => {
+        expect(trimSQLQuery('```sql\nsome query')).toEqual('some query');
+        expect(trimSQLQuery('```sql\nsome query```')).toEqual('some query');
     });
 });

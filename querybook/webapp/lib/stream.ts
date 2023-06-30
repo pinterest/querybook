@@ -106,3 +106,29 @@ export class DeltaStreamParser {
         }
     }
 }
+
+/**
+ * Trim the title of a query to remove the quotes and trailing period
+ *
+ * e.g.
+ * "some title" => some title
+ * "some title." => some title
+ * some title. => some title
+ */
+export function trimQueryTitle(title: string | null | undefined) {
+    return title
+        ?.replace(/^["']|["']$/g, '')
+        .replace(/\.$/, '')
+        .trim();
+}
+
+/**
+ * Trim the SQL query to remove the wraping ```
+ *
+ * e.g.
+ * ```\nsome query``` => some query
+ * ```sql\nsome query``` => some query
+ */
+export function trimSQLQuery(query: string | null | undefined) {
+    return query?.replace(/^```(sql)?|```$/g, '').trim();
+}

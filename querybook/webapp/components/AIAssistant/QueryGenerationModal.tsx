@@ -8,6 +8,7 @@ import { IQueryEngine } from 'const/queryEngine';
 import { StreamStatus, useStream } from 'hooks/useStream';
 import { trackClick } from 'lib/analytics';
 import { TableToken } from 'lib/sql-helper/sql-lexer';
+import { trimSQLQuery } from 'lib/stream';
 import { matchKeyPress } from 'lib/utils/keyboard';
 import { analyzeCode } from 'lib/web-worker';
 import { Button } from 'ui/Button/Button';
@@ -87,7 +88,9 @@ export const QueryGenerationModal = ({
         }
     );
 
-    const { explanation, query: newQuery } = streamData;
+    const { explanation, query: rawNewQuery } = streamData;
+
+    const newQuery = trimSQLQuery(rawNewQuery);
 
     const onKeyDown = useCallback(
         (event: React.KeyboardEvent) => {

@@ -5,6 +5,7 @@ import PublicConfig from 'config/querybook_public_config.yaml';
 import { ComponentType, ElementType } from 'const/analytics';
 import { StreamStatus, useStream } from 'hooks/useStream';
 import { trackClick } from 'lib/analytics';
+import { trimQueryTitle } from 'lib/stream';
 import { Dispatch } from 'redux/store/types';
 import { IconButton } from 'ui/Button/IconButton';
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
@@ -46,7 +47,7 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
 
     useEffect(() => {
         if (streamStatus !== StreamStatus.NOT_STARTED && title) {
-            onChange(title);
+            onChange(trimQueryTitle(title));
         }
     }, [streamStatus, title]);
 
