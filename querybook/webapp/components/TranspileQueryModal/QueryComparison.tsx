@@ -22,8 +22,10 @@ export const QueryComparison: React.FC<{
     disableHighlight,
     hideEmptyQuery,
 }) => {
+    const hasHiddenQuery = hideEmptyQuery && (!fromQuery || !toQuery);
+
     const [addedRanges, removedRanges] = useMemo(() => {
-        if (disableHighlight || (hideEmptyQuery && (!fromQuery || !toQuery))) {
+        if (disableHighlight || hasHiddenQuery) {
             return [[], []];
         }
 
@@ -57,10 +59,11 @@ export const QueryComparison: React.FC<{
         return [added, removed];
     }, [fromQuery, toQuery, disableHighlight, hideEmptyQuery]);
 
+    const width = hasHiddenQuery ? '100%' : 'calc(50% - 4px)';
     return (
         <div className="QueryComparison">
             {!(hideEmptyQuery && !fromQuery) && (
-                <div className="mr8 flex1">
+                <div className="flex1" style={{ width }}>
                     {fromQueryTitle && <Tag>{fromQueryTitle}</Tag>}
                     <ThemedCodeHighlightWithMark
                         highlightRanges={removedRanges}
@@ -71,7 +74,7 @@ export const QueryComparison: React.FC<{
                 </div>
             )}
             {!(hideEmptyQuery && !toQuery) && (
-                <div className="flex1">
+                <div className="flex1" style={{ width }}>
                     {toQueryTitle && <Tag>{toQueryTitle}</Tag>}
                     <ThemedCodeHighlightWithMark
                         highlightRanges={addedRanges}

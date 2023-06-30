@@ -4,6 +4,7 @@ import { QueryComparison } from 'components/TranspileQueryModal/QueryComparison'
 import { ComponentType, ElementType } from 'const/analytics';
 import { StreamStatus, useStream } from 'hooks/useStream';
 import { trackClick } from 'lib/analytics';
+import { trimSQLQuery } from 'lib/stream';
 import { Button } from 'ui/Button/Button';
 import { Message } from 'ui/Message/Message';
 import { Modal } from 'ui/Modal/Modal';
@@ -34,8 +35,10 @@ export const AutoFixButton = ({
     const {
         explanation,
         fix_suggestion: suggestion,
-        fixed_query: fixedQuery,
+        fixed_query: rawFixedQuery,
     } = streamData;
+
+    const fixedQuery = trimSQLQuery(rawFixedQuery);
 
     const bottomDOM =
         streamStatus === StreamStatus.STREAMING ? (
