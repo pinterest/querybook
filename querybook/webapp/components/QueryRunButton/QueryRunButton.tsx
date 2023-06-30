@@ -23,6 +23,8 @@ import { ListMenu } from 'ui/Menu/ListMenu';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 import { Tag } from 'ui/Tag/Tag';
+import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
+import { StyledText } from 'ui/StyledText/StyledText';
 
 import './QueryRunButton.scss';
 
@@ -60,6 +62,7 @@ export const QueryRunButton = React.forwardRef<
             onEngineIdSelect,
             rowLimit,
             onRowLimitChange,
+            onTestModeChange,
         },
         ref
     ) => {
@@ -104,6 +107,13 @@ export const QueryRunButton = React.forwardRef<
                 />
             ) : null;
 
+        const testModeDOM =
+            <TestModeToggle
+                setTestMode={onTestModeChange}
+            />;
+
+
+
         return (
             <div className="QueryRunButton flex-row ml16">
                 <QueryEngineSelector
@@ -114,6 +124,7 @@ export const QueryRunButton = React.forwardRef<
                     onEngineIdSelect={onEngineIdSelect}
                 />
                 {rowLimitDOM}
+                {testModeDOM}
                 {runButtonDOM}
             </div>
         );
@@ -247,5 +258,28 @@ const QueryLimitSelector: React.FC<{
         >
             <ListMenu items={rowLimitMenuItems} type="select" />
         </Dropdown>
+    );
+};
+
+const TestModeToggle: React.FC<{
+    setTestMode: (isTestMode: boolean) => void;
+}> = ({ setTestMode }) => {
+    const [selected, setSelected] = React.useState(false);
+
+    return (
+        <ToggleButton
+            color={selected ? 'accent' : 'light'}
+            onClick={() => {
+                setSelected(!selected)
+                // TODO: Change query area background too?
+                // TODO: add analytics trackClick()
+                setTestMode(selected)
+            }}
+        >
+            <StyledText>Test mode</StyledText>
+
+            <Icon name={selected ? 'Check' : ''} />
+
+        </ToggleButton >
     );
 };

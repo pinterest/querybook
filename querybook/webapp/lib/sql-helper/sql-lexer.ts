@@ -260,7 +260,13 @@ export class TableToken {
 }
 
 class Line {
+    //  Array of tuples of [starting character index, statement index]
+    //  which indicates in which statement of the query the character
+    //  range starting on the index is found.
     public statements: Array<[number, number]>;
+    //  Array of tuples of [starting character index, context],
+    //  where context indicates whether the character range is an
+    //  identifier for a table, column, or neither ('none').
     public contexts: Array<[number, string]>;
 
     public constructor(initialStatement: number, initialContext: string) {
@@ -809,7 +815,48 @@ export function findTableReferenceAndAlias(statements: IToken[][]) {
     };
 }
 
-export function getEditorLines(statements: IToken[][]) {
+export function getEditorLines(statements: IToken[][]): Line[] {
+    // getEditorLines is used to parse a list of SQL statements into
+    // an array of `Line`s. Each `Line` identifies the ranges of
+    // character indices which are part of statements, and 
+    // whether they are the name of a column, table, or neither.
+    //
+    //  The following 2-statement, 3-line query:
+    //  SELECT * FROM main.products RIGHT JOIN main.products;
+    //  SELECT a,b,c,d 
+    //      FROM main.products;
+    //
+    // And return value would be:
+    [
+        { // line 0
+            "statements": [[0, 0]], // statement 0 of the query starts at character 0
+            "contexts": [
+                [0, "none"], // char 0-7: neither ('SELECT ')
+                [7, "column"], // char 7-14: column ('* FROM')
+                [14, "table"], // etc. 
+                [28, "none"],
+                [39, "table"],
+                [53, "none"]
+            ]
+        },
+        { // line 1
+            "statements": [[0, 1]], // statement 1 of the query starts at character 0
+            "contexts": [
+                [0, "none"], // char 0-7: neither
+                [7, "column"] // char 7-end: column
+            ]
+        },
+        { // line 2
+            "statements": [[0, 1]], // statement 2 of the query starts at character 0
+            "contexts": [
+                [0, "column"], // char 0-4: column name
+                [5, "table"], // char 5-19: table name
+                [19, "none"] // char 19-end: neither
+            ]
+        }
+    ]
+
+
     const lines: Line[] = [];
     let lastLine = 0;
 

@@ -63,6 +63,9 @@ import { Modal } from 'ui/Modal/Modal';
 import { QueryComposerExecution } from './QueryComposerExecution';
 import { runQuery, transformQuery } from './RunQuery';
 
+import { TemplatedQueryResource } from 'resource/queryExecution';
+import { useResource } from 'hooks/useResource';
+
 import './QueryComposer.scss';
 
 const QUERY_EXECUTION_HEIGHT = 300;
@@ -373,6 +376,39 @@ function useTranspileQuery(
     };
 }
 
+function useTestMode(
+    query: string,
+    queryEngine: IQueryEngine,
+    templatedVariables: IDataDocMetaVariable[],
+    setQuery: (query: string) => any,
+    // TODO: Should the implementation be different per query engine?
+) {
+    return useCallback( //TODO: useResource to memoize?
+        (selected) => {
+            console.log('CCCC', selected);
+            const engineId = queryEngine.id;
+
+            function HandleValidateFulfilled(
+                optimizedQuery,
+                isLoading,
+                error,
+            ) {
+                // TODO: Handle Errors
+                // Assumes that only one optimization is returned
+                setQuery(optimizedQuery.data[0].diff.b);
+            };
+
+            TemplatedQueryResource.validateQuery(
+                query,
+                engineId,
+                templatedVariables,
+                selected ? ['RemoveTableSampleOptimization'] : ['ApplyTableSampleOptimization']
+
+            ).then(HandleValidateFulfilled); // TODO: this works, but it's not the React way
+        }
+    )
+}
+
 const QueryComposer: React.FC = () => {
     useTrackView(ComponentType.ADHOC_QUERY);
     useBrowserTitle('Adhoc Query');
@@ -391,6 +427,7 @@ const QueryComposer: React.FC = () => {
         environmentId
     );
     const { rowLimit, setRowLimit } = useRowLimit(dispatch, environmentId);
+
 
     const [resultsCollapsed, setResultsCollapsed] = useState(false);
 
@@ -432,6 +469,8 @@ const QueryComposer: React.FC = () => {
         handleTranspileQuery,
         transpilerOptions,
     } = useTranspileQuery(engine, queryEngines, setEngineId, setQuery);
+
+    const setTestMode = useTestMode(query, engine, templatedVariables, setQuery);
 
     const handleCreateDataDoc = useCallback(async () => {
         trackClick({
@@ -637,6 +676,7 @@ const QueryComposer: React.FC = () => {
                 runButtonTooltipPos={'down'}
                 rowLimit={rowLimit}
                 onRowLimitChange={setRowLimit}
+                onTestModeChange={setTestMode}
             />
         </div>
     );
