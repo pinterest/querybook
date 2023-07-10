@@ -1,6 +1,7 @@
 pytest==7.1.2
 coverage==5.4
 moto==2.2.4
+sqlglot>=17.0.0
 
 -r auth/ldap.txt
 -r engine/hive.txt

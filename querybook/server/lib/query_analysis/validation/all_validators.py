@@ -7,6 +7,10 @@ ALL_DEFAULT_QUERY_VALIDATORS = import_modules(
             "lib.query_analysis.validation.validators.presto_explain_validator",
             "PrestoExplainValidator",
         ),
+        (
+            "lib.query_analysis.validation.validators.presto_optimizing_validator",
+            "PrestoOptimizingValidator",
+        ),
     ]
 )
 
