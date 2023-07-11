@@ -708,6 +708,8 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                                 ? this.handleMetaRowLimitChange
                                 : null
                         }
+                        docId={this.props.docId}
+                        index={this.props.queryIndexInDoc}
                     />
                     {this.getAdditionalDropDownButtonDOM()}
                 </div>

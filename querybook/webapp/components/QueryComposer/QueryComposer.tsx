@@ -637,6 +637,8 @@ const QueryComposer: React.FC = () => {
                 runButtonTooltipPos={'down'}
                 rowLimit={rowLimit}
                 onRowLimitChange={setRowLimit}
+                docId={null}
+                index={null}
             />
         </div>
     );

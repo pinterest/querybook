@@ -101,8 +101,13 @@ export const DataDocResource = {
         }>(`/favorite_data_doc/${docId}/`),
     unfavorite: (docId: number) => ds.delete(`/favorite_data_doc/${docId}/`),
 
-    run: (docId: number, sendNotification: boolean = false) =>
+    run: (
+        docId: number,
+        sendNotification: boolean = false,
+        start_index: number = 0
+    ) =>
         ds.save<null>(`/datadoc/${docId}/run/`, {
+            start_index,
             send_notification: sendNotification,
         }),
 

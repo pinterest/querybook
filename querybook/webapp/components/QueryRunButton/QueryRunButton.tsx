@@ -24,6 +24,8 @@ import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 import { Tag } from 'ui/Tag/Tag';
 
+import { QueryCellRunAllFromCellButton } from '../QueryCellRunAllFromCellButton/QueryCellRunAllFromCellButton';
+
 import './QueryRunButton.scss';
 
 const EXECUTE_QUERY_SHORTCUT = getShortcutSymbols(
@@ -38,6 +40,9 @@ interface IQueryRunButtonProps extends IQueryEngineSelectorProps {
     rowLimit?: number;
     onRunClick: () => any;
     onRowLimitChange?: (rowLimit: number) => void;
+
+    docId: number;
+    index: number;
 }
 
 export interface IQueryRunButtonHandles {
@@ -60,6 +65,8 @@ export const QueryRunButton = React.forwardRef<
             onEngineIdSelect,
             rowLimit,
             onRowLimitChange,
+            docId,
+            index,
         },
         ref
     ) => {
@@ -115,6 +122,13 @@ export const QueryRunButton = React.forwardRef<
                 />
                 {rowLimitDOM}
                 {runButtonDOM}
+                {docId != null && (
+                    <QueryCellRunAllFromCellButton
+                        docId={docId}
+                        enabled={!disabled}
+                        index={index}
+                    />
+                )}
             </div>
         );
     }
