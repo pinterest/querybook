@@ -37,7 +37,7 @@ def search_datadoc(
 
     query = construct_datadoc_query(
         uid=current_user.id,
-        keywords=keywords,
+        keywords=keywords.strip(),
         filters=filters,
         fields=fields,
         limit=limit,
@@ -66,7 +66,7 @@ def search_query(
 
     query = construct_query_search_query(
         uid=current_user.id,
-        keywords=keywords,
+        keywords=keywords.strip(),
         filters=filters,
         limit=limit,
         offset=offset,
@@ -100,7 +100,7 @@ def search_tables(
     filters.append(["metastore_id", metastore_id])
 
     query = construct_tables_query(
-        keywords=keywords,
+        keywords=keywords.strip(),
         filters=filters,
         fields=fields,
         limit=limit,
@@ -167,7 +167,7 @@ def search_board(
 
     query = construct_board_query(
         uid=current_user.id,
-        keywords=keywords,
+        keywords=keywords.strip(),
         filters=filters,
         fields=fields,
         limit=limit,
