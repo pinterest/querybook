@@ -17,6 +17,10 @@ export const CommentResource = {
         }),
     softDelete: (commentId: number) =>
         ds.delete<null>(`/comment/${commentId}/`),
+    undoDelete: (commentId: number) =>
+        ds.update<ICommentRaw>(`/comment/${commentId}/`, {
+            archived: false,
+        }),
 };
 
 export const CellCommentResource = {

@@ -80,6 +80,10 @@ const DEFAULT_KEY_MAP = {
             key: 'Ctrl-D',
             name: 'Delete current cell',
         },
+        onSubmit: {
+            key: 'Cmd-Enter',
+            name: 'On Submit',
+        },
     },
     queryEditor: {
         runQuery: {

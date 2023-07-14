@@ -8,6 +8,7 @@ import {
     deleteReactionByCommentId,
 } from 'redux/comment/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
+import { Icon } from 'ui/Icon/Icon';
 import { StyledText } from 'ui/StyledText/StyledText';
 
 import { AddReactionButton } from './AddReactionButton';
@@ -24,13 +25,22 @@ export const Reactions: React.FunctionComponent<IProps> = ({
     const dispatch: Dispatch = useDispatch();
     const userInfo = useSelector((state: IStoreState) => state.user.myUserInfo);
 
+    const [isLoadingEmoji, setIsLoadingEmoji] = React.useState<string | null>(
+        null
+    );
+
     const addEmoji = React.useCallback(
-        (emoji: string) => dispatch(addReactionByCommentId(commentId, emoji)),
+        (emoji: string) =>
+            dispatch(addReactionByCommentId(commentId, emoji)).then(() =>
+                setIsLoadingEmoji(null)
+            ),
         [commentId, dispatch]
     );
     const deleteEmoji = React.useCallback(
         (reactionId) => {
-            dispatch(deleteReactionByCommentId(commentId, reactionId));
+            dispatch(deleteReactionByCommentId(commentId, reactionId)).then(
+                () => setIsLoadingEmoji(null)
+            );
         },
         [dispatch, commentId]
     );
@@ -39,6 +49,7 @@ export const Reactions: React.FunctionComponent<IProps> = ({
         const existingReaction = reactionsByEmoji[emoji].find(
             (reaction) => reaction.created_by === uid
         );
+        setIsLoadingEmoji(emoji);
         if (existingReaction) {
             deleteEmoji(existingReaction.id);
         } else {
@@ -64,6 +75,7 @@ export const Reactions: React.FunctionComponent<IProps> = ({
                         onClick={() => handleReactionClick(emoji, userInfo.uid)}
                     >
                         <StyledText size="smedium">{emoji}</StyledText>
+
                         <StyledText
                             weight="bold"
                             color="lightest"
@@ -71,7 +83,11 @@ export const Reactions: React.FunctionComponent<IProps> = ({
                             size="small"
                             cursor="default"
                         >
-                            {uids.length}
+                            {isLoadingEmoji === emoji ? (
+                                <Icon name="Loading" size={12} />
+                            ) : (
+                                uids.length
+                            )}
                         </StyledText>
                     </div>
                 );

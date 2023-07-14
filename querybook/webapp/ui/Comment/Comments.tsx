@@ -10,6 +10,7 @@ import {
     IComment,
 } from 'const/comment';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
+import { getShortcutSymbols, KeyMap } from 'lib/utils/keyboard';
 import {
     createChildComment,
     createComment,
@@ -33,6 +34,8 @@ interface IProps {
 }
 
 const emptyCommentValue = DraftJs.ContentState.createFromText('');
+
+const ON_SUBMIT_SHORTCUT = getShortcutSymbols(KeyMap.richText.onSubmit.key);
 
 export const Comments: React.FunctionComponent<IProps> = ({
     entityType,
@@ -130,9 +133,7 @@ export const Comments: React.FunctionComponent<IProps> = ({
     }, []);
 
     const handleArchiveComment = React.useCallback(
-        (commentId: number) => {
-            dispatch(deleteComment(commentId));
-        },
+        (commentId: number) => dispatch(deleteComment(commentId)),
         [dispatch]
     );
 
@@ -153,7 +154,11 @@ export const Comments: React.FunctionComponent<IProps> = ({
                 onCreateChildComment={() =>
                     handleEditComment(undefined, undefined, comment.id)
                 }
-                isBeingRepliedTo={editingCommentParentId === comment.id}
+                isBeingRepliedTo={
+                    editingCommentParentId === comment.id &&
+                    editingCommentId !== comment.id
+                }
+                onReplyingToClick={handleCommentClear}
             />
         ) : null;
 
@@ -215,7 +220,11 @@ export const Comments: React.FunctionComponent<IProps> = ({
                         return (
                             <>
                                 <UserAvatar uid={userInfo?.uid} tiny />
-                                <RichTextField name="text" />
+                                <RichTextField
+                                    name="text"
+                                    autoFocus
+                                    onSubmit={submitForm}
+                                />
                                 <IconButton
                                     icon="XCircle"
                                     onClick={() => {
@@ -237,7 +246,7 @@ export const Comments: React.FunctionComponent<IProps> = ({
                                     noPadding
                                     size={18}
                                     className="mr4"
-                                    tooltip="Comment"
+                                    tooltip={`Comment (${ON_SUBMIT_SHORTCUT})`}
                                     tooltipPos="left"
                                     disabled={isTextEmpty}
                                 />
