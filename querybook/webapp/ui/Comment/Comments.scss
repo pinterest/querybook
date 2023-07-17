@@ -26,6 +26,9 @@
                 color: var(--text-lightest-0);
             }
         }
+        .IconButton.disabled {
+            color: var(--icon-light);
+        }
     }
     .CommentThread {
         margin-left: 32px;
@@ -129,7 +132,7 @@
     .Reaction {
         background-color: var(--bg-light);
         border-radius: var(--border-radius-sm);
-        cursor: default;
+        cursor: pointer;
         &.active {
             background-color: var(--color-accent-lightest-0);
         }

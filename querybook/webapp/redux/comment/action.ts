@@ -154,6 +154,24 @@ export function deleteComment(commentId: number): ThunkResult<Promise<void>> {
     };
 }
 
+export function undoDeleteComment(
+    commentId: number
+): ThunkResult<Promise<ICommentRaw>> {
+    return async (dispatch) => {
+        const { data: newComment } = await CommentResource.undoDelete(
+            commentId
+        );
+
+        dispatch({
+            type: '@@comment/RECEIVE_COMMENTS',
+            payload: {
+                comments: [newComment],
+            },
+        });
+
+        return newComment;
+    };
+}
 export function updateComment(
     commentId: number,
     text: ContentState
