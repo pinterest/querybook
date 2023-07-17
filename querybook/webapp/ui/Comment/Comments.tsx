@@ -36,7 +36,7 @@ interface IProps {
 const emptyCommentValue = DraftJs.ContentState.createFromText('');
 
 const ON_SUBMIT_SHORTCUT = getShortcutSymbols(
-    KeyMap.overallUI.SubmitComment.key
+    KeyMap.overallUI.submitComment.key
 );
 
 export const Comments: React.FunctionComponent<IProps> = ({

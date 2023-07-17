@@ -20,9 +20,9 @@ const DEFAULT_KEY_MAP = {
             key: 'Enter',
             name: 'Confirm Modal',
         },
-        SubmitComment: {
+        submitComment: {
             key: 'Cmd-Enter',
-            name: 'On Submit',
+            name: 'Submit Comment',
         },
     },
     dataDoc: {
