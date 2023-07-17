@@ -549,7 +549,7 @@ export const RichTextEditor = React.forwardRef<
                         command = 'italic';
                         handled = true;
                     } else if (
-                        matchKeyMap(e, KeyMap.overallUI.submitComment) &&
+                        matchKeyMap(e, KeyMap.overallUI.SubmitComment) &&
                         onSubmit
                     ) {
                         onSubmit();

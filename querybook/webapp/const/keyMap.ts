@@ -20,7 +20,7 @@ const DEFAULT_KEY_MAP = {
             key: 'Enter',
             name: 'Confirm Modal',
         },
-        submitComment: {
+        SubmitComment: {
             key: 'Cmd-Enter',
             name: 'On Submit',
         },
