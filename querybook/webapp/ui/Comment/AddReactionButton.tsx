@@ -60,9 +60,9 @@ export const AddReactionButton: React.FunctionComponent<IProps> = ({
             if (existingReaction) {
                 dispatch(
                     deleteReactionByCommentId(commentId, existingReaction.id)
-                ).then(() => setIsLoading(false));
+                ).finally(() => setIsLoading(false));
             } else {
-                dispatch(addReactionByCommentId(commentId, emoji)).then(() =>
+                dispatch(addReactionByCommentId(commentId, emoji)).finally(() =>
                     setIsLoading(false)
                 );
             }
@@ -80,6 +80,7 @@ export const AddReactionButton: React.FunctionComponent<IProps> = ({
                 tooltipPos={tooltipPos}
                 ref={addReactionButtonRef}
                 onClick={() => setShowEmojis(true)}
+                disabled={isLoading}
             />
             {showEmojis ? (
                 <Popover

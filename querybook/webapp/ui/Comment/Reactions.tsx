@@ -30,18 +30,12 @@ export const Reactions: React.FunctionComponent<IProps> = ({
     );
 
     const addEmoji = React.useCallback(
-        (emoji: string) =>
-            dispatch(addReactionByCommentId(commentId, emoji)).then(() =>
-                setIsLoadingEmoji(null)
-            ),
+        (emoji: string) => dispatch(addReactionByCommentId(commentId, emoji)),
         [commentId, dispatch]
     );
     const deleteEmoji = React.useCallback(
-        (reactionId) => {
-            dispatch(deleteReactionByCommentId(commentId, reactionId)).then(
-                () => setIsLoadingEmoji(null)
-            );
-        },
+        (reactionId) =>
+            dispatch(deleteReactionByCommentId(commentId, reactionId)),
         [dispatch, commentId]
     );
 
@@ -51,9 +45,11 @@ export const Reactions: React.FunctionComponent<IProps> = ({
         );
         setIsLoadingEmoji(emoji);
         if (existingReaction) {
-            deleteEmoji(existingReaction.id);
+            deleteEmoji(existingReaction.id).finally(() =>
+                setIsLoadingEmoji(null)
+            );
         } else {
-            addEmoji(emoji);
+            addEmoji(emoji).finally(() => setIsLoadingEmoji(null));
         }
     };
 
@@ -72,10 +68,13 @@ export const Reactions: React.FunctionComponent<IProps> = ({
                     <div
                         className={reactionClassnames}
                         key={emoji}
-                        onClick={() => handleReactionClick(emoji, userInfo.uid)}
+                        onClick={() =>
+                            isLoadingEmoji === emoji
+                                ? null
+                                : handleReactionClick(emoji, userInfo.uid)
+                        }
                     >
                         <StyledText size="smedium">{emoji}</StyledText>
-
                         <StyledText
                             weight="bold"
                             color="lightest"

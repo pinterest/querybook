@@ -78,12 +78,10 @@ export const Comment: React.FunctionComponent<IProps> = ({
     );
 
     const handleUndoDeleteComment = React.useCallback(() => {
-        if (recentlyArchived) {
-            dispatch(undoDeleteComment(comment.id)).then(() =>
-                setRecentlyArchived(false)
-            );
-        }
-    }, [comment.id, dispatch, recentlyArchived]);
+        dispatch(undoDeleteComment(comment.id)).finally(() =>
+            setRecentlyArchived(false)
+        );
+    }, [comment.id, dispatch]);
 
     return (
         <div
@@ -126,7 +124,7 @@ export const Comment: React.FunctionComponent<IProps> = ({
                     {isBeingRepliedTo ? (
                         <span
                             onClick={onReplyingToClick}
-                            aria-label="Undo Reply To"
+                            aria-label="Cancel Reply To"
                             data-balloon-pos="up"
                         >
                             <StyledText

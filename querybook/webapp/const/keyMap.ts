@@ -20,6 +20,10 @@ const DEFAULT_KEY_MAP = {
             key: 'Enter',
             name: 'Confirm Modal',
         },
+        submitComment: {
+            key: 'Cmd-Enter',
+            name: 'On Submit',
+        },
     },
     dataDoc: {
         saveDataDoc: {
@@ -79,10 +83,6 @@ const DEFAULT_KEY_MAP = {
         deleteCell: {
             key: 'Ctrl-D',
             name: 'Delete current cell',
-        },
-        onSubmit: {
-            key: 'Cmd-Enter',
-            name: 'On Submit',
         },
     },
     queryEditor: {
