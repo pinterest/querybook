@@ -1,6 +1,5 @@
 import datetime
 
-from sqlalchemy import or_
 from app.db import with_session
 from const.elasticsearch import ElasticsearchItem
 from models.board import Board, BoardItem, BoardEditor
@@ -54,7 +53,7 @@ def update_board(id, commit=True, session=None, **fields):
     board = Board.update(
         id,
         fields=fields,
-        field_names=["name", "description", "public"],
+        field_names=["name", "description", "public", "owner_uid"],
         commit=commit,
         session=session,
     )
