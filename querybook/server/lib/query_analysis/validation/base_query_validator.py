@@ -10,6 +10,7 @@ from lib.query_analysis.templating import (
 class QueryValidationResultObjectType(Enum):
     LINT = "lint"
     GENERAL = "general"
+    SUGGESTION = "SUGGESTION"
 
 
 class QueryValidationSeverity(Enum):
@@ -21,23 +22,29 @@ class QueryValidationSeverity(Enum):
 class QueryValidationResult(object):
     def __init__(
         self,
-        line: int,  # 0 based
-        ch: int,  # location of the starting token
+        start_line: int,  # 0 based
+        start_ch: int,  # location of the starting token
+        end_line: int,  # 0 based
+        end_ch: int,  # location of the ending token
         severity: QueryValidationSeverity,
         message: str,
         obj_type: QueryValidationResultObjectType = QueryValidationResultObjectType.LINT,
     ):
         self.type = obj_type
-        self.line = line
-        self.ch = ch
+        self.start_line = start_line
+        self.start_ch = start_ch
+        self.end_line = end_line
+        self.end_ch = end_ch
         self.severity = severity
         self.message = message
 
     def to_dict(self):
         return {
             "type": self.type.value,
-            "line": self.line,
-            "ch": self.ch,
+            "start_line": self.start_line,
+            "start_ch": self.start_ch,
+            "end_line": self.end_line,
+            "end_ch": self.end_ch,
             "severity": self.severity.value,
             "message": self.message,
         }
@@ -67,7 +74,9 @@ class BaseQueryValidator(ABC):
         try:
             templated_query = render_templated_query(query, templated_vars, engine_id)
         except QueryTemplatingError as e:
-            return [QueryValidationResult(0, 0, QueryValidationSeverity.ERROR, str(e))]
+            return [
+                QueryValidationResult(0, 0, 0, 0, QueryValidationSeverity.ERROR, str(e))
+            ]
 
         return self.validate(templated_query, uid, engine_id)
 
