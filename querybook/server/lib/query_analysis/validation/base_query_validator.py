@@ -24,11 +24,12 @@ class QueryValidationResult(object):
         self,
         start_line: int,  # 0 based
         start_ch: int,  # location of the starting token
-        end_line: int,  # 0 based
-        end_ch: int,  # location of the ending token
         severity: QueryValidationSeverity,
         message: str,
         obj_type: QueryValidationResultObjectType = QueryValidationResultObjectType.LINT,
+        end_line: int = None,  # 0 based
+        end_ch: int = None,  # location of the ending token
+        suggestion: str = None,
     ):
         self.type = obj_type
         self.start_line = start_line
@@ -37,6 +38,7 @@ class QueryValidationResult(object):
         self.end_ch = end_ch
         self.severity = severity
         self.message = message
+        self.suggestion = suggestion
 
     def to_dict(self):
         return {
@@ -47,6 +49,7 @@ class QueryValidationResult(object):
             "end_ch": self.end_ch,
             "severity": self.severity.value,
             "message": self.message,
+            "suggestion": self.suggestion,
         }
 
 
@@ -74,9 +77,7 @@ class BaseQueryValidator(ABC):
         try:
             templated_query = render_templated_query(query, templated_vars, engine_id)
         except QueryTemplatingError as e:
-            return [
-                QueryValidationResult(0, 0, 0, 0, QueryValidationSeverity.ERROR, str(e))
-            ]
+            return [QueryValidationResult(0, 0, QueryValidationSeverity.ERROR, str(e))]
 
         return self.validate(templated_query, uid, engine_id)
 

@@ -1,1 +1,1 @@
-sqlglot==5.1.3
+sqlglot==17.8.0

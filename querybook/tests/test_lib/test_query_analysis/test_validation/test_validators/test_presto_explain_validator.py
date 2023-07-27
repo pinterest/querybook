@@ -41,11 +41,11 @@ class MapStatementErrorToQueryTestCase(TestCase):
             1, statement_start_locations, error_line=0, error_ch=2, error_msg=""
         )
 
-        self.assertEqual(validation_result.line, 0)
-        self.assertEqual(validation_result.ch, 12)
+        self.assertEqual(validation_result.start_line, 0)
+        self.assertEqual(validation_result.start_ch, 12)
 
         validation_result = self._validator._map_statement_error_to_query(
             2, statement_start_locations, error_line=0, error_ch=5, error_msg=""
         )
-        self.assertEqual(validation_result.line, 1)
-        self.assertEqual(validation_result.ch, 5)
+        self.assertEqual(validation_result.start_line, 1)
+        self.assertEqual(validation_result.start_ch, 5)
