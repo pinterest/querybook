@@ -7,11 +7,6 @@ from lib.query_analysis.validation.base_query_validator import (
     QueryValidationSeverity,
 )
 from lib.query_analysis.validation.validators.presto_optimizing_validator import (
-    UNION_ALL_SUGGESTION,
-    APPROX_DISTINCT_SUGGESTION,
-    UNION_ALL_MESSAGE,
-    REGEXP_LIKE_MESSAGE,
-    APPROX_DISTINCT_MESSAGE,
     ApproxDistinctValidator,
     RegexpLikeValidator,
     UnionAllValidator,
@@ -42,7 +37,7 @@ class BaseValidatorTestCase(TestCase):
             start_line,
             start_ch,
             QueryValidationSeverity.WARNING,
-            REGEXP_LIKE_MESSAGE,
+            "Combining multiple LIKEs into one REGEXP_LIKE will execute faster",
             QueryValidationResultObjectType.SUGGESTION,
             end_line=end_line,
             end_ch=end_ch,
@@ -56,11 +51,11 @@ class BaseValidatorTestCase(TestCase):
             start_line,
             start_ch,
             QueryValidationSeverity.WARNING,
-            UNION_ALL_MESSAGE,
+            "Using UNION ALL instead of UNION will execute faster",
             QueryValidationResultObjectType.SUGGESTION,
             end_line=end_line,
             end_ch=end_ch,
-            suggestion=UNION_ALL_SUGGESTION,
+            suggestion="UNION ALL",
         )
 
     def _get_approx_distinct_validation_result(
@@ -70,11 +65,11 @@ class BaseValidatorTestCase(TestCase):
             start_line,
             start_ch,
             QueryValidationSeverity.WARNING,
-            APPROX_DISTINCT_MESSAGE,
+            "Using APPROX_DISTINCT(x) instead of COUNT(DISTINCT x) will execute faster",
             QueryValidationResultObjectType.SUGGESTION,
             end_line=end_line,
             end_ch=end_ch,
-            suggestion=APPROX_DISTINCT_SUGGESTION,
+            suggestion="APPROX_DISTINCT(",
         )
 
 
@@ -289,6 +284,19 @@ class PrestoOptimizingValidatorTestCase(BaseValidatorTestCase):
                 self._get_approx_distinct_validation_result(1, 0, 1, 14),
                 self._get_regexp_like_validation_result(
                     2, 0, 3, 4, "REGEXP_LIKE(x, 'foo|bar')"
+                ),
+            ],
+        )
+
+    def test_extra_whitespace(self):
+        query = "SELECT \n  COUNT( DISTINCT x) from a WHERE \n\t  x LIKE 'foo' or x like \n'bar' and y like 'foo' \n     UNION select * from b"
+        self._verify_query_validation_results(
+            self._validator._get_validation_suggestions(query),
+            [
+                self._get_union_all_validation_result(4, 5, 4, 9),
+                self._get_approx_distinct_validation_result(1, 2, 1, 16),
+                self._get_regexp_like_validation_result(
+                    2, 3, 3, 4, "REGEXP_LIKE(x, 'foo|bar')"
                 ),
             ],
         )

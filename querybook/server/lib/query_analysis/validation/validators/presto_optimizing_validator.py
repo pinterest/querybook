@@ -1,83 +1,30 @@
-from abc import ABCMeta, abstractmethod
-from typing import List, Tuple
-from sqlglot import TokenType
+from typing import List
+from sqlglot import TokenType, Tokenizer
 from sqlglot.dialects import Trino
 from sqlglot.tokens import Token
 
 from lib.query_analysis.validation.base_query_validator import (
     QueryValidationResult,
-    QueryValidationResultObjectType,
     QueryValidationSeverity,
 )
 from lib.query_analysis.validation.validators.presto_explain_validator import (
     PrestoExplainValidator,
 )
-
-UNION_ALL_SUGGESTION = "UNION ALL"
-APPROX_DISTINCT_SUGGESTION = "APPROX_DISTINCT("
-
-UNION_ALL_MESSAGE = "Using UNION ALL instead of UNION will execute faster"
-REGEXP_LIKE_MESSAGE = (
-    "Combining multiple LIKEs into one REGEXP_LIKE will execute faster"
-)
-APPROX_DISTINCT_MESSAGE = (
-    "Using APPROX_DISTINCT(x) instead of COUNT(DISTINCT x) will execute faster"
+from lib.query_analysis.validation.validators.base_sqlglot_validator import (
+    BaseSQLGlotValidator,
 )
 
 
-def _get_query_coordinate_by_index(query: str, index: int) -> Tuple[int, int]:
-    rows = query[: index + 1].splitlines(keepends=False)
-    return len(rows) - 1, len(rows[-1]) - 1
-
-
-def _tokenize_query(query: str) -> List[Token]:
-    return Trino.Tokenizer().tokenize(query)
-
-
-class BaseSQLGlotValidator(metaclass=ABCMeta):
+class BasePrestoSQLGlotValidator(BaseSQLGlotValidator):
     @property
-    @abstractmethod
-    def message(self) -> str:
-        raise NotImplementedError()
-
-    @property
-    @abstractmethod
-    def severity(self) -> QueryValidationSeverity:
-        raise NotImplementedError()
-
-    def _get_query_validation_result(
-        self,
-        query: str,
-        start_index: int,
-        end_index: int,
-        suggestion: str = None,
-        validation_result_object_type=QueryValidationResultObjectType.SUGGESTION,
-    ):
-        start_line, start_ch = _get_query_coordinate_by_index(query, start_index)
-        end_line, end_ch = _get_query_coordinate_by_index(query, end_index)
-
-        return QueryValidationResult(
-            start_line,
-            start_ch,
-            self.severity,
-            self.message,
-            validation_result_object_type,
-            end_line=end_line,
-            end_ch=end_ch,
-            suggestion=suggestion,
-        )
-
-    @abstractmethod
-    def get_query_validation_results(
-        self, query: str, raw_tokens: List[Token] = None
-    ) -> List[QueryValidationResult]:
-        raise NotImplementedError()
+    def tokenizer(self) -> Tokenizer:
+        return Trino.Tokenizer()
 
 
-class UnionAllValidator(BaseSQLGlotValidator):
+class UnionAllValidator(BasePrestoSQLGlotValidator):
     @property
     def message(self):
-        return UNION_ALL_MESSAGE
+        return "Using UNION ALL instead of UNION will execute faster"
 
     @property
     def severity(self) -> str:
@@ -87,7 +34,7 @@ class UnionAllValidator(BaseSQLGlotValidator):
         self, query: str, raw_tokens: List[Token] = None
     ) -> List[QueryValidationResult]:
         if raw_tokens is None:
-            raw_tokens = _tokenize_query(query)
+            raw_tokens = self._tokenize_query(query)
         validation_errors = []
         for i, token in enumerate(raw_tokens):
             if token.token_type == TokenType.UNION:
@@ -97,16 +44,18 @@ class UnionAllValidator(BaseSQLGlotValidator):
                 ):
                     validation_errors.append(
                         self._get_query_validation_result(
-                            query, token.start, token.end, UNION_ALL_SUGGESTION
+                            query, token.start, token.end, "UNION ALL"
                         )
                     )
         return validation_errors
 
 
-class ApproxDistinctValidator(BaseSQLGlotValidator):
+class ApproxDistinctValidator(BasePrestoSQLGlotValidator):
     @property
     def message(self):
-        return APPROX_DISTINCT_MESSAGE
+        return (
+            "Using APPROX_DISTINCT(x) instead of COUNT(DISTINCT x) will execute faster"
+        )
 
     @property
     def severity(self) -> str:
@@ -116,7 +65,7 @@ class ApproxDistinctValidator(BaseSQLGlotValidator):
         self, query: str, raw_tokens: List[Token] = None
     ) -> List[QueryValidationResult]:
         if raw_tokens is None:
-            raw_tokens = _tokenize_query(query)
+            raw_tokens = self._tokenize_query(query)
 
         validation_errors = []
         for i, token in enumerate(raw_tokens):
@@ -132,16 +81,16 @@ class ApproxDistinctValidator(BaseSQLGlotValidator):
                         query,
                         token.start,
                         raw_tokens[i + 2].end,
-                        APPROX_DISTINCT_SUGGESTION,
+                        "APPROX_DISTINCT(",
                     )
                 )
         return validation_errors
 
 
-class RegexpLikeValidator(BaseSQLGlotValidator):
+class RegexpLikeValidator(BasePrestoSQLGlotValidator):
     @property
     def message(self):
-        return REGEXP_LIKE_MESSAGE
+        return "Combining multiple LIKEs into one REGEXP_LIKE will execute faster"
 
     @property
     def severity(self) -> str:
@@ -157,7 +106,7 @@ class RegexpLikeValidator(BaseSQLGlotValidator):
         self, query: str, raw_tokens: List[Token] = None
     ) -> List[QueryValidationResult]:
         if raw_tokens is None:
-            raw_tokens = _tokenize_query(query)
+            raw_tokens = self._tokenize_query(query)
 
         validation_errors = []
 
@@ -235,8 +184,10 @@ class PrestoOptimizingValidator(PrestoExplainValidator):
     def _get_validation_suggestions(self, query: str) -> List[QueryValidationResult]:
         validation_suggestions = []
 
-        query_raw_tokens = _tokenize_query(query)
+        query_raw_tokens = None
         for validator in self._get_sqlglot_validators():
+            if query_raw_tokens is None:
+                query_raw_tokens = validator._tokenize_query(query)
             validation_suggestions.extend(
                 validator.get_query_validation_results(
                     query, raw_tokens=query_raw_tokens
