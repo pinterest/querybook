@@ -65,8 +65,13 @@ function useValidateQuery(
                 );
                 if (token) {
                     return {
-                        from: queryPositions[token.line] + token.start,
-                        to: queryPositions[token.line] + token.end,
+                        from: queryPositions[error.start_line] + error.start_ch,
+                        to:
+                            error.end_line && error.end_ch
+                                ? queryPositions[error.end_line] +
+                                  error.end_ch +
+                                  1
+                                : queryPositions[token.line] + token.end,
                         className: 'code-highlight-red',
                     };
                 }

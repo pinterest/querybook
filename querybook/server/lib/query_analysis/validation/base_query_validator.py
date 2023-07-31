@@ -10,7 +10,6 @@ from lib.query_analysis.templating import (
 class QueryValidationResultObjectType(Enum):
     LINT = "lint"
     GENERAL = "general"
-    SUGGESTION = "SUGGESTION"
 
 
 class QueryValidationSeverity(Enum):

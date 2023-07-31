@@ -39,7 +39,7 @@ class BaseSQLGlotValidator(metaclass=ABCMeta):
         start_index: int,
         end_index: int,
         suggestion: str = None,
-        validation_result_object_type=QueryValidationResultObjectType.SUGGESTION,
+        validation_result_object_type=QueryValidationResultObjectType.LINT,
     ):
         start_line, start_ch = self._get_query_coordinate_by_index(query, start_index)
         end_line, end_ch = self._get_query_coordinate_by_index(query, end_index)
