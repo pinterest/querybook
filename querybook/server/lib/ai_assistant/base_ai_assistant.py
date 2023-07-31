@@ -94,7 +94,7 @@ class BaseAIAssistant(ABC):
 
         return str(error.args[0])
 
-    def _filter_column(self, column: DataTableColumn) -> bool:
+    def _should_skip_column(self, column: DataTableColumn) -> bool:
         """Override this method to filter out columns that are not needed."""
         return False
 
@@ -140,7 +140,7 @@ class BaseAIAssistant(ABC):
             prompt += f"Description: {table_description}\n"
             prompt += "Columns:\n"
             for column in table.columns:
-                if self._filter_column(column):
+                if self._should_skip_column(column):
                     continue
 
                 prompt += f"- Column Name: {column.name}\n"
@@ -151,6 +151,7 @@ class BaseAIAssistant(ABC):
                     # use data element's description when column's description is empty
                     # TODO: only handling the REF data element for now. Need to handle ARRAY, MAP and etc in the future.
                     prompt += f"  Description: {column.data_elements[0].description}\n"
+                    prompt += f"  Data Element: {column.data_elements[0].name}\n"
 
             prompt += "\n"
 
