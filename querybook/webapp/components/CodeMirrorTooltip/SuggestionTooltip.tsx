@@ -4,7 +4,6 @@ import { Button } from 'ui/Button/Button';
 interface IProps {
     suggestionText: string;
     onAcceptSuggestion: () => void;
-    onCancel: () => void;
 }
 
 const SUGGESTION_MAX_LENGTH = 20;
@@ -12,11 +11,10 @@ const SUGGESTION_MAX_LENGTH = 20;
 export const SuggestionTooltip: React.FunctionComponent<IProps> = ({
     suggestionText,
     onAcceptSuggestion,
-    onCancel,
 }) => {
     const truncatedSuggestion =
         suggestionText.length > SUGGESTION_MAX_LENGTH
-            ? suggestionText.slice(0, 20) + '...'
+            ? suggestionText.slice(0, SUGGESTION_MAX_LENGTH) + '...'
             : suggestionText;
 
     return (
@@ -31,13 +29,6 @@ export const SuggestionTooltip: React.FunctionComponent<IProps> = ({
                     theme="fill"
                     color="confirm"
                     icon="Check"
-                />
-                <Button
-                    title="Cancel"
-                    onClick={onCancel}
-                    theme="fill"
-                    color="cancel"
-                    icon="X"
                 />
             </div>
         </div>

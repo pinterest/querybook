@@ -97,7 +97,6 @@ export const CodeMirrorTooltip: React.FunctionComponent<
             <SuggestionTooltip
                 suggestionText={suggestionText}
                 onAcceptSuggestion={onAcceptSuggestion}
-                onCancel={hide}
             />
         );
     }

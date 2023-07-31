@@ -457,21 +457,13 @@ export const QueryEditor: React.FC<
                         const suggestionAnnotation =
                             getSuggestionByPosition(pos);
                         if (suggestionAnnotation != null) {
-                            markTextAndShowTooltip(
-                                editor,
-                                suggestionAnnotation.from,
-                                suggestionAnnotation.to,
-                                {
-                                    onAcceptSuggestion: () =>
-                                        editor.replaceRange(
-                                            suggestionAnnotation.suggestion,
-                                            suggestionAnnotation.from,
-                                            suggestionAnnotation.to
-                                        ),
-                                    suggestionText:
-                                        suggestionAnnotation.suggestion,
-                                }
-                            );
+                            const { suggestion, from, to } =
+                                suggestionAnnotation;
+                            markTextAndShowTooltip(editor, from, to, {
+                                onAcceptSuggestion: () =>
+                                    editor.replaceRange(suggestion, from, to),
+                                suggestionText: suggestion,
+                            });
                         }
                     }
                 }, 100),
@@ -480,7 +472,10 @@ export const QueryEditor: React.FC<
 
         const onTextHover = useCallback(
             async (editor: CodeMirror.Editor, node, e, pos, token) => {
+                // Debounce asynchronous checks with a longer delay (e.g. for requesting table metadata)
                 onTextHoverLongDebounce(editor, node, e, pos, token);
+
+                // Faster checks use a shorter delay
                 onTextHoverShortDebounce(editor, node, e, pos, token);
             },
             [onTextHoverLongDebounce, onTextHoverShortDebounce]
