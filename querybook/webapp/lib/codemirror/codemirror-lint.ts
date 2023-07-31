@@ -17,7 +17,13 @@ export function createSQLLinter(
             );
 
         return validationResults.map((validationError) => {
-            const { type, line, ch, severity, message } = validationError;
+            const {
+                type,
+                start_line: line,
+                start_ch: ch,
+                severity,
+                message,
+            } = validationError;
 
             const errorToken = cm.getTokenAt({
                 line,

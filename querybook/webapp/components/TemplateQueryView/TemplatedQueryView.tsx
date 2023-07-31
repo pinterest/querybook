@@ -60,7 +60,8 @@ function useValidateQuery(
             .map((error) => {
                 const token = tokens.find(
                     (token) =>
-                        token.line === error.line && token.start === error.ch
+                        token.line === error.start_line &&
+                        token.start === error.start_ch
                 );
                 if (token) {
                     return {
@@ -145,7 +146,8 @@ export const TemplatedQueryView: React.FC<ITemplatedQueryViewProps> = ({
 
             const errorsDOM = queryValidationErrors.map((err, i) => (
                 <p key={i}>
-                    Line: {err.line} Ch: {err.ch}, Message: {err.message}
+                    Line: {err.start_line} Ch: {err.start_ch}, Message:{' '}
+                    {err.message}
                 </p>
             ));
 

@@ -10,6 +10,7 @@ from lib.query_analysis.templating import (
 class QueryValidationResultObjectType(Enum):
     LINT = "lint"
     GENERAL = "general"
+    SUGGESTION = "SUGGESTION"
 
 
 class QueryValidationSeverity(Enum):
@@ -21,25 +22,34 @@ class QueryValidationSeverity(Enum):
 class QueryValidationResult(object):
     def __init__(
         self,
-        line: int,  # 0 based
-        ch: int,  # location of the starting token
+        start_line: int,  # 0 based
+        start_ch: int,  # location of the starting token
         severity: QueryValidationSeverity,
         message: str,
         obj_type: QueryValidationResultObjectType = QueryValidationResultObjectType.LINT,
+        end_line: int = None,  # 0 based
+        end_ch: int = None,  # location of the ending token
+        suggestion: str = None,
     ):
         self.type = obj_type
-        self.line = line
-        self.ch = ch
+        self.start_line = start_line
+        self.start_ch = start_ch
+        self.end_line = end_line
+        self.end_ch = end_ch
         self.severity = severity
         self.message = message
+        self.suggestion = suggestion
 
     def to_dict(self):
         return {
             "type": self.type.value,
-            "line": self.line,
-            "ch": self.ch,
+            "start_line": self.start_line,
+            "start_ch": self.start_ch,
+            "end_line": self.end_line,
+            "end_ch": self.end_ch,
             "severity": self.severity.value,
             "message": self.message,
+            "suggestion": self.suggestion,
         }
 
 
