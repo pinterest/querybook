@@ -13,6 +13,7 @@ from lib.query_analysis.lineage import process_query
 from logic import admin as admin_logic
 from logic import metastore as m_logic
 from models.query_execution import QueryExecution
+from models.metastore import DataTableColumn
 
 LOG = get_logger(__file__)
 
@@ -93,6 +94,10 @@ class BaseAIAssistant(ABC):
 
         return str(error.args[0])
 
+    def _should_skip_column(self, column: DataTableColumn) -> bool:
+        """Override this method to filter out columns that are not needed."""
+        return False
+
     @with_session
     def _generate_table_schema_prompt(
         self, metastore_id, table_names: list[str], session=None
@@ -135,9 +140,18 @@ class BaseAIAssistant(ABC):
             prompt += f"Description: {table_description}\n"
             prompt += "Columns:\n"
             for column in table.columns:
+                if self._should_skip_column(column):
+                    continue
+
                 prompt += f"- Column Name: {column.name}\n"
                 prompt += f"  Data Type: {column.type}\n"
-                prompt += f"  Description: {column.description}\n"
+                if column.description:
+                    prompt += f"  Description: {column.description}\n"
+                elif column.data_elements:
+                    # use data element's description when column's description is empty
+                    # TODO: only handling the REF data element for now. Need to handle ARRAY, MAP and etc in the future.
+                    prompt += f"  Description: {column.data_elements[0].description}\n"
+                    prompt += f"  Data Element: {column.data_elements[0].name}\n"
 
             prompt += "\n"
 
