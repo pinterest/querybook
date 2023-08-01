@@ -29,12 +29,7 @@ import {
     ExcludedTriggerKeys,
 } from 'lib/sql-helper/sql-autocompleter';
 import { format, ISQLFormatOptions } from 'lib/sql-helper/sql-formatter';
-import {
-    ILinterWarning,
-    IRange,
-    IToken,
-    TableToken,
-} from 'lib/sql-helper/sql-lexer';
+import { ILinterWarning, IRange, TableToken } from 'lib/sql-helper/sql-lexer';
 import { formatNumber } from 'lib/utils/number';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { IconButton } from 'ui/Button/IconButton';
@@ -168,6 +163,14 @@ export const QueryEditor: React.FC<
             return list.length > 0 ? list[0] : null;
         }, [queryAnnotations]);
 
+        const annotationSuggestions: ILinterWarning[] = useMemo(
+            () =>
+                queryAnnotations.filter(
+                    (annotation) => annotation.suggestion != null
+                ),
+            [queryAnnotations]
+        );
+
         const openTableModal = useCallback((tableId: number) => {
             navigateWithinEnv(`/table/${tableId}/`, {
                 isModal: true,
@@ -233,6 +236,26 @@ export const QueryEditor: React.FC<
             [getTableByName, codeAnalysisRef]
         );
 
+        const getSuggestionByPosition = useCallback(
+            (pos: CodeMirror.Position) => {
+                const currLine = pos.line;
+                const currCh = pos.ch;
+
+                for (const suggestion of annotationSuggestions) {
+                    if (
+                        suggestion.from.line <= currLine &&
+                        suggestion.to.line >= currLine &&
+                        suggestion.from.ch <= currCh &&
+                        suggestion.to.ch >= currCh
+                    ) {
+                        return suggestion;
+                    }
+                }
+                return null;
+            },
+            [annotationSuggestions]
+        );
+
         const onOpenTableModal = useCallback(
             (editor: CodeMirror.Editor) => {
                 const pos = editor.getDoc().getCursor();
@@ -290,13 +313,10 @@ export const QueryEditor: React.FC<
 
         const markTextAndShowTooltip = (
             editor: CodeMirror.Editor,
-            pos: CodeMirror.Position,
-            token: IToken,
+            markTextFrom: CodeMirror.Position,
+            markTextTo: CodeMirror.Position,
             tooltipProps: Omit<ICodeMirrorTooltipProps, 'hide'>
         ) => {
-            const markTextFrom = { line: pos.line, ch: token.start };
-            const markTextTo = { line: pos.line, ch: token.end };
-
             markerRef.current = editor
                 .getDoc()
                 .markText(markTextFrom, markTextTo, {
@@ -358,7 +378,7 @@ export const QueryEditor: React.FC<
             [language, functionDocumentationByNameByLanguage]
         );
 
-        const onTextHover = useMemo(
+        const onTextHoverLongDebounce = useMemo(
             () =>
                 debounce(
                     async (editor: CodeMirror.Editor, node, e, pos, token) => {
@@ -371,19 +391,36 @@ export const QueryEditor: React.FC<
                                 pos,
                                 token
                             );
-
+                            const markTextFrom = {
+                                line: pos.line,
+                                ch: token.start,
+                            };
+                            const markTextTo = {
+                                line: pos.line,
+                                ch: token.end,
+                            };
                             if (tokenInsideTable) {
                                 const { tableInfo } = tokenInsideTable;
                                 if (tableInfo) {
-                                    markTextAndShowTooltip(editor, pos, token, {
-                                        tableId: tableInfo.id,
-                                        openTableModal: () =>
-                                            openTableModal(tableInfo.id),
-                                    });
+                                    markTextAndShowTooltip(
+                                        editor,
+                                        markTextFrom,
+                                        markTextTo,
+                                        {
+                                            tableId: tableInfo.id,
+                                            openTableModal: () =>
+                                                openTableModal(tableInfo.id),
+                                        }
+                                    );
                                 } else {
-                                    markTextAndShowTooltip(editor, pos, token, {
-                                        error: 'Table does not exist!',
-                                    });
+                                    markTextAndShowTooltip(
+                                        editor,
+                                        markTextFrom,
+                                        markTextTo,
+                                        {
+                                            error: 'Table does not exist!',
+                                        }
+                                    );
                                 }
                             }
 
@@ -396,9 +433,14 @@ export const QueryEditor: React.FC<
                                     token.string
                                 );
                                 if (functionDef) {
-                                    markTextAndShowTooltip(editor, pos, token, {
-                                        functionDocumentations: functionDef,
-                                    });
+                                    markTextAndShowTooltip(
+                                        editor,
+                                        markTextFrom,
+                                        markTextTo,
+                                        {
+                                            functionDocumentations: functionDef,
+                                        }
+                                    );
                                 }
                             }
                         }
@@ -406,6 +448,37 @@ export const QueryEditor: React.FC<
                     600
                 ),
             [isTokenInTable, matchFunctionWithDefinition, openTableModal]
+        );
+
+        const onTextHoverShortDebounce = useMemo(
+            () =>
+                debounce((editor: CodeMirror.Editor, node, e, pos, _token) => {
+                    if (markerRef.current == null) {
+                        const suggestionAnnotation =
+                            getSuggestionByPosition(pos);
+                        if (suggestionAnnotation != null) {
+                            const { suggestion, from, to } =
+                                suggestionAnnotation;
+                            markTextAndShowTooltip(editor, from, to, {
+                                onAcceptSuggestion: () =>
+                                    editor.replaceRange(suggestion, from, to),
+                                suggestionText: suggestion,
+                            });
+                        }
+                    }
+                }, 100),
+            [getSuggestionByPosition]
+        );
+
+        const onTextHover = useCallback(
+            async (editor: CodeMirror.Editor, node, e, pos, token) => {
+                // Debounce asynchronous checks with a longer delay (e.g. for requesting table metadata)
+                onTextHoverLongDebounce(editor, node, e, pos, token);
+
+                // Faster checks use a shorter delay
+                onTextHoverShortDebounce(editor, node, e, pos, token);
+            },
+            [onTextHoverLongDebounce, onTextHoverShortDebounce]
         );
 
         const showAutoCompletion = useMemo(

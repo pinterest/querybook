@@ -9,6 +9,7 @@ import { IStoreState } from 'redux/store/types';
 
 import { FunctionDocumentationTooltip } from './FunctionDocumentationTooltip';
 import { TableTooltip } from './TableTooltip';
+import { SuggestionTooltip } from './SuggestionTooltip';
 
 import './CodeMirrorTooltip.scss';
 
@@ -16,14 +17,24 @@ export interface ICodeMirrorTooltipProps {
     tableId?: number;
     functionDocumentations?: IFunctionDescription[];
     error?: React.ReactChild;
+    suggestionText?: string;
 
     openTableModal?: () => any;
+    onAcceptSuggestion?: () => void;
     hide: () => any;
 }
 
 export const CodeMirrorTooltip: React.FunctionComponent<
     ICodeMirrorTooltipProps
-> = ({ tableId, hide, functionDocumentations, error, openTableModal }) => {
+> = ({
+    tableId,
+    hide,
+    functionDocumentations,
+    error,
+    openTableModal,
+    suggestionText,
+    onAcceptSuggestion,
+}) => {
     const { table, schema, columns } = useShallowSelector(
         (state: IStoreState) => {
             const tableFromState = state.dataSources.dataTablesById[tableId];
@@ -80,6 +91,13 @@ export const CodeMirrorTooltip: React.FunctionComponent<
                 <h3>Error</h3>
                 <div>{error}</div>
             </div>
+        );
+    } else if (suggestionText && onAcceptSuggestion) {
+        contentDOM = (
+            <SuggestionTooltip
+                suggestionText={suggestionText}
+                onAcceptSuggestion={onAcceptSuggestion}
+            />
         );
     }
 
