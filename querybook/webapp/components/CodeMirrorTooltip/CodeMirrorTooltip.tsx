@@ -20,7 +20,7 @@ export interface ICodeMirrorTooltipProps {
     suggestionText?: string;
 
     openTableModal?: () => any;
-    onAcceptSuggestion?: () => void;
+    onAcceptSuggestion?: (suggestion: string) => void;
     hide: () => any;
 }
 

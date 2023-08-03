@@ -22,6 +22,7 @@ import {
 import { useAutoComplete } from 'hooks/queryEditor/useAutoComplete';
 import { useCodeAnalysis } from 'hooks/queryEditor/useCodeAnalysis';
 import { useLint } from 'hooks/queryEditor/useLint';
+import { useDebouncedFn } from 'hooks/useDebouncedFn';
 import CodeMirror, { CodeMirrorKeyMap } from 'lib/codemirror';
 import { SQL_JINJA_MODE } from 'lib/codemirror/codemirror-mode';
 import {
@@ -378,95 +379,87 @@ export const QueryEditor: React.FC<
             [language, functionDocumentationByNameByLanguage]
         );
 
-        const onTextHoverLongDebounce = useMemo(
-            () =>
-                debounce(
-                    async (editor: CodeMirror.Editor, node, e, pos, token) => {
-                        if (
-                            markerRef.current == null &&
-                            (token.type === 'variable-2' || token.type == null)
-                        ) {
-                            // Check if token is inside a table
-                            const tokenInsideTable = await isTokenInTable(
-                                pos,
-                                token
+        const onTextHoverLongDebounce = useDebouncedFn(
+            async (editor: CodeMirror.Editor, node, e, pos, token) => {
+                if (
+                    markerRef.current == null &&
+                    (token.type === 'variable-2' || token.type == null)
+                ) {
+                    // Check if token is inside a table
+                    const tokenInsideTable = await isTokenInTable(pos, token);
+                    const markTextFrom = {
+                        line: pos.line,
+                        ch: token.start,
+                    };
+                    const markTextTo = {
+                        line: pos.line,
+                        ch: token.end,
+                    };
+                    if (tokenInsideTable) {
+                        const { tableInfo } = tokenInsideTable;
+                        if (tableInfo) {
+                            markTextAndShowTooltip(
+                                editor,
+                                markTextFrom,
+                                markTextTo,
+                                {
+                                    tableId: tableInfo.id,
+                                    openTableModal: () =>
+                                        openTableModal(tableInfo.id),
+                                }
                             );
-                            const markTextFrom = {
-                                line: pos.line,
-                                ch: token.start,
-                            };
-                            const markTextTo = {
-                                line: pos.line,
-                                ch: token.end,
-                            };
-                            if (tokenInsideTable) {
-                                const { tableInfo } = tokenInsideTable;
-                                if (tableInfo) {
-                                    markTextAndShowTooltip(
-                                        editor,
-                                        markTextFrom,
-                                        markTextTo,
-                                        {
-                                            tableId: tableInfo.id,
-                                            openTableModal: () =>
-                                                openTableModal(tableInfo.id),
-                                        }
-                                    );
-                                } else {
-                                    markTextAndShowTooltip(
-                                        editor,
-                                        markTextFrom,
-                                        markTextTo,
-                                        {
-                                            error: 'Table does not exist!',
-                                        }
-                                    );
+                        } else {
+                            markTextAndShowTooltip(
+                                editor,
+                                markTextFrom,
+                                markTextTo,
+                                {
+                                    error: 'Table does not exist!',
                                 }
-                            }
-
-                            const nextChar = editor.getDoc().getLine(pos.line)[
-                                token.end
-                            ];
-                            if (nextChar === '(') {
-                                // if it seems like a function call
-                                const functionDef = matchFunctionWithDefinition(
-                                    token.string
-                                );
-                                if (functionDef) {
-                                    markTextAndShowTooltip(
-                                        editor,
-                                        markTextFrom,
-                                        markTextTo,
-                                        {
-                                            functionDocumentations: functionDef,
-                                        }
-                                    );
-                                }
-                            }
+                            );
                         }
-                    },
-                    600
-                ),
+                    }
+
+                    const nextChar = editor.getDoc().getLine(pos.line)[
+                        token.end
+                    ];
+                    if (nextChar === '(') {
+                        // if it seems like a function call
+                        const functionDef = matchFunctionWithDefinition(
+                            token.string
+                        );
+                        if (functionDef) {
+                            markTextAndShowTooltip(
+                                editor,
+                                markTextFrom,
+                                markTextTo,
+                                {
+                                    functionDocumentations: functionDef,
+                                }
+                            );
+                        }
+                    }
+                }
+            },
+            600,
             [isTokenInTable, matchFunctionWithDefinition, openTableModal]
         );
 
-        const onTextHoverShortDebounce = useMemo(
-            () =>
-                debounce((editor: CodeMirror.Editor, node, e, pos, _token) => {
-                    if (markerRef.current == null) {
-                        const suggestionAnnotation =
-                            getSuggestionByPosition(pos);
-                        if (suggestionAnnotation != null) {
-                            const { suggestion, from, to } =
-                                suggestionAnnotation;
-                            markTextAndShowTooltip(editor, from, to, {
-                                onAcceptSuggestion: () =>
-                                    editor.replaceRange(suggestion, from, to),
-                                suggestionText: suggestion,
-                            });
-                        }
+        const onTextHoverShortDebounce = useDebouncedFn(
+            (editor: CodeMirror.Editor, node, e, pos, _token) => {
+                if (markerRef.current == null) {
+                    const suggestionAnnotation = getSuggestionByPosition(pos);
+                    if (suggestionAnnotation != null) {
+                        const { suggestion, from, to } = suggestionAnnotation;
+                        markTextAndShowTooltip(editor, from, to, {
+                            onAcceptSuggestion: (suggestion: string) =>
+                                editor.replaceRange(suggestion, from, to),
+                            suggestionText: suggestion,
+                        });
                     }
-                }, 100),
+                }
+            },
+            100,
             [getSuggestionByPosition]
         );
 

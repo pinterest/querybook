@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Button } from 'ui/Button/Button';
 
 interface IProps {
     suggestionText: string;
-    onAcceptSuggestion: () => void;
+    onAcceptSuggestion: (suggestion: string) => void;
 }
 
 const SUGGESTION_MAX_LENGTH = 20;
@@ -12,10 +12,17 @@ export const SuggestionTooltip: React.FunctionComponent<IProps> = ({
     suggestionText,
     onAcceptSuggestion,
 }) => {
-    const truncatedSuggestion =
-        suggestionText.length > SUGGESTION_MAX_LENGTH
-            ? suggestionText.slice(0, SUGGESTION_MAX_LENGTH) + '...'
-            : suggestionText;
+    const truncatedSuggestion = useMemo(
+        () =>
+            suggestionText.length > SUGGESTION_MAX_LENGTH
+                ? suggestionText.slice(0, SUGGESTION_MAX_LENGTH - 3) + '...'
+                : suggestionText,
+        [suggestionText]
+    );
+
+    const onClick = useCallback(() => {
+        onAcceptSuggestion(suggestionText);
+    }, [onAcceptSuggestion, suggestionText]);
 
     return (
         <div className="rich-text-content">
@@ -25,7 +32,7 @@ export const SuggestionTooltip: React.FunctionComponent<IProps> = ({
             <div className="mt8 right-align">
                 <Button
                     title="Accept"
-                    onClick={onAcceptSuggestion}
+                    onClick={onClick}
                     theme="fill"
                     color="confirm"
                     icon="Check"
