@@ -7,6 +7,9 @@ slug: /changelog
 
 Here are the list of breaking changes that you should be aware of when updating Querybook:
 
+## v3.27.0
+Updated properties of `QueryValidationResult` object. `line` and `ch` are replaced with `start_line` and `start_ch` respectively.
+
 ## v3.22.0
 
 Updated the charset of table `data_element` to `utf8mb4`. For those mysql db's default charset is not utf8, please run below sql to update it if needed.
