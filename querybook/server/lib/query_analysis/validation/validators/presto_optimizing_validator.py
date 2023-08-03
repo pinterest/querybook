@@ -4,6 +4,7 @@ from sqlglot.dialects import Trino
 from sqlglot.tokens import Token
 
 from lib.query_analysis.validation.base_query_validator import (
+    BaseQueryValidator,
     QueryValidationResult,
     QueryValidationSeverity,
 )
@@ -173,7 +174,13 @@ class RegexpLikeValidator(BasePrestoSQLGlotValidator):
         return validation_errors
 
 
-class PrestoOptimizingValidator(PrestoExplainValidator):
+class PrestoOptimizingValidator(BaseQueryValidator):
+    def languages(self):
+        return ["presto", "trino"]
+
+    def _get_explain_validator(self):
+        return PrestoExplainValidator("")
+
     def _get_sqlglot_validators(self) -> List[BaseSQLGlotValidator]:
         return [
             UnionAllValidator(),
@@ -181,7 +188,9 @@ class PrestoOptimizingValidator(PrestoExplainValidator):
             RegexpLikeValidator(),
         ]
 
-    def _get_validation_suggestions(self, query: str) -> List[QueryValidationResult]:
+    def _get_sql_glot_validation_results(
+        self, query: str
+    ) -> List[QueryValidationResult]:
         validation_suggestions = []
 
         query_raw_tokens = None
@@ -196,16 +205,19 @@ class PrestoOptimizingValidator(PrestoExplainValidator):
 
         return validation_suggestions
 
+    def _get_presto_explain_validation_results(
+        self, query: str, uid: int, engine_id: int
+    ) -> List[QueryValidationResult]:
+        return self._get_explain_validator().validate(query, uid, engine_id)
+
     def validate(
         self,
         query: str,
         uid: int,
         engine_id: int,
     ) -> List[QueryValidationResult]:
-        presto_explain_validation_errors = super(
-            PrestoOptimizingValidator, self
-        ).validate(query, uid, engine_id)
-        validation_results = (
-            presto_explain_validation_errors + self._get_validation_suggestions(query)
-        )
+        validation_results = [
+            *self._get_presto_explain_validation_results(query, uid, engine_id),
+            *self._get_sql_glot_validation_results(query),
+        ]
         return validation_results
