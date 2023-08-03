@@ -243,7 +243,7 @@ class PrestoOptimizingValidatorTestCase(BaseValidatorTestCase):
     def test_union_and_count_distinct(self):
         query = "SELECT \nCOUNT( DISTINCT x) from a \nUNION select \ncount(distinct y) from b"
         self._verify_query_validation_results(
-            self._validator._get_validation_suggestions(query),
+            self._validator._get_sql_glot_validation_results(query),
             [
                 self._get_union_all_validation_result(2, 0, 2, 4),
                 self._get_approx_distinct_validation_result(1, 0, 1, 14),
@@ -254,7 +254,7 @@ class PrestoOptimizingValidatorTestCase(BaseValidatorTestCase):
     def test_union_and_regexp_like(self):
         query = "SELECT * from a WHERE \nx like 'foo' or x like \n'bar' \nUNION select * from b where y like 'foo' AND x like 'bar'"
         self._verify_query_validation_results(
-            self._validator._get_validation_suggestions(query),
+            self._validator._get_sql_glot_validation_results(query),
             [
                 self._get_union_all_validation_result(3, 0, 3, 4),
                 self._get_regexp_like_validation_result(
@@ -266,7 +266,7 @@ class PrestoOptimizingValidatorTestCase(BaseValidatorTestCase):
     def test_count_distinct_and_regexp_like(self):
         query = "SELECT \nCOUNT( DISTINCT x) from a WHERE \nx LIKE 'foo' or x like \n'bar' and y like 'foo'"
         self._verify_query_validation_results(
-            self._validator._get_validation_suggestions(query),
+            self._validator._get_sql_glot_validation_results(query),
             [
                 self._get_approx_distinct_validation_result(1, 0, 1, 14),
                 self._get_regexp_like_validation_result(
@@ -278,7 +278,7 @@ class PrestoOptimizingValidatorTestCase(BaseValidatorTestCase):
     def test_all_errors(self):
         query = "SELECT \nCOUNT( DISTINCT x) from a WHERE \nx LIKE 'foo' or x like \n'bar' and y like 'foo' \nUNION select * from b"
         self._verify_query_validation_results(
-            self._validator._get_validation_suggestions(query),
+            self._validator._get_sql_glot_validation_results(query),
             [
                 self._get_union_all_validation_result(4, 0, 4, 4),
                 self._get_approx_distinct_validation_result(1, 0, 1, 14),
@@ -291,7 +291,7 @@ class PrestoOptimizingValidatorTestCase(BaseValidatorTestCase):
     def test_extra_whitespace(self):
         query = "SELECT \n  COUNT( DISTINCT x) from a WHERE \n\t  x LIKE 'foo' or x like \n'bar' and y like 'foo' \n     UNION select * from b"
         self._verify_query_validation_results(
-            self._validator._get_validation_suggestions(query),
+            self._validator._get_sql_glot_validation_results(query),
             [
                 self._get_union_all_validation_result(4, 5, 4, 9),
                 self._get_approx_distinct_validation_result(1, 2, 1, 16),
