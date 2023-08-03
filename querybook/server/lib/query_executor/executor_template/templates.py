@@ -97,6 +97,7 @@ sqlalchemy_template = StructFormField(
 </p>""",
         ),
     ),
+    ("impersonate", FormField(field_type=FormFieldType.Boolean)),
     (
         "connect_args",
         ExpandableFormField(
