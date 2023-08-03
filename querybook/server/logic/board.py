@@ -1,5 +1,6 @@
 import datetime
 
+from sqlalchemy import or_
 from app.db import with_session
 from const.elasticsearch import ElasticsearchItem
 from models.board import Board, BoardItem, BoardEditor
