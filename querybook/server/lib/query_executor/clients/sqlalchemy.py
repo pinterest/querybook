@@ -1,4 +1,5 @@
 import sqlalchemy
+from sqlalchemy.engine import make_url
 
 from lib.query_executor.base_client import ClientBaseClass, CursorBaseClass
 from lib.query_executor.connection_string.sqlalchemy import create_sqlalchemy_engine
@@ -6,8 +7,19 @@ from lib.query_executor.connection_string.sqlalchemy import create_sqlalchemy_en
 
 class SqlAlchemyClient(ClientBaseClass):
     def __init__(
-        self, connection_string=None, connect_args=[], proxy_user=None, *args, **kwargs
+        self,
+        connection_string=None,
+        connect_args=[],
+        proxy_user=None,
+        impersonate=False,
+        *args,
+        **kwargs
     ):
+        if impersonate and proxy_user:
+            parsed_connection_url = make_url(connection_string)
+            new_connection_url = parsed_connection_url.set(username=proxy_user)
+            connection_string = str(new_connection_url)
+
         self._engine = create_sqlalchemy_engine(
             {
                 "connection_string": connection_string,
