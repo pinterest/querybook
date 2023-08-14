@@ -2,6 +2,7 @@ import React, { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import PublicConfig from 'config/querybook_public_config.yaml';
+import { AICommandType } from 'const/aiAssistant';
 import { ComponentType, ElementType } from 'const/analytics';
 import { StreamStatus, useStream } from 'hooks/useStream';
 import { trackClick } from 'lib/analytics';
@@ -38,7 +39,7 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
         query;
 
     const { streamStatus, startStream, streamData } = useStream(
-        '/ds/ai/query_title/',
+        AICommandType.SQL_TITLE,
         {
             data_cell_id: cellId,
         }

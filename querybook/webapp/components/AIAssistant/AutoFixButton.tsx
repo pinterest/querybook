@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import { QueryComparison } from 'components/TranspileQueryModal/QueryComparison';
+import { AICommandType } from 'const/aiAssistant';
 import { ComponentType, ElementType } from 'const/analytics';
 import { StreamStatus, useStream } from 'hooks/useStream';
 import { trackClick } from 'lib/analytics';
@@ -26,7 +27,7 @@ export const AutoFixButton = ({
     const [show, setShow] = useState(false);
 
     const { streamStatus, startStream, streamData, cancelStream } = useStream(
-        '/ds/ai/query_auto_fix/',
+        AICommandType.SQL_FIX,
         {
             query_execution_id: queryExecutionId,
         }

@@ -16,7 +16,6 @@ from . import tag
 from . import event_log
 from . import data_element
 from . import comment
-from . import ai_assistant
 
 # Keep this at the end of imports to make sure the plugin APIs override the default ones
 try:
@@ -43,5 +42,4 @@ tag
 event_log
 data_element
 comment
-ai_assistant
 api_plugin

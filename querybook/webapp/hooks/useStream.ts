@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 
+import { AICommandType } from 'const/aiAssistant';
 import ds from 'lib/datasource';
 
 export enum StreamStatus {
@@ -10,7 +11,7 @@ export enum StreamStatus {
 }
 
 export function useStream(
-    url: string,
+    commandType: AICommandType,
     params: Record<string, unknown> = {}
 ): {
     streamStatus: StreamStatus;
@@ -21,17 +22,17 @@ export function useStream(
 } {
     const [streamStatus, setSteamStatus] = useState(StreamStatus.NOT_STARTED);
     const [data, setData] = useState<{ [key: string]: string }>({});
-    const streamRef = useRef<EventSource | null>(null);
+    const streamRef = useRef<{ close: () => void } | null>(null);
 
     const startStream = useCallback(() => {
         setSteamStatus(StreamStatus.STREAMING);
         setData({});
 
-        streamRef.current = ds.stream(url, params, setData, (data) => {
+        streamRef.current = ds.stream(commandType, params, setData, (data) => {
             setData(data);
             setSteamStatus(StreamStatus.FINISHED);
         });
-    }, [url, params]);
+    }, [commandType, params]);
 
     const resetStream = useCallback(() => {
         setSteamStatus(StreamStatus.NOT_STARTED);

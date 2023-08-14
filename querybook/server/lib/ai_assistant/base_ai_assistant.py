@@ -1,66 +1,31 @@
-from abc import ABC, abstractmethod
 import functools
-import json
-import queue
+from abc import ABC, abstractmethod
 
-from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
+from flask_login import current_user
+from langchain.chains import LLMChain
+from langchain.memory import ConversationBufferMemory
 from pydantic.error_wrappers import ValidationError
 
 from app.db import with_session
+from app.flask_app import socketio
+from const.ai_assistant import AICommandType
+from clients.redis_client import with_redis
 from lib.logger import get_logger
-from logic import query_execution as qe_logic
 from lib.query_analysis.lineage import process_query
 from logic import admin as admin_logic
+from logic import datadoc as datadoc_logic
 from logic import metastore as m_logic
-from models.query_execution import QueryExecution
+from logic import query_execution as qe_logic
 from models.metastore import DataTableColumn
+from models.query_execution import QueryExecution
+
+from .prompts.sql_fix_prompt import PROMPT as SQL_FIX_PROMPT
+from .prompts.sql_title_prompt import PROMPT as SQL_TITLE_PROMPT
+from .prompts.text2sql_prompt import PROMPT as TEXT2SQL_PROMPT
+from .redis_chat_history_storage import RedisChatHistoryStorage
+from .web_socket_callback_handler import WebSocketStream, WebSocketCallbackHandler
 
 LOG = get_logger(__file__)
-
-
-class EventStream:
-    """Generator to facilitate streaming result from Langchain.
-    The stream format is based on Server-Sent Events (SSE)."""
-
-    def __init__(self):
-        self.queue = queue.Queue()
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        item = self.queue.get()
-        if item is StopIteration:
-            raise item
-        return item
-
-    def send(self, data: str):
-        self.queue.put("data: " + json.dumps({"data": data}) + "\n\n")
-
-    def close(self):
-        # the empty data is to make sure the client receives the close event
-        self.queue.put("event: close\ndata: \n\n")
-        self.queue.put(StopIteration)
-
-    def send_error(self, error: str):
-        self.queue.put("event: error\n")
-        data = json.dumps({"data": error})
-        self.queue.put(f"data: {data}\n\n")
-        self.close()
-
-
-class ChainStreamHandler(StreamingStdOutCallbackHandler):
-    """Callback handlder to stream the result to a generator."""
-
-    def __init__(self, stream: EventStream):
-        super().__init__()
-        self.stream = stream
-
-    def on_llm_new_token(self, token: str, **kwargs):
-        self.stream.send(token)
-
-    def on_llm_end(self, response, **kwargs):
-        self.stream.close()
 
 
 class BaseAIAssistant(ABC):
@@ -86,6 +51,48 @@ class BaseAIAssistant(ABC):
                     raise Exception(err_msg) from e
 
         return wrapper
+
+    @abstractmethod
+    def _get_llm(self, callback_handler: WebSocketCallbackHandler):
+        """return the language model to use"""
+
+    @with_redis
+    def _get_chat_memory(
+        self,
+        session_id,
+        memory_key="chat_history",
+        input_key="question",
+        ttl=600,
+        redis_conn=None,
+    ):
+        message_history_storage = RedisChatHistoryStorage(
+            redis_client=redis_conn, ttl=ttl, session_id=session_id
+        )
+
+        return ConversationBufferMemory(
+            memory_key=memory_key,
+            chat_memory=message_history_storage,
+            input_key=input_key,
+            return_messages=True,
+        )
+
+    def _get_sql_title_prompt(self):
+        """Override this method to return specific prompt for your own assistant."""
+        return SQL_TITLE_PROMPT
+
+    def _get_text2sql_prompt(self):
+        """Override this method to return specific prompt for your own assistant."""
+        return TEXT2SQL_PROMPT
+
+    def _get_sql_fix_prompt(self):
+        """Override this method to return specific prompt for your own assistant."""
+        return SQL_FIX_PROMPT
+
+    def _get_llm_chain(self, command_type, prompt, memory=None):
+        ws_stream = WebSocketStream(socketio, command_type)
+        callback_handler = WebSocketCallbackHandler(ws_stream)
+        llm = self._get_llm(callback_handler=callback_handler)
+        return LLMChain(llm=llm, prompt=prompt, memory=memory)
 
     def _get_error_msg(self, error) -> str:
         """Override this method to return specific error messages for your own assistant."""
@@ -167,6 +174,30 @@ class BaseAIAssistant(ABC):
 
         return error[:1000]
 
+    def handle_ai_command(self, command_type: str, payload: dict = {}):
+        data_cell_id = payload.get("data_cell_id")
+        data_cell = datadoc_logic.get_data_cell_by_id(data_cell_id)
+        query = data_cell.context if data_cell else None
+
+        if command_type == AICommandType.SQL_TITLE.value:
+            self.generate_title_from_query(query=query)
+        elif command_type == AICommandType.TEXT_TO_SQL.value:
+            query_engine_id = payload.get("query_engine_id")
+            tables = payload.get("tables")
+            question = payload.get("question")
+            self.generate_sql_query(
+                query_engine_id=query_engine_id,
+                tables=tables,
+                question=question,
+                original_query=query,
+                memory_session_id=f"{current_user.id}_{data_cell_id}",
+            )
+        elif command_type == AICommandType.SQL_FIX.value:
+            query_execution_id = payload.get("query_execution_id")
+            self.query_auto_fix(
+                query_execution_id=query_execution_id,
+            )
+
     @catch_error
     @with_session
     def generate_sql_query(
@@ -175,9 +206,7 @@ class BaseAIAssistant(ABC):
         tables: list[str],
         question: str,
         original_query: str = None,
-        stream=True,
-        callback_handler: ChainStreamHandler = None,
-        user_id=None,
+        memory_session_id=None,
         session=None,
     ):
         query_engine = admin_logic.get_query_engine_by_id(
@@ -186,36 +215,25 @@ class BaseAIAssistant(ABC):
         table_schemas = self._generate_table_schema_prompt(
             metastore_id=query_engine.metastore_id, table_names=tables, session=session
         )
-        return self._generate_sql_query(
-            language=query_engine.language,
-            table_schemas=table_schemas,
-            question=question,
-            original_query=original_query,
-            stream=stream,
-            callback_handler=callback_handler,
-            user_id=user_id,
-        )
 
-    @abstractmethod
-    def _generate_sql_query(
-        self,
-        language: str,
-        table_schemas: str,
-        question: str,
-        original_query: str = None,
-        stream=True,
-        callback_handler: ChainStreamHandler = None,
-        user_id=None,
-    ):
-        raise NotImplementedError()
+        prompt = self._get_text2sql_prompt()
+        memory = self._get_chat_memory(session_id=memory_session_id)
+        chain = self._get_llm_chain(
+            command_type=AICommandType.TEXT_TO_SQL.value,
+            prompt=prompt,
+            memory=memory,
+        )
+        return chain.run(
+            dialect=query_engine.language,
+            question=question,
+            table_schemas=table_schemas,
+            original_query=original_query,
+        )
 
     @catch_error
     def generate_title_from_query(
         self,
         query,
-        stream=True,
-        callback_handler: ChainStreamHandler = None,
-        user_id=None,
     ):
         """Generate title from SQL query.
 
@@ -224,39 +242,24 @@ class BaseAIAssistant(ABC):
             stream (bool, optional): Whether to stream the result. Defaults to True.
             callback_handler (CallbackHandler, optional): Callback handler to handle the straming result. Required if stream is True.
         """
-        return self._generate_title_from_query(
-            query=query,
-            stream=stream,
-            callback_handler=callback_handler,
-            user_id=user_id,
+        prompt = self._get_sql_title_prompt()
+        chain = self._get_llm_chain(
+            command_type=AICommandType.SQL_TITLE.value,
+            prompt=prompt,
         )
-
-    @abstractmethod
-    def _generate_title_from_query(
-        self,
-        query,
-        stream,
-        callback_handler,
-        user_id=None,
-    ):
-        raise NotImplementedError()
+        return chain.run(query=query)
 
     @catch_error
     @with_session
     def query_auto_fix(
         self,
         query_execution_id: int,
-        stream: bool = True,
-        callback_handler: ChainStreamHandler = None,
-        user_id: int = None,
         session=None,
     ):
         """Generate title from SQL query.
 
         Args:
             query_execution_id (int): The failed query execution id
-            stream (bool, optional): Whether to stream the result. Defaults to True.
-            callback_handler (CallbackHandler, optional): Callback handler to handle the straming result. Required if stream is True.
         """
         query_execution = qe_logic.get_query_execution_by_id(
             query_execution_id, session=session
@@ -276,25 +279,14 @@ class BaseAIAssistant(ABC):
             session=session,
         )
 
-        return self._query_auto_fix(
-            language=language,
+        prompt = self._get_sql_fix_prompt()
+        chain = self._get_llm_chain(
+            command_type=AICommandType.SQL_FIX.value,
+            prompt=prompt,
+        )
+        return chain.run(
+            dialect=language,
             query=query_execution.query,
             error=self._get_query_execution_error(query_execution),
             table_schemas=table_schemas,
-            stream=stream,
-            callback_handler=callback_handler,
-            user_id=user_id,
         )
-
-    @abstractmethod
-    def _query_auto_fix(
-        self,
-        language: str,
-        query: str,
-        error: str,
-        table_schemas: str,
-        stream: bool,
-        callback_handler: ChainStreamHandler,
-        user_id=None,
-    ):
-        raise NotImplementedError()

@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { QueryEngineSelector } from 'components/QueryRunButton/QueryRunButton';
 import { QueryComparison } from 'components/TranspileQueryModal/QueryComparison';
+import { AICommandType } from 'const/aiAssistant';
 import { ComponentType, ElementType } from 'const/analytics';
 import { IQueryEngine } from 'const/queryEngine';
 import { StreamStatus, useStream } from 'hooks/useStream';
@@ -12,7 +13,6 @@ import { trimSQLQuery } from 'lib/stream';
 import { matchKeyPress } from 'lib/utils/keyboard';
 import { analyzeCode } from 'lib/web-worker';
 import { Button } from 'ui/Button/Button';
-import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { Icon } from 'ui/Icon/Icon';
 import { Message } from 'ui/Message/Message';
 import { Modal } from 'ui/Modal/Modal';
@@ -78,7 +78,7 @@ export const QueryGenerationModal = ({
     }, [tablesInQuery]);
 
     const { streamStatus, startStream, streamData, cancelStream } = useStream(
-        '/ds/ai/generate_query/',
+        AICommandType.TEXT_TO_SQL,
         {
             query_engine_id: engineId,
             tables: tables,
@@ -88,7 +88,7 @@ export const QueryGenerationModal = ({
         }
     );
 
-    const { explanation, query: rawNewQuery } = streamData;
+    const { explanation, query: rawNewQuery, data } = streamData;
 
     const newQuery = trimSQLQuery(rawNewQuery);
 
@@ -258,8 +258,8 @@ export const QueryGenerationModal = ({
                 {tables.length > 0 && (
                     <>
                         {questionBarDOM}
-                        {explanation && (
-                            <div className="mt12">{explanation}</div>
+                        {(explanation || data) && (
+                            <div className="mt12">{explanation || data}</div>
                         )}
 
                         {(query || newQuery) && (
