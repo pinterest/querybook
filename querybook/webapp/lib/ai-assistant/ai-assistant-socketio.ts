@@ -13,13 +13,25 @@ class AIAssistantSocket {
     private socket: Socket = null;
     private socketPromise: Promise<Socket> = null;
 
-    constructor() {
+    public constructor() {
         this.setupSocket();
     }
 
     public onSocketConnect(socket: Socket) {
         socket.emit('subscribe');
     }
+
+    public requestAIAssistant = (command: AICommandType, payload: object) => {
+        this.socket.emit(AI_ASSISTANT_REQUEST_EVENT, command, payload);
+    };
+
+    public addAIListener = (listener) => {
+        this.socket.on(AI_ASSISTANT_RESPONSE_EVENT, listener);
+    };
+
+    public removeAIListener = (listener) => {
+        this.socket.off(AI_ASSISTANT_RESPONSE_EVENT, listener);
+    };
 
     private setupSocket = async () => {
         if (this.socket) {
@@ -43,18 +55,6 @@ class AIAssistantSocket {
         });
 
         return this.socket;
-    };
-
-    public requestAIAssistant = (command: AICommandType, payload: object) => {
-        this.socket.emit(AI_ASSISTANT_REQUEST_EVENT, command, payload);
-    };
-
-    public addAIListener = (listener) => {
-        this.socket.on(AI_ASSISTANT_RESPONSE_EVENT, listener);
-    };
-
-    public removeAIListener = (listener) => {
-        this.socket.off(AI_ASSISTANT_RESPONSE_EVENT, listener);
     };
 }
 
