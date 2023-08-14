@@ -130,8 +130,7 @@ function getQuerybookSidebarTourSteps() {
             ),
         },
         {
-            selector:
-                '.EntitySidebar .sidebar-footer [aria-label="Search Docs/Tables"]',
+            selector: '.EntitySidebar .apps-list .SearchContainer',
             content: (
                 <>
                     <p>This is the Advanced Search for DataDocs and Tables.</p>
@@ -145,7 +144,7 @@ function getQuerybookSidebarTourSteps() {
             ),
         },
         {
-            selector: '.EntitySidebar .sidebar-footer .UserMenu',
+            selector: '.EntitySidebar .apps-list .UserMenu',
             content: (
                 <>
                     <p>
@@ -161,7 +160,7 @@ function getQuerybookSidebarTourSteps() {
             ),
         },
         {
-            selector: '.EntitySidebar .sidebar-footer .QueryEngineStatusButton',
+            selector: '.EntitySidebar .apps-list .QueryEngineStatusButton',
             content: (
                 <>
                     <p>

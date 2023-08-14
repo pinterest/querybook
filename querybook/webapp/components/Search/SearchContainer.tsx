@@ -18,6 +18,7 @@ export const SearchContainer: React.FC = () => {
 
     return (
         <IconButton
+            className="SearchContainer"
             icon="Search"
             tooltipPos="right"
             tooltip="Search Queries, Docs, Tables, and Boards"
