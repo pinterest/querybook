@@ -39,7 +39,7 @@ human_message_template = (
     "{original_query}\n\n"
 )
 
-PROMPT = ChatPromptTemplate.from_messages(
+TEXT2SQL_PROMPT = ChatPromptTemplate.from_messages(
     [
         SystemMessagePromptTemplate.from_template(system_message_template),
         HumanMessagePromptTemplate.from_template(human_message_template),

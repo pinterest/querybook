@@ -21,7 +21,7 @@ human_message_template = (
     "This is a title\n"
 )
 
-PROMPT = ChatPromptTemplate.from_messages(
+SQL_TITLE_PROMPT = ChatPromptTemplate.from_messages(
     [
         SystemMessagePromptTemplate.from_template(system_message_template),
         HumanMessagePromptTemplate.from_template(human_message_template),

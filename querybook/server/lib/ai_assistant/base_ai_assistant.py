@@ -19,11 +19,14 @@ from logic import query_execution as qe_logic
 from models.metastore import DataTableColumn
 from models.query_execution import QueryExecution
 
-from .prompts.sql_fix_prompt import PROMPT as SQL_FIX_PROMPT
-from .prompts.sql_title_prompt import PROMPT as SQL_TITLE_PROMPT
-from .prompts.text2sql_prompt import PROMPT as TEXT2SQL_PROMPT
+from .prompts.sql_fix_prompt import SQL_FIX_PROMPT
+from .prompts.sql_title_prompt import SQL_TITLE_PROMPT
+from .prompts.text2sql_prompt import TEXT2SQL_PROMPT
 from .redis_chat_history_storage import RedisChatHistoryStorage
-from .web_socket_callback_handler import WebSocketStream, WebSocketCallbackHandler
+from .streaming_web_socket_callback_handler import (
+    WebSocketStream,
+    StreamingWebsocketCallbackHandler,
+)
 
 LOG = get_logger(__file__)
 
@@ -53,7 +56,7 @@ class BaseAIAssistant(ABC):
         return wrapper
 
     @abstractmethod
-    def _get_llm(self, callback_handler: WebSocketCallbackHandler):
+    def _get_llm(self, callback_handler: StreamingWebsocketCallbackHandler):
         """return the language model to use"""
 
     @with_redis
@@ -88,9 +91,12 @@ class BaseAIAssistant(ABC):
         """Override this method to return specific prompt for your own assistant."""
         return SQL_FIX_PROMPT
 
+    def _get_ws_stream(self, command_type: str):
+        return WebSocketStream(socketio, command_type)
+
     def _get_llm_chain(self, command_type, prompt, memory=None):
-        ws_stream = WebSocketStream(socketio, command_type)
-        callback_handler = WebSocketCallbackHandler(ws_stream)
+        ws_stream = self._get_ws_stream(command_type=command_type)
+        callback_handler = StreamingWebsocketCallbackHandler(ws_stream)
         llm = self._get_llm(callback_handler=callback_handler)
         return LLMChain(llm=llm, prompt=prompt, memory=memory)
 
@@ -175,28 +181,35 @@ class BaseAIAssistant(ABC):
         return error[:1000]
 
     def handle_ai_command(self, command_type: str, payload: dict = {}):
-        data_cell_id = payload.get("data_cell_id")
-        data_cell = datadoc_logic.get_data_cell_by_id(data_cell_id)
-        query = data_cell.context if data_cell else None
-
-        if command_type == AICommandType.SQL_TITLE.value:
-            self.generate_title_from_query(query=query)
-        elif command_type == AICommandType.TEXT_TO_SQL.value:
-            query_engine_id = payload.get("query_engine_id")
-            tables = payload.get("tables")
-            question = payload.get("question")
-            self.generate_sql_query(
-                query_engine_id=query_engine_id,
-                tables=tables,
-                question=question,
-                original_query=query,
-                memory_session_id=f"{current_user.id}_{data_cell_id}",
-            )
-        elif command_type == AICommandType.SQL_FIX.value:
-            query_execution_id = payload.get("query_execution_id")
-            self.query_auto_fix(
-                query_execution_id=query_execution_id,
-            )
+        try:
+            if command_type == AICommandType.SQL_TITLE.value:
+                query = payload["query"]
+                self.generate_title_from_query(query=query)
+            elif command_type == AICommandType.TEXT_TO_SQL.value:
+                data_cell_id = payload["data_cell_id"]
+                data_cell = datadoc_logic.get_data_cell_by_id(data_cell_id)
+                query = data_cell.context if data_cell else None
+                query_engine_id = payload["query_engine_id"]
+                tables = payload.get("tables")
+                question = payload["question"]
+                self.generate_sql_query(
+                    query_engine_id=query_engine_id,
+                    tables=tables,
+                    question=question,
+                    original_query=query,
+                    memory_session_id=f"{current_user.id}_{data_cell_id}",
+                )
+            elif command_type == AICommandType.SQL_FIX.value:
+                query_execution_id = payload["query_execution_id"]
+                self.query_auto_fix(
+                    query_execution_id=query_execution_id,
+                )
+            else:
+                self._get_ws_stream(command_type=command_type).send_error(
+                    "Unsupported command"
+                )
+        except Exception as e:
+            self._get_ws_stream(command_type=command_type).send_error(str(e))
 
     @catch_error
     @with_session

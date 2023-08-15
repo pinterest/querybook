@@ -25,11 +25,15 @@ class AIAssistantSocket {
         this.socket.emit(AI_ASSISTANT_REQUEST_EVENT, command, payload);
     };
 
-    public addAIListener = (listener) => {
+    public addAIListener = (
+        listener: (command: string, payload: object) => void
+    ) => {
         this.socket.on(AI_ASSISTANT_RESPONSE_EVENT, listener);
     };
 
-    public removeAIListener = (listener) => {
+    public removeAIListener = (
+        listener: (command: string, payload: object) => void
+    ) => {
         this.socket.off(AI_ASSISTANT_RESPONSE_EVENT, listener);
     };
 

@@ -41,7 +41,7 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
     const { streamStatus, startStream, streamData } = useStream(
         AICommandType.SQL_TITLE,
         {
-            data_cell_id: cellId,
+            query,
         }
     );
     const { data: title } = streamData;

@@ -190,11 +190,14 @@ function streamDatasource(
 
         if (payload.event === 'close') {
             aiAssistantSocket.removeAIListener(onData);
+            parser.close();
             onStreamingEnd?.(parser.result);
             return;
         } else if (payload.event === 'error') {
             aiAssistantSocket.removeAIListener(onData);
             toast.error(payload.data);
+            onStreamingEnd?.(parser.result);
+            return;
         }
 
         parser.parse(payload.data);

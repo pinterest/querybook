@@ -42,7 +42,7 @@ human_message_template = (
     "3. Maintain the original query format and case in the fixed_query section, including comments, except when correcting the erroneous part.\n"
 )
 
-PROMPT = ChatPromptTemplate.from_messages(
+SQL_FIX_PROMPT = ChatPromptTemplate.from_messages(
     [
         SystemMessagePromptTemplate.from_template(system_message_template),
         HumanMessagePromptTemplate.from_template(human_message_template),

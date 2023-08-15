@@ -24,7 +24,7 @@ class WebSocketStream:
             room=self.room,
         )
 
-    def send(self, data: str, end=False):
+    def send(self, data: str):
         self._send(
             {
                 "event": "data",
@@ -49,7 +49,7 @@ class WebSocketStream:
         )
 
 
-class WebSocketCallbackHandler(StreamingStdOutCallbackHandler):
+class StreamingWebsocketCallbackHandler(StreamingStdOutCallbackHandler):
     """Callback handlder to stream the result through web socket."""
 
     def __init__(self, stream: WebSocketStream):
