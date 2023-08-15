@@ -72,12 +72,12 @@ export function getViewerInfo(
     viewerIds: number[],
     nonExplicitEditorPermissions: Record<number, IDataDocEditor>
 ): IViewerInfo {
-    const editor =
-        uid in editorsByUserId
-            ? editorsByUserId[uid]
-            : uid in nonExplicitEditorPermissions
-            ? nonExplicitEditorPermissions[uid]
-            : null;
+    let editor = null;
+    if (uid in editorsByUserId) {
+        editor = editorsByUserId[uid];
+    } else if (uid in nonExplicitEditorPermissions) {
+        editor = nonExplicitEditorPermissions[uid];
+    }
     const permission = readWriteToPermission(
         editor ? editor.read : false,
         editor ? editor.write : false,
