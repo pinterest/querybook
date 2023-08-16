@@ -1,7 +1,6 @@
 import functools
 from abc import ABC, abstractmethod
 
-from flask_login import current_user
 from langchain.chains import LLMChain
 from pydantic.error_wrappers import ValidationError
 
