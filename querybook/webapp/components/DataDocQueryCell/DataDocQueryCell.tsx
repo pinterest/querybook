@@ -546,6 +546,14 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         });
 
         additionalButtons.push({
+            name: 'Run From Current Cell',
+            onClick: null,
+            icon: 'FastForward',
+            tooltip: 'Run all cells in the current datadoc after this cell',
+            tooltipPos: 'left',
+        });
+
+        additionalButtons.push({
             name: queryCollapsed ? 'Show Query' : 'Hide Query',
             onClick: this.toggleQueryCollapsing.bind(this, !queryCollapsed),
             icon: queryCollapsed ? 'Eye' : 'EyeOff',
