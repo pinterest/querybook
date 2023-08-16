@@ -6,8 +6,9 @@ from langchain.prompts import (
 )
 
 
-system_message_template = (
-    "You are a SQL expert that can help generating SQL query.\n\n"
+system_message_template = "You are a SQL expert that can help generating SQL query."
+
+human_message_template = (
     "Please help to generate a new SQL query or modify the original query to answer the following question. Your response should ONLY be based on the given context.\n\n"
     "Please always follow the key/value pair format below for your response:\n"
     "===Response Format\n"
@@ -28,24 +29,19 @@ system_message_template = (
     "2. If the provided context is insufficient, please explain what information is missing.\n"
     "3. If the original query is provided, please modify the original query to answer the question. The original query may start with a comment containing a previously asked question. If you find such a comment, please use both the original question and the new question to generate the new query.\n"
     "4. Please always honor the table schmeas for the query generation\n\n"
-)
-
-human_message_template = (
     "===SQL Dialect\n"
     "{dialect}\n\n"
     "===Tables\n"
     "{table_schemas}\n\n"
     "===Original Query\n"
     "{original_query}\n\n"
+    "===Question\n"
+    "{question}\n\n"
 )
 
 TEXT2SQL_PROMPT = ChatPromptTemplate.from_messages(
     [
         SystemMessagePromptTemplate.from_template(system_message_template),
         HumanMessagePromptTemplate.from_template(human_message_template),
-        MessagesPlaceholder(variable_name="chat_history"),
-        HumanMessagePromptTemplate.from_template(
-            "{question}\nPlease remember always start your response with <@query@> or <@explanation@>.\n"
-        ),
     ]
 )

@@ -3,17 +3,14 @@ from abc import ABC, abstractmethod
 
 from flask_login import current_user
 from langchain.chains import LLMChain
-from langchain.memory import ConversationBufferMemory
 from pydantic.error_wrappers import ValidationError
 
 from app.db import with_session
 from app.flask_app import socketio
 from const.ai_assistant import AICommandType
-from clients.redis_client import with_redis
 from lib.logger import get_logger
 from lib.query_analysis.lineage import process_query
 from logic import admin as admin_logic
-from logic import datadoc as datadoc_logic
 from logic import metastore as m_logic
 from logic import query_execution as qe_logic
 from models.metastore import DataTableColumn
@@ -22,7 +19,6 @@ from models.query_execution import QueryExecution
 from .prompts.sql_fix_prompt import SQL_FIX_PROMPT
 from .prompts.sql_title_prompt import SQL_TITLE_PROMPT
 from .prompts.text2sql_prompt import TEXT2SQL_PROMPT
-from .redis_chat_history_storage import RedisChatHistoryStorage
 from .streaming_web_socket_callback_handler import (
     WebSocketStream,
     StreamingWebsocketCallbackHandler,
@@ -58,26 +54,6 @@ class BaseAIAssistant(ABC):
     @abstractmethod
     def _get_llm(self, callback_handler: StreamingWebsocketCallbackHandler):
         """return the language model to use"""
-
-    @with_redis
-    def _get_chat_memory(
-        self,
-        session_id,
-        memory_key="chat_history",
-        input_key="question",
-        ttl=600,
-        redis_conn=None,
-    ):
-        message_history_storage = RedisChatHistoryStorage(
-            redis_client=redis_conn, ttl=ttl, session_id=session_id
-        )
-
-        return ConversationBufferMemory(
-            memory_key=memory_key,
-            chat_memory=message_history_storage,
-            input_key=input_key,
-            return_messages=True,
-        )
 
     def _get_sql_title_prompt(self):
         """Override this method to return specific prompt for your own assistant."""
@@ -186,9 +162,7 @@ class BaseAIAssistant(ABC):
                 query = payload["query"]
                 self.generate_title_from_query(query=query)
             elif command_type == AICommandType.TEXT_TO_SQL.value:
-                data_cell_id = payload["data_cell_id"]
-                data_cell = datadoc_logic.get_data_cell_by_id(data_cell_id)
-                query = data_cell.context if data_cell else None
+                original_query = payload["original_query"]
                 query_engine_id = payload["query_engine_id"]
                 tables = payload.get("tables")
                 question = payload["question"]
@@ -196,8 +170,7 @@ class BaseAIAssistant(ABC):
                     query_engine_id=query_engine_id,
                     tables=tables,
                     question=question,
-                    original_query=query,
-                    memory_session_id=f"{current_user.id}_{data_cell_id}",
+                    original_query=original_query,
                 )
             elif command_type == AICommandType.SQL_FIX.value:
                 query_execution_id = payload["query_execution_id"]
@@ -219,7 +192,6 @@ class BaseAIAssistant(ABC):
         tables: list[str],
         question: str,
         original_query: str = None,
-        memory_session_id=None,
         session=None,
     ):
         query_engine = admin_logic.get_query_engine_by_id(
@@ -230,11 +202,9 @@ class BaseAIAssistant(ABC):
         )
 
         prompt = self._get_text2sql_prompt()
-        memory = self._get_chat_memory(session_id=memory_session_id)
         chain = self._get_llm_chain(
             command_type=AICommandType.TEXT_TO_SQL.value,
             prompt=prompt,
-            memory=memory,
         )
         return chain.run(
             dialect=query_engine.language,

@@ -18,6 +18,7 @@ import { Message } from 'ui/Message/Message';
 import { Modal } from 'ui/Modal/Modal';
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
 import { StyledText } from 'ui/StyledText/StyledText';
+import { Tag } from 'ui/Tag/Tag';
 
 import { TableSelector } from './TableSelector';
 import { TextToSQLMode, TextToSQLModeSelector } from './TextToSQLModeSelector';
@@ -72,6 +73,7 @@ export const QueryGenerationModal = ({
     const [textToSQLMode, setTextToSQLMode] = useState(
         !!query ? TextToSQLMode.EDIT : TextToSQLMode.GENERATE
     );
+    const [newQuery, setNewQuery] = useState<string>('');
 
     useEffect(() => {
         setTables(uniq([...tablesInQuery, ...tables]));
@@ -83,14 +85,17 @@ export const QueryGenerationModal = ({
             query_engine_id: engineId,
             tables: tables,
             question: question,
-            data_cell_id:
-                textToSQLMode === TextToSQLMode.EDIT ? dataCellId : undefined,
+            original_query: query,
         }
     );
 
     const { explanation, query: rawNewQuery, data } = streamData;
 
-    const newQuery = trimSQLQuery(rawNewQuery);
+    // const newQuery = trimSQLQuery(rawNewQuery);
+
+    useEffect(() => {
+        setNewQuery(trimSQLQuery(rawNewQuery));
+    }, [rawNewQuery]);
 
     const onKeyDown = useCallback(
         (event: React.KeyboardEvent) => {
@@ -272,7 +277,37 @@ export const QueryGenerationModal = ({
                                     }
                                     toQuery={newQuery}
                                     fromQueryTitle="Original Query"
-                                    toQueryTitle="New Query"
+                                    toQueryTitle={
+                                        <div className="horizontal-space-between">
+                                            {<Tag>New Query</Tag>}
+                                            <Button
+                                                title="Keep the query"
+                                                onClick={() => {
+                                                    onUpdateQuery(
+                                                        newQuery,
+                                                        false
+                                                    );
+                                                    setTextToSQLMode(
+                                                        TextToSQLMode.EDIT
+                                                    );
+                                                    setQuestion('');
+                                                    setNewQuery('');
+                                                    trackClick({
+                                                        component:
+                                                            ComponentType.AI_ASSISTANT,
+                                                        element:
+                                                            ElementType.QUERY_GENERATION_KEEP_BUTTON,
+                                                        aux: {
+                                                            mode: textToSQLMode,
+                                                            question,
+                                                            tables,
+                                                        },
+                                                    });
+                                                }}
+                                                color="confirm"
+                                            />
+                                        </div>
+                                    }
                                     disableHighlight={
                                         streamStatus === StreamStatus.STREAMING
                                     }
