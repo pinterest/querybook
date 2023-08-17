@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { QueryEngineSelector } from 'components/QueryRunButton/QueryRunButton';
 import { QueryComparison } from 'components/TranspileQueryModal/QueryComparison';
+import { AICommandType } from 'const/aiAssistant';
 import { ComponentType, ElementType } from 'const/analytics';
 import { IQueryEngine } from 'const/queryEngine';
 import { StreamStatus, useStream } from 'hooks/useStream';
@@ -12,12 +13,12 @@ import { trimSQLQuery } from 'lib/stream';
 import { matchKeyPress } from 'lib/utils/keyboard';
 import { analyzeCode } from 'lib/web-worker';
 import { Button } from 'ui/Button/Button';
-import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { Icon } from 'ui/Icon/Icon';
 import { Message } from 'ui/Message/Message';
 import { Modal } from 'ui/Modal/Modal';
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
 import { StyledText } from 'ui/StyledText/StyledText';
+import { Tag } from 'ui/Tag/Tag';
 
 import { TableSelector } from './TableSelector';
 import { TextToSQLMode, TextToSQLModeSelector } from './TextToSQLModeSelector';
@@ -72,25 +73,29 @@ export const QueryGenerationModal = ({
     const [textToSQLMode, setTextToSQLMode] = useState(
         !!query ? TextToSQLMode.EDIT : TextToSQLMode.GENERATE
     );
+    const [newQuery, setNewQuery] = useState<string>('');
 
     useEffect(() => {
         setTables(uniq([...tablesInQuery, ...tables]));
     }, [tablesInQuery]);
 
     const { streamStatus, startStream, streamData, cancelStream } = useStream(
-        '/ds/ai/generate_query/',
+        AICommandType.TEXT_TO_SQL,
         {
             query_engine_id: engineId,
             tables: tables,
             question: question,
-            data_cell_id:
-                textToSQLMode === TextToSQLMode.EDIT ? dataCellId : undefined,
+            original_query: query,
         }
     );
 
-    const { explanation, query: rawNewQuery } = streamData;
+    const { explanation, query: rawNewQuery, data } = streamData;
 
-    const newQuery = trimSQLQuery(rawNewQuery);
+    // const newQuery = trimSQLQuery(rawNewQuery);
+
+    useEffect(() => {
+        setNewQuery(trimSQLQuery(rawNewQuery));
+    }, [rawNewQuery]);
 
     const onKeyDown = useCallback(
         (event: React.KeyboardEvent) => {
@@ -258,8 +263,8 @@ export const QueryGenerationModal = ({
                 {tables.length > 0 && (
                     <>
                         {questionBarDOM}
-                        {explanation && (
-                            <div className="mt12">{explanation}</div>
+                        {(explanation || data) && (
+                            <div className="mt12">{explanation || data}</div>
                         )}
 
                         {(query || newQuery) && (
@@ -272,7 +277,37 @@ export const QueryGenerationModal = ({
                                     }
                                     toQuery={newQuery}
                                     fromQueryTitle="Original Query"
-                                    toQueryTitle="New Query"
+                                    toQueryTitle={
+                                        <div className="horizontal-space-between">
+                                            {<Tag>New Query</Tag>}
+                                            <Button
+                                                title="Keep the query"
+                                                onClick={() => {
+                                                    onUpdateQuery(
+                                                        newQuery,
+                                                        false
+                                                    );
+                                                    setTextToSQLMode(
+                                                        TextToSQLMode.EDIT
+                                                    );
+                                                    setQuestion('');
+                                                    setNewQuery('');
+                                                    trackClick({
+                                                        component:
+                                                            ComponentType.AI_ASSISTANT,
+                                                        element:
+                                                            ElementType.QUERY_GENERATION_KEEP_BUTTON,
+                                                        aux: {
+                                                            mode: textToSQLMode,
+                                                            question,
+                                                            tables,
+                                                        },
+                                                    });
+                                                }}
+                                                color="confirm"
+                                            />
+                                        </div>
+                                    }
                                     disableHighlight={
                                         streamStatus === StreamStatus.STREAMING
                                     }

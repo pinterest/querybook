@@ -1,6 +1,8 @@
+import aiAssistantSocket from './ai-assistant/ai-assistant-socketio';
 import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
 import toast from 'react-hot-toast';
 
+import { AICommandType } from 'const/aiAssistant';
 import { setSessionExpired } from 'lib/querybookUI';
 import { formatError } from 'lib/utils/error';
 
@@ -159,7 +161,7 @@ export function uploadDatasource<T = null>(
 }
 
 /**
- * Stream data from a datasource using EventSource
+ * Stream data from WebSocket
  *
  * The data is streamed in the form of deltas. Each delta is a JSON object
  * ```
@@ -168,41 +170,48 @@ export function uploadDatasource<T = null>(
  * }
  * ```
  *
- * @param url The url to stream from
- * @param params The data to send to the url
+ * @param commandType The ai command type
+ * @param params The data to send
  * @param onStraming Callback when data is received. The data is the accumulated data.
  * @param onStramingEnd Callback when the stream ends
  */
 function streamDatasource(
-    url: string,
+    commandType: AICommandType,
     params?: Record<string, unknown>,
     onStreaming?: (data: { [key: string]: string }) => void,
     onStreamingEnd?: (data: { [key: string]: string }) => void
 ) {
-    const eventSource = new EventSource(
-        `${url}?params=${JSON.stringify(params)}`
-    );
     const parser = new DeltaStreamParser();
-    eventSource.addEventListener('message', (e) => {
-        const newToken = JSON.parse(e.data).data;
-        parser.parse(newToken);
-        onStreaming?.(parser.result);
-    });
-    eventSource.addEventListener('error', (e) => {
-        console.error(e);
-        eventSource.close();
-        onStreamingEnd?.(parser.result);
-        if (e instanceof MessageEvent) {
-            toast.error(JSON.parse(e.data).data);
-        }
-    });
-    eventSource.addEventListener('close', (e) => {
-        eventSource.close();
-        parser.close();
-        onStreamingEnd?.(parser.result);
-    });
 
-    return eventSource;
+    const onData = (command, payload) => {
+        if (command !== commandType) {
+            return;
+        }
+
+        if (payload.event === 'close') {
+            aiAssistantSocket.removeAIListener(onData);
+            parser.close();
+            onStreamingEnd?.(parser.result);
+            return;
+        } else if (payload.event === 'error') {
+            aiAssistantSocket.removeAIListener(onData);
+            toast.error(payload.data);
+            onStreamingEnd?.(parser.result);
+            return;
+        }
+
+        parser.parse(payload.data);
+        onStreaming?.(parser.result);
+    };
+
+    aiAssistantSocket.addAIListener(onData);
+
+    aiAssistantSocket.requestAIAssistant(commandType, params);
+    return {
+        close: () => {
+            aiAssistantSocket.removeAIListener(onData);
+        },
+    };
 }
 
 export default {
