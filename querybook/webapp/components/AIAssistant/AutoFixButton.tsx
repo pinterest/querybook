@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { QueryComparison } from 'components/TranspileQueryModal/QueryComparison';
 import { AICommandType } from 'const/aiAssistant';
 import { ComponentType, ElementType } from 'const/analytics';
-import { StreamStatus, useStream } from 'hooks/useStream';
+import { useAISocket } from 'hooks/useAISocket';
 import { trackClick } from 'lib/analytics';
 import { trimSQLQuery } from 'lib/stream';
 import { Button } from 'ui/Button/Button';
@@ -24,71 +24,68 @@ export const AutoFixButton = ({
     queryExecutionId,
     onUpdateQuery,
 }: IProps) => {
-    const [show, setShow] = useState(false);
+    const [show, setShow] = useState<boolean>(false);
+    const [data, setData] = useState<{ [key: string]: string }>({});
 
-    const { streamStatus, startStream, streamData, cancelStream } = useStream(
-        AICommandType.SQL_FIX,
-        {
-            query_execution_id: queryExecutionId,
-        }
-    );
+    const socket = useAISocket(AICommandType.SQL_FIX, ({ data }) => {
+        setData(data);
+    });
 
     const {
         explanation,
         fix_suggestion: suggestion,
         fixed_query: rawFixedQuery,
-    } = streamData;
+    } = data;
 
     const fixedQuery = trimSQLQuery(rawFixedQuery);
 
-    const bottomDOM =
-        streamStatus === StreamStatus.STREAMING ? (
+    const bottomDOM = socket.loading ? (
+        <div className="right-align mb16">
+            <Button
+                title="Stop Generating"
+                color="light"
+                onClick={socket.cancel}
+                className="mr8"
+            />
+        </div>
+    ) : (
+        fixedQuery && (
             <div className="right-align mb16">
                 <Button
-                    title="Stop Generating"
-                    color="light"
-                    onClick={cancelStream}
-                    className="mr8"
+                    title="Reject"
+                    onClick={() => {
+                        setShow(false);
+                    }}
+                />
+                <Button
+                    title="Apply"
+                    color="confirm"
+                    onClick={() => {
+                        onUpdateQuery?.(fixedQuery, false);
+                        trackClick({
+                            component: ComponentType.AI_ASSISTANT,
+                            element:
+                                ElementType.QUERY_ERROR_AUTO_FIX_APPLY_BUTTON,
+                        });
+                        setShow(false);
+                    }}
+                />
+                <Button
+                    title="Apply and Run"
+                    color="accent"
+                    onClick={() => {
+                        onUpdateQuery?.(fixedQuery, true);
+                        trackClick({
+                            component: ComponentType.AI_ASSISTANT,
+                            element:
+                                ElementType.QUERY_ERROR_AUTO_FIX_APPLY_AND_RUN_BUTTON,
+                        });
+                        setShow(false);
+                    }}
                 />
             </div>
-        ) : (
-            fixedQuery && (
-                <div className="right-align mb16">
-                    <Button
-                        title="Reject"
-                        onClick={() => {
-                            setShow(false);
-                        }}
-                    />
-                    <Button
-                        title="Apply"
-                        color="confirm"
-                        onClick={() => {
-                            onUpdateQuery?.(fixedQuery, false);
-                            trackClick({
-                                component: ComponentType.AI_ASSISTANT,
-                                element:
-                                    ElementType.QUERY_ERROR_AUTO_FIX_APPLY_BUTTON,
-                            });
-                            setShow(false);
-                        }}
-                    />
-                    <Button
-                        title="Apply and Run"
-                        color="accent"
-                        onClick={() => {
-                            onUpdateQuery?.(fixedQuery, true);
-                            trackClick({
-                                component: ComponentType.AI_ASSISTANT,
-                                element:
-                                    ElementType.QUERY_ERROR_AUTO_FIX_APPLY_AND_RUN_BUTTON,
-                            });
-                            setShow(false);
-                        }}
-                    />
-                </div>
-            )
-        );
+        )
+    );
     return (
         <>
             <Button
@@ -96,11 +93,10 @@ export const AutoFixButton = ({
                 title="Auto fix"
                 onClick={() => {
                     setShow(true);
-                    if (
-                        streamStatus === StreamStatus.NOT_STARTED ||
-                        streamStatus === StreamStatus.CANCELLED
-                    ) {
-                        startStream();
+                    if (Object.keys(data).length === 0) {
+                        socket.emit({
+                            query_execution_id: queryExecutionId,
+                        });
                         trackClick({
                             component: ComponentType.AI_ASSISTANT,
                             element: ElementType.QUERY_ERROR_AUTO_FIX_BUTTON,
@@ -114,7 +110,7 @@ export const AutoFixButton = ({
             {show && (
                 <Modal
                     onHide={() => {
-                        cancelStream();
+                        socket.cancel();
                         setShow(false);
                     }}
                     bottomDOM={bottomDOM}
@@ -124,9 +120,6 @@ export const AutoFixButton = ({
                         message="Note: This AI-powered auto fix may not be 100% accurate. Please use your own judgement and verify the result."
                         type="warning"
                     />
-                    {streamStatus === StreamStatus.NOT_STARTED && (
-                        <AccentText>Thinking...</AccentText>
-                    )}
                     {explanation && (
                         <div>
                             <AccentText size="med" weight="bold">
@@ -150,9 +143,7 @@ export const AutoFixButton = ({
                                 toQuery={fixedQuery}
                                 fromQueryTitle="Original"
                                 toQueryTitle="Fixed"
-                                disableHighlight={
-                                    streamStatus === StreamStatus.STREAMING
-                                }
+                                disableHighlight={socket.loading}
                             />
                         </div>
                     )}

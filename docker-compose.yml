@@ -99,12 +99,15 @@ services:
         command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
     elasticsearch:
         container_name: querybook_elasticsearch
-        image: docker.elastic.co/elasticsearch/elasticsearch:7.16.2
+        # image: docker.elastic.co/elasticsearch/elasticsearch:7.16.2
+        image: opensearchproject/opensearch:latest
         environment:
             cluster.name: docker-cluster
             bootstrap.memory_lock: 'true'
             discovery.type: single-node
+            plugins.security.disabled: true
             ES_JAVA_OPTS: -Xms750m -Xmx750m
+            OPENSEARCH_JAVA_OPTS: -Xms512m -Xmx512m
         ulimits:
             memlock:
                 soft: -1
@@ -113,7 +116,7 @@ services:
                 soft: 65536
                 hard: 65536
         volumes:
-            - esdata1:/usr/share/elasticsearch/data
+            - esdata2:/usr/share/elasticsearch/data
         ports:
             - 9200:9200
         healthcheck:
@@ -161,7 +164,7 @@ services:
 
 volumes:
     my-db:
-    esdata1:
+    esdata2:
         driver: local
     # file:
     #     driver: local

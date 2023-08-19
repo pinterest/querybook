@@ -1,10 +1,9 @@
+import openai
+from langchain.callbacks.manager import CallbackManager
+from langchain.chat_models import ChatOpenAI
+
 from lib.ai_assistant.base_ai_assistant import BaseAIAssistant
 from lib.logger import get_logger
-
-from langchain.chat_models import ChatOpenAI
-from langchain.callbacks.manager import CallbackManager
-import openai
-
 
 LOG = get_logger(__file__)
 
@@ -24,9 +23,11 @@ class OpenAIAssistant(BaseAIAssistant):
 
         return super()._get_error_msg(error)
 
-    def _get_llm(self, callback_handler):
+    def _get_llm(self, callback_handler=None):
         return ChatOpenAI(
             **self._config,
-            streaming=True,
-            callback_manager=CallbackManager([callback_handler]),
+            streaming=True if callback_handler else False,
+            callback_manager=CallbackManager([callback_handler])
+            if callback_handler
+            else None,
         )

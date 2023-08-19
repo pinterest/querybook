@@ -1,13 +1,9 @@
 import type { Socket } from 'socket.io-client';
 
-import {
-    AI_ASSISTANT_REQUEST_EVENT,
-    AI_ASSISTANT_RESPONSE_EVENT,
-    AICommandType,
-} from 'const/aiAssistant';
+import { AICommandType } from 'const/aiAssistant';
 import SocketIOManager from 'lib/socketio-manager';
 
-class AIAssistantSocket {
+export class AIAssistantSocket {
     private static NAME_SPACE = '/ai_assistant';
 
     private socket: Socket = null;
@@ -16,25 +12,26 @@ class AIAssistantSocket {
     public constructor() {
         this.setupSocket();
     }
-
-    public onSocketConnect(socket: Socket) {
-        socket.emit('subscribe');
+    public async getSocket() {
+        return await this.setupSocket();
     }
 
-    public requestAIAssistant = (command: AICommandType, payload: object) => {
-        this.socket.emit(AI_ASSISTANT_REQUEST_EVENT, command, payload);
+    public emit = (command: AICommandType, payload: object) => {
+        this.socket.emit(command, payload);
     };
 
-    public addAIListener = (
-        listener: (command: string, payload: object) => void
+    public addListener = (
+        command: string,
+        listener: (event: string, payload: object) => void
     ) => {
-        this.socket.on(AI_ASSISTANT_RESPONSE_EVENT, listener);
+        this.socket.on(command, listener);
     };
 
-    public removeAIListener = (
-        listener: (command: string, payload: object) => void
+    public removeListener = (
+        command: string,
+        listener: (event: string, payload: object) => void
     ) => {
-        this.socket.off(AI_ASSISTANT_RESPONSE_EVENT, listener);
+        this.socket.off(command, listener);
     };
 
     private setupSocket = async () => {
@@ -46,8 +43,7 @@ class AIAssistantSocket {
         } else {
             // We need to setup our socket
             this.socketPromise = SocketIOManager.getSocket(
-                AIAssistantSocket.NAME_SPACE,
-                this.onSocketConnect.bind(this)
+                AIAssistantSocket.NAME_SPACE
             );
 
             // Setup socket's connection functions

@@ -767,6 +767,16 @@ def get_table_query_samples_count(table_id, session):
     return session.query(DataTableQueryExecution).filter_by(table_id=table_id).count()
 
 
+@with_session
+def get_tables_by_query_execution_id(query_execution_id, session):
+    return (
+        session.query(DataTable)
+        .join(DataTableQueryExecution)
+        .filter(DataTableQueryExecution.query_execution_id == query_execution_id)
+        .all()
+    )
+
+
 """
     ---------------------------------------------------------------------------------------------------------
     ELASTICSEARCH

@@ -3,6 +3,20 @@ FLASK_SECRET_KEY: SOME_RANDOM_SECRET_KEY
 
 DATABASE_CONN: mysql+pymysql://test:passw0rd@mysql:3306/querybook2?charset=utf8mb4
 REDIS_URL: redis://redis:6379/0
-ELASTICSEARCH_HOST: elasticsearch:9200
+ELASTICSEARCH_HOST: http://elasticsearch:9200
+# ELASTICSEARCH_CONNECTION_TYPE: aws
 # Uncomment for email
 # EMAILER_CONN: dockerhostforward
+
+AI_ASSISTANT_PROVIDER: openai
+AI_ASSISTANT_CONFIG:
+    model_name: gpt-3.5-turbo-0613
+    temperature: 0
+
+EMBEDDINGS_PROVIDER: openai
+EMBEDDINGS_CONFIG: ~
+VECTOR_STORE_PROVIDER: opensearch
+VECTOR_STORE_CONFIG:
+    embeddings_arg_name: 'embedding_function'
+    opensearch_url: http://elasticsearch:9200
+    index_name: 'vector_index_v1'
