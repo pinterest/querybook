@@ -12,9 +12,6 @@ export class AIAssistantSocket {
     public constructor() {
         this.setupSocket();
     }
-    public async getSocket() {
-        return await this.setupSocket();
-    }
 
     public emit = (command: AICommandType, payload: object) => {
         this.socket.emit(command, payload);
