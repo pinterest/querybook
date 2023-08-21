@@ -1,4 +1,5 @@
-import { useCallback, useRef, useState } from 'react';
+import { List } from 'immutable';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 
 import { AICommandType } from 'const/aiAssistant';
@@ -19,53 +20,66 @@ export function useAISocket(
         new DeltaStreamParser()
     );
 
-    const eventHandler = useCallback((event, payload) => {
-        const parser = deltaStreamParserRef.current;
-        switch (event) {
-            case 'data':
-                onData({ data: { data: payload } });
-                break;
+    const eventHandler = useCallback(
+        (event, payload) => {
+            const parser = deltaStreamParserRef.current;
+            switch (event) {
+                case 'data':
+                    onData({ data: { data: payload } });
+                    break;
 
-            case 'delta_data':
-                parser.parse(payload);
-                onData({ data: parser.result });
-                break;
+                case 'delta_data':
+                    parser.parse(payload);
+                    onData({ data: parser.result });
+                    break;
 
-            case 'delta_end':
-                parser.close();
-                onData({ data: parser.result });
-                break;
+                case 'delta_end':
+                    parser.close();
+                    onData({ data: parser.result });
+                    break;
 
-            case 'tables':
-                onData({ type: 'tables', data: payload });
-                break;
+                case 'tables':
+                    onData({ type: 'tables', data: payload });
+                    break;
 
-            case 'close':
-                close();
-                break;
+                case 'close':
+                    close();
+                    break;
 
-            case 'error':
-                toast.error(payload);
-                close();
-                break;
-            default:
-                console.error('Unknown ai websocket event', event);
-        }
-    }, []);
+                case 'error':
+                    toast.error(payload);
+                    close();
+                    break;
+                default:
+                    console.error('Unknown ai websocket event', event);
+            }
+        },
+        [onData]
+    );
 
     const close = useCallback(() => {
         aiAssistantSocket.removeListener(commandType, eventHandler);
+        aiAssistantSocket.removeListener('error', onError);
         setLoading(false);
         deltaStreamParserRef.current.reset();
-    }, []);
+    }, [aiAssistantSocket, commandType, eventHandler]);
+
+    const onError = useCallback(
+        (error: string) => {
+            toast.error(error);
+            close();
+        },
+        [close]
+    );
 
     const emit = useCallback(
         (params) => {
+            aiAssistantSocket.addListener('error', onError);
             aiAssistantSocket.addListener(commandType, eventHandler);
             aiAssistantSocket.emit(commandType, params);
             setLoading(true);
         },
-        [commandType]
+        [aiAssistantSocket, commandType]
     );
 
     return {

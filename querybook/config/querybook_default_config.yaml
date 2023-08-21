@@ -88,8 +88,11 @@ STATS_LOGGER_NAME: ~
 # --------------- AI Assistant ---------------
 AI_ASSISTANT_PROVIDER: ~
 AI_ASSISTANT_CONFIG:
+    model_name: ~
 
 EMBEDDINGS_PROVIDER: ~
 EMBEDDINGS_CONFIG: ~
 VECTOR_STORE_PROVIDER: ~
-VECTOR_STORE_CONFIG: ~
+VECTOR_STORE_CONFIG:
+    embeddings_arg_name: 'embedding_function'
+    index_name: 'vector_index_v1'

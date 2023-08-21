@@ -5,7 +5,7 @@ from app.db import with_session
 from langchain.docstore.document import Document
 from lib.ai_assistant import ai_assistant
 from lib.logger import get_logger
-from lib.vector_store import vector_store
+from lib.vector_store import get_vector_store
 from logic.metastore import get_table_by_id, get_tables_by_query_execution_id
 from logic.query_execution import get_query_execution_by_id
 from models.metastore import DataTable
@@ -16,7 +16,7 @@ LOG = get_logger(__file__)
 
 def generate_hash(query: str) -> str:
     """Normalize SQL query and generate its hash."""
-    query = query.replace("\n", " ").strip().lower().split()
+    query = " ".join(query.replace("\n", " ").strip().lower().split())
     query_hash = hashlib.sha256(query.encode())
     return query_hash.hexdigest()
 
@@ -25,7 +25,7 @@ def create_and_store_document(summary: str, metadata: dict, doc_id: str):
     """Create a Document and store it in the vector store."""
     try:
         doc = Document(page_content=summary, metadata=metadata)
-        vector_store.add_documents(documents=[doc], ids=[doc_id])
+        get_vector_store().add_documents(documents=[doc], ids=[doc_id])
     except Exception as e:
         LOG.error(f"Failed to store document to vector store: {e}")
         raise
@@ -46,6 +46,10 @@ def log_query_execution(
     session=None,
 ):
     """Generate summary of the query execution and log it to the vector store."""
+    # vector store is not configured
+    if not get_vector_store():
+        return
+
     try:
         if query_execution is None:
             query_execution = get_query_execution_by_id(
@@ -59,7 +63,7 @@ def log_query_execution(
         if not tables:
             return
 
-        if vector_store.should_skip_query_execution(query_execution, tables):
+        if get_vector_store().should_skip_query_execution(query_execution, tables):
             return
 
         summary = ai_assistant.summarize_query(
@@ -89,6 +93,10 @@ def log_table(
     session=None,
 ):
     """Generate summary of the table and log it to the vector store."""
+    # vector store is not configured
+    if not get_vector_store():
+        return
+
     try:
         if table is None:
             table = get_table_by_id(table_id, session=session)
@@ -96,7 +104,7 @@ def log_table(
         if table is None:
             return
 
-        if vector_store.should_skip_table(table):
+        if get_vector_store().should_skip_table(table):
             return
 
         summary = ai_assistant.summarize_table(table_id=table.id, session=session)
@@ -116,5 +124,9 @@ def log_table(
 
 def delete_table_doc(table_id: int):
     """Delete table summary doc from vector store by table id."""
+
+    # vector store is not configured
+    if not get_vector_store():
+        return
     doc_id = _get_table_doc_id(table_id)
-    vector_store.delete([doc_id])
+    get_vector_store().delete([doc_id])

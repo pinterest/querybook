@@ -6,7 +6,7 @@ from const.ai_assistant import AICommandType
 from langchain.chains import LLMChain
 from lib.logger import get_logger
 from lib.query_analysis.lineage import process_query
-from lib.vector_store import vector_store
+from lib.vector_store import get_vector_store
 from logic import admin as admin_logic
 from logic import query_execution as qe_logic
 from models.metastore import DataTableColumn
@@ -112,7 +112,7 @@ class BaseAIAssistant(ABC):
         session=None,
     ):
         if not tables:
-            tables = vector_store.search_tables(question)
+            tables = get_vector_store().search_tables(question)
             if tables:
                 socket.send_tables(tables)
 

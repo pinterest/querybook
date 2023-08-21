@@ -159,6 +159,5 @@ def log_table_per_statement(
     if execution_type == QueryExecutionType.ADHOC.value:
         vs_logic.log_query_execution(
             query_execution_id=query_execution_id,
-            table_names=list(all_tables),
             session=session,
         )

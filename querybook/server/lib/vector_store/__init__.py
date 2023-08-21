@@ -54,6 +54,3 @@ def get_vector_store():
 
     __vector_store = vector_store_class(**kwargs)
     return __vector_store
-
-
-vector_store = get_vector_store()
