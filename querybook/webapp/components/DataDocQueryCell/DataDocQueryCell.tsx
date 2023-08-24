@@ -93,6 +93,7 @@ interface IOwnProps {
     onUpKeyPressed?: () => any;
     onDownKeyPressed?: () => any;
     toggleFullScreen: () => any;
+    onRunAll: () => any;
 }
 type IProps = IOwnProps & StateProps & DispatchProps;
 
@@ -547,7 +548,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
         additionalButtons.push({
             name: 'Run From Current Cell',
-            onClick: null,
+            onClick: this.props.onRunAll,
             icon: 'FastForward',
             tooltip: 'Run all cells in the current datadoc after this cell',
             tooltipPos: 'left',
