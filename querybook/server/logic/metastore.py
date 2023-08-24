@@ -333,15 +333,15 @@ def create_table_warnings(
     """
     # delete all warnings without created_by from the table
     session.query(DataTableWarning).filter_by(
-        DataTableWarning.created_by is None
+        table_id=table_id, created_by=None
     ).delete()
 
     # add warnings from metastore to the table
-    for severiy, message in warnings:
+    for severity, message in warnings:
         DataTableWarning.create(
             {
                 "message": message,
-                "severity": severiy,
+                "severity": severity,
                 "table_id": table_id,
             }
         )
