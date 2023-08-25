@@ -73,7 +73,7 @@ trino_executor_template = StructFormField(
         ),
     ),
     ("username", FormField(regex="\\w+")),
-    ("impersonate", FormField(field_type=FormFieldType.Boolean)),
+    ("password", FormField(hidden=True)),
     (
         "proxy_user_id",
         FormField(
