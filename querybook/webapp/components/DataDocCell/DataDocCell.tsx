@@ -34,6 +34,7 @@ import { sendConfirm } from '../../lib/querybookUI';
 import { DataDocRunAllButtonConfirm } from '../DataDocRightSidebar/DataDocRunAllButtonConfirm';
 import toast from 'react-hot-toast';
 import { DataDocResource } from '../../resource/dataDoc';
+import { QueryExecutionStatus } from '../../const/queryExecution';
 
 import './DataDocCell.scss';
 
@@ -59,6 +60,53 @@ function getEstimatedCellHeight(cell: IDataCell) {
         return 240;
     }
     return 80;
+}
+
+function useRunAll(docId, index) {
+    let queryCells = useQueryCells(docId);
+    queryCells = queryCells.slice(index);
+
+    const latestQueryExecutions = useMakeSelector(
+        makeLatestQueryExecutionsSelector,
+        queryCells.map((c) => c.id) ?? []
+    );
+    const hasQueryRunning = useMemo(
+        () => latestQueryExecutions.some((q) => QueryExecutionStatus.DONE),
+        [latestQueryExecutions]
+    );
+    const notification = useRef(true);
+
+    const onRunAll = useCallback(() => {
+        sendConfirm({
+            header: 'Run all cells below',
+            message: (
+                <DataDocRunAllButtonConfirm
+                    defaultNotification={notification.current}
+                    onNotificationChange={(value) => {
+                        notification.current = value;
+                    }}
+                    hasQueryRunning={hasQueryRunning}
+                    queryCells={queryCells}
+                />
+            ),
+            onConfirm: () => {
+                trackClick({
+                    component: ComponentType.DATADOC_PAGE,
+                    element: ElementType.RUN_ALL_FROM_CELL_BUTTON,
+                });
+                toast.promise(
+                    DataDocResource.run(docId, notification.current, index),
+                    {
+                        loading: null,
+                        success: 'DataDoc execution started!',
+                        error: 'Failed to start the execution',
+                    }
+                );
+            },
+            confirmText: 'Run',
+        });
+        return null;
+    }, [docId, hasQueryRunning, notification, queryCells]);
 }
 
 // renders cell
@@ -91,60 +139,6 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> =
                 highlightCellIndex,
                 fullScreenCellIndex,
             } = useContext(DataDocContext);
-
-            let queryCells = useQueryCells(docId);
-            const queryTitle = queryCells[index].meta.title;
-            const title =
-                queryTitle == null || queryTitle === ''
-                    ? 'Query #' + (index + 1).toString()
-                    : queryTitle;
-            queryCells = queryCells.slice(index);
-
-            const latestQueryExecutions = useMakeSelector(
-                makeLatestQueryExecutionsSelector,
-                queryCells.map((c) => c.id) ?? []
-            );
-            const hasQueryRunning = useMemo(
-                () => latestQueryExecutions.some((q) => q.status < 3),
-                [latestQueryExecutions]
-            );
-            const notification = useRef(true);
-
-            const onRunAll = useCallback(() => {
-                sendConfirm({
-                    header: 'Run Cells From ' + title,
-                    message: (
-                        <DataDocRunAllButtonConfirm
-                            defaultNotification={notification.current}
-                            onNotificationChange={(value) => {
-                                notification.current = value;
-                            }}
-                            hasQueryRunning={hasQueryRunning}
-                            queryCells={queryCells}
-                        />
-                    ),
-                    onConfirm: () => {
-                        trackClick({
-                            component: ComponentType.DATADOC_PAGE,
-                            element: ElementType.RUN_ALL_FROM_CELL_BUTTON,
-                        });
-                        toast.promise(
-                            DataDocResource.run(
-                                docId,
-                                notification.current,
-                                index
-                            ),
-                            {
-                                loading: null,
-                                success: 'DataDoc execution started!',
-                                error: 'Failed to start the execution',
-                            }
-                        );
-                    },
-                    confirmText: 'Run',
-                });
-                return null;
-            }, [docId, hasQueryRunning, notification, queryCells]);
 
             const cellIdtoUid = useMakeSelector(
                 dataDocSelectors.makeDataDocCursorByCellIdSelector,
@@ -252,7 +246,7 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> =
                         templatedVariables,
                         isFullScreen,
                         toggleFullScreen,
-                        onRunAll,
+                        useRunAll,
                     };
                     cellDOM = <DataDocQueryCell {...allProps} />;
                 } else if (cell.cell_type === 'chart') {

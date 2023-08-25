@@ -38,9 +38,6 @@ interface IQueryRunButtonProps extends IQueryEngineSelectorProps {
     rowLimit?: number;
     onRunClick: () => any;
     onRowLimitChange?: (rowLimit: number) => void;
-
-    docId: number;
-    index: number;
 }
 
 export interface IQueryRunButtonHandles {
@@ -63,8 +60,6 @@ export const QueryRunButton = React.forwardRef<
             onEngineIdSelect,
             rowLimit,
             onRowLimitChange,
-            docId,
-            index,
         },
         ref
     ) => {
