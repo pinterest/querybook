@@ -29,6 +29,11 @@ class DataOwner(NamedTuple):
     type: str = None
 
 
+class DataTableWarningSeverity(Enum):
+    WARNING = 0
+    ERROR = 1
+
+
 class DataTable(NamedTuple):
     name: str
 
@@ -73,6 +78,9 @@ class DataTable(NamedTuple):
     golden: bool = False
     boost_score: float = 1
 
+    # table warnings
+    warnings: list[tuple[DataTableWarningSeverity, str]] = None
+
 
 class DataColumn(NamedTuple):
     name: str
@@ -89,11 +97,6 @@ class DataColumn(NamedTuple):
 
     # data element
     data_element: DataElementAssociationTuple = None
-
-
-class DataTableWarningSeverity(Enum):
-    WARNING = 0
-    ERROR = 1
 
 
 class MetadataType(Enum):
