@@ -14,7 +14,8 @@ export const tagsInTableSelector = createSelector(
 
 const datadocTagNameSelector = (state: IStoreState, datadocId: number) =>
     state.tag.datadocIdToTagName[datadocId] || [];
-const datadocTagByNameSelector = (state: IStoreState) => 
+
+const datadocTagByNameSelector = (state: IStoreState) =>
     state.tag.datadocTagByName;
 
 export const tagsInDataDocSelector = createSelector(

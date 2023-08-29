@@ -752,7 +752,6 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                             className="header-subtitle mr20"
                             weight="bold"
                             color="lightest"
-
                         >
                             Tags
                         </AccentText>
