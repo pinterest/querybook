@@ -1,17 +1,17 @@
 import React, { useCallback, useMemo } from 'react';
-import { ITag, ITagMeta } from '../../const/tag';
+import { ITag, ITagMeta } from 'const/tag';
 import { useDispatch, useSelector } from 'react-redux';
-import { Dispatch, IStoreState } from '../../redux/store/types';
-import { ColorPalette } from '../../const/chartColors';
-import AllLucideIcons from '../../ui/Icon/LucideIcons';
-import { Icon } from '../../ui/Icon/Icon';
+import { Dispatch, IStoreState } from 'redux/store/types';
+import { ColorPalette } from 'const/chartColors';
+import AllLucideIcons from 'ui/Icon/LucideIcons';
+import { Icon } from 'ui/Icon/Icon';
 import toast from 'react-hot-toast';
-import { updateTag } from '../../redux/tag/action';
+import { updateTag } from 'redux/tag/action';
 import { Formik } from 'formik';
-import { FormWrapper } from '../../ui/Form/FormWrapper';
-import { SimpleField } from '../../ui/FormikField/SimpleField';
-import { AsyncButton } from '../../ui/AsyncButton/AsyncButton';
-import { Modal } from '../../ui/Modal/Modal';
+import { FormWrapper } from 'ui/Form/FormWrapper';
+import { SimpleField } from 'ui/FormikField/SimpleField';
+import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
+import { Modal } from 'ui/Modal/Modal';
 
 export const TagConfigModal: React.FC<{
     tag: ITag;

@@ -12,13 +12,13 @@ import { TableTagResource } from 'resource/table';
 
 interface IProps {
     id: number;
-    tag_type: string;
+    tagType: string;
     tags: ITag[];
 }
 
 export const CreateTag: React.FunctionComponent<IProps> = ({
     id,
-    tag_type,
+    tagType,
     tags,
 }) => {
     const dispatch: Dispatch = useDispatch();
@@ -42,9 +42,9 @@ export const CreateTag: React.FunctionComponent<IProps> = ({
     );
 
     let resource;
-    if (tag_type === 'DataDoc') {
+    if (tagType === 'DataDoc') {
         resource = DataDocTagResource;
-    } else if (tag_type === 'Table') {
+    } else if (tagType === 'Table') {
         resource = TableTagResource;
     }
 

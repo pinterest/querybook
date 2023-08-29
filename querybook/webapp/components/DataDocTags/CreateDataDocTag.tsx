@@ -10,4 +10,4 @@ interface IProps {
 export const CreateDataDocTag: React.FunctionComponent<IProps> = ({
     datadocId,
     tags,
-}) => <CreateTag id={datadocId} tag_type={'DataDoc'} tags={tags} />;
+}) => <CreateTag id={datadocId} tagType={'DataDoc'} tags={tags} />;

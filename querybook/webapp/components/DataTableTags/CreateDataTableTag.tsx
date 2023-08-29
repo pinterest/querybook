@@ -10,4 +10,4 @@ interface IProps {
 export const CreateDataTableTag: React.FunctionComponent<IProps> = ({
     tableId,
     tags,
-}) => <CreateTag id={tableId} tag_type={'Table'} tags={tags} />;
+}) => <CreateTag id={tableId} tagType={'Table'} tags={tags} />;
