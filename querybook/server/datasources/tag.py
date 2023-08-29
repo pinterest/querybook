@@ -78,15 +78,13 @@ def add_tag_to_table(table_id, tag):
     methods=["POST"],
 )
 def add_tag_to_datadoc(datadoc_id, tag):
-    with DBSession() as session:
-        verify_data_doc_permission(datadoc_id, session=session)
-        return logic.add_tag_to_datadoc(
-            datadoc_id=datadoc_id,
-            tag_name=tag,
-            uid=current_user.id,
-            user_is_admin=current_user.is_admin,
-            session=session,
-        )
+    verify_data_doc_permission(datadoc_id)
+    return logic.add_tag_to_datadoc(
+        datadoc_id=datadoc_id,
+        tag_name=tag,
+        uid=current_user.id,
+        user_is_admin=current_user.is_admin,
+    )
 
 
 @register(

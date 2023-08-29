@@ -53,7 +53,7 @@ def construct_datadoc_query(
         "query": {
             "bool": combine_keyword_and_filter_query(keywords_query, search_filter)
         },
-        "_source": ["id", "title", "owner_uid", "created_at", "scheduled", "tags"],
+        "_source": ["id", "title", "owner_uid", "created_at", "tags"],
         "size": limit,
         "from": offset,
     }

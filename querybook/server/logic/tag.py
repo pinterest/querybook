@@ -205,49 +205,6 @@ def create_table_tags(
 
 
 @with_session
-def create_datadoc_tags(
-    datadoc_id: int,
-    tags: list[DataTag] = [],
-    commit=True,
-    session=None,
-):
-    """This function is used for loading datadoc tags from metastore."""
-    # delete all tags from the table
-    session.query(DataDocTagItem).filter_by(datadoc_id=datadoc_id).delete()
-
-    for tag in tags:
-        tag_color_name = (
-            find_nearest_palette_color(tag.color)["name"]
-            if tag.color is not None
-            else None
-        )
-        meta = {
-            "type": tag.type,
-            "tooltip": tag.description,
-            "color": tag_color_name,
-            "admin": True,
-        }
-        # filter out properties with none values
-        meta = {k: v for k, v in meta.items() if v is not None}
-
-        # update or create a new tag if not exist
-        create_or_update_tag(
-            tag_name=tag.name, meta=meta, commit=commit, session=session
-        )
-
-        # add a new tag_item to associate with the datadoc
-        TagItem.create(
-            {"tag_name": tag.name, "datadoc_id": datadoc_id, "uid": None},
-            session=session,
-        )
-
-    if commit:
-        session.commit()
-    else:
-        session.flush()
-
-
-@with_session
 def create_column_tags(
     column_id: int,
     tags: list[DataTag] = [],

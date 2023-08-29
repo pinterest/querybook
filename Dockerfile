@@ -1,7 +1,7 @@
 # Cannot upgrade to Python 3.10 until the following uWSGI release a new version:
 # https://github.com/unbit/uwsgi/pull/2363
 # This caused websocket to fail
-FROM python:3.9
+FROM python:3.9.16
 
 ARG PRODUCTION=true
 ARG EXTRA_PIP_INSTALLS=""
