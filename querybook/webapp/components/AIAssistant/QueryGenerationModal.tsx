@@ -58,7 +58,7 @@ const useTablesInQuery = (query, language) => {
 };
 
 const useSQLGeneration = (
-    onData: ({ type: string, data: object }) => void
+    onData: (data: { type?: string; data: { [key: string]: string } }) => void
 ): {
     generating: boolean;
     generateSQL: (data: {
@@ -106,7 +106,6 @@ export const QueryGenerationModal = ({
         }
     }, []);
 
-    // const socket = useAISocket(AICommandType.TEXT_TO_SQL, onData);
     const { generating, generateSQL, cancelGeneration } =
         useSQLGeneration(onData);
 
