@@ -44,7 +44,7 @@ from logic.query_execution import (
     get_query_execution_by_id,
     get_successful_query_executions_by_data_cell_id,
 )
-from logic.vector_store import delete_table_doc, log_table
+from logic.vector_store import delete_table_doc, record_table
 from models.user import User
 from models.datadoc import DataCellType
 from models.board import Board
@@ -640,7 +640,7 @@ def update_table_by_id(table_id, session=None):
             _update(index_name, table_id, updated_body)
 
             # update it in vector store as well
-            log_table(table=table, session=session)
+            record_table(table=table, session=session)
         except Exception:
             # Otherwise insert as new
             LOG.error("failed to upsert {}. Will pass.".format(table_id))

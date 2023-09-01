@@ -24,10 +24,12 @@ class OpenAIAssistant(BaseAIAssistant):
         return super()._get_error_msg(error)
 
     def _get_llm(self, callback_handler=None):
+        if not callback_handler:
+            # non-streaming
+            return ChatOpenAI(**self._config)
+
         return ChatOpenAI(
             **self._config,
-            streaming=True if callback_handler else False,
+            streaming=True,
             callback_manager=CallbackManager([callback_handler])
-            if callback_handler
-            else None,
         )

@@ -8,7 +8,7 @@ from .helper import register_socket
 def text_to_sql(payload={}):
     original_query = payload["original_query"]
     query_engine_id = payload["query_engine_id"]
-    tables = payload.get("tables")
+    tables = payload.get("tables", [])
     question = payload["question"]
     ai_assistant.generate_sql_query(
         query_engine_id=query_engine_id,

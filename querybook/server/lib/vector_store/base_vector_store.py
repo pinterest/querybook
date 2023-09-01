@@ -26,6 +26,7 @@ class VectorStoreBase(VectorStore):
         Override this method to implement custom logic for your vector store."""
         query = query_execution.query
 
+        # TODO: add more filters
         # skip queries if it starts with "select * from"
         pattern = r"^\s*select\s+\*\s+from"
         if re.match(pattern, query, re.IGNORECASE):
@@ -55,8 +56,8 @@ class VectorStoreBase(VectorStore):
         for table, score in tables:
             table_score_dict[table] = max(score, table_score_dict.get(table, 0))
 
-        unique_tables = sorted(
+        sorted_tables = sorted(
             table_score_dict.items(), key=lambda x: x[1], reverse=True
         )
 
-        return [t for t, _ in unique_tables[:k]]
+        return [t for t, _ in sorted_tables[:k]]

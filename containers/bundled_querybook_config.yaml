@@ -8,15 +8,18 @@ ELASTICSEARCH_HOST: http://elasticsearch:9200
 # Uncomment for email
 # EMAILER_CONN: dockerhostforward
 
-AI_ASSISTANT_PROVIDER: openai
-AI_ASSISTANT_CONFIG:
-    model_name: gpt-3.5-turbo-0613
-    temperature: 0
+# Uncomment below to enable AI Assistant
+# AI_ASSISTANT_PROVIDER: openai
+# AI_ASSISTANT_CONFIG:
+#     model_name: gpt-3.5-turbo
+#     temperature: 0
 
-EMBEDDINGS_PROVIDER: openai
-EMBEDDINGS_CONFIG: ~
-VECTOR_STORE_PROVIDER: opensearch
-VECTOR_STORE_CONFIG:
-    embeddings_arg_name: 'embedding_function'
-    opensearch_url: http://elasticsearch:9200
-    index_name: 'vector_index_v1'
+# Uncomment below to enable vector store to support embedding based table search.
+# Please check langchain doc for the configs of each provider.
+# EMBEDDINGS_PROVIDER: openai
+# EMBEDDINGS_CONFIG: ~
+# VECTOR_STORE_PROVIDER: opensearch
+# VECTOR_STORE_CONFIG:
+#     embeddings_arg_name: 'embedding_function'
+#     opensearch_url: http://elasticsearch:9200
+#     index_name: 'vector_index_v1'

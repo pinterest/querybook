@@ -39,24 +39,42 @@ const useTablesInQuery = (query, language) => {
     const [tables, setTables] = useState<string[]>([]);
 
     useEffect(() => {
-        if (!!query) {
-            analyzeCode(query, 'autocomplete', language).then(
-                (codeAnalysis) => {
-                    const tableReferences: TableToken[] = [].concat.apply(
-                        [],
-                        Object.values(codeAnalysis?.lineage.references ?? {})
-                    );
-                    setTables(
-                        tableReferences.map(
-                            ({ schema, name }) => `${schema}.${name}`
-                        )
-                    );
-                }
-            );
+        if (!query) {
+            return;
         }
+
+        analyzeCode(query, 'autocomplete', language).then((codeAnalysis) => {
+            const tableReferences: TableToken[] = [].concat.apply(
+                [],
+                Object.values(codeAnalysis?.lineage.references ?? {})
+            );
+            setTables(
+                tableReferences.map(({ schema, name }) => `${schema}.${name}`)
+            );
+        });
     }, [query, language]);
 
     return tables;
+};
+
+const useSQLGeneration = (
+    onData: ({ type: string, data: object }) => void
+): {
+    generating: boolean;
+    generateSQL: (data: {
+        query_engine_id: number;
+        tables: string[];
+        question: string;
+        original_query: string;
+    }) => void;
+    cancelGeneration: () => void;
+} => {
+    const socket = useAISocket(AICommandType.TEXT_TO_SQL, onData);
+    return {
+        generating: socket.loading,
+        generateSQL: socket.emit,
+        cancelGeneration: socket.cancel,
+    };
 };
 
 export const QueryGenerationModal = ({
@@ -88,13 +106,15 @@ export const QueryGenerationModal = ({
         }
     }, []);
 
-    const socket = useAISocket(AICommandType.TEXT_TO_SQL, onData);
+    // const socket = useAISocket(AICommandType.TEXT_TO_SQL, onData);
+    const { generating, generateSQL, cancelGeneration } =
+        useSQLGeneration(onData);
 
     useEffect(() => {
-        if (!socket.loading) {
+        if (!generating) {
             setTables(uniq([...tablesInQuery, ...tables]));
         }
-    }, [tablesInQuery, socket.loading]);
+    }, [tablesInQuery, generating]);
 
     const { explanation, query: rawNewQuery, data } = streamData;
 
@@ -105,11 +125,11 @@ export const QueryGenerationModal = ({
     const onKeyDown = useCallback(
         (event: React.KeyboardEvent) => {
             if (
-                !socket.loading &&
+                !generating &&
                 matchKeyPress(event, 'Enter') &&
                 !event.shiftKey
             ) {
-                socket.emit({
+                generateSQL({
                     query_engine_id: engineId,
                     tables: tables,
                     question: question,
@@ -126,13 +146,13 @@ export const QueryGenerationModal = ({
                 });
             }
         },
-        [engineId, question, tables, query, socket.emit, socket.loading]
+        [engineId, question, tables, query, generateSQL, generating]
     );
 
     const questionBarDOM = (
         <div className="question-bar">
             <span className="stars-icon">
-                <Icon name={socket.loading ? 'Loading' : 'Stars'} size={18} />
+                <Icon name={generating ? 'Loading' : 'Stars'} size={18} />
             </span>
             <div className="text2sql-mode">
                 <TextToSQLModeSelector
@@ -155,21 +175,21 @@ export const QueryGenerationModal = ({
                         : 'Ask AI to edit the query'
                 }
                 onKeyDown={onKeyDown}
-                disabled={socket.loading}
+                disabled={generating}
                 transparent
             />
-            {socket.loading && (
+            {generating && (
                 <Button
                     title="Stop Generating"
                     color="light"
-                    onClick={socket.cancel}
+                    onClick={cancelGeneration}
                     className="mr8"
                 />
             )}
         </div>
     );
 
-    const bottomDOM = newQuery && !socket.loading && (
+    const bottomDOM = newQuery && !generating && (
         <div className="right-align mb16">
             <Button
                 title="Cancel"
@@ -219,7 +239,7 @@ export const QueryGenerationModal = ({
     return (
         <Modal
             onHide={() => {
-                socket.cancel();
+                cancelGeneration();
                 onHide();
             }}
             className="QueryGenerationModal"
@@ -308,7 +328,7 @@ export const QueryGenerationModal = ({
                                     />
                                 </div>
                             }
-                            disableHighlight={socket.loading}
+                            disableHighlight={generating}
                             hideEmptyQuery={true}
                         />
                     </div>

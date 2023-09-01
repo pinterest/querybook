@@ -41,6 +41,17 @@ def log_query_per_table_task(self, query_execution_id, execution_type):
             create_lineage_from_query(
                 query_execution, metastore_id, datadoc_cell, session=session
             )
+
+        # log the ad-hoc(not scheduled) query to vector store for table search
+        if (
+            datadoc_cell is not None
+            and execution_type == QueryExecutionType.ADHOC.value
+        ):
+            vs_logic.record_query_execution_by_id(
+                query_execution_id=query_execution_id,
+                session=session,
+            )
+
         if datadoc_cell is None or not datadoc_cell.doc.public:
             return
 
@@ -50,7 +61,6 @@ def log_query_per_table_task(self, query_execution_id, execution_type):
             query_execution_id,
             metastore_id,
             datadoc_cell.id,
-            execution_type,
             session=session,
         )
 
@@ -123,7 +133,6 @@ def log_table_per_statement(
     query_execution_id,
     metastore_id,
     cell_id,
-    execution_type,
     session=None,
 ):
     metastore_loader = get_metastore_loader(metastore_id, session=session)
@@ -154,10 +163,3 @@ def log_table_per_statement(
                 query_execution_id=query_execution_id,
                 session=session,
             )
-
-    # log the ad-hoc query with tables to vector store for table search
-    if execution_type == QueryExecutionType.ADHOC.value:
-        vs_logic.log_query_execution(
-            query_execution_id=query_execution_id,
-            session=session,
-        )

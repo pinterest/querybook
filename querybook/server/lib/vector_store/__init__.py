@@ -46,8 +46,8 @@ def get_vector_store():
     )
 
     kwargs = {
-        embeddings_arg_name: get_embeddings(),
         **vector_store_config,
+        embeddings_arg_name: get_embeddings(),
     }
     if "embeddings_arg_name" in kwargs:
         del kwargs["embeddings_arg_name"]

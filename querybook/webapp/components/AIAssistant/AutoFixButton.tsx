@@ -19,12 +19,7 @@ interface IProps {
     onUpdateQuery?: (query: string, run?: boolean) => any;
 }
 
-export const AutoFixButton = ({
-    query,
-    queryExecutionId,
-    onUpdateQuery,
-}: IProps) => {
-    const [show, setShow] = useState<boolean>(false);
+const useSQLFix = () => {
     const [data, setData] = useState<{ [key: string]: string }>({});
 
     const socket = useAISocket(AICommandType.SQL_FIX, ({ data }) => {
@@ -38,6 +33,23 @@ export const AutoFixButton = ({
     } = data;
 
     const fixedQuery = trimSQLQuery(rawFixedQuery);
+
+    return {
+        socket,
+        fixed: Object.keys(data).length > 0, // If has data, then it has been fixed
+        explanation,
+        suggestion,
+        fixedQuery,
+    };
+};
+
+export const AutoFixButton = ({
+    query,
+    queryExecutionId,
+    onUpdateQuery,
+}: IProps) => {
+    const [showModal, setShowModal] = useState<boolean>(false);
+    const { socket, fixed, explanation, suggestion, fixedQuery } = useSQLFix();
 
     const bottomDOM = socket.loading ? (
         <div className="right-align mb16">
@@ -54,7 +66,7 @@ export const AutoFixButton = ({
                 <Button
                     title="Reject"
                     onClick={() => {
-                        setShow(false);
+                        setShowModal(false);
                     }}
                 />
                 <Button
@@ -67,7 +79,7 @@ export const AutoFixButton = ({
                             element:
                                 ElementType.QUERY_ERROR_AUTO_FIX_APPLY_BUTTON,
                         });
-                        setShow(false);
+                        setShowModal(false);
                     }}
                 />
                 <Button
@@ -80,7 +92,7 @@ export const AutoFixButton = ({
                             element:
                                 ElementType.QUERY_ERROR_AUTO_FIX_APPLY_AND_RUN_BUTTON,
                         });
-                        setShow(false);
+                        setShowModal(false);
                     }}
                 />
             </div>
@@ -92,8 +104,8 @@ export const AutoFixButton = ({
                 icon="Bug"
                 title="Auto fix"
                 onClick={() => {
-                    setShow(true);
-                    if (Object.keys(data).length === 0) {
+                    setShowModal(true);
+                    if (!fixed) {
                         socket.emit({
                             query_execution_id: queryExecutionId,
                         });
@@ -107,11 +119,11 @@ export const AutoFixButton = ({
                     }
                 }}
             />
-            {show && (
+            {showModal && (
                 <Modal
                     onHide={() => {
                         socket.cancel();
-                        setShow(false);
+                        setShowModal(false);
                     }}
                     bottomDOM={bottomDOM}
                     className="AutoFixModal"

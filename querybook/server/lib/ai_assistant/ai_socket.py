@@ -32,7 +32,7 @@ class AIWebSocket:
     def send_delta_end(self):
         self._send("delta_end")
 
-    def send_tables(self, data: list[str]):
+    def send_tables_for_sql_gen(self, data: list[str]):
         self._send("tables", data)
 
     def send_error(self, error: str):

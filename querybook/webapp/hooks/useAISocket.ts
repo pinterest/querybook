@@ -1,19 +1,20 @@
-import { List } from 'immutable';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 
-import { AICommandType } from 'const/aiAssistant';
+import { AICommandType, AISocketEvent } from 'const/aiAssistant';
 import aiAssistantSocket from 'lib/ai-assistant/ai-assistant-socketio';
 import { DeltaStreamParser } from 'lib/stream';
+
+export interface AISocket {
+    loading: boolean;
+    emit: (payload: object) => void;
+    cancel: () => void;
+}
 
 export function useAISocket(
     commandType: AICommandType,
     onData: (data: { type?: string; data: { [key: string]: string } }) => void
-): {
-    loading: boolean;
-    emit: (payload: object) => void;
-    cancel: () => void;
-} {
+): AISocket {
     const [loading, setLoading] = useState(false);
 
     const deltaStreamParserRef = useRef<DeltaStreamParser>(
@@ -24,29 +25,29 @@ export function useAISocket(
         (event, payload) => {
             const parser = deltaStreamParserRef.current;
             switch (event) {
-                case 'data':
+                case AISocketEvent.DATA:
                     onData({ data: { data: payload } });
                     break;
 
-                case 'delta_data':
+                case AISocketEvent.DELTA_DATA:
                     parser.parse(payload);
                     onData({ data: parser.result });
                     break;
 
-                case 'delta_end':
+                case AISocketEvent.DELTA_END:
                     parser.close();
                     onData({ data: parser.result });
                     break;
 
-                case 'tables':
+                case AISocketEvent.TABLES:
                     onData({ type: 'tables', data: payload });
                     break;
 
-                case 'close':
+                case AISocketEvent.CLOSE:
                     close();
                     break;
 
-                case 'error':
+                case AISocketEvent.ERROR:
                     toast.error(payload);
                     close();
                     break;

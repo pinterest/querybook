@@ -5,4 +5,13 @@ export enum AICommandType {
     TEXT_TO_SQL = 'text_to_sql',
 }
 
+export enum AISocketEvent {
+    DATA = 'data',
+    DELTA_DATA = 'delta_data',
+    DELTA_END = 'delta_end',
+    TABLES = 'tables',
+    CLOSE = 'close',
+    ERROR = 'error',
+}
+
 export const AI_ASSISTANT_NAMESPACE = '/ai_assistant';

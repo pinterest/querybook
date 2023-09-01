@@ -114,7 +114,7 @@ class BaseAIAssistant(ABC):
         if not tables:
             tables = get_vector_store().search_tables(question)
             if tables:
-                socket.send_tables(tables)
+                socket.send_tables_for_sql_gen(tables)
 
         # not finding any relevant tables
         if not tables:

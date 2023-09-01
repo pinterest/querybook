@@ -5,10 +5,26 @@ from logic import metastore as m_logic
 from models.metastore import DataTable, DataTableColumn
 
 
+def _get_column_prompt(column: DataTableColumn) -> str:
+    prompt = ""
+
+    prompt += f"- Column Name: {column.name}\n"
+    prompt += f"  Data Type: {column.type}\n"
+    if column.description:
+        prompt += f"  Description: {column.description}\n"
+    elif column.data_elements:
+        # use data element's description when column's description is empty
+        # TODO: only handling the REF data element for now. Need to handle ARRAY, MAP and etc in the future.
+        prompt += f"  Description: {column.data_elements[0].description}\n"
+        prompt += f"  Data Element: {column.data_elements[0].name}\n"
+
+    return prompt
+
+
 def _get_table_schema_prompt(
     table: DataTable,
     should_skip_column: Callable[[DataTableColumn], bool] = None,
-):
+) -> str:
     """Generate table schema prompt. The format will be like:
 
     Table Name: [Name_of_table_1]
@@ -38,15 +54,7 @@ def _get_table_schema_prompt(
         if should_skip_column and should_skip_column(column):
             continue
 
-        prompt += f"- Column Name: {column.name}\n"
-        prompt += f"  Data Type: {column.type}\n"
-        if column.description:
-            prompt += f"  Description: {column.description}\n"
-        elif column.data_elements:
-            # use data element's description when column's description is empty
-            # TODO: only handling the REF data element for now. Need to handle ARRAY, MAP and etc in the future.
-            prompt += f"  Description: {column.data_elements[0].description}\n"
-            prompt += f"  Data Element: {column.data_elements[0].name}\n"
+        prompt += _get_column_prompt(column)
 
     return prompt
 

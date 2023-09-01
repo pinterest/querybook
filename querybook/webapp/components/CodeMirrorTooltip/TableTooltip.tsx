@@ -121,8 +121,7 @@ export const TableTooltipByName: React.FunctionComponent<{
     useEffect(() => {
         const fetchTable = async () => {
             try {
-                const schemaName = tableFullName.split('.')[0];
-                const tableName = tableFullName.split('.')[1];
+                const [schemaName, tableName] = tableFullName.split('.');
                 const table: any = await dispatch(
                     dataSourcesActions.fetchDataTableByNameIfNeeded(
                         schemaName,
