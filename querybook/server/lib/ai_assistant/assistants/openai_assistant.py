@@ -9,7 +9,7 @@ from langchain.prompts.chat import (
     HumanMessagePromptTemplate,
 )
 import openai
-
+from litellm import completion
 
 LOG = get_logger(__file__)
 
@@ -30,11 +30,9 @@ class OpenAIAssistant(BaseAIAssistant):
         return super()._get_error_msg(error)
 
     @property
-    def title_generation_prompt_template(self) -> ChatPromptTemplate:
-        system_message_prompt = SystemMessage(
-            content="You are a helpful assistant that can summerize SQL queries."
-        )
-        human_template = (
+    def title_generation_prompt_template(self) -> list:
+        system_message_prompt = "You are a helpful assistant that can summerize SQL queries."
+        human_message_prompt = (
             "Generate a brief 10-word-maximum title for the SQL query below. "
             "===Query\n"
             "{query}\n\n"
@@ -45,24 +43,25 @@ class OpenAIAssistant(BaseAIAssistant):
             "===Example response\n"
             "This is a title\n"
         )
-        human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
-        return ChatPromptTemplate.from_messages(
-            [system_message_prompt, human_message_prompt]
-        )
+        messages = {
+            {"role": "system", "content": system_message_prompt},
+            {"role": "user", "content": human_message_prompt}
+        }
+        return messages
+
 
     @property
-    def query_auto_fix_prompt_template(self) -> ChatPromptTemplate:
-        system_message_prompt = SystemMessage(
-            content=(
+    def query_auto_fix_prompt_template(self) -> list:
+        system_message_prompt = (
                 "You are a SQL expert that can help fix SQL query errors.\n\n"
                 "Please follow the format below for your response:\n"
                 "<@key-1@>\n"
                 "value-1\n\n"
                 "<@key-2@>\n"
                 "value-2\n\n"
-            )
         )
-        human_template = (
+
+        human_message_prompt = (
             "Please help fix the query below based on the given error message and table schemas. \n\n"
             "===SQL dialect\n"
             "{dialect}\n\n"
@@ -89,24 +88,24 @@ class OpenAIAssistant(BaseAIAssistant):
             "2. If there is insufficient context to address the query error, you may leave the fixed_query section blank and provide a general suggestion instead.\n"
             "3. Maintain the original query format and case in the fixed_query section, including comments, except when correcting the erroneous part.\n"
         )
-        human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
-        return ChatPromptTemplate.from_messages(
-            [system_message_prompt, human_message_prompt]
-        )
+        messages = {
+            {"role": "system", "content": system_message_prompt},
+            {"role": "user", "content": human_message_prompt}
+        }
+        return messages
 
     @property
     def generate_sql_query_prompt_template(self) -> ChatPromptTemplate:
-        system_message_prompt = SystemMessage(
-            content=(
+        system_message_prompt = (
                 "You are a SQL expert that can help generating SQL query.\n\n"
                 "Please follow the key/value pair format below for your response:\n"
                 "<@key-1@>\n"
                 "value-1\n\n"
                 "<@key-2@>\n"
                 "value-2\n\n"
-            )
         )
-        human_template = (
+
+        human_message_prompt = (
             "Please help to generate a new SQL query or modify the original query to answer the following question. Your response should ONLY be based on the given context.\n\n"
             "===SQL Dialect\n"
             "{dialect}\n\n"
@@ -134,10 +133,11 @@ class OpenAIAssistant(BaseAIAssistant):
             "3. If the original query is provided, please modify the original query to answer the question. The original query may start with a comment containing a previously asked question. If you find such a comment, please use both the original question and the new question to generate the new query.\n"
             "4. The <@key_name@> in the response can only be <@explanation@> or <@query@>.\n\n"
         )
-        human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
-        return ChatPromptTemplate.from_messages(
-            [system_message_prompt, human_message_prompt]
-        )
+        messages = {
+            {"role": "system", "content": system_message_prompt},
+            {"role": "user", "content": human_message_prompt}
+        }
+        return messages
 
     def _generate_title_from_query(
         self, query, stream=True, callback_handler=None, user_id=None
@@ -146,13 +146,11 @@ class OpenAIAssistant(BaseAIAssistant):
         messages = self.title_generation_prompt_template.format_prompt(
             query=query
         ).to_messages()
-        chat = ChatOpenAI(
+        result = completion(
             **self._config,
             streaming=stream,
-            callback_manager=CallbackManager([callback_handler]),
         )
-        ai_message = chat(messages)
-        return ai_message.content
+        return ['choices'][0]['message']['content']
 
     def _query_auto_fix(
         self,
@@ -168,13 +166,11 @@ class OpenAIAssistant(BaseAIAssistant):
         messages = self.query_auto_fix_prompt_template.format_prompt(
             dialect=language, query=query, error=error, table_schemas=table_schemas
         ).to_messages()
-        chat = ChatOpenAI(
+        result = completion(
             **self._config,
             streaming=stream,
-            callback_manager=CallbackManager([callback_handler]),
         )
-        ai_message = chat(messages)
-        return ai_message.content
+        return ['choices'][0]['message']['content']
 
     def _generate_sql_query(
         self,
@@ -193,10 +189,8 @@ class OpenAIAssistant(BaseAIAssistant):
             table_schemas=table_schemas,
             original_query=original_query,
         ).to_messages()
-        chat = ChatOpenAI(
+        result = completion(
             **self._config,
             streaming=stream,
-            callback_manager=CallbackManager([callback_handler]),
         )
-        ai_message = chat(messages)
-        return ai_message.content
+        return ['choices'][0]['message']['content']
