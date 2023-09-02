@@ -86,11 +86,13 @@ EVENT_LOGGER_NAME: ~
 STATS_LOGGER_NAME: ~
 
 # --------------- AI Assistant ---------------
-# Example config for OpenAI
-# AI_ASSISTANT_PROVIDER: openai
-# AI_ASSISTANT_CONFIG:
-#     model_name: gpt-3.5-turbo
-#     temperature: 0
 AI_ASSISTANT_PROVIDER: ~
 AI_ASSISTANT_CONFIG:
     model_name: ~
+
+EMBEDDINGS_PROVIDER: ~
+EMBEDDINGS_CONFIG: ~
+VECTOR_STORE_PROVIDER: ~
+VECTOR_STORE_CONFIG:
+    embeddings_arg_name: 'embedding_function'
+    index_name: 'vector_index_v1'

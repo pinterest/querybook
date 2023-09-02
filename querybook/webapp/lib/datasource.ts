@@ -160,65 +160,10 @@ export function uploadDatasource<T = null>(
     return syncDatasource<T>('POST', urlOptions, null, options);
 }
 
-/**
- * Stream data from WebSocket
- *
- * The data is streamed in the form of deltas. Each delta is a JSON object
- * ```
- * {
- *   data: The data of the delta
- * }
- * ```
- *
- * @param commandType The ai command type
- * @param params The data to send
- * @param onStraming Callback when data is received. The data is the accumulated data.
- * @param onStramingEnd Callback when the stream ends
- */
-function streamDatasource(
-    commandType: AICommandType,
-    params?: Record<string, unknown>,
-    onStreaming?: (data: { [key: string]: string }) => void,
-    onStreamingEnd?: (data: { [key: string]: string }) => void
-) {
-    const parser = new DeltaStreamParser();
-
-    const onData = (command, payload) => {
-        if (command !== commandType) {
-            return;
-        }
-
-        if (payload.event === 'close') {
-            aiAssistantSocket.removeAIListener(onData);
-            parser.close();
-            onStreamingEnd?.(parser.result);
-            return;
-        } else if (payload.event === 'error') {
-            aiAssistantSocket.removeAIListener(onData);
-            toast.error(payload.data);
-            onStreamingEnd?.(parser.result);
-            return;
-        }
-
-        parser.parse(payload.data);
-        onStreaming?.(parser.result);
-    };
-
-    aiAssistantSocket.addAIListener(onData);
-
-    aiAssistantSocket.requestAIAssistant(commandType, params);
-    return {
-        close: () => {
-            aiAssistantSocket.removeAIListener(onData);
-        },
-    };
-}
-
 export default {
     fetch: fetchDatasource,
     save: saveDatasource,
     update: updateDatasource,
     delete: deleteDatasource,
     upload: uploadDatasource,
-    stream: streamDatasource,
 };

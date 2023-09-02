@@ -1,27 +1,31 @@
 import functools
 from abc import ABC, abstractmethod
 
-from langchain.chains import LLMChain
-from pydantic.error_wrappers import ValidationError
-
 from app.db import with_session
-from app.flask_app import socketio
 from const.ai_assistant import AICommandType
+from langchain.chains import LLMChain
 from lib.logger import get_logger
 from lib.query_analysis.lineage import process_query
+from lib.vector_store import get_vector_store
 from logic import admin as admin_logic
-from logic import metastore as m_logic
 from logic import query_execution as qe_logic
 from models.metastore import DataTableColumn
 from models.query_execution import QueryExecution
+from pydantic.error_wrappers import ValidationError
 
+from .ai_socket import with_ai_socket
 from .prompts.sql_fix_prompt import SQL_FIX_PROMPT
 from .prompts.sql_title_prompt import SQL_TITLE_PROMPT
+from .prompts.sql_to_text_prompt import SQL_TO_TEXT_PROMPT
+from .prompts.table_summary_prompt import TABLE_SUMMARY_PROMPT
 from .prompts.text2sql_prompt import TEXT2SQL_PROMPT
-from .streaming_web_socket_callback_handler import (
-    WebSocketStream,
-    StreamingWebsocketCallbackHandler,
+from .streaming_web_socket_callback_handler import StreamingWebsocketCallbackHandler
+from .tools.table import (
+    get_table_schema_prompt_by_id,
+    get_table_schemas_prompt_by_ids,
+    get_table_schemas_prompt_by_names,
 )
+
 
 LOG = get_logger(__file__)
 
@@ -51,29 +55,28 @@ class BaseAIAssistant(ABC):
         return wrapper
 
     @abstractmethod
-    def _get_llm(self, callback_handler: StreamingWebsocketCallbackHandler):
+    def _get_llm(self, callback_handler: StreamingWebsocketCallbackHandler = None):
         """return the language model to use"""
 
     def _get_sql_title_prompt(self):
-        """Override this method to return specific prompt for your own assistant."""
         return SQL_TITLE_PROMPT
 
     def _get_text2sql_prompt(self):
-        """Override this method to return specific prompt for your own assistant."""
         return TEXT2SQL_PROMPT
 
     def _get_sql_fix_prompt(self):
-        """Override this method to return specific prompt for your own assistant."""
         return SQL_FIX_PROMPT
 
-    def _get_ws_stream(self, command_type: str):
-        return WebSocketStream(socketio, command_type)
+    def _get_table_summary_prompt(self):
+        return TABLE_SUMMARY_PROMPT
 
-    def _get_llm_chain(self, command_type, prompt, memory=None):
-        ws_stream = self._get_ws_stream(command_type=command_type)
-        callback_handler = StreamingWebsocketCallbackHandler(ws_stream)
+    def _get_sql_summary_prompt(self):
+        return SQL_TO_TEXT_PROMPT
+
+    def _get_llm_chain(self, prompt, socket):
+        callback_handler = StreamingWebsocketCallbackHandler(socket)
         llm = self._get_llm(callback_handler=callback_handler)
-        return LLMChain(llm=llm, prompt=prompt, memory=memory)
+        return LLMChain(llm=llm, prompt=prompt)
 
     def _get_error_msg(self, error) -> str:
         """Override this method to return specific error messages for your own assistant."""
@@ -86,65 +89,6 @@ class BaseAIAssistant(ABC):
         """Override this method to filter out columns that are not needed."""
         return False
 
-    @with_session
-    def _generate_table_schema_prompt(
-        self, metastore_id, table_names: list[str], session=None
-    ) -> str:
-        """Generate prompt for table schema. The format will be like:
-
-        Table Name: [Name_of_table_1]
-        Description: [Brief_general_description_of_Table_1]
-        Columns:
-        - Column Name: [Column1_name]
-          Data Type: [Column1_data_type]
-          Description: [Brief_description_of_the_column1_purpose]
-        - Column Name: [Column2_name]
-          Data Type: [Column2_data_type]
-          Description: [Brief_description_of_the_column2_purpose]
-
-        Table Name: [Name_of_table_2]
-        Description: [Brief_general_description_of_Table_2]
-        Columns:
-        - Column Name: [Column1_name]
-          Data Type: [Column1_data_type]
-          Description: [Brief_description_of_the_column1_purpose]
-        - Column Name: [Column2_name]
-          Data Type: [Column2_data_type]
-          Description: [Brief_description_of_the_column2_purpose]
-        """
-        prompt = ""
-        for full_table_name in table_names:
-            table_schema, table_name = full_table_name.split(".")
-            table = m_logic.get_table_by_name(
-                schema_name=table_schema,
-                name=table_name,
-                metastore_id=metastore_id,
-                session=session,
-            )
-            if not table:
-                continue
-            table_description = table.information.description or ""
-            prompt += f"Table Name: {full_table_name}\n"
-            prompt += f"Description: {table_description}\n"
-            prompt += "Columns:\n"
-            for column in table.columns:
-                if self._should_skip_column(column):
-                    continue
-
-                prompt += f"- Column Name: {column.name}\n"
-                prompt += f"  Data Type: {column.type}\n"
-                if column.description:
-                    prompt += f"  Description: {column.description}\n"
-                elif column.data_elements:
-                    # use data element's description when column's description is empty
-                    # TODO: only handling the REF data element for now. Need to handle ARRAY, MAP and etc in the future.
-                    prompt += f"  Description: {column.data_elements[0].description}\n"
-                    prompt += f"  Data Element: {column.data_elements[0].name}\n"
-
-            prompt += "\n"
-
-        return prompt
-
     def _get_query_execution_error(self, query_execution: QueryExecution) -> str:
         """Get error message from query execution. If the error message is too long, only return the first 1000 characters."""
         error = (
@@ -155,54 +99,47 @@ class BaseAIAssistant(ABC):
 
         return error[:1000]
 
-    def handle_ai_command(self, command_type: str, payload: dict = {}):
-        try:
-            if command_type == AICommandType.SQL_TITLE.value:
-                query = payload["query"]
-                self.generate_title_from_query(query=query)
-            elif command_type == AICommandType.TEXT_TO_SQL.value:
-                original_query = payload["original_query"]
-                query_engine_id = payload["query_engine_id"]
-                tables = payload.get("tables")
-                question = payload["question"]
-                self.generate_sql_query(
-                    query_engine_id=query_engine_id,
-                    tables=tables,
-                    question=question,
-                    original_query=original_query,
-                )
-            elif command_type == AICommandType.SQL_FIX.value:
-                query_execution_id = payload["query_execution_id"]
-                self.query_auto_fix(
-                    query_execution_id=query_execution_id,
-                )
-            else:
-                self._get_ws_stream(command_type=command_type).send_error(
-                    "Unsupported command"
-                )
-        except Exception as e:
-            self._get_ws_stream(command_type=command_type).send_error(str(e))
-
     @catch_error
     @with_session
+    @with_ai_socket(command_type=AICommandType.TEXT_TO_SQL)
     def generate_sql_query(
         self,
         query_engine_id: int,
         tables: list[str],
         question: str,
         original_query: str = None,
+        socket=None,
         session=None,
     ):
+        if not tables:
+            tables = get_vector_store().search_tables(question)
+            if tables:
+                socket.send_tables_for_sql_gen(tables)
+
+        # not finding any relevant tables
+        if not tables:
+            # ask user to provide table names
+            socket.send_data(
+                "Sorry, I can't find any relevant tables by the given context. Please provide table names above."
+            )
+            socket.close()
+            return
+
         query_engine = admin_logic.get_query_engine_by_id(
             query_engine_id, session=session
         )
-        table_schemas = self._generate_table_schema_prompt(
-            metastore_id=query_engine.metastore_id, table_names=tables, session=session
+        table_schemas = get_table_schemas_prompt_by_names(
+            metastore_id=query_engine.metastore_id,
+            full_table_names=tables,
+            should_skip_column=self._should_skip_column,
+            session=session,
         )
 
         prompt = self._get_text2sql_prompt()
-        chain = self._get_llm_chain(
-            command_type=AICommandType.TEXT_TO_SQL.value,
+        chain = LLMChain(
+            llm=self._get_llm(
+                callback_handler=StreamingWebsocketCallbackHandler(socket)
+            ),
             prompt=prompt,
         )
         return chain.run(
@@ -213,10 +150,8 @@ class BaseAIAssistant(ABC):
         )
 
     @catch_error
-    def generate_title_from_query(
-        self,
-        query,
-    ):
+    @with_ai_socket(command_type=AICommandType.SQL_TITLE)
+    def generate_title_from_query(self, query, socket=None):
         """Generate title from SQL query.
 
         Args:
@@ -225,17 +160,21 @@ class BaseAIAssistant(ABC):
             callback_handler (CallbackHandler, optional): Callback handler to handle the straming result. Required if stream is True.
         """
         prompt = self._get_sql_title_prompt()
-        chain = self._get_llm_chain(
-            command_type=AICommandType.SQL_TITLE.value,
+        chain = LLMChain(
+            llm=self._get_llm(
+                callback_handler=StreamingWebsocketCallbackHandler(socket)
+            ),
             prompt=prompt,
         )
         return chain.run(query=query)
 
     @catch_error
     @with_session
+    @with_ai_socket(command_type=AICommandType.SQL_FIX)
     def query_auto_fix(
         self,
         query_execution_id: int,
+        socket=None,
         session=None,
     ):
         """Generate title from SQL query.
@@ -253,17 +192,20 @@ class BaseAIAssistant(ABC):
         table_names, _ = process_query(query=query, language=language)
 
         metastore_id = query_execution.engine.metastore_id
-        table_schemas = self._generate_table_schema_prompt(
+        table_schemas = get_table_schemas_prompt_by_names(
             metastore_id=metastore_id,
-            table_names=[
+            full_table_names=[
                 table for statement_tables in table_names for table in statement_tables
             ],
+            should_skip_column=self._should_skip_column,
             session=session,
         )
 
         prompt = self._get_sql_fix_prompt()
-        chain = self._get_llm_chain(
-            command_type=AICommandType.SQL_FIX.value,
+        chain = LLMChain(
+            llm=self._get_llm(
+                callback_handler=StreamingWebsocketCallbackHandler(socket)
+            ),
             prompt=prompt,
         )
         return chain.run(
@@ -272,3 +214,44 @@ class BaseAIAssistant(ABC):
             error=self._get_query_execution_error(query_execution),
             table_schemas=table_schemas,
         )
+
+    @catch_error
+    @with_session
+    def summarize_table(
+        self,
+        table_id: int,
+        session=None,
+    ):
+        """Generate an informative summary of the table."""
+
+        table_schema = get_table_schema_prompt_by_id(
+            table_id=table_id,
+            should_skip_column=self._should_skip_column,
+            session=session,
+        )
+
+        prompt = self._get_table_summary_prompt()
+        llm = self._get_llm(callback_handler=None)
+        chain = LLMChain(llm=llm, prompt=prompt)
+        return chain.run(table_schema=table_schema)
+
+    @catch_error
+    @with_session
+    def summarize_query(
+        self,
+        query: str,
+        table_ids: list[int],
+        session=None,
+    ):
+        """Generate an informative summary of the query."""
+
+        table_schemas = get_table_schemas_prompt_by_ids(
+            table_ids=table_ids,
+            should_skip_column=self._should_skip_column,
+            session=session,
+        )
+
+        prompt = self._get_sql_summary_prompt()
+        llm = self._get_llm(callback_handler=None)
+        chain = LLMChain(llm=llm, prompt=prompt)
+        return chain.run(table_schemas=table_schemas, query=query)

@@ -44,6 +44,7 @@ from logic.query_execution import (
     get_query_execution_by_id,
     get_successful_query_executions_by_data_cell_id,
 )
+from logic.vector_store import delete_table_doc, record_table
 from models.user import User
 from models.datadoc import DataCellType
 from models.board import Board
@@ -60,7 +61,6 @@ def get_hosted_es():
     if QuerybookSettings.ELASTICSEARCH_CONNECTION_TYPE == "naive":
         hosted_es = Elasticsearch(hosts=QuerybookSettings.ELASTICSEARCH_HOST)
     elif QuerybookSettings.ELASTICSEARCH_CONNECTION_TYPE == "aws":
-
         # TODO: generialize aws region setup
         from boto3 import session as boto_session
         from lib.utils.assume_role_aws4auth import AssumeRoleAWS4Auth
@@ -638,6 +638,9 @@ def update_table_by_id(table_id, session=None):
                 "doc_as_upsert": True,
             }  # ES requires this format for updates
             _update(index_name, table_id, updated_body)
+
+            # update it in vector store as well
+            record_table(table=table, session=session)
         except Exception:
             # Otherwise insert as new
             LOG.error("failed to upsert {}. Will pass.".format(table_id))
@@ -649,6 +652,9 @@ def delete_es_table_by_id(
     index_name = ES_CONFIG["tables"]["index_name"]
     try:
         _delete(index_name, id=table_id)
+
+        # delete it from vector store as well
+        delete_table_doc(table_id)
     except Exception:
         LOG.error("failed to delete {}. Will pass.".format(table_id))
 
