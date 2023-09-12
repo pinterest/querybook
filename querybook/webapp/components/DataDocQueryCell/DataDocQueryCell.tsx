@@ -674,7 +674,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
     public renderCellHeaderDOM() {
         const {
-            docId,
             cellId,
             queryEngines,
             queryEngineById,
