@@ -51,6 +51,7 @@ class PrestoClient(ClientBaseClass):
         password: Optional[str] = None,
         proxy_user: Optional[str] = None,
         impersonate: bool = False,
+        connection_timeout: int = None,
         *args: Any,
         **kwargs: Any
     ) -> None:
@@ -58,6 +59,10 @@ class PrestoClient(ClientBaseClass):
 
         host = presto_conf.host
         port = 8080 if not presto_conf.port else presto_conf.port
+
+        requests_kwargs = {}
+        if connection_timeout and connection_timeout > 0:
+            requests_kwargs["timeout"] = connection_timeout
 
         connection = presto.connect(
             host,
@@ -69,6 +74,7 @@ class PrestoClient(ClientBaseClass):
             schema=presto_conf.schema,
             source="querybook",
             protocol=presto_conf.protocol,
+            requests_kwargs=requests_kwargs,
         )
         self._connection = connection
         super(PrestoClient, self).__init__()

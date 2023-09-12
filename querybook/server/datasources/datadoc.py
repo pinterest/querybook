@@ -295,7 +295,6 @@ def create_datadoc_schedule(
                 "user_id": data_doc.owner_uid,
                 "doc_id": id,
             },
-            task_type="user",
             session=session,
         )
 
@@ -381,11 +380,23 @@ def run_data_doc(id):
 
 
 @register("/datadoc/<int:id>/run/", methods=["POST"])
-def adhoc_run_data_doc(id):
+def adhoc_run_data_doc(id, send_notification=False):
     assert_can_write(id)
     verify_data_doc_permission(id)
 
     notifier_name = get_user_preferred_notifier(current_user.id)
+
+    notifications = (
+        [
+            {
+                "config": {"to_user": [current_user.id]},
+                "on": 0,
+                "with": notifier_name,
+            }
+        ]
+        if send_notification
+        else []
+    )
 
     celery.send_task(
         "tasks.run_datadoc.run_datadoc",
@@ -394,13 +405,7 @@ def adhoc_run_data_doc(id):
             "doc_id": id,
             "user_id": current_user.id,
             "execution_type": QueryExecutionType.ADHOC.value,
-            "notifications": [
-                {
-                    "config": {"to_user": [current_user.id]},
-                    "on": 0,
-                    "with": notifier_name,
-                }
-            ],
+            "notifications": notifications,
         },
     )
 
@@ -459,7 +464,6 @@ def add_datadoc_editor(
                 (originator, doc_id, uid, None),
                 namespace="/datadoc",
                 room=doc_id,
-                broadcast=True,
             )
 
         socketio.emit(
@@ -467,7 +471,6 @@ def add_datadoc_editor(
             (originator, doc_id, uid, editor_dict),
             namespace="/datadoc",
             room=doc_id,
-            broadcast=True,
         )
         logic.update_es_data_doc_by_id(doc_id)
         send_add_datadoc_editor_email(doc_id, uid, read, write)
@@ -495,7 +498,6 @@ def add_datadoc_access_request(doc_id, originator=None):
             (originator, doc_id, uid, access_request_dict),
             namespace="/datadoc",
             room=doc_id,
-            broadcast=True,
         )
     send_datadoc_access_request_notification(doc_id=doc_id, uid=uid)
     return access_request_dict
@@ -510,7 +512,6 @@ def remove_datadoc_access_request(doc_id, uid, originator=None):
         (originator, doc_id, uid, None),
         namespace="/datadoc",
         room=doc_id,
-        broadcast=True,
     )
 
 
@@ -591,7 +592,6 @@ def update_datadoc_editor(
                 ),
                 namespace="/datadoc",
                 room=editor_dict["data_doc_id"],
-                broadcast=True,
             )
             return editor_dict
 
@@ -614,7 +614,6 @@ def delete_datadoc_editor(
                 (originator, editor_dict["data_doc_id"], editor_dict["uid"], None),
                 namespace="/datadoc",
                 room=editor_dict["data_doc_id"],
-                broadcast=True,
             )
 
 
@@ -657,7 +656,6 @@ def update_datadoc_owner(doc_id, next_owner_id, originator=None):
             (originator, doc_id, current_user.id, current_owner_editor_dict),
             namespace="/datadoc",
             room=doc_id,
-            broadcast=True,
         )
         socketio.emit(
             "data_doc_editor",
@@ -669,7 +667,6 @@ def update_datadoc_owner(doc_id, next_owner_id, originator=None):
             ),
             namespace="/datadoc",
             room=next_owner_editor_dict["data_doc_id"],
-            broadcast=True,
         )
         socketio.emit(
             "data_doc_updated",
@@ -679,7 +676,6 @@ def update_datadoc_owner(doc_id, next_owner_id, originator=None):
             ),
             namespace="/datadoc",
             room=next_owner_editor_dict["data_doc_id"],
-            broadcast=True,
         )
         logic.update_es_data_doc_by_id(doc_id)
         # Update queries in elasticsearch to reflect new permissions

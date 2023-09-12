@@ -40,6 +40,16 @@ def get_user_info(uid):
     return user
 
 
+@register("/user/<int:gid>/group_members/", methods=["GET"])
+def get_user_group_members(gid):
+    group = logic.get_user_by_id(gid)
+
+    if group is None:
+        abort(RESOURCE_NOT_FOUND_STATUS_CODE)
+
+    return group.group_members
+
+
 @register("/user/name/<username>/", methods=["GET"])
 def get_user_info_by_username(username):
     user = logic.get_user_by_name(username)

@@ -5,6 +5,8 @@ from lib.elasticsearch.query_utils import (
     combine_keyword_and_filter_query,
 )
 
+FILTERS_TO_AND = ["tags", "data_elements"]
+
 
 def _get_potential_exact_schema_table_name(keywords):
     """Get the schema and table name from a full table name.
@@ -24,7 +26,7 @@ def _match_table_word_fields(fields):
         # 'table_name', 'description', and 'column' are fields used by Table search
         if field == "table_name":
             search_fields.append("full_name^2")
-            search_fields.append("full_name_ngram")
+            search_fields.append("full_name_ngram^0.2")
         elif field == "description":
             search_fields.append("description")
         elif field == "column":
@@ -33,15 +35,17 @@ def _match_table_word_fields(fields):
 
 
 def _match_table_phrase_queries(fields, keywords):
-    phrase_queries = []
-    for field in fields:
-        if field == "table_name":
-            phrase_queries.append(
-                {"match_phrase": {"full_name": {"query": keywords, "boost": 10}}}
-            )
-        elif field == "column":
-            phrase_queries.append({"match_phrase": {"columns": {"query": keywords}}})
-    return phrase_queries
+    # boos score for phrase match
+    return [
+        {"match_phrase": {"full_name": {"query": keywords, "boost": 1}}},
+        {"match_phrase": {"description": {"query": keywords, "boost": 1}}},
+        {"match_phrase": {"column_descriptions": {"query": keywords, "boost": 1}}},
+        {
+            "match_phrase": {
+                "data_element_descriptions": {"query": keywords, "boost": 1}
+            }
+        },
+    ]
 
 
 def construct_tables_query(
@@ -88,16 +92,16 @@ def construct_tables_query(
     keywords_query = {
         "function_score": {
             "query": keywords_query,
-            "boost_mode": "multiply",
+            "boost_mode": "sum",
             "script_score": {
                 "script": {
-                    "source": "1 + (doc['importance_score'].value + (doc['golden'].value ? 1 : 0))"
+                    "source": "doc['importance_score'].value * 10 + (doc['golden'].value ? 50 : 0)"
                 }
             },
         }
     }
 
-    search_filter = match_filters(filters)
+    search_filter = match_filters(filters, and_filter_names=FILTERS_TO_AND)
     query = {
         "query": {
             "bool": combine_keyword_and_filter_query(keywords_query, search_filter)
@@ -114,6 +118,10 @@ def construct_tables_query(
         highlight_fields(
             {
                 "columns": {
+                    "fragment_size": 20,
+                    "number_of_fragments": 5,
+                },
+                "data_elements": {
                     "fragment_size": 20,
                     "number_of_fragments": 5,
                 },

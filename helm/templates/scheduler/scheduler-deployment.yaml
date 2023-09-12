@@ -38,23 +38,27 @@ spec:
             - name: FLASK_SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "querybook.fullname" . }}-secret
+                  name: {{ template "querybook.secrets" . }}
                   key: FLASK_SECRET_KEY
             - name: DATABASE_CONN
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "querybook.fullname" . }}-secret
+                  name: {{ template "querybook.secrets" . }}
                   key: DATABASE_CONN
             - name: REDIS_URL
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "querybook.fullname" . }}-secret
+                  name: {{ template "querybook.secrets" . }}
                   key: REDIS_URL
             - name: ELASTICSEARCH_HOST
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "querybook.fullname" . }}-secret
+                  name: {{ template "querybook.secrets" . }}
                   key: ELASTICSEARCH_HOST
+            {{- range $key, $value := .Values.extraEnv }}
+            - name: {{ $key | quote}}
+              value: {{ $value | quote }}
+            {{- end }}
           resources:
             {{- toYaml .Values.scheduler.resources | nindent 12 }}
       restartPolicy: Always

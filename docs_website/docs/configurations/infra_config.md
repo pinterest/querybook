@@ -92,6 +92,14 @@ The following settings are only relevant if you are using `s3` and your S3 bucke
 
 You can also add addtional loggers in the event logger plugin. See [Add Event Logger guide](../integrations/add_event_logger.md) for more details.
 
+### Stats Logging
+
+`STATS_LOGGER_NAME` (optional, defaults to **"null"**): This configures what stats logger to be used.
+
+    - null: This is the default logger, which does nothing and disregards the logs.
+    - console: This will print the stats logs to the console. Could be used for debugging purpose.
+
+You need to add your own stats logger plugin to use it. See [Add Stats Logger guide](../integrations/add_stats_logger.md) for more details.
 ## Authentication
 
 `AUTH_BACKEND` (optional, defaults to **app.auth.password_auth**): Python path to the authentication file. By default Querybook provides:
@@ -126,6 +134,11 @@ for LDAP authentication:
       - `LDAP_SEARCH` (**required**) LDAP search base (ex. `ou=people,dc=example,dc=com`)
       - `LDAP_FILTER` (optional) LDAP filter condition (ex. `(departmentNumber=01000)`)
       - `LDAP_UID_FIELD` (optional) Field that matches the username when searching for the account to bind to (defaults to `uid`)
+      - `LDAP_EMAIL_FIELD`: (optional) Field that matches the user email (default to `mail`)
+      - `LDAP_LASTNAME_FIELD`: (optional) Field that matches the user surname (default to `sn`)
+      - `LDAP_FIRSTNAME_FIELD`: (optional) Field that matches the user given name (default to `givenName`)
+      - `LDAP_FULLNAME_FIELD`: (optional) Field that matches the user full/common name (default to `cn`)
+
     - Login flow:
       1) Initialized connection for the _bind user_.
       2) Searching the _login user_ using the _bind user_ in LDAP dictionary based on `LDAP_SEARCH` and `LDAP_FILTER`.

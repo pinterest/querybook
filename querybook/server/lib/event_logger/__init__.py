@@ -15,8 +15,10 @@ class EventLogger:
 
     def log(self, event_type: EventType, event_data: dict, timestamp: int = None):
         try:
+            # default uid 0 if we cant get the current user
+            uid = current_user.id if current_user else 0
             self.logger.log(
-                uid=current_user.id,
+                uid=uid,
                 event_type=event_type,
                 event_data=event_data,
                 timestamp=timestamp,

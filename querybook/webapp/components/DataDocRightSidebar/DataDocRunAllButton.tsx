@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import toast from 'react-hot-toast';
 
 import { ComponentType, ElementType } from 'const/analytics';
@@ -9,7 +9,8 @@ import { sendConfirm } from 'lib/querybookUI';
 import { makeLatestQueryExecutionsSelector } from 'redux/queryExecutions/selector';
 import { DataDocResource } from 'resource/dataDoc';
 import { IconButton } from 'ui/Button/IconButton';
-import { Message } from 'ui/Message/Message';
+
+import { DataDocRunAllButtonConfirm } from './DataDocRunAllButtonConfirm';
 
 interface IProps {
     docId: number;
@@ -27,43 +28,38 @@ export const DataDocRunAllButton: React.FunctionComponent<IProps> = ({
         () => latestQueryExecutions.some((q) => q.status < 3),
         [latestQueryExecutions]
     );
-
-    const ConfirmMessageDOM = useCallback(
-        () => (
-            <div>
-                {hasQueryRunning && (
-                    <Message type="warning" className="mb8">
-                        There are some query cells still running. Do you want to
-                        run anyway?
-                    </Message>
-                )}
-                <div>
-                    {`You will be executing ${queryCells.length} query cells sequentially. If any of them
-                fails, the sequence of execution will be stopped.`}
-                </div>
-            </div>
-        ),
-        [queryCells.length, hasQueryRunning]
-    );
+    const notification = useRef(true);
 
     const onRunAll = useCallback(() => {
         sendConfirm({
             header: 'Run All Cells',
-            message: ConfirmMessageDOM(),
+            message: (
+                <DataDocRunAllButtonConfirm
+                    defaultNotification={notification.current}
+                    onNotificationChange={(value) => {
+                        notification.current = value;
+                    }}
+                    hasQueryRunning={hasQueryRunning}
+                    queryCells={queryCells}
+                />
+            ),
             onConfirm: () => {
                 trackClick({
                     component: ComponentType.DATADOC_PAGE,
                     element: ElementType.RUN_ALL_CELLS_BUTTON,
                 });
-                toast.promise(DataDocResource.run(docId), {
-                    loading: null,
-                    success: 'DataDoc execution started!',
-                    error: 'Failed to start the execution',
-                });
+                toast.promise(
+                    DataDocResource.run(docId, notification.current),
+                    {
+                        loading: null,
+                        success: 'DataDoc execution started!',
+                        error: 'Failed to start the execution',
+                    }
+                );
             },
             confirmText: 'Run',
         });
-    }, [ConfirmMessageDOM, docId]);
+    }, [docId, hasQueryRunning, notification, queryCells]);
 
     return (
         <IconButton

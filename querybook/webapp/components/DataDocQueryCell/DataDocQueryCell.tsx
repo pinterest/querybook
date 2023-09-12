@@ -8,7 +8,9 @@ import React from 'react';
 import toast from 'react-hot-toast';
 import { connect } from 'react-redux';
 
+import { QueryGenerationButton } from 'components/AIAssistant/QueryGenerationButton';
 import { DataDocQueryExecutions } from 'components/DataDocQueryExecutions/DataDocQueryExecutions';
+import { QueryCellTitle } from 'components/QueryCellTitle/QueryCellTitle';
 import { runQuery, transformQuery } from 'components/QueryComposer/RunQuery';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
 import { IQueryEditorHandles } from 'components/QueryEditor/QueryEditor';
@@ -37,6 +39,7 @@ import { getPossibleTranspilers } from 'lib/templated-query/transpile';
 import { enableResizable } from 'lib/utils';
 import { getShortcutSymbols, KeyMap, matchKeyPress } from 'lib/utils/keyboard';
 import { doesLanguageSupportUDF } from 'lib/utils/udf';
+import * as dataDocActions from 'redux/dataDoc/action';
 import * as dataSourcesActions from 'redux/dataSources/action';
 import { setSidebarTableId } from 'redux/querybookUI/action';
 import {
@@ -51,7 +54,6 @@ import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Icon } from 'ui/Icon/Icon';
 import { IListMenuItem, ListMenu } from 'ui/Menu/ListMenu';
 import { Modal } from 'ui/Modal/Modal';
-import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
 import { AccentText } from 'ui/StyledText/StyledText';
 
 import { ISelectedRange } from './common';
@@ -339,13 +341,24 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
-    public handleChange(query: string) {
+    public handleChange(query: string, run: boolean = false) {
         this.setState(
             {
                 query,
             },
-            () => this.onChangeDebounced({ context: query })
+            () => {
+                this.onChangeDebounced({ context: query });
+                if (run) {
+                    this.clickOnRunButton();
+                }
+            }
         );
+    }
+
+    @bind
+    public async forceSaveQuery() {
+        this.props.onChange({ context: this.state.query });
+        await this.props.forceSaveDataCell(this.props.cellId);
     }
 
     @bind
@@ -649,20 +662,23 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
     public renderCellHeaderDOM() {
         const {
+            docId,
+            cellId,
             queryEngines,
             queryEngineById,
 
             isEditable,
         } = this.props;
-        const { meta, selectedRange } = this.state;
+        const { meta, query, selectedRange } = this.state;
 
         const queryTitleDOM = isEditable ? (
-            <ResizableTextArea
+            <QueryCellTitle
+                cellId={cellId}
                 value={meta.title}
                 onChange={this.handleMetaTitleChange}
-                transparent
                 placeholder={this.defaultCellTitle}
-                className="Title"
+                query={query}
+                forceSaveQuery={this.forceSaveQuery}
             />
         ) : (
             <span className="p8">{this.dataCellTitle}</span>
@@ -729,6 +745,18 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
         const editorDOM = !queryCollapsed && (
             <div className="editor">
+                <QueryGenerationButton
+                    dataCellId={cellId}
+                    query={query}
+                    engineId={this.engineId}
+                    onUpdateQuery={this.handleChange}
+                    queryEngineById={queryEngineById}
+                    queryEngines={this.props.queryEngines}
+                    onUpdateEngineId={this.handleMetaChange.bind(
+                        this,
+                        'engine'
+                    )}
+                />
                 <BoundQueryEditor
                     value={query}
                     lineWrapping={true}
@@ -947,6 +975,9 @@ function mapDispatchToProps(dispatch: Dispatch) {
         ) => dispatch(createQueryExecution(query, engineId, cellId)),
 
         setTableSidebarId: (id: number) => dispatch(setSidebarTableId(id)),
+
+        forceSaveDataCell: (cellId: number) =>
+            dispatch(dataDocActions.forceSaveDataDocCell(cellId)),
     };
 }
 

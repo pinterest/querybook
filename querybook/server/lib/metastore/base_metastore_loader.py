@@ -1,80 +1,45 @@
-from abc import ABCMeta, abstractmethod, abstractclassmethod
-import gevent
 import math
-from typing import NamedTuple, List, Dict, Tuple, Optional
 import traceback
+from abc import ABCMeta, abstractclassmethod, abstractmethod
+from typing import Dict, List, Optional, Tuple
 
+import gevent
 from app.db import DBSession, with_session
-from const.metastore import MetadataType, MetastoreLoaderConfig
-from lib.logger import get_logger
-
+from const.data_element import DataElementTuple, DataElementAssociationTuple
+from const.metastore import (
+    DataColumn,
+    DataOwnerType,
+    DataTable,
+    MetadataType,
+    MetastoreLoaderConfig,
+)
 from lib.form import AllFormField
+from lib.logger import get_logger
 from lib.utils import json
 from lib.utils.utils import with_exception
-from logic.elasticsearch import update_table_by_id, delete_es_table_by_id
+from logic.data_element import create_column_data_element_association
+from logic.elasticsearch import delete_es_table_by_id, update_table_by_id
 from logic.metastore import (
-    create_schema,
-    delete_schema,
-    create_table,
-    delete_table,
-    create_table_information,
     create_column,
+    create_schema,
+    create_table,
+    create_table_information,
+    create_table_ownerships,
+    create_table_warnings,
     delete_column,
-    iterate_data_schema,
-    get_table_by_schema_id,
+    delete_schema,
+    delete_table,
     get_column_by_table_id,
     get_schema_by_name,
+    get_table_by_schema_id,
     get_table_by_schema_id_and_name,
+    iterate_data_schema,
 )
+from logic.tag import create_column_tags, create_table_tags
 
 from .utils import MetastoreTableACLChecker
 
 LOG = get_logger(__name__)
-
-
-class DataSchema(NamedTuple):
-    name: str
-
-
-class DataTable(NamedTuple):
-    name: str
-
-    # The type of table, it can be an arbitrary string
-    type: str = None
-    owner: str = None
-
-    # description from metastore, expect HTML format
-    description: str = None
-
-    # Expected in UTC seconds
-    table_created_at: int = None
-    table_updated_at: int = None
-    table_updated_by: str = None
-
-    # size of table
-    data_size_bytes: int = None
-    # Location of the raw file
-    location: str = None
-
-    # Json arrays of partitions
-    partitions: List = []
-
-    # Store the raw info here
-    raw_description: str = None
-
-    # Arrays of partition keys
-    partition_keys: List[str] = []
-
-
-class DataColumn(NamedTuple):
-    name: str
-    type: str
-
-    # column comment from sql query when creating the table
-    comment: str = None
-
-    # user edited description from metastore, expect HTML format
-    description: str = None
 
 
 class BaseMetastoreLoader(metaclass=ABCMeta):
@@ -85,7 +50,7 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
         self.acl_checker = MetastoreTableACLChecker(metastore_dict["acl_control"])
 
     @classmethod
-    def get_metastore_link(
+    def get_table_metastore_link(
         cls, metadata_type: MetadataType, schema_name: str, table_name: str
     ) -> str:
         """Return the external metastore link of the table metadata if it has an accessible page for the given type.
@@ -99,6 +64,48 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
             str: external metastore link of the table metadata.
         """
         return None
+
+    @classmethod
+    def get_data_element_metastore_link(cls, name: str) -> str:
+        """Return the external metastore link of the data elementif it has an accessible page.
+
+        Args:
+            name (str): data element name
+
+        Returns:
+            str: external metastore link of the data element.
+        """
+        return None
+
+    @classmethod
+    def get_table_owner_types(cls) -> list[DataOwnerType]:
+        """Return all the owner types the meatstore supports.
+
+        Override this method if loading table owners from metastore is enabled
+        and your metastore supports owner types.
+
+        E.g.
+        [
+            DataOwnerType(
+                name="CREATOR",
+                display_name="Table Creator",
+                description="Person who created the table",
+            ),
+            DataOwnerType(
+                name="BUSINESS_OWNER",
+                display_name="Owners",
+                description="Person or group who is responsible for business related aspects of the table",
+            ),
+        ]
+
+
+        The `display_name` will be rendered as the field label in the detailed table view, which is `Owners` by default.
+        """
+        return [
+            DataOwnerType(
+                name=None, display_name="Owners", description="People who own the table"
+            )
+        ]
 
     @with_session
     def sync_table(
@@ -322,7 +329,7 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
 
     def _create_tables(self, schema_tables):
         with DBSession() as session:
-            for (schema_id, schema_name, table) in schema_tables:
+            for schema_id, schema_name, table in schema_tables:
                 self._create_table_table(schema_id, schema_name, table, session=session)
 
     @with_session
@@ -355,28 +362,88 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
                 location=table.location,
                 column_count=len(columns),
                 schema_id=schema_id,
+                golden=table.golden,
+                boost_score=table.boost_score,
+                commit=False,
                 session=session,
             ).id
             create_table_information(
                 data_table_id=table_id,
                 description=table.description,
-                latest_partitions=json.dumps((table.partitions or [])[-10:]),
-                earliest_partitions=json.dumps((table.partitions or [])[:10]),
+                latest_partitions=json.dumps(
+                    table.latest_partitions or (table.partitions or [])[-10:]
+                ),
+                earliest_partitions=json.dumps(
+                    table.earliest_partitions or (table.partitions or [])[:10]
+                ),
                 hive_metastore_description=table.raw_description,
                 partition_keys=table.partition_keys,
+                custom_properties=table.custom_properties,
                 session=session,
             )
+            if table.warnings is not None:
+                create_table_warnings(
+                    table_id=table_id,
+                    warnings=table.warnings,
+                    commit=False,
+                    session=session,
+                )
+
             delete_column_not_in_metastore(
                 table_id, set(map(lambda c: c.name, columns)), session=session
             )
 
             for column in columns:
-                create_column(
+                column_id = create_column(
                     name=column.name,
                     type=column.type,
                     comment=column.comment,
                     description=column.description,
                     table_id=table_id,
+                    commit=False,
+                    session=session,
+                ).id
+
+                # create tags only if the metastore is configured to sync tags
+                if self.loader_config.can_load_external_metadata(MetadataType.TAG):
+                    create_column_tags(
+                        column_id=column_id,
+                        tags=column.tags,
+                        commit=False,
+                        session=session,
+                    )
+
+                # create data element associations only if the metastore is configured to sync data elements
+                if self.loader_config.can_load_external_metadata(
+                    MetadataType.DATA_ELEMENT
+                ):
+                    data_element_association = (
+                        self._populate_column_data_element_association(
+                            column.data_element
+                        )
+                    )
+                    create_column_data_element_association(
+                        metastore_id=self.metastore_id,
+                        column_id=column_id,
+                        data_element_association=data_element_association,
+                        commit=False,
+                        session=session,
+                    )
+
+            # create tags only if the metastore is configured to sync tags
+            if self.loader_config.can_load_external_metadata(MetadataType.TAG):
+                create_table_tags(
+                    table_id=table_id,
+                    tags=table.tags,
+                    commit=False,
+                    session=session,
+                )
+
+            # load owners if the metastore is configured to sync table owners
+            if self.loader_config.can_load_external_metadata(MetadataType.OWNER):
+                create_table_ownerships(
+                    table_id=table_id,
+                    owners=table.owners,
                     commit=False,
                     session=session,
                 )
@@ -386,6 +453,26 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
         except Exception:
             session.rollback()
             LOG.error(traceback.format_exc())
+
+    def _populate_column_data_element_association(
+        self, data_element_association: DataElementAssociationTuple
+    ) -> DataElementAssociationTuple:
+        """If the value_data_element or key_data_element is a name instead of DataElementTuple,
+        this function will help to replace the name with the actual DataElementTuple"""
+        if data_element_association is None:
+            return None
+
+        value_data_element = data_element_association.value_data_element
+        if type(value_data_element) is str:
+            value_data_element = self.get_data_element(value_data_element)
+
+        key_data_element = data_element_association.key_data_element
+        if type(key_data_element) is str:
+            key_data_element = self.get_data_element(key_data_element)
+
+        return data_element_association._replace(
+            value_data_element=value_data_element, key_data_element=key_data_element
+        )
 
     @with_exception
     def _get_all_filtered_schema_names(self) -> List[str]:
@@ -456,6 +543,14 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
         Returns:
             Tuple[DataTable, List[DataColumn]] -- Return [null, null] if not found
         """
+        pass
+
+    def get_data_element(self, data_element_name: str) -> Optional[DataElementTuple]:
+        """Override this to get data element by name"""
+        pass
+
+    def get_schema_location(self, schema_name: str) -> str:
+        """Get schema location, used by table uploader"""
         pass
 
     @abstractclassmethod

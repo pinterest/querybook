@@ -48,6 +48,8 @@ export interface IRichTextEditorProps {
 
     decorator?: DraftJs.CompositeDecorator;
     autoFocus?: boolean;
+
+    onSubmit?: () => void;
 }
 
 export interface IRichTextEditorState {
@@ -69,6 +71,43 @@ interface IToolBarStyle {
     left?: number;
     visibility: VisibilityProperty;
 }
+
+// https://github.com/jpuri/draftjs-utils/blob/master/js/block.js
+const removeSelectedBlocksStyle = (editorState: DraftJs.EditorState) => {
+    const newContentState =
+        DraftJs.RichUtils.tryToRemoveBlockStyle(editorState);
+    if (newContentState) {
+        return DraftJs.EditorState.push(
+            editorState,
+            newContentState,
+            'change-block-type'
+        );
+    }
+    return editorState;
+};
+
+// https://github.com/jpuri/draftjs-utils/blob/master/js/block.js
+export const getResetEditorState = (editorState: DraftJs.EditorState) => {
+    const blocks = editorState.getCurrentContent().getBlockMap().toList();
+    const updatedSelection = editorState.getSelection().merge({
+        anchorKey: blocks.first().get('key'),
+        anchorOffset: 0,
+        focusKey: blocks.last().get('key'),
+        focusOffset: blocks.last().getLength(),
+    });
+    const newContentState = DraftJs.Modifier.removeRange(
+        editorState.getCurrentContent(),
+        updatedSelection,
+        'forward'
+    );
+
+    const newState = DraftJs.EditorState.push(
+        editorState,
+        newContentState,
+        'remove-range'
+    );
+    return removeSelectedBlocksStyle(newState);
+};
 
 function calculateToolBarPosition(element: Nullable<HTMLElement>) {
     if (!element) {
@@ -118,6 +157,7 @@ export const RichTextEditor = React.forwardRef<
             value,
             placeholder,
             autoFocus,
+            onSubmit,
             decorator,
 
             onChange,
@@ -146,7 +186,7 @@ export const RichTextEditor = React.forwardRef<
         const selfRef = useRef<HTMLDivElement>();
 
         const focus = useCallback(() => {
-            if (editorRef.current) {
+            if (editorRef.current && toolBarRef.current) {
                 editorRef.current.focus();
                 setToolBarStyle(
                     calculateToolBarStyle(
@@ -156,6 +196,12 @@ export const RichTextEditor = React.forwardRef<
                 );
             }
         }, [editorState]);
+
+        useEffect(() => {
+            if (value.getPlainText().length === 0) {
+                setEditorState(getResetEditorState);
+            }
+        }, [setEditorState, value]);
 
         const handleChange = useCallback(
             (newEditorState: DraftJs.EditorState) => {
@@ -501,6 +547,12 @@ export const RichTextEditor = React.forwardRef<
                         handled = true;
                     } else if (matchKeyMap(e, KeyMap.richText.italics)) {
                         command = 'italic';
+                        handled = true;
+                    } else if (
+                        matchKeyMap(e, KeyMap.overallUI.submitComment) &&
+                        onSubmit
+                    ) {
+                        onSubmit();
                         handled = true;
                     }
                 }

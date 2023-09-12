@@ -32,7 +32,6 @@ def send_data_doc_session_info(data_doc_id, room, redis_conn=None):
         {"users": user_dict, "cursors": cursor_dict},
         namespace=DATA_DOC_NAMESPACE,
         room=room,
-        broadcast=True,
     )
 
 
@@ -110,7 +109,6 @@ def update_user_list(data_doc_id, add=False, redis_conn=None):
             (add, request.sid, current_user.id),
             namespace=DATA_DOC_NAMESPACE,
             room=data_doc_id,
-            broadcast=True,
         )
 
 
@@ -186,7 +184,6 @@ def fetch_data_doc_editors(doc_id):
                 "data_doc_editors",
                 (request.sid, editor_dicts),
                 namespace=DATA_DOC_NAMESPACE,
-                broadcast=False,
                 room=request.sid,
             )
             send_data_doc_session_info(doc_id, room=request.sid)
@@ -208,7 +205,6 @@ def fetch_data_doc_access_requests(doc_id):
                 "data_doc_access_requests",
                 (request.sid, access_request_dicts),
                 namespace=DATA_DOC_NAMESPACE,
-                broadcast=False,
                 room=request.sid,
             )
             send_data_doc_session_info(doc_id, room=request.sid)
@@ -264,5 +260,4 @@ def move_data_doc_cursor(data_doc_id, data_cell_id=None):
         ),
         namespace=DATA_DOC_NAMESPACE,
         room=data_doc_id,
-        broadcast=True,
     )

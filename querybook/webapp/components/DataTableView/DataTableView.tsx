@@ -363,6 +363,7 @@ export const DataTableView: React.FC<IDataTableViewProps> = ({ tableId }) => {
                     table={table}
                     tableName={tableName}
                     userInfo={userInfo}
+                    metastore={metastore}
                     updateDataTableGolden={updateDataTableGolden}
                 />
                 <Tabs

@@ -35,7 +35,7 @@ spec:
           imagePullPolicy: {{ .Values.web.image.pullPolicy }}
           env:
             - name: PORT
-              value: '10001'
+              value: "{{ .Values.web.service.containerPort }}"
             - name: FLASK_SECRET_KEY
               valueFrom:
                 secretKeyRef:
@@ -56,8 +56,12 @@ spec:
                 secretKeyRef:
                   name: {{ include "querybook.fullname" . }}-secret
                   key: ELASTICSEARCH_HOST
+            {{- range $key, $value := .Values.extraEnv }}
+            - name: {{ $key | quote}}
+              value: {{ $value | quote }}
+            {{- end }}
           ports:
-            - containerPort: 10001
+            - containerPort: {{ .Values.web.service.containerPort }}
           resources:
             {{- toYaml .Values.web.resources | nindent 12 }}
       restartPolicy: Always

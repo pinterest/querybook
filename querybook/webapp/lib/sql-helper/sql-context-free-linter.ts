@@ -47,6 +47,7 @@ const contextFreeLinterWarningsByLanguage: Record<
                                 message:
                                     'Do a "count(*) and group by" works better in terms of performance.',
                                 severity: 'warning',
+                                type: 'lint',
                                 from: {
                                     line: token.line,
                                     ch: token.start,
@@ -55,6 +56,7 @@ const contextFreeLinterWarningsByLanguage: Record<
                                     line: distinct.line,
                                     ch: distinct.end,
                                 },
+                                suggestion: null,
                             });
                         }
                     }
@@ -88,6 +90,7 @@ const contextFreeLinterWarningsByLanguage: Record<
                         warnings.push({
                             message: 'Please add a LIMIT clause',
                             severity: 'warning',
+                            type: 'lint',
                             from: {
                                 line: firstToken.line,
                                 ch: firstToken.start,
@@ -96,6 +99,7 @@ const contextFreeLinterWarningsByLanguage: Record<
                                 line: firstToken.line,
                                 ch: firstToken.end,
                             },
+                            suggestion: null,
                         });
                     }
                 }

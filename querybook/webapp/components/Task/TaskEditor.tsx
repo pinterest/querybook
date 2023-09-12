@@ -73,11 +73,6 @@ function stringToTypedVal(stringVal: boolean | number | string) {
     }
 }
 
-const UserTasks = new Set(['tasks.run_datadoc.run_datadoc']);
-function isTaskUserTask(task: string) {
-    return UserTasks.has(task) ? 'user' : 'prod';
-}
-
 export const TaskEditor: React.FunctionComponent<IProps> = ({
     task,
     onTaskUpdate,
@@ -141,7 +136,6 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                         cron: editedCron,
                         name: editedValues.name,
                         task: editedValues.task,
-                        task_type: isTaskUserTask(editedValues.task),
                         enabled: editedValues.enabled,
                         args: editedArgs,
                         kwargs: editedKwargs,

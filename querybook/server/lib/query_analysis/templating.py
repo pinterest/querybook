@@ -273,7 +273,7 @@ def flatten_recursive_variables(
     variables_dag = {}
 
     for key, value in raw_variables.items():
-        if not value:
+        if value is None:
             value = ""
 
         # check if a string has any custom global functions or raw variables

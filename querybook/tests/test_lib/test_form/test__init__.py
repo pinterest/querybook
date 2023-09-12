@@ -85,8 +85,8 @@ class ValidateFormTestCase(TestCase):
 
     def test_dict_field(self):
         form = StructFormField(
-            name=FormField(),
-            phone_numbers=ExpandableFormField(of=FormField(), min=1, max=2),
+            ("name", FormField()),
+            ("phone_numbers", ExpandableFormField(of=FormField(), min=1, max=2)),
         )
         self.assertEqual(
             validate_form(form, "123"),

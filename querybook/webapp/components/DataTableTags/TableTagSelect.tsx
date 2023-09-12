@@ -20,7 +20,7 @@ interface IProps {
 const tagReactSelectStyle = makeReactSelectStyle(true, miniReactSelectStyles);
 
 function isTagValid(val: string, existingTags: string[]) {
-    const regex = /^[a-z0-9]{1,255}$/i;
+    const regex = /^[a-z0-9_ ]{1,255}$/i;
     const match = val.match(regex);
     return Boolean(match && !existingTags.includes(val));
 }

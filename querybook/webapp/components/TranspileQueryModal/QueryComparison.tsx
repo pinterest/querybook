@@ -1,10 +1,8 @@
 import { diffWordsWithSpace } from 'diff';
 import React, { useMemo } from 'react';
 
-import { IQueryEngine } from 'const/queryEngine';
 import { ThemedCodeHighlightWithMark } from 'ui/CodeHighlight/ThemedCodeHighlightWithMark';
 import { IHighlightRange } from 'ui/CodeHighlight/types';
-import { AccentText } from 'ui/StyledText/StyledText';
 import { Tag } from 'ui/Tag/Tag';
 
 import './QueryComparison.scss';
@@ -12,10 +10,25 @@ import './QueryComparison.scss';
 export const QueryComparison: React.FC<{
     fromQuery: string;
     toQuery: string;
-    fromEngine: IQueryEngine;
-    toEngine: IQueryEngine;
-}> = ({ fromQuery, toQuery, fromEngine, toEngine }) => {
+    fromQueryTitle?: string;
+    toQueryTitle?: string;
+    disableHighlight?: boolean;
+    hideEmptyQuery?: boolean;
+}> = ({
+    fromQuery,
+    toQuery,
+    fromQueryTitle,
+    toQueryTitle,
+    disableHighlight,
+    hideEmptyQuery,
+}) => {
+    const hasHiddenQuery = hideEmptyQuery && (!fromQuery || !toQuery);
+
     const [addedRanges, removedRanges] = useMemo(() => {
+        if (disableHighlight || hasHiddenQuery) {
+            return [[], []];
+        }
+
         const added: IHighlightRange[] = [];
         const removed: IHighlightRange[] = [];
         const diffObjects = diffWordsWithSpace(fromQuery, toQuery);
@@ -44,34 +57,32 @@ export const QueryComparison: React.FC<{
             }
         }
         return [added, removed];
-    }, [fromQuery, toQuery]);
+    }, [fromQuery, toQuery, disableHighlight, hideEmptyQuery]);
 
     return (
         <div className="QueryComparison">
-            <div className="mr8 flex1">
-                <div className="center-align">
-                    <AccentText weight="bold">Original</AccentText>
+            {!(hideEmptyQuery && !fromQuery) && (
+                <div className="diff-side-view">
+                    {fromQueryTitle && <Tag>{fromQueryTitle}</Tag>}
+                    <ThemedCodeHighlightWithMark
+                        highlightRanges={removedRanges}
+                        query={fromQuery}
+                        maxEditorHeight={'40vh'}
+                        autoHeight={false}
+                    />
                 </div>
-                <Tag>{fromEngine.name}</Tag>
-                <ThemedCodeHighlightWithMark
-                    highlightRanges={removedRanges}
-                    query={fromQuery}
-                    maxEditorHeight={'40vh'}
-                    autoHeight={false}
-                />
-            </div>
-            <div className="flex1">
-                <div className="center-align">
-                    <AccentText weight="bold">Transpiled</AccentText>
+            )}
+            {!(hideEmptyQuery && !toQuery) && (
+                <div className="diff-side-view">
+                    {toQueryTitle && <Tag>{toQueryTitle}</Tag>}
+                    <ThemedCodeHighlightWithMark
+                        highlightRanges={addedRanges}
+                        query={toQuery}
+                        maxEditorHeight={'40vh'}
+                        autoHeight={false}
+                    />
                 </div>
-                <Tag>{toEngine.name}</Tag>
-                <ThemedCodeHighlightWithMark
-                    highlightRanges={addedRanges}
-                    query={toQuery}
-                    maxEditorHeight={'40vh'}
-                    autoHeight={false}
-                />
-            </div>
+            )}
         </div>
     );
 };

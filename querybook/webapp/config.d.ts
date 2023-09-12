@@ -74,3 +74,31 @@ declare module 'config/query_error.yaml' {
     >;
     export default data;
 }
+
+declare module 'config/color_palette.yaml' {
+    const data: Array<{
+        name: string;
+        color: string;
+        fillColor: string;
+    }>;
+    export default data;
+}
+
+declare module 'config/querybook_public_config.yaml' {
+    const data: {
+        ai_assistant: {
+            enabled: boolean;
+            query_title_generation: {
+                enabled: boolean;
+            };
+            query_generation: {
+                enabled: boolean;
+            };
+
+            query_auto_fix: {
+                enabled: boolean;
+            };
+        };
+    };
+    export default data;
+}

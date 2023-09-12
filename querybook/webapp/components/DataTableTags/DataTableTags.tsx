@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ITag } from 'const/tag';
 import { stopPropagationAndDefault } from 'lib/utils/noop';
 import { navigateWithinEnv } from 'lib/utils/query-string';
+import { useRankedTags } from 'lib/utils/tag';
 import { Dispatch, IStoreState } from 'redux/store/types';
 import {
     deleteTableTag,
@@ -18,7 +19,6 @@ import { HoverIconTag } from 'ui/Tag/HoverIconTag';
 
 import { CreateDataTableTag } from './CreateDataTableTag';
 import { TableTagConfigModal } from './TableTagConfigModal';
-import { useRankedTags } from './utils';
 
 import './DataTableTags.scss';
 
@@ -26,12 +26,14 @@ interface IProps {
     tableId: number;
     readonly?: boolean;
     mini?: boolean;
+    showType?: boolean;
 }
 
 export const DataTableTags: React.FunctionComponent<IProps> = ({
     tableId,
     readonly = false,
     mini = false,
+    showType = true,
 }) => {
     const isUserAdmin = useSelector(
         (state: IStoreState) => state.user.myUserInfo.isAdmin
@@ -62,6 +64,7 @@ export const DataTableTags: React.FunctionComponent<IProps> = ({
             key={tag.id}
             isUserAdmin={isUserAdmin}
             mini={mini}
+            showType={showType}
         />
     ));
 
@@ -82,7 +85,8 @@ export const TableTag: React.FC<{
     readonly?: boolean;
     deleteTag?: (tagName: string) => void;
     mini?: boolean;
-}> = ({ tag, readonly, deleteTag, isUserAdmin, mini }) => {
+    showType?: boolean;
+}> = ({ tag, readonly, deleteTag, isUserAdmin, mini, showType = true }) => {
     const tagMeta = tag.meta ?? {};
     const tagRef = React.useRef<HTMLSpanElement>();
     const [showConfigModal, setShowConfigModal] = React.useState(false);
@@ -124,7 +128,7 @@ export const TableTag: React.FC<{
     );
 
     return (
-        <>
+        <div className="TableTag">
             {canUserUpdate && (
                 <ContextMenu
                     anchorRef={tagRef}
@@ -138,9 +142,11 @@ export const TableTag: React.FC<{
                     onHide={() => setShowConfigModal(false)}
                 />
             )}
-
             <HoverIconTag
                 key={tag.id}
+                name={tag.name}
+                type={tagMeta.type}
+                icon={tagMeta.icon}
                 iconOnHover={canUserDelete ? 'X' : null}
                 onIconHoverClick={canUserDelete ? handleDeleteTag : null}
                 tooltip={tagMeta.tooltip}
@@ -148,18 +154,9 @@ export const TableTag: React.FC<{
                 color={tagMeta.color}
                 onClick={handleTagClick}
                 ref={tagRef}
-                withBorder={tagMeta.admin}
                 mini={mini}
-            >
-                {tagMeta.icon && (
-                    <Icon
-                        name={tagMeta.icon as any}
-                        size={16}
-                        className="mr4"
-                    />
-                )}
-                <span>{tag.name}</span>
-            </HoverIconTag>
-        </>
+                showType={showType}
+            />
+        </div>
     );
 };

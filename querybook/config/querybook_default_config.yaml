@@ -48,6 +48,10 @@ OAUTH_USER_PROFILE: ~
 LDAP_CONN: ~
 LDAP_USER_DN: uid={},dc=example,dc=com
 LDAP_UID_FIELD: uid
+LDAP_EMAIL_FIELD: mail
+LDAP_LASTNAME_FIELD: sn
+LDAP_FIRSTNAME_FIELD: givenName
+LDAP_FULLNAME_FIELD: cn
 
 # --------------- Result Store ---------------
 RESULT_STORE_TYPE: db
@@ -77,3 +81,16 @@ TABLE_MAX_UPLOAD_SIZE: ~
 
 # --------------- Event Logging ---------------
 EVENT_LOGGER_NAME: ~
+
+# --------------- Stats Logging ---------------
+STATS_LOGGER_NAME: ~
+
+# --------------- AI Assistant ---------------
+# Example config for OpenAI
+# AI_ASSISTANT_PROVIDER: openai
+# AI_ASSISTANT_CONFIG:
+#     model_name: gpt-3.5-turbo
+#     temperature: 0
+AI_ASSISTANT_PROVIDER: ~
+AI_ASSISTANT_CONFIG:
+    model_name: ~

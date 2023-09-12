@@ -35,7 +35,7 @@ export const QueryExecutionDuration: React.FunctionComponent<IProps> = ({
     }
 
     return (
-        <StyledText className="flex-row" color="light">
+        <StyledText className="flex-row mr8" color="light">
             {durationDOM}
             <span className="mh4">by</span>
             <UserName uid={queryExecution.uid} />

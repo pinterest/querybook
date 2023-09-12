@@ -3,16 +3,16 @@
     flex-direction: row;
     margin-bottom: 8px;
     cursor: default;
+    gap: 12px;
 
     .KeyContentDisplay-key {
-        width: 180px;
-        margin-right: 12px;
+        min-width: 160px;
         color: var(--text-light);
         font-size: var(--text-size);
         font-weight: var(--light-bold-font);
     }
     .KeyContentDisplay-content {
-        width: 100%;
+        flex: 1;
         align-self: center;
 
         &.right-align {

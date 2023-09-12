@@ -11,7 +11,7 @@ from app.db import with_session
 from env import QuerybookSettings
 from const.data_doc import DataCellType
 from const.impression import ImpressionItemType
-from const.schedule import TaskRunStatus
+from const.schedule import TaskRunStatus, ScheduleTaskType
 from lib.notify.utils import notify_user
 from lib.scheduled_datadoc.legacy import convert_if_legacy_datadoc_schedule
 from logic.schedule import (
@@ -65,7 +65,7 @@ def get_scheduled_datadoc_tasks(session=None):
         .filter(
             TaskSchedule.enabled.is_(True),
             TaskSchedule.name.like(DATADOC_SCHEDULE_PREFIX + "%"),
-            TaskSchedule.task_type == "user",
+            TaskSchedule.task_type == ScheduleTaskType.USER,
         )
         .all()
     )

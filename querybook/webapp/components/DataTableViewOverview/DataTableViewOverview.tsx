@@ -34,6 +34,7 @@ import { refreshDataTableInMetastore } from 'redux/dataSources/action';
 import { SoftButton, TextButton } from 'ui/Button/Button';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
 import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
+import { Link } from 'ui/Link/Link';
 import { LoadingRow } from 'ui/Loading/Loading';
 import { Message } from 'ui/Message/Message';
 import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
@@ -150,6 +151,20 @@ export const DataTableViewOverview: React.FC<
             );
         });
 
+    const customPropertiesDOM = Object.entries(
+        table.custom_properties ?? {}
+    ).map(([key, value]) => (
+        <KeyContentDisplay key={key} keyString={titleize(key, '_', ' ')}>
+            {value && /https?:\/\/[^\s]+/.test(value.trim()) ? (
+                <Link to={value} newTab>
+                    {value}
+                </Link>
+            ) : (
+                value
+            )}
+        </KeyContentDisplay>
+    ));
+
     const rawMetastoreInfoDOM = table.hive_metastore_description ? (
         <pre className="raw-metastore-info">
             <ShowMoreText
@@ -192,6 +207,7 @@ export const DataTableViewOverview: React.FC<
     const detailsSection = (
         <DataTableViewOverviewSection title="Details">
             {detailsDOM}
+            {customPropertiesDOM}
         </DataTableViewOverviewSection>
     );
 

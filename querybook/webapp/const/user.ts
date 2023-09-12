@@ -9,8 +9,14 @@ export interface IUserInfo {
     fullname: string;
     profile_img: string;
     deleted: boolean;
+    email: string;
+    is_group: boolean;
 
     roles?: number[];
+
+    properties: {
+        description?: string;
+    };
 }
 
 export interface IMyUserInfo {

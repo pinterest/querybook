@@ -22,6 +22,7 @@ export function getContextSensitiveWarnings(
                 contextSensitiveWarnings.push({
                     message: `Table ${table.name} is newly created or does not exist`,
                     severity: 'warning',
+                    type: 'lint',
                     from: {
                         line: table.line,
                         ch: implicitSchema
@@ -32,6 +33,7 @@ export function getContextSensitiveWarnings(
                         line: table.line,
                         ch: table.end,
                     },
+                    suggestion: null,
                 });
             }
         } else {
@@ -55,6 +57,7 @@ export function getContextSensitiveWarnings(
 
                 contextSensitiveWarnings.push({
                     message: warningMessage,
+                    type: 'lint',
                     severity:
                         maxSeverity === DataTableWarningSeverity.ERROR
                             ? 'error'
@@ -69,6 +72,7 @@ export function getContextSensitiveWarnings(
                         line: table.line,
                         ch: table.end,
                     },
+                    suggestion: null,
                 });
             }
         }

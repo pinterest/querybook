@@ -5,6 +5,7 @@ import { useRouteMatch } from 'react-router-dom';
 
 import { CreateDataDocButton } from 'components/CreateDataDocButton/CreateDataDocButton';
 import { IDataDoc } from 'const/datadoc';
+import { useDeleteDataDoc } from 'hooks/dataDoc/useDeleteDataDoc';
 import * as dataDocActions from 'redux/dataDoc/action';
 import {
     dataDocsMineSelector,
@@ -258,6 +259,8 @@ const MyDataDocsSection: React.FC<ICommonSectionProps> = (props) => {
     );
     const dataDocs = useSelector(dataDocsMineSelector);
 
+    const handleDeleteDataDoc = useDeleteDataDoc();
+
     return (
         <DataDocNavigatorSection
             sectionHeader="my docs"
@@ -270,6 +273,7 @@ const MyDataDocsSection: React.FC<ICommonSectionProps> = (props) => {
             collapsed={collapsed}
             setCollapsed={setCollapsed}
             allowReorder
+            onRemove={(dataDoc: IDataDoc) => handleDeleteDataDoc(dataDoc.id)}
         />
     );
 };

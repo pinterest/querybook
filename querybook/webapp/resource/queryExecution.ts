@@ -178,7 +178,7 @@ export const TemplatedQueryResource = {
                 engine_id: engineId,
             },
             {
-                notifyOnError: true,
+                notifyOnError: false,
                 timeout: 5000, // timeouts in 5s
             }
         ),

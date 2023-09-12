@@ -44,10 +44,6 @@ function SimpleFormField<T>({
     value: T;
     onChange: onChangeFunc<T>;
 }) {
-    const onFieldChange = React.useCallback(
-        (newVal: any) => onChange('', newVal),
-        [onChange]
-    );
     const {
         description,
         hidden,
@@ -56,6 +52,18 @@ function SimpleFormField<T>({
         field_type: fieldType,
         options,
     } = formField;
+
+    const onFieldChange = React.useCallback(
+        (newVal: any) => {
+            if (fieldType === 'number') {
+                newVal = Number(newVal);
+            }
+
+            return onChange('', newVal);
+        },
+        [onChange, fieldType]
+    );
+
     let controlDOM: React.ReactChild;
     if (fieldType === 'string' || fieldType === 'number') {
         const inputProps = {
@@ -125,7 +133,7 @@ function ExpandableFormField<T extends []>({
         if (value == null) {
             onChange('', [] as any);
         }
-    }, [value]);
+    }, [value, onChange]);
 
     if (!Array.isArray(value)) {
         return <div className="ExpandableFormField">Invalid Field</div>;
@@ -174,17 +182,15 @@ function StructFormField<T extends Record<string, unknown>>({
     value: T;
     onChange: onChangeFunc<T>;
 }) {
-    const fieldsDOM = Object.entries(formField.fields).map(
-        ([key, subField]) => (
-            <FormField key={key} stacked label={titleize(key)}>
-                <SmartForm
-                    formField={subField}
-                    value={value[key]}
-                    onChange={prependOnChangePath(key, onChange)}
-                />
-            </FormField>
-        )
-    );
+    const fieldsDOM = formField.fields.map(([key, subField]) => (
+        <FormField key={key} stacked label={titleize(key)}>
+            <SmartForm
+                formField={subField}
+                value={value[key]}
+                onChange={prependOnChangePath(key, onChange)}
+            />
+        </FormField>
+    ));
 
     return <>{fieldsDOM}</>;
 }

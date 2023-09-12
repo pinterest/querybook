@@ -1,12 +1,9 @@
 from typing import Dict, List, Tuple
 
-from lib.metastore.base_metastore_loader import (
-    BaseMetastoreLoader,
-    DataTable,
-    DataColumn,
-)
-from lib.query_executor.executor_template.templates import sqlalchemy_template
+from const.metastore import DataColumn, DataTable
+from lib.metastore.base_metastore_loader import BaseMetastoreLoader
 from lib.query_executor.connection_string.sqlalchemy import create_sqlalchemy_engine
+from lib.query_executor.executor_template.templates import sqlalchemy_template
 
 
 class SqlAlchemyMetastoreLoader(BaseMetastoreLoader):

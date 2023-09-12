@@ -12,7 +12,7 @@ spec:
   type: {{ .Values.web.service.serviceType }}
   ports:
     - port: {{ .Values.web.service.servicePort }}
-      targetPort: 10001
+      targetPort: {{ .Values.web.service.containerPort }}
       protocol: TCP
       name: http
   selector:

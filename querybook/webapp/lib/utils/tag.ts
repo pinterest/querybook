@@ -26,3 +26,8 @@ export function useRankedTags(tags: ITag[]) {
         [tags]
     );
 }
+
+export function isTagValid(val: string) {
+    const regex = /^[a-z0-9_ ]{1,255}$/i;
+    return regex.test(val);
+}

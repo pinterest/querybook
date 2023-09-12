@@ -10,10 +10,10 @@ import type {
     IDataTableSamples,
     IDataTableWarning,
     IDataTableWarningUpdateFields,
+    IDetailedDataColumn,
     ILineage,
     IPaginatedQuerySampleFilters,
     IQueryMetastore,
-    ITableColumnStats,
     ITableQueryEngine,
     ITableSampleParams,
     ITableStats,
@@ -168,8 +168,9 @@ export const TableResource = {
 };
 
 export const TableColumnResource = {
-    getStats: (columnId: number) =>
-        ds.fetch<ITableColumnStats[]>(`/column/stats/${columnId}/`),
+    get: (columnId: number) =>
+        ds.fetch<IDetailedDataColumn>(`/column/${columnId}/`),
+
     update: (columnId: number, description: ContentState) => {
         const params = {
             description: convertContentStateToHTML(description),
@@ -177,6 +178,7 @@ export const TableColumnResource = {
 
         return ds.update<IDataColumn>(`/column/${columnId}/`, params);
     },
+    getTags: (columnId: number) => ds.fetch<ITag[]>(`/column/${columnId}/tag/`),
 };
 
 export const TableLineageResource = {
@@ -235,4 +237,17 @@ export const TableTagResource = {
         ds.update<ITag>(`/tag/${tag.id}/`, {
             meta: tag.meta,
         }),
+};
+
+export const DataElementResource = {
+    search: (keyword: string) =>
+        ds.fetch<
+            Array<{
+                name: string;
+                desc: string;
+            }>
+        >(`/data_element/keyword/`, { keyword }),
+
+    getMetastoreLink: (dataElementId: number) =>
+        ds.fetch<string>(`/data_element/${dataElementId}/metastore_link/`),
 };
