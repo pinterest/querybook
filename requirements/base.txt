@@ -16,6 +16,7 @@ alembic==1.8.1
 
 gevent-websocket==0.10.1
 flask-socketio==5.3.1
+python-engineio>=4.7.1
 
 # Query templating
 Jinja2==3.1.2  # From Flask
