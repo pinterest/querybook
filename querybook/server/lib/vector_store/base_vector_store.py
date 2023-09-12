@@ -1,16 +1,25 @@
-from abc import abstractmethod
 import re
+from abc import abstractmethod
+from typing import Literal, Optional
 
+from langchain.docstore.document import Document
 from langchain.vectorstores.base import VectorStore
-
 from models.metastore import DataTable
 from models.query_execution import QueryExecution
 
 
 class VectorStoreBase(VectorStore):
     @abstractmethod
+    def get_doc_by_id(self, doc_id: str) -> Document:
+        raise NotImplementedError()
+
+    @abstractmethod
     def delete_doc_by_id(self, doc_id: str):
         raise NotImplementedError()
+
+    def get_table_summary(self, table_id: int) -> str:
+        doc = self.get_doc_by_id(f"table_{table_id}")
+        return doc.page_content if doc else ""
 
     def should_skip_table(self, table: DataTable) -> bool:
         """Whether to skip logging the table to the vector store.
@@ -39,25 +48,34 @@ class VectorStoreBase(VectorStore):
 
         return False
 
-    def search_tables(self, text: str, threshold=0.6, k=3):
+    def search_tables(
+        self, metastore_id: int, text: str, threshold=0.6, k=3, fetch_k=30
+    ) -> list[tuple[int, str, int]]:
         """Find tables using embedding based table search.
 
         The table search will return a list of k tables that are similar to the given text with highest similarity score.
+
+        Return: a list of tuples (table_name, score)
         """
-        docs_with_score = self.similarity_search_with_score(text, k=3)
+
+        boolean_filter = {"term": {"metadata.metastore_id": metastore_id}}
+        docs_with_score = self.similarity_search_with_score(
+            text, k=fetch_k, boolean_filter=boolean_filter
+        )
         tables = [
-            (table, score)
+            (table_name, score, doc.metadata.get("type"))
             for (doc, score) in docs_with_score
-            for table in doc.metadata.get("tables", [])
+            for table_name in doc.metadata.get("tables", [])
             if score > threshold
         ]
 
         table_score_dict = {}
-        for table, score in tables:
-            table_score_dict[table] = max(score, table_score_dict.get(table, 0))
+        for table_name, score, type in tables:
+            if type == "table" and score >= 0.7:
+                score *= 10
+            elif type == "query":
+                score /= 10
 
-        sorted_tables = sorted(
-            table_score_dict.items(), key=lambda x: x[1], reverse=True
-        )
+            table_score_dict[table_name] = table_score_dict.get(table_name, 0) + score
 
-        return [t for t, _ in sorted_tables[:k]]
+        return sorted(table_score_dict.items(), key=lambda x: x[1], reverse=True)[:k]

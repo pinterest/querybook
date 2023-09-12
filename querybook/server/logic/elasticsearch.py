@@ -379,6 +379,11 @@ def update_query_cell_by_id(query_cell_id, session=None):
                 "doc_as_upsert": True,
             }  # ES requires this format for updates
             _update(index_name, query_cell_id, updated_body)
+
+            # Try to update the vector store as well
+            from logic.vector_store import record_query_cell_from_es
+
+            record_query_cell_from_es(formatted_object)
         except Exception:
             LOG.error("failed to upsert {}. Will pass.".format(query_cell_id))
 
@@ -623,7 +628,7 @@ def _bulk_update_tables(fields: Set[str] = None):
 
 @with_exception
 @with_session
-def update_table_by_id(table_id, session=None):
+def update_table_by_id(table_id, update_vector_store=False, session=None):
     index_name = ES_CONFIG["tables"]["index_name"]
 
     table = get_table_by_id(table_id, session=session)
@@ -640,7 +645,8 @@ def update_table_by_id(table_id, session=None):
             _update(index_name, table_id, updated_body)
 
             # update it in vector store as well
-            record_table(table=table, session=session)
+            if update_vector_store:
+                record_table(table=table, session=session)
         except Exception:
             # Otherwise insert as new
             LOG.error("failed to upsert {}. Will pass.".format(table_id))

@@ -42,16 +42,6 @@ def log_query_per_table_task(self, query_execution_id, execution_type):
                 query_execution, metastore_id, datadoc_cell, session=session
             )
 
-        # log the ad-hoc(not scheduled) query to vector store for table search
-        if (
-            datadoc_cell is not None
-            and execution_type == QueryExecutionType.ADHOC.value
-        ):
-            vs_logic.record_query_execution_by_id(
-                query_execution_id=query_execution_id,
-                session=session,
-            )
-
         if datadoc_cell is None or not datadoc_cell.doc.public:
             return
 

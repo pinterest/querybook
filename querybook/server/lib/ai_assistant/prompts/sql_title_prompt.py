@@ -1,15 +1,8 @@
-from langchain.prompts import (
-    ChatPromptTemplate,
-    SystemMessagePromptTemplate,
-    HumanMessagePromptTemplate,
-)
+from langchain import PromptTemplate
 
 
-system_message_template = (
-    """You are a helpful assistant that can summerize SQL queries."""
-)
-
-human_message_template = (
+prompt_template = (
+    "You are a helpful data scientist that can summerize SQL queries.\n\n"
     "Generate a brief 10-word-maximum title for the SQL query below. "
     "===Query\n"
     "{query}\n\n"
@@ -21,9 +14,4 @@ human_message_template = (
     "This is a title\n"
 )
 
-SQL_TITLE_PROMPT = ChatPromptTemplate.from_messages(
-    [
-        SystemMessagePromptTemplate.from_template(system_message_template),
-        HumanMessagePromptTemplate.from_template(human_message_template),
-    ]
-)
+SQL_TITLE_PROMPT = PromptTemplate.from_template(prompt_template)

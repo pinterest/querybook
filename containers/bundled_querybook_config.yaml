@@ -8,11 +8,29 @@ ELASTICSEARCH_HOST: http://elasticsearch:9200
 # Uncomment for email
 # EMAILER_CONN: dockerhostforward
 
-# Uncomment below to enable AI Assistant
+# Uncomment below to enable AI Assistant for local development.
 # AI_ASSISTANT_PROVIDER: openai
 # AI_ASSISTANT_CONFIG:
-#     model_name: gpt-3.5-turbo
-#     temperature: 0
+#     default:
+#         model_args:
+#             model_name: gpt-3.5-turbo-16k
+#             temperature: 0
+#         context_length: 16000
+#     table_summary:
+#         model_args:
+#             model_name: gpt-3.5-turbo-16k
+#             temperature: 0
+#         context_length: 16000
+#     query_summary:
+#         model_args:
+#             model_name: gpt-3.5-turbo-16k
+#             temperature: 0
+#         context_length: 16000
+#     table_select:
+#         model_args:
+#             model_name: gpt-3.5-turbo-16k
+#             temperature: 0
+#         context_length: 16000
 
 # Uncomment below to enable vector store to support embedding based table search.
 # Please check langchain doc for the configs of each provider.

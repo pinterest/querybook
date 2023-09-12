@@ -1,4 +1,3 @@
-from logic.vector_store import ingest_tables, ingest_query_executions
+from logic.vector_store import ingest_vector_index
 
-ingest_tables()
-ingest_query_executions()
+ingest_vector_index()

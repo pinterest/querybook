@@ -113,7 +113,7 @@ export function performSearch(): ThunkResult<Promise<ISearchPreview[]>> {
                 searchState.searchRequest.cancel();
             }
 
-            const { currentPage, searchType } = searchState;
+            const { currentPage, searchType, isVectorSearch } = searchState;
 
             const searchParams = mapStateToSearch(searchState);
 
@@ -137,13 +137,24 @@ export function performSearch(): ThunkResult<Promise<ISearchPreview[]>> {
                     });
                     break;
                 case SearchType.Table:
-                    searchRequest = SearchTableResource.search({
-                        ...searchParams,
-                        metastore_id:
-                            state.dataTableSearch.metastoreId ||
-                            queryMetastoresSelector(state)[0].id,
-                        fields: Object.keys(searchState.searchFields),
-                    });
+                    if (isVectorSearch) {
+                        searchRequest = SearchTableResource.vectorSearch({
+                            metastore_id:
+                                state.dataTableSearch.metastoreId ||
+                                queryMetastoresSelector(state)[0].id,
+                            keywords: searchString,
+                            filters: searchParams.filters,
+                        });
+                    } else {
+                        searchRequest = SearchTableResource.search({
+                            ...searchParams,
+                            metastore_id:
+                                state.dataTableSearch.metastoreId ||
+                                queryMetastoresSelector(state)[0].id,
+                            fields: Object.keys(searchState.searchFields),
+                        });
+                    }
+
                     break;
                 case SearchType.Board:
                     searchRequest = SearchBoardResource.search({
@@ -273,6 +284,22 @@ export function updateSearchType(searchType: SearchType): ThunkResult<void> {
             type: '@@search/SEARCH_TYPE_UPDATE',
             payload: {
                 searchType,
+            },
+        });
+        mapStateToQueryParam(getState().search);
+        dispatch(performSearch());
+    };
+}
+
+export function updateIsVectorSearch(
+    isVectorSearch: boolean
+): ThunkResult<void> {
+    return (dispatch, getState) => {
+        dispatch(resetSearchResult());
+        dispatch({
+            type: '@@search/IS_VECTOR_SEARCH_UPDATE',
+            payload: {
+                isVectorSearch,
             },
         });
         mapStateToQueryParam(getState().search);

@@ -1,13 +1,8 @@
-from langchain.prompts import (
-    ChatPromptTemplate,
-    SystemMessagePromptTemplate,
-    HumanMessagePromptTemplate,
-)
+from langchain import PromptTemplate
 
 
-system_message_template = "You are a SQL expert that can help generating SQL query."
-
-human_message_template = (
+prompt_template = (
+    "You are a SQL expert that can help generating SQL query.\n\n"
     "Please help to generate a new SQL query or modify the original query to answer the following question. Your response should ONLY be based on the given context.\n\n"
     "Please always follow the key/value pair format below for your response:\n"
     "===Response Format\n"
@@ -39,9 +34,4 @@ human_message_template = (
     "{question}\n\n"
 )
 
-TEXT2SQL_PROMPT = ChatPromptTemplate.from_messages(
-    [
-        SystemMessagePromptTemplate.from_template(system_message_template),
-        HumanMessagePromptTemplate.from_template(human_message_template),
-    ]
-)
+TEXT_TO_SQL_PROMPT = PromptTemplate.from_template(prompt_template)

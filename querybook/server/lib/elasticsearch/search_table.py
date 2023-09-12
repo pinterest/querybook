@@ -134,3 +134,42 @@ def construct_tables_query(
     )
 
     return query
+
+
+def construct_tables_query_by_table_names(
+    metastore_id: int,
+    table_names: list[str],
+    filters: list[list[str]],
+    limit=20,
+):
+    """This query is used to get table information by table names."""
+    should_clause = []
+    for table_name in table_names:
+        schema, name = table_name.split(".")
+        should_clause.append(
+            {
+                "bool": {
+                    "must": [
+                        {"term": {"schema": schema}},
+                        {"term": {"name": name}},
+                    ],
+                }
+            }
+        )
+
+    bool_query = {
+        "must": [{"term": {"metastore_id": metastore_id}}],
+        "should": should_clause,
+        "minimum_should_match": 1,
+    }
+
+    search_filter = match_filters(filters, and_filter_names=FILTERS_TO_AND)
+    if search_filter and search_filter.get("filter"):
+        bool_query["filter"] = search_filter["filter"]
+
+    query = {
+        "query": {"bool": bool_query},
+        "size": limit,
+    }
+
+    return query

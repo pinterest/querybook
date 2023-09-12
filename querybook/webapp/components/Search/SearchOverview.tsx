@@ -48,8 +48,9 @@ import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { Select } from 'ui/Select/Select';
 import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
-import { EmptyText } from 'ui/StyledText/StyledText';
+import { AccentText, EmptyText } from 'ui/StyledText/StyledText';
 import { Tabs } from 'ui/Tabs/Tabs';
+import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
 import { EntitySelect } from './EntitySelect';
 import { SearchDatePicker } from './SearchDatePicker';
@@ -96,6 +97,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
         searchOrder,
         searchType,
         searchAuthorChoices,
+        isVectorSearch,
 
         searchRequest,
         queryMetastores,
@@ -144,6 +146,9 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
     }, []);
     const updateSearchType = React.useCallback((type) => {
         dispatch(searchActions.updateSearchType(type));
+    }, []);
+    const updateIsVectorSearch = React.useCallback((isVectorSearch) => {
+        dispatch(searchActions.updateIsVectorSearch(isVectorSearch));
     }, []);
     const moveToPage = React.useCallback((page) => {
         dispatch(searchActions.moveToPage(page));
@@ -272,7 +277,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                 ? 'Search data docs'
                 : 'Search tables';
         return (
-            <div className="search-bar-wrapper flex-row">
+            <div className="search-bar-wrapper">
                 <SearchBar
                     className="SearchBar"
                     value={searchString}
@@ -283,6 +288,17 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                     placeholder={placeholder}
                     autoFocus
                 />
+                {searchType === SearchType.Table && (
+                    <div className="mt8 flex-row">
+                        <AccentText weight="bold" className="ml8 mr12">
+                            Natural Language Search
+                        </AccentText>
+                        <ToggleSwitch
+                            checked={isVectorSearch}
+                            onChange={(val) => updateIsVectorSearch(!!val)}
+                        />
+                    </div>
+                )}
             </div>
         );
     };

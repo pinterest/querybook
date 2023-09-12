@@ -3,25 +3,40 @@ from typing import Callable
 from app.db import with_session
 from logic import metastore as m_logic
 from models.metastore import DataTable, DataTableColumn
+from lib.vector_store import get_vector_store
 
 
-def _get_column_prompt(column: DataTableColumn) -> str:
-    prompt = ""
+def get_table_documentation(table: DataTable) -> str:
+    """Get table documentation.
+    Try to get it from the vector store first. If not found, get it from the metastore.
+    """
+    if table.information.description:
+        return table.information.description
 
-    prompt += f"- Column Name: {column.name}\n"
-    prompt += f"  Data Type: {column.type}\n"
+    vs = get_vector_store()
+    if vs:
+        vs.get_table_summary(table.id)
+
+    return ""
+
+
+def _get_column(column: DataTableColumn) -> str:
+    column_json = {}
+
+    column_json["name"] = column.name
+    column_json["type"] = column.type
     if column.description:
-        prompt += f"  Description: {column.description}\n"
+        column_json["description"] = column.description
     elif column.data_elements:
         # use data element's description when column's description is empty
         # TODO: only handling the REF data element for now. Need to handle ARRAY, MAP and etc in the future.
-        prompt += f"  Description: {column.data_elements[0].description}\n"
-        prompt += f"  Data Element: {column.data_elements[0].name}\n"
+        column_json["description"] = column.data_elements[0].description
+        column_json["data_element"] = column.data_elements[0].name
 
-    return prompt
+    return column_json
 
 
-def _get_table_schema_prompt(
+def _get_table_schema(
     table: DataTable,
     should_skip_column: Callable[[DataTableColumn], bool] = None,
 ) -> str:
@@ -39,58 +54,54 @@ def _get_table_schema_prompt(
         Data Element: [Data_element_name]
     """
     if not table:
-        return ""
+        return {}
 
-    prompt = ""
+    table_json = {}
 
-    full_table_name = f"{table.data_schema.name}.{table.name}"
-    table_description = table.information.description or ""
+    table_json["table_name"] = f"{table.data_schema.name}.{table.name}"
+    table_json["table_description"] = get_table_documentation(table)
 
-    prompt += f"Table Name: {full_table_name}\n"
-    prompt += f"Description: {table_description}\n"
-
-    prompt += "Columns:\n"
+    columns = []
     for column in table.columns:
         if should_skip_column and should_skip_column(column):
             continue
 
-        prompt += _get_column_prompt(column)
+        columns.append(_get_column(column))
 
-    return prompt
+    table_json["columns"] = columns
+    return table_json
 
 
 @with_session
-def get_table_schema_prompt_by_id(
+def get_table_schema_by_id(
     table_id: int,
     should_skip_column: Callable[[DataTableColumn], bool] = None,
     session=None,
 ) -> str:
     """Generate table schema prompt by table id"""
     table = m_logic.get_table_by_id(table_id=table_id, session=session)
-    return _get_table_schema_prompt(table, should_skip_column)
+    return _get_table_schema(table, should_skip_column)
 
 
 @with_session
-def get_table_schemas_prompt_by_ids(
+def get_table_schemas_by_ids(
     table_ids: list[int],
     should_skip_column: Callable[[DataTableColumn], bool] = None,
     session=None,
 ) -> str:
     """Generate table schemas prompt by table ids"""
-    return "\n\n".join(
-        [
-            get_table_schema_prompt_by_id(
-                table_id=table_id,
-                should_skip_column=should_skip_column,
-                session=session,
-            )
-            for table_id in table_ids
-        ]
-    )
+    return [
+        get_table_schema_by_id(
+            table_id=table_id,
+            should_skip_column=should_skip_column,
+            session=session,
+        )
+        for table_id in table_ids
+    ]
 
 
 @with_session
-def get_table_schema_prompt_by_name(
+def get_table_schema_by_name(
     metastore_id: int,
     full_table_name: str,
     should_skip_column: Callable[[DataTableColumn], bool] = None,
@@ -104,25 +115,23 @@ def get_table_schema_prompt_by_name(
         metastore_id=metastore_id,
         session=session,
     )
-    return _get_table_schema_prompt(table, should_skip_column)
+    return _get_table_schema(table, should_skip_column)
 
 
 @with_session
-def get_table_schemas_prompt_by_names(
+def get_table_schemas_by_names(
     metastore_id: int,
     full_table_names: list[str],
     should_skip_column: Callable[[DataTableColumn], bool] = None,
     session=None,
 ) -> str:
     """Generate table schemas prompt by table names"""
-    return "\n\n".join(
-        [
-            get_table_schema_prompt_by_name(
-                metastore_id=metastore_id,
-                full_table_name=table_name,
-                should_skip_column=should_skip_column,
-                session=session,
-            )
-            for table_name in full_table_names
-        ]
-    )
+    return [
+        get_table_schema_by_name(
+            metastore_id=metastore_id,
+            full_table_name=table_name,
+            should_skip_column=should_skip_column,
+            session=session,
+        )
+        for table_name in full_table_names
+    ]
