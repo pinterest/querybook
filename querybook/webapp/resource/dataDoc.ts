@@ -107,7 +107,7 @@ export const DataDocResource = {
         startIndex: number = 0
     ) =>
         ds.save<null>(`/datadoc/${docId}/run/`, {
-            startIndex,
+            start_index: startIndex,
             send_notification: sendNotification,
         }),
 

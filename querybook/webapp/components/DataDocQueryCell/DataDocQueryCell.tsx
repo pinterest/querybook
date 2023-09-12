@@ -93,7 +93,7 @@ interface IOwnProps {
     onUpKeyPressed?: () => any;
     onDownKeyPressed?: () => any;
     toggleFullScreen: () => any;
-    useRunAll: (docId: number, index: number) => any;
+    onRunAllFromIndex: () => any;
 }
 type IProps = IOwnProps & StateProps & DispatchProps;
 
@@ -548,12 +548,12 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
         additionalButtons.push({
             name: 'Run From Current Cell',
-            onClick: this.props.useRunAll(
-                this.props.docId,
-                this.props.queryIndexInDoc
-            ),
+            onClick: () => {
+                this.props.onRunAllFromIndex();
+            },
             icon: 'FastForward',
-            tooltip: 'Run all cells in the current datadoc after this cell',
+            tooltip:
+                'Run all cells in the current datadoc starting from this cell',
             tooltipPos: 'left',
         });
 

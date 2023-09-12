@@ -1,11 +1,5 @@
 import clsx from 'clsx';
-import React, {
-    useCallback,
-    useContext,
-    useEffect,
-    useMemo,
-    useRef,
-} from 'react';
+import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 import { DataDocCellControl } from 'components/DataDoc/DataDocCellControl';
@@ -28,15 +22,9 @@ import { getShareUrl } from 'lib/data-doc/data-doc-utils';
 import * as dataDocActions from 'redux/dataDoc/action';
 import * as dataDocSelectors from 'redux/dataDoc/selector';
 import { IStoreState } from 'redux/store/types';
-import { useQueryCells } from '../../hooks/dataDoc/useQueryCells';
-import { makeLatestQueryExecutionsSelector } from '../../redux/queryExecutions/selector';
-import { sendConfirm } from '../../lib/querybookUI';
-import { DataDocRunAllButtonConfirm } from '../DataDocRightSidebar/DataDocRunAllButtonConfirm';
-import toast from 'react-hot-toast';
-import { DataDocResource } from '../../resource/dataDoc';
-import { QueryExecutionStatus } from '../../const/queryExecution';
 
 import './DataDocCell.scss';
+import { useRunAllFromIndex } from 'hooks/dataDoc/useRunAllFromIndex';
 
 interface IDataDocCellProps {
     docId: number;
@@ -60,53 +48,6 @@ function getEstimatedCellHeight(cell: IDataCell) {
         return 240;
     }
     return 80;
-}
-
-function useRunAll(docId, index) {
-    let queryCells = useQueryCells(docId);
-    queryCells = queryCells.slice(index);
-
-    const latestQueryExecutions = useMakeSelector(
-        makeLatestQueryExecutionsSelector,
-        queryCells.map((c) => c.id) ?? []
-    );
-    const hasQueryRunning = useMemo(
-        () => latestQueryExecutions.some((q) => QueryExecutionStatus.DONE),
-        [latestQueryExecutions]
-    );
-    const notification = useRef(true);
-
-    const onRunAll = useCallback(() => {
-        sendConfirm({
-            header: 'Run all cells below',
-            message: (
-                <DataDocRunAllButtonConfirm
-                    defaultNotification={notification.current}
-                    onNotificationChange={(value) => {
-                        notification.current = value;
-                    }}
-                    hasQueryRunning={hasQueryRunning}
-                    queryCells={queryCells}
-                />
-            ),
-            onConfirm: () => {
-                trackClick({
-                    component: ComponentType.DATADOC_PAGE,
-                    element: ElementType.RUN_ALL_FROM_CELL_BUTTON,
-                });
-                toast.promise(
-                    DataDocResource.run(docId, notification.current, index),
-                    {
-                        loading: null,
-                        success: 'DataDoc execution started!',
-                        error: 'Failed to start the execution',
-                    }
-                );
-            },
-            confirmText: 'Run',
-        });
-        return null;
-    }, [docId, hasQueryRunning, notification, queryCells]);
 }
 
 // renders cell
@@ -139,6 +80,12 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> =
                 highlightCellIndex,
                 fullScreenCellIndex,
             } = useContext(DataDocContext);
+
+            const onRunAllFromIndex = useRunAllFromIndex(
+                docId,
+                queryIndexInDoc
+            );
+            console.log(onRunAllFromIndex);
 
             const cellIdtoUid = useMakeSelector(
                 dataDocSelectors.makeDataDocCursorByCellIdSelector,
@@ -246,7 +193,7 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> =
                         templatedVariables,
                         isFullScreen,
                         toggleFullScreen,
-                        useRunAll,
+                        onRunAllFromIndex,
                     };
                     cellDOM = <DataDocQueryCell {...allProps} />;
                 } else if (cell.cell_type === 'chart') {
