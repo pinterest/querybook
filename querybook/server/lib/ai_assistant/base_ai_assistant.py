@@ -319,39 +319,47 @@ class BaseAIAssistant(ABC):
     @with_session
     def find_tables(self, metastore_id, question, session=None):
         """Given 10 similar tables, ask LLM to select top 3 most suitable tables for the question"""
-        tables = get_vector_store().search_tables(
-            metastore_id=metastore_id,
-            text=question,
-            k=10,
-        )
-
-        table_names = [t[0] for t in tables]
-        table_docs = {}
-
-        token_count = 0
-        context_limit = (
-            self._get_llm_context_length(AICommandType.TABLE_SELECT.value) - 2048
-        )  # reserve 2k for prompt template and response
-        for full_table_name in table_names:
-            table_schema, table_name = full_table_name.split(".")
-            table = get_table_by_name(
-                schema_name=table_schema,
-                name=table_name,
+        try:
+            tables = get_vector_store().search_tables(
                 metastore_id=metastore_id,
-                session=session,
+                text=question,
+                k=10,
             )
-            summary = get_vector_store().get_table_summary(table.id)
-            count = self._get_token_count(AICommandType.TABLE_SELECT.value, summary)
-            if token_count + count > context_limit:
-                break
 
-            token_count += count
-            table_docs[table_name] = summary
+            table_names = [t[0] for t in tables]
+            table_docs = {}
 
-        prompt = self._get_table_select_prompt(
-            top_n=3, table_schemas=table_docs, question=question
-        )
-        llm = self._get_llm(
-            ai_command=AICommandType.TABLE_SELECT.value, callback_handler=None
-        )
-        return json.loads(llm.predict(text=prompt))
+            token_count = 0
+            context_limit = (
+                self._get_llm_context_length(AICommandType.TABLE_SELECT.value) - 2048
+            )  # reserve 2k for prompt template and response
+            for full_table_name in table_names:
+                table_schema, table_name = full_table_name.split(".")
+                table = get_table_by_name(
+                    schema_name=table_schema,
+                    name=table_name,
+                    metastore_id=metastore_id,
+                    session=session,
+                )
+
+                if not table:
+                    continue
+
+                summary = get_vector_store().get_table_summary(table.id)
+                count = self._get_token_count(AICommandType.TABLE_SELECT.value, summary)
+                if token_count + count > context_limit:
+                    break
+
+                token_count += count
+                table_docs[full_table_name] = summary
+
+            prompt = self._get_table_select_prompt(
+                top_n=3, table_schemas=table_docs, question=question
+            )
+            llm = self._get_llm(
+                ai_command=AICommandType.TABLE_SELECT.value, callback_handler=None
+            )
+            return json.loads(llm.predict(text=prompt))
+        except Exception as e:
+            LOG.error(e, exc_info=True)
+            return []
