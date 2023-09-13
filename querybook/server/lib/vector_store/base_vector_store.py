@@ -49,7 +49,13 @@ class VectorStoreBase(VectorStore):
         return False
 
     def search_tables(
-        self, metastore_id: int, text: str, threshold=0.6, k=3, fetch_k=30
+        self,
+        metastore_id: int,
+        text: str,
+        search_type: Optional[Literal["table", "query"]] = None,
+        threshold=0.6,
+        k=3,
+        fetch_k=30,
     ) -> list[tuple[int, str, int]]:
         """Find tables using embedding based table search.
 
@@ -58,7 +64,11 @@ class VectorStoreBase(VectorStore):
         Return: a list of tuples (table_name, score)
         """
 
-        boolean_filter = {"term": {"metadata.metastore_id": metastore_id}}
+        must_query = [{"term": {"metadata.metastore_id": metastore_id}}]
+        if search_type:
+            must_query.append({"term": {"metadata.type": search_type}})
+        boolean_filter = {"bool": {"must": must_query}}
+
         docs_with_score = self.similarity_search_with_score(
             text, k=fetch_k, boolean_filter=boolean_filter
         )
@@ -71,6 +81,7 @@ class VectorStoreBase(VectorStore):
 
         table_score_dict = {}
         for table_name, score, type in tables:
+            # TODO: need to tune the scoring strategy
             if type == "table" and score >= 0.7:
                 score *= 10
             elif type == "query":

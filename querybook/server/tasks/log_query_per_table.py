@@ -1,17 +1,13 @@
 from app.flask_app import celery
 
 from app.db import DBSession, with_session
-from const.query_execution import QueryExecutionStatus, QueryExecutionType
+from const.query_execution import QueryExecutionStatus
 from lib.query_analysis.lineage import (
     process_query,
     get_table_statement_type,
 )
 from lib.metastore import get_metastore_loader
-from logic import (
-    query_execution as qe_logic,
-    metastore as m_logic,
-    vector_store as vs_logic,
-)
+from logic import query_execution as qe_logic, metastore as m_logic
 from lib.lineage.utils import lineage as lineage_logic
 
 

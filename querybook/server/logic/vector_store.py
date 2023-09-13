@@ -2,22 +2,14 @@ import hashlib
 import time
 
 from app.db import with_session
-from const.query_execution import QueryExecutionStatus
 from langchain.docstore.document import Document
 from lib.ai_assistant import ai_assistant
+from lib.elasticsearch.search_table import construct_tables_query_by_table_names
 from lib.logger import get_logger
 from lib.vector_store import get_vector_store
 from logic.admin import get_query_engine_by_id
-from logic.metastore import (
-    get_all_table,
-    get_table_by_id,
-    get_tables_by_query_execution_id,
-    get_table_by_name,
-)
-from logic.query_execution import get_query_execution_by_id
+from logic.metastore import get_all_table, get_table_by_name
 from models.metastore import DataTable
-from models.query_execution import QueryExecution
-from lib.elasticsearch.search_table import construct_tables_query_by_table_names
 
 LOG = get_logger(__file__)
 
