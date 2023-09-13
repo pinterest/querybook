@@ -380,10 +380,6 @@ def update_query_cell_by_id(query_cell_id, session=None):
             }  # ES requires this format for updates
             _update(index_name, query_cell_id, updated_body)
 
-            # Try to update the vector store as well
-            from logic.vector_store import record_query_cell_from_es
-
-            record_query_cell_from_es(formatted_object)
         except Exception:
             LOG.error("failed to upsert {}. Will pass.".format(query_cell_id))
 

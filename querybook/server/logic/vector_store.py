@@ -1,5 +1,6 @@
 import hashlib
 import time
+from flask_login import current_user
 
 from app.db import with_session
 from langchain.docstore.document import Document
@@ -45,21 +46,21 @@ def get_sample_query_cells_by_table_name(table_name: str, k: int = 50):
     from lib.elasticsearch.search_utils import get_matching_objects
     from logic.elasticsearch import ES_CONFIG
 
-    # get timestamp of now
-    now = int(time.time())
+    # get timestamp of yesterday
+    end_time = int(time.time()) - 24 * 60 * 60
     # get timestamp of 6 months ago
-    half_year_ago = now - 6 * 30 * 24 * 60 * 60
+    start_time = end_time - 6 * 30 * 24 * 60 * 60
 
     filters = [
         ["full_table_name", [f"{table_name}"]],
         ["query_type", "query_cell"],
         ["statement_type", ["SELECT"]],
-        ["startDate", half_year_ago],
-        ["endDate", now],
+        ["startDate", start_time],
+        ["endDate", end_time],
     ]
 
     query = construct_query_search_query(
-        uid=1,
+        uid=current_user.id if current_user else 1,
         keywords="",
         filters=filters,
         limit=min(
