@@ -72,11 +72,13 @@ DAG Exporters allow users to create a workflow from Query Cells in DataDocs. Que
 
 The API plugin enables you to create new or modify existing API endpoints. For examples of its usage, please refer to the `querybook/plugins/api_plugin` folder.
 
-
 ### Monkey Patch Plugin
 
 Similar to the API plugin, the monkey patch plugin allows you to override or modify existing modules or functions. To see examples of how it works, please check the `querybook/plugins/monkey_patch_plugin` folder.
 
+### AI Assistant Plugin
+
+The AI assistant plugin will provide features like title generation, text-to-sql and query auto fix, powered by LLM. Please check [AI Assistant Guide](./add_ai_assistant.md) to learn how to enable it.
 
 ## Installing Plugins
 
