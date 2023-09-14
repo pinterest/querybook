@@ -10,3 +10,6 @@ ai_assistant:
 
     query_auto_fix:
         enabled: true
+
+    table_vector_search:
+        enabled: false

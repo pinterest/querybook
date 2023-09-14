@@ -6,6 +6,7 @@ import CreatableSelect from 'react-select/creatable';
 
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import { UserSelect } from 'components/UserSelect/UserSelect';
+import PublicConfig from 'config/querybook_public_config.yaml';
 import { ComponentType, ElementType } from 'const/analytics';
 import {
     IBoardPreview,
@@ -64,6 +65,8 @@ import { SearchSchemaSelect } from './SearchSchemaSelect';
 import { TableSelect } from './TableSelect';
 
 import './SearchOverview.scss';
+
+const AIAssistantConfig = PublicConfig.ai_assistant;
 
 const userReactSelectStyle = makeReactSelectStyle(
     true,
@@ -276,6 +279,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                 : searchType === SearchType.DataDoc
                 ? 'Search data docs'
                 : 'Search tables';
+
         return (
             <div className="search-bar-wrapper">
                 <SearchBar
@@ -288,17 +292,19 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                     placeholder={placeholder}
                     autoFocus
                 />
-                {searchType === SearchType.Table && (
-                    <div className="mt8 flex-row">
-                        <AccentText weight="bold" className="ml8 mr12">
-                            Natural Language Search
-                        </AccentText>
-                        <ToggleSwitch
-                            checked={isVectorSearch}
-                            onChange={(val) => updateIsVectorSearch(!!val)}
-                        />
-                    </div>
-                )}
+                {searchType === SearchType.Table &&
+                    AIAssistantConfig.enabled &&
+                    AIAssistantConfig.table_vector_search.enabled && (
+                        <div className="mt8 flex-row">
+                            <AccentText weight="bold" className="ml8 mr12">
+                                Natural Language Search
+                            </AccentText>
+                            <ToggleSwitch
+                                checked={isVectorSearch}
+                                onChange={(val) => updateIsVectorSearch(!!val)}
+                            />
+                        </div>
+                    )}
             </div>
         );
     };
