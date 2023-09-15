@@ -10,8 +10,8 @@ import './QueryComparison.scss';
 export const QueryComparison: React.FC<{
     fromQuery: string;
     toQuery: string;
-    fromQueryTitle?: string;
-    toQueryTitle?: string;
+    fromQueryTitle?: string | React.ReactNode;
+    toQueryTitle?: string | React.ReactNode;
     disableHighlight?: boolean;
     hideEmptyQuery?: boolean;
 }> = ({
@@ -63,7 +63,15 @@ export const QueryComparison: React.FC<{
         <div className="QueryComparison">
             {!(hideEmptyQuery && !fromQuery) && (
                 <div className="diff-side-view">
-                    {fromQueryTitle && <Tag>{fromQueryTitle}</Tag>}
+                    {fromQueryTitle && (
+                        <div className="mb12">
+                            {typeof fromQueryTitle === 'string' ? (
+                                <Tag>{fromQueryTitle}</Tag>
+                            ) : (
+                                fromQueryTitle
+                            )}
+                        </div>
+                    )}
                     <ThemedCodeHighlightWithMark
                         highlightRanges={removedRanges}
                         query={fromQuery}
@@ -74,7 +82,15 @@ export const QueryComparison: React.FC<{
             )}
             {!(hideEmptyQuery && !toQuery) && (
                 <div className="diff-side-view">
-                    {toQueryTitle && <Tag>{toQueryTitle}</Tag>}
+                    {toQueryTitle && (
+                        <div className="mb12">
+                            {typeof toQueryTitle === 'string' ? (
+                                <Tag>{toQueryTitle}</Tag>
+                            ) : (
+                                toQueryTitle
+                            )}
+                        </div>
+                    )}
                     <ThemedCodeHighlightWithMark
                         highlightRanges={addedRanges}
                         query={toQuery}

@@ -3,21 +3,22 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { QueryEngineSelector } from 'components/QueryRunButton/QueryRunButton';
 import { QueryComparison } from 'components/TranspileQueryModal/QueryComparison';
+import { AICommandType } from 'const/aiAssistant';
 import { ComponentType, ElementType } from 'const/analytics';
 import { IQueryEngine } from 'const/queryEngine';
-import { StreamStatus, useStream } from 'hooks/useStream';
+import { useAISocket } from 'hooks/useAISocket';
 import { trackClick } from 'lib/analytics';
 import { TableToken } from 'lib/sql-helper/sql-lexer';
 import { trimSQLQuery } from 'lib/stream';
 import { matchKeyPress } from 'lib/utils/keyboard';
 import { analyzeCode } from 'lib/web-worker';
 import { Button } from 'ui/Button/Button';
-import { DebouncedInput } from 'ui/DebouncedInput/DebouncedInput';
 import { Icon } from 'ui/Icon/Icon';
 import { Message } from 'ui/Message/Message';
 import { Modal } from 'ui/Modal/Modal';
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
 import { StyledText } from 'ui/StyledText/StyledText';
+import { Tag } from 'ui/Tag/Tag';
 
 import { TableSelector } from './TableSelector';
 import { TextToSQLMode, TextToSQLModeSelector } from './TextToSQLModeSelector';
@@ -25,7 +26,6 @@ import { TextToSQLMode, TextToSQLModeSelector } from './TextToSQLModeSelector';
 import './QueryGenerationModal.scss';
 
 interface IProps {
-    dataCellId: number;
     query: string;
     engineId: number;
     queryEngines: IQueryEngine[];
@@ -39,6 +39,10 @@ const useTablesInQuery = (query, language) => {
     const [tables, setTables] = useState<string[]>([]);
 
     useEffect(() => {
+        if (!query) {
+            return;
+        }
+
         analyzeCode(query, 'autocomplete', language).then((codeAnalysis) => {
             const tableReferences: TableToken[] = [].concat.apply(
                 [],
@@ -53,8 +57,27 @@ const useTablesInQuery = (query, language) => {
     return tables;
 };
 
+const useSQLGeneration = (
+    onData: (data: { type?: string; data: { [key: string]: string } }) => void
+): {
+    generating: boolean;
+    generateSQL: (data: {
+        query_engine_id: number;
+        tables: string[];
+        question: string;
+        original_query: string;
+    }) => void;
+    cancelGeneration: () => void;
+} => {
+    const socket = useAISocket(AICommandType.TEXT_TO_SQL, onData);
+    return {
+        generating: socket.loading,
+        generateSQL: socket.emit,
+        cancelGeneration: socket.cancel,
+    };
+};
+
 export const QueryGenerationModal = ({
-    dataCellId,
     query = '',
     engineId,
     queryEngines,
@@ -72,34 +95,45 @@ export const QueryGenerationModal = ({
     const [textToSQLMode, setTextToSQLMode] = useState(
         !!query ? TextToSQLMode.EDIT : TextToSQLMode.GENERATE
     );
+    const [newQuery, setNewQuery] = useState<string>('');
+    const [streamData, setStreamData] = useState<{ [key: string]: string }>({});
+
+    const onData = useCallback(({ type, data }) => {
+        if (type === 'tables') {
+            setTables(uniq([...tables, ...data]));
+        } else {
+            setStreamData(data);
+        }
+    }, []);
+
+    const { generating, generateSQL, cancelGeneration } =
+        useSQLGeneration(onData);
 
     useEffect(() => {
-        setTables(uniq([...tablesInQuery, ...tables]));
-    }, [tablesInQuery]);
-
-    const { streamStatus, startStream, streamData, cancelStream } = useStream(
-        '/ds/ai/generate_query/',
-        {
-            query_engine_id: engineId,
-            tables: tables,
-            question: question,
-            data_cell_id:
-                textToSQLMode === TextToSQLMode.EDIT ? dataCellId : undefined,
+        if (!generating) {
+            setTables(uniq([...tablesInQuery, ...tables]));
         }
-    );
+    }, [tablesInQuery, generating]);
 
-    const { explanation, query: rawNewQuery } = streamData;
+    const { explanation, query: rawNewQuery, data } = streamData;
 
-    const newQuery = trimSQLQuery(rawNewQuery);
+    useEffect(() => {
+        setNewQuery(trimSQLQuery(rawNewQuery));
+    }, [rawNewQuery]);
 
     const onKeyDown = useCallback(
         (event: React.KeyboardEvent) => {
             if (
-                streamStatus !== StreamStatus.STREAMING &&
+                !generating &&
                 matchKeyPress(event, 'Enter') &&
                 !event.shiftKey
             ) {
-                startStream();
+                generateSQL({
+                    query_engine_id: engineId,
+                    tables: tables,
+                    question: question,
+                    original_query: query,
+                });
                 trackClick({
                     component: ComponentType.AI_ASSISTANT,
                     element: ElementType.QUERY_GENERATION_BUTTON,
@@ -111,20 +145,13 @@ export const QueryGenerationModal = ({
                 });
             }
         },
-        [streamStatus, startStream]
+        [engineId, question, tables, query, generateSQL, generating]
     );
 
     const questionBarDOM = (
         <div className="question-bar">
             <span className="stars-icon">
-                <Icon
-                    name={
-                        streamStatus === StreamStatus.STREAMING
-                            ? 'Loading'
-                            : 'Stars'
-                    }
-                    size={18}
-                />
+                <Icon name={generating ? 'Loading' : 'Stars'} size={18} />
             </span>
             <div className="text2sql-mode">
                 <TextToSQLModeSelector
@@ -147,21 +174,21 @@ export const QueryGenerationModal = ({
                         : 'Ask AI to edit the query'
                 }
                 onKeyDown={onKeyDown}
-                disabled={streamStatus === StreamStatus.STREAMING}
+                disabled={generating}
                 transparent
             />
-            {streamStatus === StreamStatus.STREAMING && (
+            {generating && (
                 <Button
                     title="Stop Generating"
                     color="light"
-                    onClick={cancelStream}
+                    onClick={cancelGeneration}
                     className="mr8"
                 />
             )}
         </div>
     );
 
-    const bottomDOM = newQuery && streamStatus === StreamStatus.FINISHED && (
+    const bottomDOM = newQuery && !generating && (
         <div className="right-align mb16">
             <Button
                 title="Cancel"
@@ -211,7 +238,7 @@ export const QueryGenerationModal = ({
     return (
         <Modal
             onHide={() => {
-                cancelStream();
+                cancelGeneration();
                 onHide();
             }}
             className="QueryGenerationModal"
@@ -230,7 +257,8 @@ export const QueryGenerationModal = ({
                     }}
                 >
                     <StyledText size="small" weight="bold">
-                        Please select query engine and table(s) to get started
+                        Please select query engine and table(s) to get started,
+                        or AI will try the best to find the table(s) for you.
                     </StyledText>
                     <div className="flex-row-top mt8 gap8">
                         <QueryEngineSelector
@@ -250,37 +278,59 @@ export const QueryGenerationModal = ({
                                     autoFocus: true,
                                 }}
                                 clearAfterSelect
+                                showTablePopoverTooltip
                             />
                         </div>
                     </div>
                 </div>
 
-                {tables.length > 0 && (
-                    <>
-                        {questionBarDOM}
-                        {explanation && (
-                            <div className="mt12">{explanation}</div>
-                        )}
+                {questionBarDOM}
+                {(explanation || data) && (
+                    <div className="mt12">{explanation || data}</div>
+                )}
 
-                        {(query || newQuery) && (
-                            <div className="mt12">
-                                <QueryComparison
-                                    fromQuery={
-                                        textToSQLMode === TextToSQLMode.EDIT
-                                            ? query
-                                            : ''
-                                    }
-                                    toQuery={newQuery}
-                                    fromQueryTitle="Original Query"
-                                    toQueryTitle="New Query"
-                                    disableHighlight={
-                                        streamStatus === StreamStatus.STREAMING
-                                    }
-                                    hideEmptyQuery={true}
-                                />
-                            </div>
-                        )}
-                    </>
+                {(query || newQuery) && (
+                    <div className="mt12">
+                        <QueryComparison
+                            fromQuery={
+                                textToSQLMode === TextToSQLMode.EDIT
+                                    ? query
+                                    : ''
+                            }
+                            toQuery={newQuery}
+                            fromQueryTitle="Original Query"
+                            toQueryTitle={
+                                <div className="horizontal-space-between">
+                                    {<Tag>New Query</Tag>}
+                                    <Button
+                                        title="Keep the query"
+                                        onClick={() => {
+                                            onUpdateQuery(newQuery, false);
+                                            setTextToSQLMode(
+                                                TextToSQLMode.EDIT
+                                            );
+                                            setQuestion('');
+                                            setNewQuery('');
+                                            trackClick({
+                                                component:
+                                                    ComponentType.AI_ASSISTANT,
+                                                element:
+                                                    ElementType.QUERY_GENERATION_KEEP_BUTTON,
+                                                aux: {
+                                                    mode: textToSQLMode,
+                                                    question,
+                                                    tables,
+                                                },
+                                            });
+                                        }}
+                                        color="confirm"
+                                    />
+                                </div>
+                            }
+                            disableHighlight={generating}
+                            hideEmptyQuery={true}
+                        />
+                    </div>
                 )}
             </div>
         </Modal>

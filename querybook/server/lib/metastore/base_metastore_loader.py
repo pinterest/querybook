@@ -330,11 +330,20 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
     def _create_tables(self, schema_tables):
         with DBSession() as session:
             for schema_id, schema_name, table in schema_tables:
-                self._create_table_table(schema_id, schema_name, table, session=session)
+                self._create_table_table(
+                    schema_id, schema_name, table, from_batch=True, session=session
+                )
 
     @with_session
     def _create_table_table(
-        self, schema_id, schema_name, table_name, table=None, columns=None, session=None
+        self,
+        schema_id,
+        schema_name,
+        table_name,
+        table=None,
+        columns=None,
+        from_batch=False,
+        session=None,
     ):
         """Create or update a table.
         If detailed table info is given (parameter table and columns), it will just use
@@ -448,7 +457,11 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
                     session=session,
                 )
             session.commit()
-            update_table_by_id(table_id, session=session)
+            update_table_by_id(
+                table_id,
+                update_vector_store=not from_batch,
+                session=session,
+            )
             return table_id
         except Exception:
             session.rollback()

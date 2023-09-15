@@ -1,6 +1,8 @@
+import aiAssistantSocket from './ai-assistant/ai-assistant-socketio';
 import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
 import toast from 'react-hot-toast';
 
+import { AICommandType } from 'const/aiAssistant';
 import { setSessionExpired } from 'lib/querybookUI';
 import { formatError } from 'lib/utils/error';
 
@@ -158,58 +160,10 @@ export function uploadDatasource<T = null>(
     return syncDatasource<T>('POST', urlOptions, null, options);
 }
 
-/**
- * Stream data from a datasource using EventSource
- *
- * The data is streamed in the form of deltas. Each delta is a JSON object
- * ```
- * {
- *   data: The data of the delta
- * }
- * ```
- *
- * @param url The url to stream from
- * @param params The data to send to the url
- * @param onStraming Callback when data is received. The data is the accumulated data.
- * @param onStramingEnd Callback when the stream ends
- */
-function streamDatasource(
-    url: string,
-    params?: Record<string, unknown>,
-    onStreaming?: (data: { [key: string]: string }) => void,
-    onStreamingEnd?: (data: { [key: string]: string }) => void
-) {
-    const eventSource = new EventSource(
-        `${url}?params=${JSON.stringify(params)}`
-    );
-    const parser = new DeltaStreamParser();
-    eventSource.addEventListener('message', (e) => {
-        const newToken = JSON.parse(e.data).data;
-        parser.parse(newToken);
-        onStreaming?.(parser.result);
-    });
-    eventSource.addEventListener('error', (e) => {
-        console.error(e);
-        eventSource.close();
-        onStreamingEnd?.(parser.result);
-        if (e instanceof MessageEvent) {
-            toast.error(JSON.parse(e.data).data);
-        }
-    });
-    eventSource.addEventListener('close', (e) => {
-        eventSource.close();
-        parser.close();
-        onStreamingEnd?.(parser.result);
-    });
-
-    return eventSource;
-}
-
 export default {
     fetch: fetchDatasource,
     save: saveDatasource,
     update: updateDatasource,
     delete: deleteDatasource,
     upload: uploadDatasource,
-    stream: streamDatasource,
 };

@@ -53,7 +53,6 @@ export const QueryGenerationButton = ({
                 )}
             {show && (
                 <QueryGenerationModal
-                    dataCellId={dataCellId}
                     query={query}
                     engineId={engineId}
                     queryEngines={queryEngines}
