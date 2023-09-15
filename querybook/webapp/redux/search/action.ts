@@ -137,19 +137,19 @@ export function performSearch(): ThunkResult<Promise<ISearchPreview[]>> {
                     });
                     break;
                 case SearchType.Table:
-                    const metastore_id =
+                    const metastoreId =
                         state.dataTableSearch.metastoreId ||
                         queryMetastoresSelector(state)[0].id;
                     if (useVectorSearch) {
                         searchRequest = SearchTableResource.vectorSearch({
-                            metastore_id: metastore_id,
+                            metastore_id: metastoreId,
                             keywords: searchString,
                             filters: searchParams.filters,
                         });
                     } else {
                         searchRequest = SearchTableResource.search({
                             ...searchParams,
-                            metastore_id: metastore_id,
+                            metastore_id: metastoreId,
                             fields: Object.keys(searchState.searchFields),
                         });
                     }
