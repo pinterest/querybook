@@ -32,8 +32,6 @@ ELASTICSEARCH_HOST: http://elasticsearch:9200
 #             model_name: gpt-3.5-turbo-16k
 #             temperature: 0
 #         context_length: 16384
-#         fetch_k: 10 # fetch 10 tables from the vector store
-#         top_n: 3 # pick the top 3 most suitable tables
 
 # Uncomment below to enable vector store to support embedding based table search.
 # Please check langchain doc for the configs of each provider.
