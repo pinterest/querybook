@@ -1,25 +1,20 @@
-import hashlib
-import time
-from flask_login import current_user
-
 from app.db import with_session
+from const.ai_assistant import (
+    DEFAUTL_TABLE_SEARCH_LIMIT,
+    MAX_SAMPLE_QUERY_COUNT_FOR_TABLE_SUMMARY,
+)
 from langchain.docstore.document import Document
 from lib.ai_assistant import ai_assistant
 from lib.elasticsearch.search_table import construct_tables_query_by_table_names
+from lib.elasticsearch.search_utils import ES_CONFIG, get_matching_objects
 from lib.logger import get_logger
 from lib.vector_store import get_vector_store
 from logic.admin import get_query_engine_by_id
+from logic.elasticsearch import get_sample_query_cells_by_table_name
 from logic.metastore import get_all_table, get_table_by_name
 from models.metastore import DataTable
 
 LOG = get_logger(__file__)
-
-
-def generate_hash(query: str) -> str:
-    """Normalize SQL query and generate its hash."""
-    query = " ".join(query.replace("\n", " ").strip().lower().split())
-    query_hash = hashlib.sha256(query.encode())
-    return query_hash.hexdigest()
 
 
 def create_and_store_document(summary: str, metadata: dict, doc_id: str):
@@ -36,45 +31,8 @@ def _get_table_doc_id(table_id: int) -> str:
     return f"table_{table_id}"
 
 
-def _get_query_doc_id(query: str) -> str:
-    return f"query_{generate_hash(query)}"
-
-
-def get_sample_query_cells_by_table_name(table_name: str, k: int = 50):
-    """Get at most 50 sample queries from elasticsearch query_cell index by table name in the past half year."""
-    from lib.elasticsearch.search_query import construct_query_search_query
-    from lib.elasticsearch.search_utils import get_matching_objects
-    from logic.elasticsearch import ES_CONFIG
-
-    # get timestamp of yesterday
-    end_time = int(time.time()) - 24 * 60 * 60
-    # get timestamp of 6 months ago
-    start_time = end_time - 6 * 30 * 24 * 60 * 60
-
-    filters = [
-        ["full_table_name", [f"{table_name}"]],
-        ["query_type", "query_cell"],
-        ["statement_type", ["SELECT"]],
-        ["startDate", start_time],
-        ["endDate", end_time],
-    ]
-
-    query = construct_query_search_query(
-        uid=current_user.id if current_user else 1,
-        keywords="",
-        filters=filters,
-        limit=min(
-            3 * k, 50
-        ),  # fetch 3 times of k queries or at least 50 queries as we'll filter out some
-        offset=0,
-        sort_key="created_at",
-        sort_order="desc",
-    )
-
-    index_name = ES_CONFIG["query_cells"]["index_name"]
-
-    results = get_matching_objects(query, index_name, False)
-    return [r for r in results if r.get("title") and r.get("title") != "Untitled"][:k]
+def _get_query_doc_id(query_cell_id: int) -> str:
+    return f"query_{query_cell_id}"
 
 
 @with_session
@@ -98,7 +56,14 @@ def record_query_cell_from_es(
     try:
         engine_id = es_query_cell["engine_id"]
         engine = get_query_engine_by_id(engine_id, session=session)
+        if not engine:
+            LOG.warning(f"Engine {engine_id} not found.")
+            return
+
         metastore_id = engine.metastore_id
+        if not metastore_id:
+            LOG.warning(f"Engine {engine_id} does not have metastore.")
+            return
 
         query_text = es_query_cell["query_text"]
         table_names = es_query_cell["full_table_name"]
@@ -115,10 +80,10 @@ def record_query_cell_from_es(
             "query_cell_id": es_query_cell["id"],
             "metastore_id": metastore_id,
         }
-        doc_id = _get_query_doc_id(query_text)
+        doc_id = _get_query_doc_id(es_query_cell["id"])
         create_and_store_document(summary, metadata, doc_id)
     except Exception as e:
-        print(f"Failed to process query execution: {e}")
+        LOG.error(f"Failed to process sample query cell: {e}")
 
 
 @with_session
@@ -143,13 +108,18 @@ def record_table(
         metastore_id = table.data_schema.metastore_id
         full_table_name = f"{table.data_schema.name}.{table.name}"
 
-        sample_query_cells = get_sample_query_cells_by_table_name(full_table_name)
+        sample_query_cells = get_sample_query_cells_by_table_name(
+            table_name=full_table_name
+        )
 
         # ingest table summary
         summary = ai_assistant.summarize_table(
             metastore_id=metastore_id,
             table_name=full_table_name,
-            sample_queries=[q["query_text"] for q in sample_query_cells[:5]],
+            sample_queries=[
+                q["query_text"]
+                for q in sample_query_cells[:MAX_SAMPLE_QUERY_COUNT_FOR_TABLE_SUMMARY]
+            ],
             session=session,
         )
 
@@ -184,21 +154,21 @@ def delete_table_doc(table_id: int):
 
 
 def search_tables(
-    metastore_id,
-    keywords,
-    filters=None,
+    metastore_id, keywords, filters=None, limit=DEFAUTL_TABLE_SEARCH_LIMIT
 ):
-    """search tables from vector store and return at most 10 results."""
-    from lib.elasticsearch.search_utils import get_matching_objects
-    from logic.elasticsearch import ES_CONFIG
+    """search tables from vector store and get the table details from elastic search."""
 
     # get similar table names from vector store.
-    tables = get_vector_store().search_tables(metastore_id, keywords, k=10)
+    tables = get_vector_store().search_tables(metastore_id, keywords, k=limit)
     table_names = [t[0] for t in tables]
 
-    query = construct_tables_query_by_table_names(metastore_id, table_names, filters)
+    # get those tables from elastic table search index by table name for table details
+    query = construct_tables_query_by_table_names(
+        metastore_id, table_names, filters, limit=limit
+    )
     results = get_matching_objects(query, ES_CONFIG["tables"]["index_name"])
 
+    # reorder the results by the order of table names returned from vector store
     name_to_doc = {r["full_name"]: r for r in results}
     sorted_docs = [name_to_doc[t[0]] for t in tables if t[0] in name_to_doc]
 

@@ -2,6 +2,10 @@ import re
 from abc import abstractmethod
 from typing import Literal, Optional
 
+from const.ai_assistant import (
+    DEFAUTL_TABLE_SEARCH_LIMIT,
+    DEFAULT_VECTOR_STORE_FETCH_LIMIT,
+)
 from langchain.docstore.document import Document
 from langchain.vectorstores.base import VectorStore
 from models.metastore import DataTable
@@ -54,14 +58,23 @@ class VectorStoreBase(VectorStore):
         text: str,
         search_type: Optional[Literal["table", "query"]] = None,
         threshold=0.6,
-        k=3,
-        fetch_k=30,
-    ) -> list[tuple[int, str, int]]:
+        k=DEFAUTL_TABLE_SEARCH_LIMIT,
+        fetch_k=DEFAULT_VECTOR_STORE_FETCH_LIMIT,
+    ) -> list[tuple[str, int]]:
         """Find tables using embedding based table search.
 
         The table search will return a list of k tables that are similar to the given text with highest similarity score.
 
-        Return: a list of tuples (table_name, score)
+        Args:
+            metastore_id: the metastore id
+            text: the text to search
+            search_type: the type of the text. It can be "table" or "query" or None. If it is None, it will search both tables and queries summary.
+            threshold: the threshold of the similarity score. Only return tables with score higher than the threshold.
+            k: the number of tables to return.
+            fetch_k: the number of tables to fetch from the vector store.
+
+        Returns:
+            a list of tuples (table_name, score)
         """
 
         must_query = [{"term": {"metadata.metastore_id": metastore_id}}]

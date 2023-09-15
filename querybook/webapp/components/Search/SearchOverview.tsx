@@ -100,7 +100,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
         searchOrder,
         searchType,
         searchAuthorChoices,
-        isVectorSearch,
+        useVectorSearch,
 
         searchRequest,
         queryMetastores,
@@ -150,8 +150,8 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
     const updateSearchType = React.useCallback((type) => {
         dispatch(searchActions.updateSearchType(type));
     }, []);
-    const updateIsVectorSearch = React.useCallback((isVectorSearch) => {
-        dispatch(searchActions.updateIsVectorSearch(isVectorSearch));
+    const updateUseVectorSearch = React.useCallback((useVectorSearch) => {
+        dispatch(searchActions.updateUseVectorSearch(useVectorSearch));
     }, []);
     const moveToPage = React.useCallback((page) => {
         dispatch(searchActions.moveToPage(page));
@@ -300,8 +300,8 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                                 Natural Language Search
                             </AccentText>
                             <ToggleSwitch
-                                checked={isVectorSearch}
-                                onChange={(val) => updateIsVectorSearch(!!val)}
+                                checked={useVectorSearch}
+                                onChange={(val) => updateUseVectorSearch(val)}
                             />
                         </div>
                     )}

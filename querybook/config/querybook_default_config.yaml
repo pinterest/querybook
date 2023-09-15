@@ -92,7 +92,11 @@ AI_ASSISTANT_CONFIG:
         model_args:
             model_name: ~
             temperature: ~
-        context_length: 8000
+        context_length: ~
+        reserved_tokens: ~
+    table_select:
+        fetch_k: ~
+        top_n: ~
 
 EMBEDDINGS_PROVIDER: ~
 EMBEDDINGS_CONFIG: ~

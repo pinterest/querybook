@@ -17,13 +17,13 @@ def _query_access_terms(user_id):
 
 
 def construct_query_search_query(
-    uid,
     keywords,
     filters,
     limit,
     offset,
     sort_key=None,
     sort_order=None,
+    uid=None,
 ):
     keywords_query = {}
     if keywords:
@@ -60,9 +60,11 @@ def construct_query_search_query(
         keywords_query = {"match_all": {}}
 
     search_filter = match_filters(filters, and_filter_names=FILTERS_TO_AND)
-    search_filter.setdefault("filter", {}).setdefault("bool", {}).setdefault(
-        "must", []
-    ).append({"bool": {"should": _query_access_terms(uid)}})
+
+    if uid:
+        search_filter.setdefault("filter", {}).setdefault("bool", {}).setdefault(
+            "must", []
+        ).append({"bool": {"should": _query_access_terms(uid)}})
 
     query = {
         "query": {

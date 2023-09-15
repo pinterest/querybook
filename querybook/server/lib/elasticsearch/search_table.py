@@ -140,7 +140,7 @@ def construct_tables_query_by_table_names(
     metastore_id: int,
     table_names: list[str],
     filters: list[list[str]],
-    limit=20,
+    limit,
 ):
     """This query is used to get table information by table names."""
     should_clause = []

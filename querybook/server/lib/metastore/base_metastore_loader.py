@@ -450,7 +450,7 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
             session.commit()
             update_table_by_id(
                 table_id,
-                update_vector_store=False if from_batch else True,
+                update_vector_store=not from_batch,
                 session=session,
             )
             return table_id

@@ -1,25 +1,25 @@
-from html import escape
-from itertools import chain
 import math
 import re
+import time
+from html import escape
+from itertools import chain
 from typing import Any, Dict, List, Optional, Set
 
+from app.db import with_session
+from const.ai_assistant import DEFAULT_SAMPLE_QUERY_COUNT
 from const.impression import ImpressionItemType
 from const.query_execution import QueryExecutionStatus
-from env import QuerybookSettings
-from elasticsearch import Elasticsearch, RequestsHttpConnection
+from lib.elasticsearch.search_query import construct_query_search_query
+from lib.elasticsearch.search_utils import (
+    ES_CONFIG,
+    get_hosted_es,
+    get_matching_objects,
+)
+from lib.logger import get_logger
 from lib.query_analysis import lineage as lineage_lib
 from lib.query_analysis.lineage import get_table_statement_type
-
-from lib.utils.utils import (
-    DATETIME_TO_UTC,
-    with_exception,
-)
-from lib.utils.decorators import in_mem_memoized
-from lib.logger import get_logger
-from lib.config import get_config_value
 from lib.richtext import richtext_to_plaintext
-from app.db import with_session
+from lib.utils.utils import DATETIME_TO_UTC, with_exception
 from logic import admin as admin_logic
 from logic import datadoc as datadoc_logic
 from logic.datadoc import (
@@ -29,56 +29,25 @@ from logic.datadoc import (
     get_data_doc_by_id,
     get_unarchived_query_cell_by_id,
 )
+from logic.impression import (
+    get_last_impressions_date,
+    get_viewers_count_by_item_after_date,
+)
 from logic.metastore import (
     get_all_table,
     get_table_by_id,
     get_table_query_samples_count,
 )
-
-from logic.impression import (
-    get_viewers_count_by_item_after_date,
-    get_last_impressions_date,
-)
 from logic.query_execution import (
-    get_successful_adhoc_query_executions,
     get_query_execution_by_id,
+    get_successful_adhoc_query_executions,
     get_successful_query_executions_by_data_cell_id,
 )
-from logic.vector_store import delete_table_doc, record_table
-from models.user import User
-from models.datadoc import DataCellType
 from models.board import Board
-
+from models.datadoc import DataCellType
+from models.user import User
 
 LOG = get_logger(__file__)
-ES_CONFIG = get_config_value("elasticsearch")
-
-
-@in_mem_memoized(3600)
-def get_hosted_es():
-    hosted_es = None
-
-    if QuerybookSettings.ELASTICSEARCH_CONNECTION_TYPE == "naive":
-        hosted_es = Elasticsearch(hosts=QuerybookSettings.ELASTICSEARCH_HOST)
-    elif QuerybookSettings.ELASTICSEARCH_CONNECTION_TYPE == "aws":
-        # TODO: generialize aws region setup
-        from boto3 import session as boto_session
-        from lib.utils.assume_role_aws4auth import AssumeRoleAWS4Auth
-
-        credentials = boto_session.Session().get_credentials()
-        auth = AssumeRoleAWS4Auth(
-            credentials,
-            QuerybookSettings.AWS_REGION,
-            "es",
-        )
-        hosted_es = Elasticsearch(
-            hosts=QuerybookSettings.ELASTICSEARCH_HOST,
-            http_auth=auth,
-            connection_class=RequestsHttpConnection,
-            use_ssl=True,
-            verify_certs=True,
-        )
-    return hosted_es
 
 
 def _get_dict_by_field(
@@ -384,6 +353,45 @@ def update_query_cell_by_id(query_cell_id, session=None):
             LOG.error("failed to upsert {}. Will pass.".format(query_cell_id))
 
 
+def get_sample_query_cells_by_table_name(
+    table_name: str, k: int = DEFAULT_SAMPLE_QUERY_COUNT
+):
+    """Get at most 50 sample queries from elasticsearch query_cell index by table name in the past half year."""
+
+    # get timestamp of yesterday
+    end_time = int(time.time()) - 24 * 60 * 60
+    # get timestamp of 180 days ago
+    start_time = end_time - 6 * 30 * 24 * 60 * 60
+
+    filters = [
+        ["full_table_name", [f"{table_name}"]],
+        ["query_type", "query_cell"],
+        ["statement_type", ["SELECT"]],
+        ["startdate", start_time],
+        ["enddate", end_time],
+    ]
+
+    query = construct_query_search_query(
+        keywords="",
+        filters=filters,
+        limit=k,
+        offset=0,
+        sort_key="created_at",
+        sort_order="desc",
+    )
+
+    # filter out query cells with "Untitled" title
+    title_filter = {"bool": {"must_not": [{"match": {"title": "Untitled"}}]}}
+    query.setdefault("query", {}).setdefault("bool", {}).setdefault(
+        "filter", {}
+    ).setdefault("bool", {}).setdefault("must", []).append(title_filter)
+
+    index_name = ES_CONFIG["query_cells"]["index_name"]
+
+    results = get_matching_objects(query, index_name, False)
+    return results[:k]
+
+
 """
     DATA DOCS
 """
@@ -642,6 +650,8 @@ def update_table_by_id(table_id, update_vector_store=False, session=None):
 
             # update it in vector store as well
             if update_vector_store:
+                from logic.vector_store import record_table
+
                 record_table(table=table, session=session)
         except Exception:
             # Otherwise insert as new
@@ -656,6 +666,8 @@ def delete_es_table_by_id(
         _delete(index_name, id=table_id)
 
         # delete it from vector store as well
+        from logic.vector_store import delete_table_doc
+
         delete_table_doc(table_id)
     except Exception:
         LOG.error("failed to delete {}. Will pass.".format(table_id))

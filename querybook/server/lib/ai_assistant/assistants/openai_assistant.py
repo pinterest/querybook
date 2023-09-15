@@ -18,6 +18,13 @@ class OpenAIAssistant(BaseAIAssistant):
     def name(self) -> str:
         return "openai"
 
+    def _get_default_llm_config(self):
+        default_config = super()._get_default_llm_config()
+        if not default_config.get("model_name"):
+            default_config["model_name"] = "gpt-3.5-turbo"
+
+        return default_config
+
     def _get_token_count(self, ai_command: str, prompt: str) -> int:
         model_name = self._get_llm_config(ai_command).get("model_name")
         encoding = tiktoken.encoding_for_model(model_name)

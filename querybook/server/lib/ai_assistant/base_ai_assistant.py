@@ -3,13 +3,14 @@ import json
 from abc import ABC, abstractmethod
 
 from app.db import with_session
-from const.ai_assistant import AICommandType
+from const.ai_assistant import AICommandType, DEFAUTL_TABLE_SELECT_LIMIT
 from langchain.chains import LLMChain
 from lib.logger import get_logger
 from lib.query_analysis.lineage import process_query
 from lib.vector_store import get_vector_store
 from logic import admin as admin_logic
 from logic import query_execution as qe_logic
+from logic.elasticsearch import get_sample_query_cells_by_table_name
 from logic.metastore import get_table_by_name
 from models.metastore import DataTableColumn
 from models.query_execution import QueryExecution
@@ -57,16 +58,27 @@ class BaseAIAssistant(ABC):
 
         return wrapper
 
+    def _get_default_llm_config(self):
+        return self._config.get("default", {}).get("model_args", {})
+
     def _get_llm_config(self, ai_command: str):
         return {
-            **self._config.get("default", {}).get("model_args", {}),
+            **self._get_default_llm_config(),
             **self._config.get(ai_command, {}).get("model_args", {}),
         }
 
-    def _get_llm_context_length(self, ai_command: str):
-        return self._config.get(ai_command, {}).get(
+    def _get_usable_token_count(self, ai_command: str) -> int:
+        ai_command_config = self._config.get(ai_command, {})
+        default_config = self._config.get("default", {})
+
+        max_context_length = ai_command_config.get(
             "context_length", 0
-        ) or self._config.get("default", {}).get("context_length", 0)
+        ) or default_config.get("context_length", 0)
+        reserved_tokens = ai_command_config.get(
+            "reserved_tokens", 0
+        ) or default_config.get("reserved_tokens", 0)
+
+        return max_context_length - reserved_tokens
 
     @abstractmethod
     def _get_llm(
@@ -92,9 +104,7 @@ class BaseAIAssistant(ABC):
 
     def _get_table_summary_prompt(self, table_schema, sample_queries):
         token_count = 0
-        context_limit = (
-            self._get_llm_context_length(AICommandType.TABLE_SUMMARY.value) - 2048
-        )  # reserve 2k for prompt template and response
+        context_limit = self._get_usable_token_count(AICommandType.TABLE_SUMMARY.value)
         prompt_sample_queries = []
         for query in sample_queries:
             count = self._get_token_count(AICommandType.TABLE_SUMMARY.value, query)
@@ -268,7 +278,6 @@ class BaseAIAssistant(ABC):
         session=None,
     ):
         """Generate an informative summary of the table."""
-        from logic.vector_store import get_sample_query_cells_by_table_name
 
         table_schema = get_table_schema_by_name(
             metastore_id=metastore_id,
@@ -318,21 +327,23 @@ class BaseAIAssistant(ABC):
     @catch_error
     @with_session
     def find_tables(self, metastore_id, question, session=None):
-        """Given 10 similar tables, ask LLM to select top 3 most suitable tables for the question"""
+        """Search similar tables from vector store first, and then ask LLM to select most suitable tables for the question.
+
+        It will return at most `DEFAUTL_TABLE_SELECT_LIMIT` tables by default.
+        """
         try:
             tables = get_vector_store().search_tables(
                 metastore_id=metastore_id,
                 text=question,
-                k=10,
             )
 
             table_names = [t[0] for t in tables]
             table_docs = {}
 
             token_count = 0
-            context_limit = (
-                self._get_llm_context_length(AICommandType.TABLE_SELECT.value) - 2048
-            )  # reserve 2k for prompt template and response
+            context_limit = self._get_usable_token_count(
+                AICommandType.TABLE_SELECT.value
+            )
             for full_table_name in table_names:
                 table_schema, table_name = full_table_name.split(".")
                 table = get_table_by_name(
@@ -354,7 +365,9 @@ class BaseAIAssistant(ABC):
                 table_docs[full_table_name] = summary
 
             prompt = self._get_table_select_prompt(
-                top_n=3, table_schemas=table_docs, question=question
+                top_n=DEFAUTL_TABLE_SELECT_LIMIT,
+                table_schemas=table_docs,
+                question=question,
             )
             llm = self._get_llm(
                 ai_command=AICommandType.TABLE_SELECT.value, callback_handler=None

@@ -23,7 +23,7 @@ const initialSearchParamState = {
     searchOrder: SearchOrder.Relevance,
     searchString: '',
     searchType: SearchType.Query,
-    isVectorSearch: false,
+    useVectorSearch: false,
 };
 
 const initialState: ISearchState = {
@@ -135,7 +135,7 @@ export default function search(
                 return;
             }
             case '@@search/IS_VECTOR_SEARCH_UPDATE': {
-                draft.isVectorSearch = action.payload.isVectorSearch;
+                draft.useVectorSearch = action.payload.useVectorSearch;
                 return;
             }
             case '@@search/SEARCH_GO_TO_PAGE': {

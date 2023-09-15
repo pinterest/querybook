@@ -8,7 +8,7 @@ from lib.vector_store import get_vector_store
 
 def get_table_documentation(table: DataTable) -> str:
     """Get table documentation.
-    Try to get it from the vector store first. If not found, get it from the metastore.
+    Try to get it from database first. If not found, get it from the vector store.
     """
     if table.information.description:
         return table.information.description

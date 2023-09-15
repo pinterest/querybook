@@ -113,7 +113,7 @@ export function performSearch(): ThunkResult<Promise<ISearchPreview[]>> {
                 searchState.searchRequest.cancel();
             }
 
-            const { currentPage, searchType, isVectorSearch } = searchState;
+            const { currentPage, searchType, useVectorSearch } = searchState;
 
             const searchParams = mapStateToSearch(searchState);
 
@@ -137,20 +137,19 @@ export function performSearch(): ThunkResult<Promise<ISearchPreview[]>> {
                     });
                     break;
                 case SearchType.Table:
-                    if (isVectorSearch) {
+                    const metastore_id =
+                        state.dataTableSearch.metastoreId ||
+                        queryMetastoresSelector(state)[0].id;
+                    if (useVectorSearch) {
                         searchRequest = SearchTableResource.vectorSearch({
-                            metastore_id:
-                                state.dataTableSearch.metastoreId ||
-                                queryMetastoresSelector(state)[0].id,
+                            metastore_id: metastore_id,
                             keywords: searchString,
                             filters: searchParams.filters,
                         });
                     } else {
                         searchRequest = SearchTableResource.search({
                             ...searchParams,
-                            metastore_id:
-                                state.dataTableSearch.metastoreId ||
-                                queryMetastoresSelector(state)[0].id,
+                            metastore_id: metastore_id,
                             fields: Object.keys(searchState.searchFields),
                         });
                     }
@@ -291,15 +290,15 @@ export function updateSearchType(searchType: SearchType): ThunkResult<void> {
     };
 }
 
-export function updateIsVectorSearch(
-    isVectorSearch: boolean
+export function updateUseVectorSearch(
+    useVectorSearch: boolean
 ): ThunkResult<void> {
     return (dispatch, getState) => {
         dispatch(resetSearchResult());
         dispatch({
             type: '@@search/IS_VECTOR_SEARCH_UPDATE',
             payload: {
-                isVectorSearch,
+                useVectorSearch,
             },
         });
         mapStateToQueryParam(getState().search);

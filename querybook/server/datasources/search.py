@@ -16,7 +16,7 @@ from lib.elasticsearch.search_utils import (
 )
 from lib.elasticsearch.suggest_table import construct_suggest_table_query
 from lib.elasticsearch.suggest_user import construct_suggest_user_query
-from logic.elasticsearch import ES_CONFIG
+from lib.elasticsearch.search_utils import ES_CONFIG
 from logic import vector_store as vs_logic
 
 LOG = get_logger(__file__)
@@ -114,11 +114,7 @@ def search_tables(
         query, ES_CONFIG["tables"]["index_name"], True
     )
 
-    if count == 0:
-        # If no results, try to search in vector store
-        return vs_logic.search_tables(metastore_id, keywords)
-    else:
-        return {"count": count, "results": results}
+    return {"count": count, "results": results}
 
 
 @register("/search/tables/vector/", methods=["GET"])

@@ -12,3 +12,14 @@ class AICommandType(Enum):
 
 
 AI_ASSISTANT_NAMESPACE = "/ai_assistant"
+
+
+DEFAULT_SAMPLE_QUERY_COUNT = 50
+MAX_SAMPLE_QUERY_COUNT_FOR_TABLE_SUMMARY = 5
+
+# how many docs to fetch from vector store, it may include both table and query summary docs and they need additional processing.
+DEFAULT_VECTOR_STORE_FETCH_LIMIT = 30
+# how many tables to return from vector table search eventually
+DEFAUTL_TABLE_SEARCH_LIMIT = 10
+# how many tables to select for text-to-sql
+DEFAUTL_TABLE_SELECT_LIMIT = 3
