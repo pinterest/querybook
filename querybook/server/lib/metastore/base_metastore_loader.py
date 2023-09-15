@@ -25,6 +25,7 @@ from logic.metastore import (
     create_table,
     create_table_information,
     create_table_ownerships,
+    create_table_warnings,
     delete_column,
     delete_schema,
     delete_table,
@@ -389,6 +390,14 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
                 custom_properties=table.custom_properties,
                 session=session,
             )
+            if table.warnings is not None:
+                create_table_warnings(
+                    table_id=table_id,
+                    warnings=table.warnings,
+                    commit=False,
+                    session=session,
+                )
+
             delete_column_not_in_metastore(
                 table_id, set(map(lambda c: c.name, columns)), session=session
             )

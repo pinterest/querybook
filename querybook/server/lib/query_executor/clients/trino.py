@@ -52,6 +52,7 @@ class TrinoClient(ClientBaseClass):
         self,
         connection_string: str,
         username: Optional[str] = None,
+        password: Optional[str] = None,
         proxy_user: Optional[str] = None,
         *args: Any,
         **kwargs: Any,
@@ -61,12 +62,17 @@ class TrinoClient(ClientBaseClass):
         host = trino_conf.host
         port = 8080 if not trino_conf.port else trino_conf.port
 
+        auth = trino.constants.DEFAULT_AUTH
+        if username is not None and password is not None:
+            auth = trino.auth.BasicAuthentication(username, password)
+
         connection = trino.dbapi.connect(
             host=host,
             port=port,
             catalog=trino_conf.catalog,
             schema=trino_conf.schema,
-            user=proxy_user or username,
+            auth=auth,
+            user=proxy_user if proxy_user else username,
             http_scheme=trino_conf.protocol,
         )
         self._connection = connection

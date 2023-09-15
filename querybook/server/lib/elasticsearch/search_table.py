@@ -26,7 +26,7 @@ def _match_table_word_fields(fields):
         # 'table_name', 'description', and 'column' are fields used by Table search
         if field == "table_name":
             search_fields.append("full_name^2")
-            search_fields.append("full_name_ngram")
+            search_fields.append("full_name_ngram^0.2")
         elif field == "description":
             search_fields.append("description")
         elif field == "column":
@@ -95,7 +95,7 @@ def construct_tables_query(
             "boost_mode": "sum",
             "script_score": {
                 "script": {
-                    "source": "doc['importance_score'].value * 10 + (doc['golden'].value ? 10 : 0)"
+                    "source": "doc['importance_score'].value * 10 + (doc['golden'].value ? 50 : 0)"
                 }
             },
         }

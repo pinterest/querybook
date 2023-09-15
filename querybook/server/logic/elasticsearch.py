@@ -717,7 +717,7 @@ def user_to_es(user, fields=None, session=None):
 
 
 @with_session
-def get_users_iter(batch_size=5000, fields=None, session=None):
+def get_users_iter(batch_size=5000, session=None):
     offset = 0
 
     while True:
@@ -729,8 +729,7 @@ def get_users_iter(batch_size=5000, fields=None, session=None):
         LOG.info("\n--User count: {}, offset: {}".format(len(users), offset))
 
         for user in users:
-            expanded_user = user_to_es(user, fields=fields, session=session)
-            yield expanded_user
+            yield user
 
         if len(users) < batch_size:
             break
@@ -743,15 +742,17 @@ def _bulk_insert_users():
     for user in get_users_iter():
         # skip indexing user groups before having the correct permission setup for it.
         if not user.is_group:
-            _insert(index_name, user["id"], user)
+            expanded_user = user_to_es(user, fields=None)
+            _insert(index_name, expanded_user["id"], expanded_user)
 
 
 def _bulk_update_users(fields: Set[str] = None):
     index_name = ES_CONFIG["users"]["index_name"]
 
-    for user in get_users_iter(fields=fields):
-        updated_body = {"doc": user, "doc_as_upsert": True}
-        _update(index_name, user["id"], updated_body)
+    for user in get_users_iter():
+        expanded_user = user_to_es(user, fields=fields)
+        updated_body = {"doc": expanded_user, "doc_as_upsert": True}
+        _update(index_name, expanded_user["id"], updated_body)
 
 
 @with_exception
