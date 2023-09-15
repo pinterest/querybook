@@ -6,6 +6,7 @@ import CreatableSelect from 'react-select/creatable';
 
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import { UserSelect } from 'components/UserSelect/UserSelect';
+import PublicConfig from 'config/querybook_public_config.yaml';
 import { ComponentType, ElementType } from 'const/analytics';
 import {
     IBoardPreview,
@@ -48,8 +49,9 @@ import { PrettyNumber } from 'ui/PrettyNumber/PrettyNumber';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { Select } from 'ui/Select/Select';
 import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
-import { EmptyText } from 'ui/StyledText/StyledText';
+import { AccentText, EmptyText } from 'ui/StyledText/StyledText';
 import { Tabs } from 'ui/Tabs/Tabs';
+import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 
 import { EntitySelect } from './EntitySelect';
 import { SearchDatePicker } from './SearchDatePicker';
@@ -63,6 +65,8 @@ import { SearchSchemaSelect } from './SearchSchemaSelect';
 import { TableSelect } from './TableSelect';
 
 import './SearchOverview.scss';
+
+const AIAssistantConfig = PublicConfig.ai_assistant;
 
 const userReactSelectStyle = makeReactSelectStyle(
     true,
@@ -96,6 +100,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
         searchOrder,
         searchType,
         searchAuthorChoices,
+        useVectorSearch,
 
         searchRequest,
         queryMetastores,
@@ -144,6 +149,9 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
     }, []);
     const updateSearchType = React.useCallback((type) => {
         dispatch(searchActions.updateSearchType(type));
+    }, []);
+    const updateUseVectorSearch = React.useCallback((useVectorSearch) => {
+        dispatch(searchActions.updateUseVectorSearch(useVectorSearch));
     }, []);
     const moveToPage = React.useCallback((page) => {
         dispatch(searchActions.moveToPage(page));
@@ -271,8 +279,9 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                 : searchType === SearchType.DataDoc
                 ? 'Search data docs'
                 : 'Search tables';
+
         return (
-            <div className="search-bar-wrapper flex-row">
+            <div className="search-bar-wrapper">
                 <SearchBar
                     className="SearchBar"
                     value={searchString}
@@ -283,6 +292,19 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                     placeholder={placeholder}
                     autoFocus
                 />
+                {searchType === SearchType.Table &&
+                    AIAssistantConfig.enabled &&
+                    AIAssistantConfig.table_vector_search.enabled && (
+                        <div className="mt8 flex-row">
+                            <AccentText weight="bold" className="ml8 mr12">
+                                Natural Language Search
+                            </AccentText>
+                            <ToggleSwitch
+                                checked={useVectorSearch}
+                                onChange={(val) => updateUseVectorSearch(val)}
+                            />
+                        </div>
+                    )}
             </div>
         );
     };

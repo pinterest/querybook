@@ -88,7 +88,15 @@ STATS_LOGGER_NAME: ~
 # --------------- AI Assistant ---------------
 AI_ASSISTANT_PROVIDER: ~
 AI_ASSISTANT_CONFIG:
-    model_name: ~
+    default:
+        model_args:
+            model_name: ~
+            temperature: ~
+        context_length: ~
+        reserved_tokens: ~
+    table_select:
+        fetch_k: ~
+        top_n: ~
 
 EMBEDDINGS_PROVIDER: ~
 EMBEDDINGS_CONFIG: ~

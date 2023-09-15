@@ -1,20 +1,8 @@
-from langchain.prompts import (
-    ChatPromptTemplate,
-    SystemMessagePromptTemplate,
-    HumanMessagePromptTemplate,
-)
+from langchain import PromptTemplate
 
 
-system_message_template = (
+prompt_template = (
     "You are a SQL expert that can help fix SQL query errors.\n\n"
-    "Please follow the format below for your response:\n"
-    "<@key-1@>\n"
-    "value-1\n\n"
-    "<@key-2@>\n"
-    "value-2\n\n"
-)
-
-human_message_template = (
     "Please help fix the query below based on the given error message and table schemas. \n\n"
     "===SQL dialect\n"
     "{dialect}\n\n"
@@ -42,9 +30,4 @@ human_message_template = (
     "3. Maintain the original query format and case in the fixed_query section, including comments, except when correcting the erroneous part.\n"
 )
 
-SQL_FIX_PROMPT = ChatPromptTemplate.from_messages(
-    [
-        SystemMessagePromptTemplate.from_template(system_message_template),
-        HumanMessagePromptTemplate.from_template(human_message_template),
-    ]
-)
+SQL_FIX_PROMPT = PromptTemplate.from_template(prompt_template)

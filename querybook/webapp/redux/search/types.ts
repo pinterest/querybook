@@ -90,6 +90,13 @@ export interface ISearchTypeUpdateAction extends Action {
     };
 }
 
+export interface IUseVectorSearchUpdateAction extends Action {
+    type: '@@search/USE_VECTOR_SEARCH_UPDATE';
+    payload: {
+        useVectorSearch: boolean;
+    };
+}
+
 export interface ISearchResultResetAction extends Action {
     type: '@@search/SEARCH_RESULT_RESET';
 }
@@ -123,6 +130,7 @@ export type SearchAction =
     | ISearchFieldUpdateAction
     | ISearchOrderUpdateAction
     | ISearchTypeUpdateAction
+    | IUseVectorSearchUpdateAction
     | ISearchResultResetAction
     | IResetSearchAction
     | ISearchGoToPageAction
@@ -151,6 +159,7 @@ export interface ISearchState extends ISearchPaginationState {
     searchOrder: SearchOrder;
     searchType: SearchType;
     searchString: string;
+    useVectorSearch: boolean;
 
     // visuals
     // displayOption: DisplayOption;

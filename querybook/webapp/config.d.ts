@@ -98,6 +98,10 @@ declare module 'config/querybook_public_config.yaml' {
             query_auto_fix: {
                 enabled: boolean;
             };
+
+            table_vector_search: {
+                enabled: boolean;
+            };
         };
     };
     export default data;

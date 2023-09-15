@@ -3,6 +3,8 @@ export enum AICommandType {
     SQL_FIX = 'sql_fix',
     SQL_TITLE = 'sql_title',
     TEXT_TO_SQL = 'text_to_sql',
+    TABLE_SUMMARY = 'table_summary',
+    TABLE_SELECT = 'table_select',
 }
 
 export enum AISocketEvent {

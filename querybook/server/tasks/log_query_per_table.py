@@ -1,17 +1,13 @@
 from app.flask_app import celery
 
 from app.db import DBSession, with_session
-from const.query_execution import QueryExecutionStatus, QueryExecutionType
+from const.query_execution import QueryExecutionStatus
 from lib.query_analysis.lineage import (
     process_query,
     get_table_statement_type,
 )
 from lib.metastore import get_metastore_loader
-from logic import (
-    query_execution as qe_logic,
-    metastore as m_logic,
-    vector_store as vs_logic,
-)
+from logic import query_execution as qe_logic, metastore as m_logic
 from lib.lineage.utils import lineage as lineage_logic
 
 
@@ -40,16 +36,6 @@ def log_query_per_table_task(self, query_execution_id, execution_type):
         if any(statement in statement_types for statement in ["CREATE", "INSERT"]):
             create_lineage_from_query(
                 query_execution, metastore_id, datadoc_cell, session=session
-            )
-
-        # log the ad-hoc(not scheduled) query to vector store for table search
-        if (
-            datadoc_cell is not None
-            and execution_type == QueryExecutionType.ADHOC.value
-        ):
-            vs_logic.record_query_execution_by_id(
-                query_execution_id=query_execution_id,
-                session=session,
             )
 
         if datadoc_cell is None or not datadoc_cell.doc.public:
