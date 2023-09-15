@@ -26,7 +26,7 @@ class OpenAIAssistant(BaseAIAssistant):
         return default_config
 
     def _get_token_count(self, ai_command: str, prompt: str) -> int:
-        model_name = self._get_llm_config(ai_command).get("model_name")
+        model_name = self._get_llm_config(ai_command)["model_name"]
         encoding = tiktoken.encoding_for_model(model_name)
         return len(encoding.encode(prompt))
 

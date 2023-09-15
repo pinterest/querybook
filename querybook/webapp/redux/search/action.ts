@@ -296,7 +296,7 @@ export function updateUseVectorSearch(
     return (dispatch, getState) => {
         dispatch(resetSearchResult());
         dispatch({
-            type: '@@search/IS_VECTOR_SEARCH_UPDATE',
+            type: '@@search/USE_VECTOR_SEARCH_UPDATE',
             payload: {
                 useVectorSearch,
             },

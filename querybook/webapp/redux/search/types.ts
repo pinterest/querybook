@@ -91,7 +91,7 @@ export interface ISearchTypeUpdateAction extends Action {
 }
 
 export interface IUseVectorSearchUpdateAction extends Action {
-    type: '@@search/IS_VECTOR_SEARCH_UPDATE';
+    type: '@@search/USE_VECTOR_SEARCH_UPDATE';
     payload: {
         useVectorSearch: boolean;
     };

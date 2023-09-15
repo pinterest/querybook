@@ -134,7 +134,7 @@ export default function search(
                 draft.searchFields = searchStateForNewType.searchFields;
                 return;
             }
-            case '@@search/IS_VECTOR_SEARCH_UPDATE': {
+            case '@@search/USE_VECTOR_SEARCH_UPDATE': {
                 draft.useVectorSearch = action.payload.useVectorSearch;
                 return;
             }

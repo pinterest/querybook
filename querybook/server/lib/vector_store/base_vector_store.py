@@ -5,6 +5,8 @@ from typing import Literal, Optional
 from const.ai_assistant import (
     DEFAUTL_TABLE_SEARCH_LIMIT,
     DEFAULT_VECTOR_STORE_FETCH_LIMIT,
+    DEFAULT_SIMILARITY_SCORE_THRESHOLD,
+    DEFAULT_SIMILARITY_SCORE_THRESHOLD_GREAT_MATCH,
 )
 from langchain.docstore.document import Document
 from langchain.vectorstores.base import VectorStore
@@ -57,7 +59,7 @@ class VectorStoreBase(VectorStore):
         metastore_id: int,
         text: str,
         search_type: Optional[Literal["table", "query"]] = None,
-        threshold=0.6,
+        threshold=DEFAULT_SIMILARITY_SCORE_THRESHOLD,
         k=DEFAUTL_TABLE_SEARCH_LIMIT,
         fetch_k=DEFAULT_VECTOR_STORE_FETCH_LIMIT,
     ) -> list[tuple[str, int]]:
@@ -95,7 +97,10 @@ class VectorStoreBase(VectorStore):
         table_score_dict = {}
         for table_name, score, type in tables:
             # TODO: need to tune the scoring strategy
-            if type == "table" and score >= 0.7:
+            if (
+                type == "table"
+                and score >= DEFAULT_SIMILARITY_SCORE_THRESHOLD_GREAT_MATCH
+            ):
                 score *= 10
             elif type == "query":
                 score /= 10

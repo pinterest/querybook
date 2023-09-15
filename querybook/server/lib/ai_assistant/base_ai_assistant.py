@@ -3,7 +3,11 @@ import json
 from abc import ABC, abstractmethod
 
 from app.db import with_session
-from const.ai_assistant import AICommandType, DEFAUTL_TABLE_SELECT_LIMIT
+from const.ai_assistant import (
+    AICommandType,
+    DEFAUTL_TABLE_SELECT_LIMIT,
+    MAX_SAMPLE_QUERY_COUNT_FOR_TABLE_SUMMARY,
+)
 from langchain.chains import LLMChain
 from lib.logger import get_logger
 from lib.query_analysis.lineage import process_query
@@ -72,10 +76,10 @@ class BaseAIAssistant(ABC):
         default_config = self._config.get("default", {})
 
         max_context_length = ai_command_config.get(
-            "context_length", 0
+            "context_length"
         ) or default_config.get("context_length", 0)
         reserved_tokens = ai_command_config.get(
-            "reserved_tokens", 0
+            "reserved_tokens"
         ) or default_config.get("reserved_tokens", 0)
 
         return max_context_length - reserved_tokens
@@ -84,7 +88,8 @@ class BaseAIAssistant(ABC):
     def _get_llm(
         self, ai_command, callback_handler: StreamingWebsocketCallbackHandler = None
     ):
-        """return the language model to use"""
+        """return the large language model to use"""
+        raise NotImplementedError()
 
     def _get_sql_title_prompt(self, query):
         return SQL_TITLE_PROMPT.format(query=query)
@@ -288,7 +293,7 @@ class BaseAIAssistant(ABC):
 
         if not sample_queries:
             sample_query_cells = get_sample_query_cells_by_table_name(
-                table_name=table_name, k=5
+                table_name=table_name, k=MAX_SAMPLE_QUERY_COUNT_FOR_TABLE_SUMMARY
             )
             sample_queries = [cell["query_text"] for cell in sample_query_cells]
 
@@ -324,7 +329,6 @@ class BaseAIAssistant(ABC):
         )
         return llm.predict(text=prompt)
 
-    @catch_error
     @with_session
     def find_tables(self, metastore_id, question, session=None):
         """Search similar tables from vector store first, and then ask LLM to select most suitable tables for the question.
