@@ -45,3 +45,13 @@ How to set up and host a vector store or use a cloud vector store solution is no
 4. Enable it in `querybook/config/querybook_public_config.yaml`
 
 With vector store plugin enabled, text-to-sql will also use it to find tables if tables are not provided by the user.
+
+### Initilize the Vector Index
+
+In Docker based deployments, attach to `web` or `worker` component and run
+
+    ```shell
+    python ./querybook/server/scripts/init_vector_store.py
+    ```
+
+It will add summary for all tables and sample query summary of the tables to the vector store. If you'd like to only index part of the tables, you can follow the example of `ingest_vector_index` to create your own script.

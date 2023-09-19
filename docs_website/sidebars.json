@@ -59,6 +59,7 @@
         "Changelog": [
             "changelog/breaking_changes",
             "changelog/security_advisories",
+            "changelog/sept_2023_9_20_0",
             "changelog/dec_2022_3_15_0",
             "changelog/nov_2020_2_4_2",
             "changelog/may_2020_2_3_0",
