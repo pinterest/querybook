@@ -1,8 +1,12 @@
-from typing import List
+import re
+from itertools import chain
 from sqlglot import TokenType, Tokenizer
 from sqlglot.dialects import Trino
 from sqlglot.tokens import Token
+from typing import List
 
+from lib.elasticsearch.search_table import get_column_name_suggestion
+from lib.query_analysis.lineage import process_query
 from lib.query_analysis.validation.base_query_validator import (
     BaseQueryValidator,
     QueryValidationResult,
@@ -14,15 +18,33 @@ from lib.query_analysis.validation.validators.presto_explain_validator import (
 from lib.query_analysis.validation.validators.base_sqlglot_validator import (
     BaseSQLGlotValidator,
 )
+from logic.admin import get_query_engine_by_id
 
 
-class BasePrestoSQLGlotValidator(BaseSQLGlotValidator):
+class BasePrestoSQLGlotDecorator(BaseSQLGlotValidator):
+    def __init__(self, validator: BaseQueryValidator):
+        self._validator = validator
+
+    def languages(self):
+        return ["presto", "trino"]
+
     @property
     def tokenizer(self) -> Tokenizer:
         return Trino.Tokenizer()
 
+    def validate(
+        self,
+        query: str,
+        uid: int,
+        engine_id: int,
+        raw_tokens: List[Token] = None,
+        **kwargs,
+    ):
+        """Override this method to add suggestions to validation results"""
+        return self._validator.validate(query, uid, engine_id, **kwargs)
 
-class UnionAllValidator(BasePrestoSQLGlotValidator):
+
+class UnionAllValidator(BasePrestoSQLGlotDecorator):
     @property
     def message(self):
         return "Using UNION ALL instead of UNION will execute faster"
@@ -31,27 +53,34 @@ class UnionAllValidator(BasePrestoSQLGlotValidator):
     def severity(self) -> str:
         return QueryValidationSeverity.WARNING
 
-    def get_query_validation_results(
-        self, query: str, raw_tokens: List[Token] = None
+    def validate(
+        self,
+        query: str,
+        uid: int,
+        engine_id: int,
+        raw_tokens: List[Token] = None,
+        **kwargs,
     ) -> List[QueryValidationResult]:
         if raw_tokens is None:
             raw_tokens = self._tokenize_query(query)
-        validation_errors = []
+        validation_results = self._validator.validate(
+            query, uid, engine_id, raw_tokens=raw_tokens
+        )
         for i, token in enumerate(raw_tokens):
             if token.token_type == TokenType.UNION:
                 if (
                     i < len(raw_tokens) - 1
                     and raw_tokens[i + 1].token_type != TokenType.ALL
                 ):
-                    validation_errors.append(
+                    validation_results.append(
                         self._get_query_validation_result(
                             query, token.start, token.end, "UNION ALL"
                         )
                     )
-        return validation_errors
+        return validation_results
 
 
-class ApproxDistinctValidator(BasePrestoSQLGlotValidator):
+class ApproxDistinctValidator(BasePrestoSQLGlotDecorator):
     @property
     def message(self):
         return (
@@ -62,13 +91,20 @@ class ApproxDistinctValidator(BasePrestoSQLGlotValidator):
     def severity(self) -> str:
         return QueryValidationSeverity.WARNING
 
-    def get_query_validation_results(
-        self, query: str, raw_tokens: List[Token] = None
+    def validate(
+        self,
+        query: str,
+        uid: int,
+        engine_id: int,
+        raw_tokens: List[Token] = None,
+        **kwargs,
     ) -> List[QueryValidationResult]:
         if raw_tokens is None:
             raw_tokens = self._tokenize_query(query)
 
-        validation_errors = []
+        validation_results = self._validator.validate(
+            query, uid, engine_id, raw_tokens=raw_tokens
+        )
         for i, token in enumerate(raw_tokens):
             if (
                 i < len(raw_tokens) - 2
@@ -77,7 +113,7 @@ class ApproxDistinctValidator(BasePrestoSQLGlotValidator):
                 and raw_tokens[i + 1].token_type == TokenType.L_PAREN
                 and raw_tokens[i + 2].token_type == TokenType.DISTINCT
             ):
-                validation_errors.append(
+                validation_results.append(
                     self._get_query_validation_result(
                         query,
                         token.start,
@@ -85,10 +121,10 @@ class ApproxDistinctValidator(BasePrestoSQLGlotValidator):
                         "APPROX_DISTINCT(",
                     )
                 )
-        return validation_errors
+        return validation_results
 
 
-class RegexpLikeValidator(BasePrestoSQLGlotValidator):
+class RegexpLikeValidator(BasePrestoSQLGlotDecorator):
     @property
     def message(self):
         return "Combining multiple LIKEs into one REGEXP_LIKE will execute faster"
@@ -103,13 +139,20 @@ class RegexpLikeValidator(BasePrestoSQLGlotValidator):
         ]
         return f"REGEXP_LIKE({column_name}, '{'|'.join(sanitized_like_strings)}')"
 
-    def get_query_validation_results(
-        self, query: str, raw_tokens: List[Token] = None
+    def validate(
+        self,
+        query: str,
+        uid: int,
+        engine_id: int,
+        raw_tokens: List[Token] = None,
+        **kwargs,
     ) -> List[QueryValidationResult]:
         if raw_tokens is None:
             raw_tokens = self._tokenize_query(query)
 
-        validation_errors = []
+        validation_results = self._validator.validate(
+            query, uid, engine_id, raw_tokens=raw_tokens
+        )
 
         start_column_token = None
         like_strings = []
@@ -139,7 +182,7 @@ class RegexpLikeValidator(BasePrestoSQLGlotValidator):
                 ):  # No "OR" token following the phrase, so we cannot combine additional phrases
                     # Check if there are multiple phrases that can be combined
                     if len(like_strings) > 1:
-                        validation_errors.append(
+                        validation_results.append(
                             self._get_query_validation_result(
                                 query,
                                 start_column_token.start,
@@ -157,7 +200,7 @@ class RegexpLikeValidator(BasePrestoSQLGlotValidator):
                 if (
                     len(like_strings) > 1
                 ):  # Check if a validation suggestion can be created
-                    validation_errors.append(
+                    validation_results.append(
                         self._get_query_validation_result(
                             query,
                             start_column_token.start,
@@ -171,7 +214,93 @@ class RegexpLikeValidator(BasePrestoSQLGlotValidator):
                 like_strings = []
             token_idx += 1
 
-        return validation_errors
+        return validation_results
+
+
+class ColumnNameSuggester(BasePrestoSQLGlotDecorator):
+    @property
+    def message(self):
+        return ""  # Unused, message is not changed
+
+    @property
+    def severity(self):
+        return QueryValidationSeverity.WARNING  # Unused, severity is not changed
+
+    def _get_tables_in_query(self, query: str, engine_id: int) -> List[str]:
+        engine = get_query_engine_by_id(engine_id)
+        tables_per_statement, _ = process_query(query, language=engine.language)
+        return list(chain.from_iterable(tables_per_statement))
+
+    def _is_column_name_error(self, validation_result: QueryValidationResult) -> bool:
+        return bool(
+            re.match(r"Column .* cannot be resolved", validation_result.message)
+        )
+
+    def _get_column_name_from_position(
+        self, tokens: List[Token], query: str, start_line: int, start_ch: int
+    ) -> str:
+        column_error_start_index = self._get_query_index_by_coordinate(
+            query, start_line, start_ch
+        )
+        for token in tokens:
+            if token.start == column_error_start_index:
+                return token.text
+        return None
+
+    def _search_columns_for_suggestion(self, columns: List[str], suggestion: str):
+        """Return the case-sensitive column name by searching the table's columns for the suggestion text"""
+        for col in columns:
+            if col.lower() == suggestion.lower():
+                return col
+        return suggestion
+
+    def _get_column_name_suggestion(
+        self,
+        validation_result: QueryValidationResult,
+        query: str,
+        tables_in_query: List[str],
+        raw_tokens: List[Token],
+    ):
+        fuzzy_column_name = self._get_column_name_from_position(
+            raw_tokens, query, validation_result.start_line, validation_result.start_ch
+        )
+        if not fuzzy_column_name:
+            return None
+        results, count = get_column_name_suggestion(fuzzy_column_name, tables_in_query)
+        if count == 1:  # Only return suggestion if there's a single match
+            table_result = results[0]
+            highlights = table_result.get("highlight", {}).get("columns", [])
+            if len(highlights) == 1:
+                column_suggestion = self._search_columns_for_suggestion(
+                    table_result.get("columns"), highlights[0]
+                )
+                return column_suggestion
+
+        return None
+
+    def validate(
+        self,
+        query: str,
+        uid: int,
+        engine_id: int,
+        raw_tokens: List[QueryValidationResult] = None,
+        **kwargs,
+    ) -> List[QueryValidationResult]:
+        if raw_tokens is None:
+            raw_tokens = self._tokenize_query(query)
+        validation_results = self._validator.validate(
+            query, uid, engine_id, raw_tokens=raw_tokens
+        )
+        tables_in_query = self._get_tables_in_query(query, engine_id)
+        for result in validation_results:
+            # "Column .* cannot be resolved" -> to get all name errors
+            if self._is_column_name_error(result):
+                column_suggestion = self._get_column_name_suggestion(
+                    result, query, tables_in_query, raw_tokens
+                )
+                if column_suggestion:
+                    result.suggestion = column_suggestion
+        return validation_results
 
 
 class PrestoOptimizingValidator(BaseQueryValidator):
@@ -181,43 +310,15 @@ class PrestoOptimizingValidator(BaseQueryValidator):
     def _get_explain_validator(self):
         return PrestoExplainValidator("")
 
-    def _get_sqlglot_validators(self) -> List[BaseSQLGlotValidator]:
-        return [
-            UnionAllValidator(),
-            ApproxDistinctValidator(),
-            RegexpLikeValidator(),
-        ]
-
-    def _get_sql_glot_validation_results(
-        self, query: str
-    ) -> List[QueryValidationResult]:
-        validation_suggestions = []
-
-        query_raw_tokens = None
-        for validator in self._get_sqlglot_validators():
-            if query_raw_tokens is None:
-                query_raw_tokens = validator._tokenize_query(query)
-            validation_suggestions.extend(
-                validator.get_query_validation_results(
-                    query, raw_tokens=query_raw_tokens
-                )
+    def _get_decorated_validator(self) -> BaseQueryValidator:
+        return UnionAllValidator(
+            ApproxDistinctValidator(
+                RegexpLikeValidator(ColumnNameSuggester(self._get_explain_validator()))
             )
-
-        return validation_suggestions
-
-    def _get_presto_explain_validation_results(
-        self, query: str, uid: int, engine_id: int
-    ) -> List[QueryValidationResult]:
-        return self._get_explain_validator().validate(query, uid, engine_id)
+        )
 
     def validate(
-        self,
-        query: str,
-        uid: int,
-        engine_id: int,
+        self, query: str, uid: int, engine_id: int, **kwargs
     ) -> List[QueryValidationResult]:
-        validation_results = [
-            *self._get_presto_explain_validation_results(query, uid, engine_id),
-            *self._get_sql_glot_validation_results(query),
-        ]
-        return validation_results
+        validator = self._get_decorated_validator()
+        return validator.validate(query, uid, engine_id)

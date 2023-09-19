@@ -1,5 +1,5 @@
-from abc import ABCMeta, abstractmethod
-from typing import List, Tuple
+from abc import abstractmethod
+from typing import Any, Dict, List, Tuple
 from sqlglot import Tokenizer
 from sqlglot.tokens import Token
 
@@ -8,9 +8,13 @@ from lib.query_analysis.validation.base_query_validator import (
     QueryValidationResultObjectType,
     QueryValidationSeverity,
 )
+from lib.query_analysis.validation.base_query_validator import BaseQueryValidator
 
 
-class BaseSQLGlotValidator(metaclass=ABCMeta):
+class BaseSQLGlotValidator(BaseQueryValidator):
+    def __init__(self, name: str = "", config: Dict[str, Any] = {}):
+        super(BaseSQLGlotValidator, self).__init__(name, config)
+
     @property
     @abstractmethod
     def message(self) -> str:
@@ -32,6 +36,12 @@ class BaseSQLGlotValidator(metaclass=ABCMeta):
     def _get_query_coordinate_by_index(self, query: str, index: int) -> Tuple[int, int]:
         rows = query[: index + 1].splitlines(keepends=False)
         return len(rows) - 1, len(rows[-1]) - 1
+
+    def _get_query_index_by_coordinate(
+        self, query: str, start_line: int, start_ch: int
+    ) -> int:
+        rows = query.splitlines(keepends=True)[:start_line]
+        return sum([len(row) for row in rows]) + start_ch
 
     def _get_query_validation_result(
         self,
@@ -56,7 +66,12 @@ class BaseSQLGlotValidator(metaclass=ABCMeta):
         )
 
     @abstractmethod
-    def get_query_validation_results(
-        self, query: str, raw_tokens: List[Token] = None
+    def validate(
+        self,
+        query: str,
+        uid: int,
+        engine_id: int,
+        raw_tokens: List[Token] = None,
+        **kwargs
     ) -> List[QueryValidationResult]:
         raise NotImplementedError()

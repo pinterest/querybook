@@ -1,8 +1,13 @@
+from typing import Dict, List, Tuple
 from lib.elasticsearch.query_utils import (
     match_filters,
     highlight_fields,
     order_by_fields,
     combine_keyword_and_filter_query,
+)
+from lib.elasticsearch.search_utils import (
+    ES_CONFIG,
+    get_matching_objects,
 )
 
 FILTERS_TO_AND = ["tags", "data_elements"]
@@ -173,3 +178,40 @@ def construct_tables_query_by_table_names(
     }
 
     return query
+
+
+def get_column_name_suggestion(
+    fuzzy_column_name: str, full_table_names: List[str]
+) -> Tuple[Dict, int]:
+    """Given an invalid column name and a list of tables to search from, uses fuzzy search to search
+    the correctly-spelled column name"""
+    should_clause = []
+    for full_table_name in full_table_names:
+        schema_name, table_name = full_table_name.split(".")
+        should_clause.append(
+            {
+                "bool": {
+                    "must": [
+                        {"match": {"name": table_name}},
+                        {"match": {"schema": schema_name}},
+                    ]
+                }
+            }
+        )
+
+    search_query = {
+        "query": {
+            "bool": {
+                "must": {
+                    "match": {
+                        "columns": {"query": fuzzy_column_name, "fuzziness": "AUTO"}
+                    }
+                },
+                "should": should_clause,
+                "minimum_should_match": 1,
+            },
+        },
+        "highlight": {"pre_tags": [""], "post_tags": [""], "fields": {"columns": {}}},
+    }
+
+    return get_matching_objects(search_query, ES_CONFIG["tables"]["index_name"], True)
