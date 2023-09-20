@@ -10,7 +10,7 @@ Please check the [user guide](../user_guide/ai_assistant.md) of how the AI assis
 
 The AI assistant plugin is powered by LLM(Large Language Model), like ChatGPT from openai. We're using [Langchain](https://python.langchain.com/docs/get_started/introduction) to build the plugin.
 
-## AI Asssitant Plugin
+## AI Assistant Plugin
 
 The AI Assistant plugin will allow users to do title generation, text to sql and query auto fix.
 
