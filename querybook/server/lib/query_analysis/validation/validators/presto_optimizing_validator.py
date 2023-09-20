@@ -293,7 +293,6 @@ class ColumnNameSuggester(BasePrestoSQLGlotDecorator):
         )
         tables_in_query = self._get_tables_in_query(query, engine_id)
         for result in validation_results:
-            # "Column .* cannot be resolved" -> to get all name errors
             if self._is_column_name_error(result):
                 column_suggestion = self._get_column_name_suggestion(
                     result, query, tables_in_query, raw_tokens
