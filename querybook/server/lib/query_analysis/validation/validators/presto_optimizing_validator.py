@@ -233,7 +233,7 @@ class ColumnNameSuggester(BasePrestoSQLGlotDecorator):
 
     def _is_column_name_error(self, validation_result: QueryValidationResult) -> bool:
         return bool(
-            re.match(r"Column .* cannot be resolved", validation_result.message)
+            re.search(r"Column .* cannot be resolved", validation_result.message)
         )
 
     def _get_column_name_from_position(
