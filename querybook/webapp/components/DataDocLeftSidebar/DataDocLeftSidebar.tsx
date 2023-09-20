@@ -1,12 +1,12 @@
 import clsx from 'clsx';
 import Resizable from 're-resizable';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { DataTableViewMini } from 'components/DataTableViewMini/DataTableViewMini';
 import { IDataCell } from 'const/datadoc';
-import { useEvent } from 'hooks/useEvent';
 import { useResizeToCollapseSidebar } from 'hooks/useResizeToCollapse';
+import { useEvent } from 'hooks/useEvent';
 import { enableResizable } from 'lib/utils';
 import { getShortcutSymbols, KeyMap, matchKeyMap } from 'lib/utils/keyboard';
 import { setSidebarTableId } from 'redux/querybookUI/action';
@@ -26,6 +26,7 @@ interface IProps {
 
 type LeftSidebarContentState = 'contents' | 'table' | 'default';
 const TOGGLE_TOC_SHORTCUT = getShortcutSymbols(KeyMap.dataDoc.toggleToC.key);
+const HIDDEN_SIDEBAR_WIDTH = 36;
 const DEFAULT_SIDEBAR_WIDTH = 280;
 
 export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
@@ -39,7 +40,8 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
     const clearSidebarTableId = () => dispatch(setSidebarTableId(null));
 
     const [contentState, setContentState] =
-        React.useState<LeftSidebarContentState>('default');
+        useState<LeftSidebarContentState>('default');
+    const [sidebarWidth, setSidebarWidth] = useState(HIDDEN_SIDEBAR_WIDTH);
 
     useEvent(
         'keydown',
@@ -64,6 +66,7 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
         },
         []
     );
+
     useEffect(() => {
         if (sidebarTableId != null) {
             setContentState('table');
@@ -76,43 +79,45 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
     const resizeToCollapseSidebar = useResizeToCollapseSidebar(
         DEFAULT_SIDEBAR_WIDTH,
         1 / 3,
-        React.useCallback(() => setContentState('default'), [])
+        React.useCallback(() => {
+            clearSidebarTableId();
+            setContentState('default');
+        }, [])
     );
+
+    useEffect(() => {
+        if (contentState === 'default') {
+            setSidebarWidth(HIDDEN_SIDEBAR_WIDTH);
+        } else {
+            setSidebarWidth(DEFAULT_SIDEBAR_WIDTH);
+        }
+    }, [contentState]);
 
     let contentDOM: React.ReactChild;
     if (contentState === 'contents') {
         contentDOM = (
-            <Resizable
-                defaultSize={{
-                    width: `${DEFAULT_SIDEBAR_WIDTH}px`,
-                }}
-                minWidth={DEFAULT_SIDEBAR_WIDTH}
-                enable={enableResizable({ right: true })}
-                onResize={resizeToCollapseSidebar}
-            >
-                <div className="sidebar-content sidebar-content-contents">
-                    <Level className="contents-panel-header">
-                        <IconButton
-                            icon="ArrowLeft"
-                            onClick={() => setContentState('default')}
-                        />
-                        <div className="flex-row">
-                            <span className="mr4">
-                                contents ({TOGGLE_TOC_SHORTCUT})
-                            </span>
-                            <InfoButton layout={['right', 'top']}>
-                                Click to jump to the corresponding cell. Drag
-                                cells to reorder them.
-                            </InfoButton>
-                        </div>
-                    </Level>
-                    <DataDocContents cells={cells} docId={docId} />
-                </div>
-            </Resizable>
+            <div className="sidebar-content sidebar-content-contents">
+                <Level className="contents-panel-header">
+                    <IconButton
+                        icon="ArrowLeft"
+                        onClick={() => setContentState('default')}
+                    />
+                    <div className="flex-row">
+                        <span className="mr4">
+                            contents ({TOGGLE_TOC_SHORTCUT})
+                        </span>
+                        <InfoButton layout={['right', 'top']}>
+                            Click to jump to the corresponding cell. Drag cells
+                            to reorder them.
+                        </InfoButton>
+                    </div>
+                </Level>
+                <DataDocContents cells={cells} docId={docId} />
+            </div>
         );
     } else if (contentState === 'table') {
         contentDOM = (
-            <div className="sidebar-content sidebar-content-table">
+            <div className="sidebar-content sidebar-content-contents">
                 <DataTableViewMini
                     tableId={sidebarTableId}
                     onHide={() => clearSidebarTableId()}
@@ -143,7 +148,18 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
                 hidden: cells.length === 0,
             })}
         >
-            {contentDOM}
+            {contentState === 'default' ? (
+                <> {contentDOM} </>
+            ) : (
+                <Resizable
+                    defaultSize={{ width: `${sidebarWidth}px` }}
+                    minWidth={sidebarWidth}
+                    enable={enableResizable({ right: true })}
+                    onResize={resizeToCollapseSidebar}
+                >
+                    {contentDOM}
+                </Resizable>
+            )}
         </div>
     );
 };
