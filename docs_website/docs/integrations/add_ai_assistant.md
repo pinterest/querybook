@@ -16,15 +16,17 @@ The AI Assistant plugin will allow users to do title generation, text to sql and
 
 Please follow below steps to enable AI assistant plugin:
 
-1. [Optional] Create your own AI assistant provider if needed. Please refer to `querybook/server/lib/ai_assistant/openai_assistant.py` as an example.
+1. Add `langchain` package dependency by adding `-r ai/langchain.txt` to `requirements/local.txt`.
 
-2. Add your provider in `plugins/ai_assistant_plugin/__init__.py`
+2. [Optional] Create your own AI assistant provider if needed. Please refer to `querybook/server/lib/ai_assistant/openai_assistant.py` as an example.
 
-3. Add configs in the `querybook_config.yaml`. Please refer to `containers/bundled_querybook_config.yaml` as an example. Please also check the model's official doc for all avaialbe model args.
+3. Add your provider in `plugins/ai_assistant_plugin/__init__.py`
+
+4. Add configs in the `querybook_config.yaml`. Please refer to `containers/bundled_querybook_config.yaml` as an example. Please also check the model's official doc for all avaialbe model args.
 
     - Dont forget to set proper environment variables for your provider. e.g. for openai, you'll need `OPENAI_API_KEY`.
 
-4. Enable it in `querybook/config/querybook_public_config.yaml`
+5. Enable it in `querybook/config/querybook_public_config.yaml`
 
 ## Vector Store Plugin
 

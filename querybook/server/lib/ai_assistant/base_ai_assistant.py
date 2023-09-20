@@ -4,11 +4,10 @@ from abc import ABC, abstractmethod
 
 from app.db import with_session
 from const.ai_assistant import (
-    AICommandType,
     DEFAUTL_TABLE_SELECT_LIMIT,
     MAX_SAMPLE_QUERY_COUNT_FOR_TABLE_SUMMARY,
+    AICommandType,
 )
-from langchain.chains import LLMChain
 from lib.logger import get_logger
 from lib.query_analysis.lineage import process_query
 from lib.vector_store import get_vector_store
@@ -28,7 +27,11 @@ from .prompts.table_select_prompt import TABLE_SELECT_PROMPT
 from .prompts.table_summary_prompt import TABLE_SUMMARY_PROMPT
 from .prompts.text_to_sql_prompt import TEXT_TO_SQL_PROMPT
 from .streaming_web_socket_callback_handler import StreamingWebsocketCallbackHandler
-from .tools.table_schema import get_table_schema_by_name, get_table_schemas_by_names
+from .tools.table_schema import (
+    get_slimmed_table_schemas,
+    get_table_schema_by_name,
+    get_table_schemas_by_names,
+)
 
 LOG = get_logger(__file__)
 
@@ -71,13 +74,17 @@ class BaseAIAssistant(ABC):
             **self._config.get(ai_command, {}).get("model_args", {}),
         }
 
+    @abstractmethod
+    def _get_context_length_by_model(self, model_name: str) -> int:
+        """Get the context window size of the model."""
+        raise NotImplementedError()
+
     def _get_usable_token_count(self, ai_command: str) -> int:
         ai_command_config = self._config.get(ai_command, {})
         default_config = self._config.get("default", {})
 
-        max_context_length = ai_command_config.get(
-            "context_length"
-        ) or default_config.get("context_length", 0)
+        model_name = self._get_llm_config(ai_command)["model_name"]
+        max_context_length = self._get_context_length_by_model(model_name)
         reserved_tokens = ai_command_config.get(
             "reserved_tokens"
         ) or default_config.get("reserved_tokens", 0)
@@ -86,21 +93,44 @@ class BaseAIAssistant(ABC):
 
     @abstractmethod
     def _get_llm(
-        self, ai_command, callback_handler: StreamingWebsocketCallbackHandler = None
+        self,
+        ai_command: str,
+        prompt_length: int,
+        callback_handler: StreamingWebsocketCallbackHandler = None,
     ):
-        """return the large language model to use"""
+        """return the large language model to use.
+
+        Args:
+            ai_command (str): AI command type
+            prompt_length (str): The number of tokens in the prompt. Can be used to decide which model to use.
+            callback_handler (StreamingWebsocketCallbackHandler, optional): Callback handler to handle the straming result.
+        """
         raise NotImplementedError()
 
     def _get_sql_title_prompt(self, query):
         return SQL_TITLE_PROMPT.format(query=query)
 
     def _get_text_to_sql_prompt(self, dialect, question, table_schemas, original_query):
-        return TEXT_TO_SQL_PROMPT.format(
+        context_limit = self._get_usable_token_count(AICommandType.TEXT_TO_SQL.value)
+        prompt = TEXT_TO_SQL_PROMPT.format(
             dialect=dialect,
             question=question,
             table_schemas=table_schemas,
             original_query=original_query,
         )
+        token_count = self._get_token_count(AICommandType.TEXT_TO_SQL.value, prompt)
+
+        if token_count > context_limit:
+            # if the prompt is too long, use slimmed table schemas
+            prompt = TEXT_TO_SQL_PROMPT.format(
+                dialect=dialect,
+                question=question,
+                table_schemas=get_slimmed_table_schemas(table_schemas),
+                original_query=original_query,
+            )
+
+        # TODO: need a better way to handle it if the prompt is still too long
+        return prompt
 
     def _get_sql_fix_prompt(self, dialect, query, error, table_schemas):
         return SQL_FIX_PROMPT.format(
@@ -132,11 +162,6 @@ class BaseAIAssistant(ABC):
             question=question,
             table_schemas=table_schemas,
         )
-
-    def _get_llm_chain(self, prompt, socket):
-        callback_handler = StreamingWebsocketCallbackHandler(socket)
-        llm = self._get_llm(callback_handler=callback_handler)
-        return LLMChain(llm=llm, prompt=prompt)
 
     def _get_error_msg(self, error) -> str:
         """Override this method to return specific error messages for your own assistant."""
@@ -207,6 +232,9 @@ class BaseAIAssistant(ABC):
         )
         llm = self._get_llm(
             ai_command=AICommandType.TEXT_TO_SQL.value,
+            prompt_length=self._get_token_count(
+                AICommandType.TEXT_TO_SQL.value, prompt
+            ),
             callback_handler=StreamingWebsocketCallbackHandler(socket),
         )
         return llm.predict(text=prompt)
@@ -224,6 +252,7 @@ class BaseAIAssistant(ABC):
         prompt = self._get_sql_title_prompt(query=query)
         llm = self._get_llm(
             ai_command=AICommandType.SQL_TITLE.value,
+            prompt_length=self._get_token_count(AICommandType.SQL_TITLE.value, prompt),
             callback_handler=StreamingWebsocketCallbackHandler(socket),
         )
         return llm.predict(text=prompt)
@@ -269,6 +298,7 @@ class BaseAIAssistant(ABC):
         )
         llm = self._get_llm(
             ai_command=AICommandType.SQL_FIX.value,
+            prompt_length=self._get_token_count(AICommandType.SQL_FIX.value, prompt),
             callback_handler=StreamingWebsocketCallbackHandler(socket),
         )
         return llm.predict(text=prompt)
@@ -301,7 +331,11 @@ class BaseAIAssistant(ABC):
             table_schema=table_schema, sample_queries=sample_queries
         )
         llm = self._get_llm(
-            ai_command=AICommandType.TABLE_SUMMARY.value, callback_handler=None
+            ai_command=AICommandType.TABLE_SUMMARY.value,
+            prompt_length=self._get_token_count(
+                AICommandType.TABLE_SUMMARY.value, prompt
+            ),
+            callback_handler=None,
         )
         return llm.predict(text=prompt)
 
@@ -325,7 +359,11 @@ class BaseAIAssistant(ABC):
 
         prompt = self._get_sql_summary_prompt(table_schemas=table_schemas, query=query)
         llm = self._get_llm(
-            ai_command=AICommandType.SQL_SUMMARY.value, callback_handler=None
+            ai_command=AICommandType.SQL_SUMMARY.value,
+            prompt_length=self._get_token_count(
+                AICommandType.SQL_SUMMARY.value, prompt
+            ),
+            callback_handler=None,
         )
         return llm.predict(text=prompt)
 
@@ -349,7 +387,11 @@ class BaseAIAssistant(ABC):
                 AICommandType.TABLE_SELECT.value
             )
             for full_table_name in table_names:
-                table_schema, table_name = full_table_name.split(".")
+                full_table_name_parts = full_table_name.split(".")
+                if len(full_table_name_parts) != 2:
+                    continue
+
+                table_schema, table_name = full_table_name_parts
                 table = get_table_by_name(
                     schema_name=table_schema,
                     name=table_name,
@@ -374,7 +416,11 @@ class BaseAIAssistant(ABC):
                 question=question,
             )
             llm = self._get_llm(
-                ai_command=AICommandType.TABLE_SELECT.value, callback_handler=None
+                ai_command=AICommandType.TABLE_SELECT.value,
+                prompt_length=self._get_token_count(
+                    AICommandType.TABLE_SELECT.value, prompt
+                ),
+                callback_handler=None,
             )
             return json.loads(llm.predict(text=prompt))
         except Exception as e:

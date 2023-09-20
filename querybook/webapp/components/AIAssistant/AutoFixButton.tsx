@@ -27,6 +27,7 @@ const useSQLFix = () => {
     });
 
     const {
+        data: unformattedData,
         explanation,
         fix_suggestion: suggestion,
         fixed_query: rawFixedQuery,
@@ -37,7 +38,7 @@ const useSQLFix = () => {
     return {
         socket,
         fixed: Object.keys(data).length > 0, // If has data, then it has been fixed
-        explanation,
+        explanation: explanation || unformattedData,
         suggestion,
         fixedQuery,
     };

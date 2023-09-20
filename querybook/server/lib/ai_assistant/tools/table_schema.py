@@ -15,12 +15,12 @@ def get_table_documentation(table: DataTable) -> str:
 
     vs = get_vector_store()
     if vs:
-        vs.get_table_summary(table.id)
+        return vs.get_table_summary(table.id)
 
     return ""
 
 
-def _get_column(column: DataTableColumn) -> str:
+def _get_column(column: DataTableColumn) -> dict[str, str]:
     column_json = {}
 
     column_json["name"] = column.name
@@ -39,7 +39,7 @@ def _get_column(column: DataTableColumn) -> str:
 def _get_table_schema(
     table: DataTable,
     should_skip_column: Callable[[DataTableColumn], bool] = None,
-) -> str:
+) -> dict:
     """Generate table schema prompt. The format will be like:
 
     Table Name: [Name_of_table_1]
@@ -77,7 +77,7 @@ def get_table_schema_by_id(
     table_id: int,
     should_skip_column: Callable[[DataTableColumn], bool] = None,
     session=None,
-) -> str:
+) -> dict:
     """Generate table schema prompt by table id"""
     table = m_logic.get_table_by_id(table_id=table_id, session=session)
     return _get_table_schema(table, should_skip_column)
@@ -88,7 +88,7 @@ def get_table_schemas_by_ids(
     table_ids: list[int],
     should_skip_column: Callable[[DataTableColumn], bool] = None,
     session=None,
-) -> str:
+) -> list[dict]:
     """Generate table schemas prompt by table ids"""
     return [
         get_table_schema_by_id(
@@ -106,9 +106,13 @@ def get_table_schema_by_name(
     full_table_name: str,
     should_skip_column: Callable[[DataTableColumn], bool] = None,
     session=None,
-) -> str:
+) -> dict:
     """Generate table schema prompt by full table name"""
-    table_schema, table_name = full_table_name.split(".")
+    full_table_name_parts = full_table_name.split(".")
+    if len(full_table_name_parts) != 2:
+        return None
+
+    table_schema, table_name = full_table_name_parts
     table = m_logic.get_table_by_name(
         schema_name=table_schema,
         name=table_name,
@@ -124,7 +128,7 @@ def get_table_schemas_by_names(
     full_table_names: list[str],
     should_skip_column: Callable[[DataTableColumn], bool] = None,
     session=None,
-) -> str:
+) -> list[dict]:
     """Generate table schemas prompt by table names"""
     return [
         get_table_schema_by_name(
@@ -134,4 +138,25 @@ def get_table_schemas_by_names(
             session=session,
         )
         for table_name in full_table_names
+    ]
+
+
+def get_slimmed_table_schemas(table_schemas: list[dict]) -> list[dict]:
+    """Get a slimmed version of the table schemas, which will only keep below fields:
+    - table_name
+    - columns:
+        name
+        type
+    """
+    column_keys_to_keep = ["name", "type"]
+
+    return [
+        {
+            "table_name": schema["table_name"],
+            "columns": [
+                {k: c[k] for k in column_keys_to_keep if k in c}
+                for c in schema["columns"]
+            ],
+        }
+        for schema in table_schemas
     ]
