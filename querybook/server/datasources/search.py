@@ -17,7 +17,6 @@ from lib.elasticsearch.search_utils import (
 from lib.elasticsearch.suggest_table import construct_suggest_table_query
 from lib.elasticsearch.suggest_user import construct_suggest_user_query
 from lib.elasticsearch.search_utils import ES_CONFIG
-from logic import vector_store as vs_logic
 
 LOG = get_logger(__file__)
 
@@ -123,6 +122,9 @@ def vector_search_tables(
     keywords,
     filters=None,
 ):
+    # delayed import only if vector search is enabled
+    from logic import vector_store as vs_logic
+
     verify_metastore_permission(metastore_id)
     return vs_logic.search_tables(metastore_id, keywords, filters)
 

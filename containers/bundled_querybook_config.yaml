@@ -13,25 +13,21 @@ ELASTICSEARCH_HOST: http://elasticsearch:9200
 # AI_ASSISTANT_CONFIG:
 #     default:
 #         model_args:
-#             model_name: gpt-3.5-turbo-16k
+#             model_name: gpt-3.5-turbo
 #             temperature: 0
-#         context_length: 16384
-#         reserved_tokens: 2048
+#         reserved_tokens: 1024
 #     table_summary:
 #         model_args:
-#             model_name: gpt-3.5-turbo-16k
+#             model_name: gpt-3.5-turbo
 #             temperature: 0
-#         context_length: 16384
 #     sql_summary:
 #         model_args:
-#             model_name: gpt-3.5-turbo-16k
+#             model_name: gpt-3.5-turbo
 #             temperature: 0
-#         context_length: 16384
 #     table_select:
 #         model_args:
-#             model_name: gpt-3.5-turbo-16k
+#             model_name: gpt-3.5-turbo
 #             temperature: 0
-#         context_length: 16384
 
 # Uncomment below to enable vector store to support embedding based table search.
 # Please check langchain doc for the configs of each provider.
