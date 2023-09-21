@@ -5,7 +5,7 @@ from sqlglot.dialects import Trino
 from sqlglot.tokens import Token
 from typing import List
 
-from lib.elasticsearch.search_table import get_column_name_suggestion
+from lib.elasticsearch import search_table
 from lib.query_analysis.lineage import process_query
 from lib.query_analysis.validation.base_query_validator import (
     BaseQueryValidator,
@@ -237,12 +237,14 @@ class ColumnNameSuggester(BasePrestoSQLGlotDecorator):
         )
 
     def _get_column_name_from_position(
-        self, tokens: List[Token], query: str, start_line: int, start_ch: int
+        self, query: str, start_line: int, start_ch: int, raw_tokens: List[Token]
     ) -> str:
+        if raw_tokens is None:
+            raw_tokens = self._tokenize_query(query)
         column_error_start_index = self._get_query_index_by_coordinate(
             query, start_line, start_ch
         )
-        for token in tokens:
+        for token in raw_tokens:
             if token.start == column_error_start_index:
                 return token.text
         return None
@@ -259,14 +261,19 @@ class ColumnNameSuggester(BasePrestoSQLGlotDecorator):
         validation_result: QueryValidationResult,
         query: str,
         tables_in_query: List[str],
-        raw_tokens: List[Token],
+        raw_tokens: List[Token] = None,
     ):
         fuzzy_column_name = self._get_column_name_from_position(
-            raw_tokens, query, validation_result.start_line, validation_result.start_ch
+            query,
+            validation_result.start_line,
+            validation_result.start_ch,
+            raw_tokens=raw_tokens,
         )
         if not fuzzy_column_name:
             return None
-        results, count = get_column_name_suggestion(fuzzy_column_name, tables_in_query)
+        results, count = search_table.get_column_name_suggestion(
+            fuzzy_column_name, tables_in_query
+        )
         if count == 1:  # Only return suggestion if there's a single match
             table_result = results[0]
             highlights = table_result.get("highlight", {}).get("columns", [])
