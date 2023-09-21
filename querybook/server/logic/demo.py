@@ -72,7 +72,7 @@ def set_up_demo(uid: int, session=None):
             "task": "tasks.update_metastore.update_metastore",
             "cron": "0 0 * * *",
             "args": [metastore_id],
-            "task_type": ScheduleTaskType.PROD,
+            "task_type": ScheduleTaskType.PROD.value,
             "enabled": True,
         },
         # commit=False,
