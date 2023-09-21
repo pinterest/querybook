@@ -5,3 +5,4 @@ watchdog[watchmedo]
 black==22.3.0
 pre-commit==2.9.2
 setuptools>=65.5.1 # not directly required, pinned by Snyk to avoid a vulnerability
+gevent>=23.9.0 # not directly required, pinned by Snyk to avoid a vulnerability
