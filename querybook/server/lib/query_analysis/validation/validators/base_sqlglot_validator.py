@@ -72,6 +72,22 @@ class BaseSQLGlotValidator(BaseQueryValidator):
         uid: int,
         engine_id: int,
         raw_tokens: List[Token] = None,
-        **kwargs
+        **kwargs,
     ) -> List[QueryValidationResult]:
         raise NotImplementedError()
+
+
+class BaseSQLGlotDecorator(BaseSQLGlotValidator):
+    def __init__(self, validator: BaseQueryValidator):
+        self._validator = validator
+
+    def validate(
+        self,
+        query: str,
+        uid: int,
+        engine_id: int,
+        raw_tokens: List[Token] = None,
+        **kwargs,
+    ):
+        """Override this method to add suggestions to validation results"""
+        return self._validator.validate(query, uid, engine_id, **kwargs)

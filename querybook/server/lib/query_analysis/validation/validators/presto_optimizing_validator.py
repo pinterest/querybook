@@ -1,12 +1,9 @@
 import re
-from itertools import chain
 from sqlglot import TokenType, Tokenizer
 from sqlglot.dialects import Trino
 from sqlglot.tokens import Token
 from typing import List
 
-from lib.elasticsearch import search_table
-from lib.query_analysis.lineage import process_query
 from lib.query_analysis.validation.base_query_validator import (
     BaseQueryValidator,
     QueryValidationResult,
@@ -16,32 +13,21 @@ from lib.query_analysis.validation.validators.presto_explain_validator import (
     PrestoExplainValidator,
 )
 from lib.query_analysis.validation.validators.base_sqlglot_validator import (
-    BaseSQLGlotValidator,
+    BaseSQLGlotDecorator,
 )
-from logic.admin import get_query_engine_by_id
+from lib.query_analysis.validation.validators.metadata_suggesters import (
+    BaseColumnNameSuggester,
+    BaseTableNameSuggester,
+)
 
 
-class BasePrestoSQLGlotDecorator(BaseSQLGlotValidator):
-    def __init__(self, validator: BaseQueryValidator):
-        self._validator = validator
-
+class BasePrestoSQLGlotDecorator(BaseSQLGlotDecorator):
     def languages(self):
         return ["presto", "trino"]
 
     @property
     def tokenizer(self) -> Tokenizer:
         return Trino.Tokenizer()
-
-    def validate(
-        self,
-        query: str,
-        uid: int,
-        engine_id: int,
-        raw_tokens: List[Token] = None,
-        **kwargs,
-    ):
-        """Override this method to add suggestions to validation results"""
-        return self._validator.validate(query, uid, engine_id, **kwargs)
 
 
 class UnionAllValidator(BasePrestoSQLGlotDecorator):
@@ -217,101 +203,33 @@ class RegexpLikeValidator(BasePrestoSQLGlotDecorator):
         return validation_results
 
 
-class ColumnNameSuggester(BasePrestoSQLGlotDecorator):
+class PrestoColumnNameSuggester(BasePrestoSQLGlotDecorator, BaseColumnNameSuggester):
     @property
-    def message(self):
-        return ""  # Unused, message is not changed
+    def column_name_error_regex(self):
+        return r"line \d+:\d+: Column '(.*)' cannot be resolved"
 
+    def get_column_name_from_error(self, validation_result: QueryValidationResult):
+        regex_result = re.match(self.column_name_error_regex, validation_result.message)
+        return regex_result.groups()[0]
+
+
+class PrestoTableNameSuggester(BasePrestoSQLGlotDecorator, BaseTableNameSuggester):
     @property
-    def severity(self):
-        return QueryValidationSeverity.WARNING  # Unused, severity is not changed
+    def table_name_error_regex(self):
+        return r"line \d+:\d+: Table '(.*)' does not exist"
 
-    def _get_tables_in_query(self, query: str, engine_id: int) -> List[str]:
-        engine = get_query_engine_by_id(engine_id)
-        tables_per_statement, _ = process_query(query, language=engine.language)
-        return list(chain.from_iterable(tables_per_statement))
-
-    def _is_column_name_error(self, validation_result: QueryValidationResult) -> bool:
-        return bool(
-            re.search(r"Column .* cannot be resolved", validation_result.message)
-        )
-
-    def _get_column_name_from_position(
-        self, query: str, start_line: int, start_ch: int, raw_tokens: List[Token]
-    ) -> str:
-        if raw_tokens is None:
-            raw_tokens = self._tokenize_query(query)
-        column_error_start_index = self._get_query_index_by_coordinate(
-            query, start_line, start_ch
-        )
-        for token in raw_tokens:
-            if token.start == column_error_start_index:
-                return token.text
-        return None
-
-    def _search_columns_for_suggestion(self, columns: List[str], suggestion: str):
-        """Return the case-sensitive column name by searching the table's columns for the suggestion text"""
-        for col in columns:
-            if col.lower() == suggestion.lower():
-                return col
-        return suggestion
-
-    def _get_column_name_suggestion(
-        self,
-        validation_result: QueryValidationResult,
-        query: str,
-        tables_in_query: List[str],
-        raw_tokens: List[Token] = None,
-    ):
-        fuzzy_column_name = self._get_column_name_from_position(
-            query,
-            validation_result.start_line,
-            validation_result.start_ch,
-            raw_tokens=raw_tokens,
-        )
-        if not fuzzy_column_name:
-            return None
-        results, count = search_table.get_column_name_suggestion(
-            fuzzy_column_name, tables_in_query
-        )
-        if count == 1:  # Only return suggestion if there's a single match
-            table_result = results[0]
-            highlights = table_result.get("highlight", {}).get("columns", [])
-            if len(highlights) == 1:
-                column_suggestion = self._search_columns_for_suggestion(
-                    table_result.get("columns"), highlights[0]
-                )
-                return column_suggestion
-
-        return None
-
-    def validate(
-        self,
-        query: str,
-        uid: int,
-        engine_id: int,
-        raw_tokens: List[QueryValidationResult] = None,
-        **kwargs,
-    ) -> List[QueryValidationResult]:
-        if raw_tokens is None:
-            raw_tokens = self._tokenize_query(query)
-        validation_results = self._validator.validate(
-            query, uid, engine_id, raw_tokens=raw_tokens
-        )
-        tables_in_query = self._get_tables_in_query(query, engine_id)
-        for result in validation_results:
-            if self._is_column_name_error(result):
-                column_suggestion = self._get_column_name_suggestion(
-                    result, query, tables_in_query, raw_tokens
-                )
-                if column_suggestion:
-                    result.suggestion = column_suggestion
-        return validation_results
+    def get_full_table_name_from_error(self, validation_result: QueryValidationResult):
+        regex_result = re.match(self.table_name_error_regex, validation_result.message)
+        return regex_result.groups()[0]
 
 
 class PrestoOptimizingValidator(BaseQueryValidator):
     def languages(self):
         return ["presto", "trino"]
+
+    @property
+    def tokenizer(self) -> Tokenizer:
+        return Trino.Tokenizer()
 
     def _get_explain_validator(self):
         return PrestoExplainValidator("")
@@ -319,7 +237,11 @@ class PrestoOptimizingValidator(BaseQueryValidator):
     def _get_decorated_validator(self) -> BaseQueryValidator:
         return UnionAllValidator(
             ApproxDistinctValidator(
-                RegexpLikeValidator(ColumnNameSuggester(self._get_explain_validator()))
+                RegexpLikeValidator(
+                    PrestoTableNameSuggester(
+                        PrestoColumnNameSuggester(self._get_explain_validator())
+                    )
+                )
             )
         )
 

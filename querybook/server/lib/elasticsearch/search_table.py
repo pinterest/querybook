@@ -215,3 +215,25 @@ def get_column_name_suggestion(
     }
 
     return get_matching_objects(search_query, ES_CONFIG["tables"]["index_name"], True)
+
+
+def get_table_name_suggestion(fuzzy_full_table_name: str) -> Tuple[Dict, int]:
+    """Given an invalid table name use fuzzy search to search the correctly-spelled table name"""
+    schema_name, fuzzy_table_name = fuzzy_full_table_name.split(".")
+
+    search_query = {
+        "query": {
+            "bool": {
+                "must": [
+                    {"match": {"schema": schema_name}},
+                    {
+                        "match": {
+                            "name": {"query": fuzzy_table_name, "fuzziness": "AUTO"},
+                        }
+                    },
+                ]
+            }
+        },
+    }
+
+    return get_matching_objects(search_query, ES_CONFIG["tables"]["index_name"], True)

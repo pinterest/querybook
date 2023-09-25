@@ -9,7 +9,7 @@ from lib.query_analysis.validation.base_query_validator import (
 )
 from lib.query_analysis.validation.validators.presto_optimizing_validator import (
     ApproxDistinctValidator,
-    ColumnNameSuggester,
+    PrestoColumnNameSuggester,
     RegexpLikeValidator,
     UnionAllValidator,
     PrestoOptimizingValidator,
@@ -241,9 +241,9 @@ class RegexpLikeValidatorTestCase(BaseValidatorTestCase):
         )
 
 
-class ColumnNameSuggesterTestCase(BaseValidatorTestCase):
+class PrestoColumnNameSuggesterTestCase(BaseValidatorTestCase):
     def setUp(self):
-        self._validator = ColumnNameSuggester(MagicMock())
+        self._validator = PrestoColumnNameSuggester(MagicMock())
 
     def test__is_column_name_error(self):
         self.assertEqual(
@@ -252,7 +252,7 @@ class ColumnNameSuggesterTestCase(BaseValidatorTestCase):
                     0,
                     0,
                     QueryValidationSeverity.WARNING,
-                    "Line 0:1 Column 'happyness' cannot be resolved",
+                    "line 0:1: Column 'happyness' cannot be resolved",
                 )
             ),
             True,
@@ -263,7 +263,7 @@ class ColumnNameSuggesterTestCase(BaseValidatorTestCase):
                     0,
                     0,
                     QueryValidationSeverity.WARNING,
-                    "Line 0:1 Table 'world_happiness_rank' does not exist",
+                    "line 0:1: Table 'world_happiness_rank' does not exist",
                 )
             ),
             False,
@@ -283,18 +283,20 @@ class ColumnNameSuggesterTestCase(BaseValidatorTestCase):
             "country",
         )
 
+    def _get_new_validation_result_obj(self):
+        return QueryValidationResult(
+            0,
+            7,
+            QueryValidationSeverity.WARNING,
+            "line 0:1: Column 'happynessrank' cannot be resolved",
+        )
+
     @patch(
         "lib.elasticsearch.search_table.get_column_name_suggestion",
     )
     def test__get_column_name_suggestion(self, mock_get_column_name_suggestion):
-        validation_result = QueryValidationResult(
-            0,
-            7,
-            QueryValidationSeverity.WARNING,
-            "Line 0:1 Column 'happynessrank' cannot be resolved",
-        )
-        query = "select happynessrank from main.world_happiness_report;"
         # Test too many tables matched
+        validation_result = self._get_new_validation_result_obj()
         mock_get_column_name_suggestion.return_value = [
             [
                 {
@@ -308,16 +310,14 @@ class ColumnNameSuggesterTestCase(BaseValidatorTestCase):
             ],
             2,
         ]
-        self.assertEqual(
-            self._validator._get_column_name_suggestion(
-                validation_result,
-                query,
-                ["main.world_happiness_report"],
-            ),
-            None,
+        self._validator._suggest_column_name(
+            validation_result,
+            ["main.world_happiness_report"],
         )
+        self.assertEqual(validation_result.suggestion, None)
 
         # Test too many columns in a table matched
+        validation_result = self._get_new_validation_result_obj()
         mock_get_column_name_suggestion.return_value = [
             [
                 {
@@ -327,16 +327,17 @@ class ColumnNameSuggesterTestCase(BaseValidatorTestCase):
             ],
             1,
         ]
+        self._validator._suggest_column_name(
+            validation_result,
+            ["main.world_happiness_report"],
+        ),
         self.assertEqual(
-            self._validator._get_column_name_suggestion(
-                validation_result,
-                query,
-                ["main.world_happiness_report"],
-            ),
+            validation_result.suggestion,
             None,
         )
 
         # Test single column matched
+        validation_result = self._get_new_validation_result_obj()
         mock_get_column_name_suggestion.return_value = [
             [
                 {
@@ -346,26 +347,24 @@ class ColumnNameSuggesterTestCase(BaseValidatorTestCase):
             ],
             1,
         ]
-        self.assertEqual(
-            self._validator._get_column_name_suggestion(
-                validation_result,
-                query,
-                ["main.world_happiness_report"],
-            ),
-            "HappinessRank",
-        )
+        self._validator._suggest_column_name(
+            validation_result,
+            ["main.world_happiness_report"],
+        ),
+        self.assertEqual(validation_result.suggestion, "HappinessRank")
 
         # Test no search results
+        validation_result = self._get_new_validation_result_obj()
         mock_get_column_name_suggestion.return_value = [
             [],
             0,
         ]
+        self._validator._suggest_column_name(
+            validation_result,
+            ["main.world_happiness_report"],
+        ),
         self.assertEqual(
-            self._validator._get_column_name_suggestion(
-                validation_result,
-                query,
-                ["main.world_happiness_report"],
-            ),
+            validation_result.suggestion,
             None,
         )
 
@@ -374,7 +373,7 @@ class PrestoOptimizingValidatorTestCase(BaseValidatorTestCase):
     def setUp(self):
         super(PrestoOptimizingValidatorTestCase, self).setUp()
         patch_validator = patch.object(
-            ColumnNameSuggester,
+            PrestoColumnNameSuggester,
             "validate",
             return_value=[],
         )
