@@ -1,11 +1,12 @@
 import { ContentState } from 'draft-js';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { DataTableTags } from 'components/DataTableTags/DataTableTags';
 import { IDataColumn, IDataSchema, IDataTable } from 'const/metastore';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import { setSidebarTableId } from 'lib/querybookUI';
+import { navigateWithinEnv } from 'lib/utils/query-string';
 import * as dataSourcesActions from 'redux/dataSources/action';
 import { IStoreState } from 'redux/store/types';
 import { IconButton } from 'ui/Button/IconButton';
@@ -15,6 +16,7 @@ interface IProps {
     table: IDataTable;
     columns: IDataColumn[];
     schema: IDataSchema;
+    showPinItButton?: boolean;
     openTableModal?: () => any;
 }
 
@@ -22,6 +24,7 @@ export const TableTooltip: React.FunctionComponent<IProps> = ({
     table,
     columns,
     schema,
+    showPinItButton = true,
     openTableModal,
 }) => {
     const tableName =
@@ -47,7 +50,7 @@ export const TableTooltip: React.FunctionComponent<IProps> = ({
             className="ml4"
         />
     );
-    const pinToSidebarButton = (
+    const pinToSidebarButton = showPinItButton && (
         <IconButton
             noPadding
             size={18}
@@ -113,10 +116,22 @@ export const TableTooltip: React.FunctionComponent<IProps> = ({
 export const TableTooltipByName: React.FunctionComponent<{
     metastoreId: number;
     tableFullName: string;
-    openTableModal?: () => any;
-}> = ({ metastoreId, tableFullName, openTableModal }) => {
+    showPinItButton?: boolean;
+    showDetails?: boolean;
+}> = ({
+    metastoreId,
+    tableFullName,
+    showPinItButton = false,
+    showDetails = true,
+}) => {
     const dispatch = useDispatch();
     const [tableId, setTableId] = useState(null);
+
+    const openTableModal = useCallback((tableId: number) => {
+        navigateWithinEnv(`/table/${tableId}/`, {
+            isModal: true,
+        });
+    }, []);
 
     useEffect(() => {
         const fetchTable = async () => {
@@ -167,7 +182,10 @@ export const TableTooltipByName: React.FunctionComponent<{
             table={table}
             schema={schema}
             columns={columns}
-            openTableModal={openTableModal}
+            showPinItButton={showPinItButton}
+            openTableModal={
+                showDetails ? () => openTableModal(tableId) : undefined
+            }
         />
     );
 };

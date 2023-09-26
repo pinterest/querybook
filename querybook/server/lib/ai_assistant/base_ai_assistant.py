@@ -207,6 +207,8 @@ class BaseAIAssistant(ABC):
             )
             if tables:
                 socket.send_tables_for_sql_gen(tables)
+                socket.close()
+                return
 
         # not finding any relevant tables
         if not tables:
