@@ -209,15 +209,13 @@ export const QueryGenerationModal = ({
                     <div key={table} className="flex-row">
                         <Checkbox
                             value={tables.includes(table)}
-                            onChange={(checked) => {
-                                if (checked) {
-                                    setTables(uniq([...tables, table]));
-                                } else {
-                                    setTables(
-                                        tables.filter((t) => t !== table)
-                                    );
-                                }
-                            }}
+                            onChange={(checked) =>
+                                setTables((oldTables) =>
+                                    checked
+                                        ? uniq([...oldTables, table])
+                                        : oldTables.filter((t) => t !== table)
+                                )
+                            }
                         />
                         <TableTag
                             metastoreId={queryEngineById[engineId].metastore_id}
@@ -227,7 +225,12 @@ export const QueryGenerationModal = ({
                 ))}
             </div>
             <div className="mt8">
-                <Button title="Continue" onClick={onGenerate} color="confirm" />
+                <Button
+                    title="Confirm & Generate SQL"
+                    onClick={onGenerate}
+                    color="confirm"
+                    disabled={tables.length === 0}
+                />
             </div>
         </div>
     );

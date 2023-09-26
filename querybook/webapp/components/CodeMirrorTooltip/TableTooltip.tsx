@@ -127,11 +127,11 @@ export const TableTooltipByName: React.FunctionComponent<{
     const dispatch = useDispatch();
     const [tableId, setTableId] = useState(null);
 
-    const openTableModal = useCallback((tableId: number) => {
+    const openTableModal = useCallback(() => {
         navigateWithinEnv(`/table/${tableId}/`, {
             isModal: true,
         });
-    }, []);
+    }, [tableId]);
 
     useEffect(() => {
         const fetchTable = async () => {
@@ -183,9 +183,7 @@ export const TableTooltipByName: React.FunctionComponent<{
             schema={schema}
             columns={columns}
             showPinItButton={showPinItButton}
-            openTableModal={
-                showDetails ? () => openTableModal(tableId) : undefined
-            }
+            openTableModal={showDetails ? openTableModal : undefined}
         />
     );
 };
