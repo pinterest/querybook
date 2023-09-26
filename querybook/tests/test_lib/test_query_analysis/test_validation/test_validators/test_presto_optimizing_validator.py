@@ -10,6 +10,7 @@ from lib.query_analysis.validation.base_query_validator import (
 from lib.query_analysis.validation.validators.presto_optimizing_validator import (
     ApproxDistinctValidator,
     PrestoColumnNameSuggester,
+    PrestoTableNameSuggester,
     RegexpLikeValidator,
     UnionAllValidator,
     PrestoOptimizingValidator,
@@ -245,9 +246,9 @@ class PrestoColumnNameSuggesterTestCase(BaseValidatorTestCase):
     def setUp(self):
         self._validator = PrestoColumnNameSuggester(MagicMock())
 
-    def test__is_column_name_error(self):
+    def test_get_column_name_from_error(self):
         self.assertEqual(
-            self._validator._is_column_name_error(
+            self._validator.get_column_name_from_error(
                 QueryValidationResult(
                     0,
                     0,
@@ -255,10 +256,10 @@ class PrestoColumnNameSuggesterTestCase(BaseValidatorTestCase):
                     "line 0:1: Column 'happyness' cannot be resolved",
                 )
             ),
-            True,
+            "happyness",
         )
         self.assertEqual(
-            self._validator._is_column_name_error(
+            self._validator.get_column_name_from_error(
                 QueryValidationResult(
                     0,
                     0,
@@ -266,7 +267,7 @@ class PrestoColumnNameSuggesterTestCase(BaseValidatorTestCase):
                     "line 0:1: Table 'world_happiness_rank' does not exist",
                 )
             ),
-            False,
+            None,
         )
 
     def test_search_columns_for_suggestion(self):
@@ -310,7 +311,7 @@ class PrestoColumnNameSuggesterTestCase(BaseValidatorTestCase):
             ],
             2,
         ]
-        self._validator._suggest_column_name(
+        self._validator._suggest_column_name_if_needed(
             validation_result,
             ["main.world_happiness_report"],
         )
@@ -327,7 +328,7 @@ class PrestoColumnNameSuggesterTestCase(BaseValidatorTestCase):
             ],
             1,
         ]
-        self._validator._suggest_column_name(
+        self._validator._suggest_column_name_if_needed(
             validation_result,
             ["main.world_happiness_report"],
         ),
@@ -347,7 +348,7 @@ class PrestoColumnNameSuggesterTestCase(BaseValidatorTestCase):
             ],
             1,
         ]
-        self._validator._suggest_column_name(
+        self._validator._suggest_column_name_if_needed(
             validation_result,
             ["main.world_happiness_report"],
         ),
@@ -359,7 +360,7 @@ class PrestoColumnNameSuggesterTestCase(BaseValidatorTestCase):
             [],
             0,
         ]
-        self._validator._suggest_column_name(
+        self._validator._suggest_column_name_if_needed(
             validation_result,
             ["main.world_happiness_report"],
         ),
@@ -367,6 +368,86 @@ class PrestoColumnNameSuggesterTestCase(BaseValidatorTestCase):
             validation_result.suggestion,
             None,
         )
+
+
+class PrestoTableNameSuggesterTestCase(BaseValidatorTestCase):
+    def setUp(self):
+        self._validator = PrestoTableNameSuggester(MagicMock())
+
+    def test_get_full_table_name_from_error(self):
+        self.assertEquals(
+            self._validator.get_full_table_name_from_error(
+                QueryValidationResult(
+                    0,
+                    0,
+                    QueryValidationSeverity.WARNING,
+                    "line 0:1: Table 'world_happiness_15' does not exist",
+                )
+            ),
+            "world_happiness_15",
+        )
+        self.assertEquals(
+            self._validator.get_full_table_name_from_error(
+                QueryValidationResult(
+                    0,
+                    0,
+                    QueryValidationSeverity.WARNING,
+                    "line 0:1: column 'happiness_rank' cannot be resolved",
+                )
+            ),
+            None,
+        )
+
+    @patch(
+        "lib.elasticsearch.search_table.get_table_name_suggestion",
+    )
+    def test__suggest_table_name_if_needed_single_hit(self, mock_table_suggestion):
+        validation_result = QueryValidationResult(
+            0,
+            0,
+            QueryValidationSeverity.WARNING,
+            "line 0:1: Table 'world_happiness_15' does not exist",
+        )
+        mock_table_suggestion.return_value = [
+            {"schema": "main", "name": "world_happiness_rank_2015"}
+        ], 1
+        self._validator._suggest_table_name_if_needed(validation_result)
+        self.assertEquals(
+            validation_result.suggestion, "main.world_happiness_rank_2015"
+        )
+
+    @patch(
+        "lib.elasticsearch.search_table.get_table_name_suggestion",
+    )
+    def test__suggest_table_name_if_needed_multiple_hits(self, mock_table_suggestion):
+        validation_result = QueryValidationResult(
+            0,
+            0,
+            QueryValidationSeverity.WARNING,
+            "line 0:1: Table 'world_happiness_15' does not exist",
+        )
+        mock_table_suggestion.return_value = [
+            {"schema": "main", "name": "world_happiness_rank_2015"},
+            {"schema": "main", "name": "world_happiness_rank_2016"},
+        ], 2
+        self._validator._suggest_table_name_if_needed(validation_result)
+        self.assertEquals(
+            validation_result.suggestion, "main.world_happiness_rank_2015"
+        )
+
+    @patch(
+        "lib.elasticsearch.search_table.get_table_name_suggestion",
+    )
+    def test__suggest_table_name_if_needed_no_hits(self, mock_table_suggestion):
+        validation_result = QueryValidationResult(
+            0,
+            0,
+            QueryValidationSeverity.WARNING,
+            "line 0:1: Table 'world_happiness_15' does not exist",
+        )
+        mock_table_suggestion.return_value = [], 0
+        self._validator._suggest_table_name_if_needed(validation_result)
+        self.assertEquals(validation_result.suggestion, None)
 
 
 class PrestoOptimizingValidatorTestCase(BaseValidatorTestCase):

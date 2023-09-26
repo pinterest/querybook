@@ -204,23 +204,19 @@ class RegexpLikeValidator(BasePrestoSQLGlotDecorator):
 
 
 class PrestoColumnNameSuggester(BasePrestoSQLGlotDecorator, BaseColumnNameSuggester):
-    @property
-    def column_name_error_regex(self):
-        return r"line \d+:\d+: Column '(.*)' cannot be resolved"
-
     def get_column_name_from_error(self, validation_result: QueryValidationResult):
-        regex_result = re.match(self.column_name_error_regex, validation_result.message)
-        return regex_result.groups()[0]
+        regex_result = re.match(
+            r"line \d+:\d+: Column '(.*)' cannot be resolved", validation_result.message
+        )
+        return regex_result.groups()[0] if regex_result else None
 
 
 class PrestoTableNameSuggester(BasePrestoSQLGlotDecorator, BaseTableNameSuggester):
-    @property
-    def table_name_error_regex(self):
-        return r"line \d+:\d+: Table '(.*)' does not exist"
-
     def get_full_table_name_from_error(self, validation_result: QueryValidationResult):
-        regex_result = re.match(self.table_name_error_regex, validation_result.message)
-        return regex_result.groups()[0]
+        regex_result = re.match(
+            r"line \d+:\d+: Table '(.*)' does not exist", validation_result.message
+        )
+        return regex_result.groups()[0] if regex_result else None
 
 
 class PrestoOptimizingValidator(BaseQueryValidator):

@@ -1,7 +1,6 @@
 from abc import abstractmethod
-import re
 from itertools import chain
-from typing import List
+from typing import List, Optional
 
 from lib.elasticsearch import search_table
 from lib.query_analysis.lineage import process_query
@@ -24,17 +23,13 @@ class BaseColumnNameSuggester(BaseSQLGlotDecorator):
     def message(self):
         return ""  # Unused, message is not changed
 
-    @property
     @abstractmethod
-    def column_name_error_regex(self):
+    def get_column_name_from_error(
+        self, validation_result: QueryValidationResult
+    ) -> Optional[str]:
+        """Returns invalid column name if the validation result is a column name error, otherwise
+        returns None"""
         raise NotImplementedError()
-
-    @abstractmethod
-    def get_column_name_from_error(self, validation_result: QueryValidationResult):
-        raise NotImplementedError()
-
-    def _is_column_name_error(self, validation_result: QueryValidationResult) -> bool:
-        return bool(re.match(self.column_name_error_regex, validation_result.message))
 
     def _get_tables_in_query(self, query: str, engine_id: int) -> List[str]:
         engine = get_query_engine_by_id(engine_id)
@@ -48,7 +43,7 @@ class BaseColumnNameSuggester(BaseSQLGlotDecorator):
                 return col
         return suggestion
 
-    def _suggest_column_name(
+    def _suggest_column_name_if_needed(
         self,
         validation_result: QueryValidationResult,
         tables_in_query: List[str],
@@ -57,7 +52,7 @@ class BaseColumnNameSuggester(BaseSQLGlotDecorator):
         name suggestion"""
         fuzzy_column_name = self.get_column_name_from_error(validation_result)
         if not fuzzy_column_name:
-            return None
+            return
         results, count = search_table.get_column_name_suggestion(
             fuzzy_column_name, tables_in_query
         )
@@ -89,8 +84,7 @@ class BaseColumnNameSuggester(BaseSQLGlotDecorator):
         )
         tables_in_query = self._get_tables_in_query(query, engine_id)
         for result in validation_results:
-            if self._is_column_name_error(result):
-                self._suggest_column_name(result, tables_in_query)
+            self._suggest_column_name_if_needed(result, tables_in_query)
         return validation_results
 
 
@@ -103,24 +97,20 @@ class BaseTableNameSuggester(BaseSQLGlotDecorator):
     def message(self):
         return ""  # Unused, message is not changed
 
-    @property
-    @abstractmethod
-    def table_name_error_regex(self):
-        raise NotImplementedError()
-
     @abstractmethod
     def get_full_table_name_from_error(self, validation_result: QueryValidationResult):
+        """Returns invalid table name if the validation result is a table name error, otherwise
+        returns None"""
         raise NotImplementedError()
 
-    def _is_table_name_error(self, validation_result: QueryValidationResult) -> bool:
-        return bool(re.match(self.table_name_error_regex, validation_result.message))
-
-    def _suggest_table_name(self, validation_result: QueryValidationResult):
+    def _suggest_table_name_if_needed(
+        self, validation_result: QueryValidationResult
+    ) -> Optional[str]:
         """Takes validation result and tables in query to update validation result to provide table
         name suggestion"""
         fuzzy_table_name = self.get_full_table_name_from_error(validation_result)
         if not fuzzy_table_name:
-            return None
+            return
         results, count = search_table.get_table_name_suggestion(fuzzy_table_name)
         if count > 0:
             table_result = results[0]  # Get top match
@@ -145,6 +135,5 @@ class BaseTableNameSuggester(BaseSQLGlotDecorator):
             query, uid, engine_id, raw_tokens=raw_tokens
         )
         for result in validation_results:
-            if self._is_table_name_error(result):
-                self._suggest_table_name(result)
+            self._suggest_table_name_if_needed(result)
         return validation_results
