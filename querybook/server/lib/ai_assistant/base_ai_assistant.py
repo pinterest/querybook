@@ -199,21 +199,23 @@ class BaseAIAssistant(ABC):
         query_engine = admin_logic.get_query_engine_by_id(
             query_engine_id, session=session
         )
+
         if not tables:
-            tables = self.find_tables(
+            suggested_tables = self.find_tables(
                 metastore_id=query_engine.metastore_id,
                 question=question,
                 session=session,
             )
-            if tables:
-                socket.send_tables_for_sql_gen(tables)
 
-        # not finding any relevant tables
-        if not tables:
-            # ask user to provide table names
-            socket.send_data(
-                "Sorry, I can't find any relevant tables by the given context. Please provide table names above."
-            )
+            if suggested_tables:
+                socket.send_tables_for_sql_gen(suggested_tables)
+            else:
+                # not finding any relevant tables
+                # ask user to provide table names
+                socket.send_data(
+                    "Sorry, I can't find any relevant tables by the given context. Please provide table names above."
+                )
+
             socket.close()
             return
 

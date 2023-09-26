@@ -13,6 +13,7 @@ import { trimSQLQuery } from 'lib/stream';
 import { matchKeyPress } from 'lib/utils/keyboard';
 import { analyzeCode } from 'lib/web-worker';
 import { Button } from 'ui/Button/Button';
+import { Checkbox } from 'ui/Checkbox/Checkbox';
 import { Icon } from 'ui/Icon/Icon';
 import { Message } from 'ui/Message/Message';
 import { Modal } from 'ui/Modal/Modal';
@@ -21,6 +22,7 @@ import { StyledText } from 'ui/StyledText/StyledText';
 import { Tag } from 'ui/Tag/Tag';
 
 import { TableSelector } from './TableSelector';
+import { TableTag } from './TableTag';
 import { TextToSQLMode, TextToSQLModeSelector } from './TextToSQLModeSelector';
 
 import './QueryGenerationModal.scss';
@@ -97,10 +99,12 @@ export const QueryGenerationModal = ({
     );
     const [newQuery, setNewQuery] = useState<string>('');
     const [streamData, setStreamData] = useState<{ [key: string]: string }>({});
+    const [foundTables, setFoundTables] = useState<string[]>([]);
 
     const onData = useCallback(({ type, data }) => {
         if (type === 'tables') {
-            setTables(uniq([...tables, ...data]));
+            setTables([...data.slice(0, 1)]); // select the first table by default
+            setFoundTables(data);
         } else {
             setStreamData(data);
         }
@@ -121,6 +125,25 @@ export const QueryGenerationModal = ({
         setNewQuery(trimSQLQuery(rawNewQuery));
     }, [rawNewQuery]);
 
+    const onGenerate = useCallback(() => {
+        setFoundTables([]);
+        generateSQL({
+            query_engine_id: engineId,
+            tables: tables,
+            question: question,
+            original_query: query,
+        });
+        trackClick({
+            component: ComponentType.AI_ASSISTANT,
+            element: ElementType.QUERY_GENERATION_BUTTON,
+            aux: {
+                mode: textToSQLMode,
+                question,
+                tables,
+            },
+        });
+    }, [engineId, question, tables, query, generateSQL, trackClick]);
+
     const onKeyDown = useCallback(
         (event: React.KeyboardEvent) => {
             if (
@@ -128,24 +151,10 @@ export const QueryGenerationModal = ({
                 matchKeyPress(event, 'Enter') &&
                 !event.shiftKey
             ) {
-                generateSQL({
-                    query_engine_id: engineId,
-                    tables: tables,
-                    question: question,
-                    original_query: query,
-                });
-                trackClick({
-                    component: ComponentType.AI_ASSISTANT,
-                    element: ElementType.QUERY_GENERATION_BUTTON,
-                    aux: {
-                        mode: textToSQLMode,
-                        question,
-                        tables,
-                    },
-                });
+                onGenerate();
             }
         },
-        [engineId, question, tables, query, generateSQL, generating]
+        [onGenerate]
     );
 
     const questionBarDOM = (
@@ -185,6 +194,44 @@ export const QueryGenerationModal = ({
                     className="mr8"
                 />
             )}
+        </div>
+    );
+
+    const tablesDOM = foundTables.length > 0 && (
+        <div className="mt12">
+            <div>
+                Please review the tables below that I found for your question.
+                Select the tables you would like to use or you can also search
+                for tables above.
+            </div>
+            <div className="mt8">
+                {foundTables.map((table) => (
+                    <div key={table} className="flex-row">
+                        <Checkbox
+                            value={tables.includes(table)}
+                            onChange={(checked) =>
+                                setTables((oldTables) =>
+                                    checked
+                                        ? uniq([...oldTables, table])
+                                        : oldTables.filter((t) => t !== table)
+                                )
+                            }
+                        />
+                        <TableTag
+                            metastoreId={queryEngineById[engineId].metastore_id}
+                            tableName={table}
+                        />
+                    </div>
+                ))}
+            </div>
+            <div className="mt8">
+                <Button
+                    title="Confirm & Generate SQL"
+                    onClick={onGenerate}
+                    color="confirm"
+                    disabled={tables.length === 0}
+                />
+            </div>
         </div>
     );
 
@@ -278,13 +325,13 @@ export const QueryGenerationModal = ({
                                     autoFocus: true,
                                 }}
                                 clearAfterSelect
-                                showTablePopoverTooltip
                             />
                         </div>
                     </div>
                 </div>
 
                 {questionBarDOM}
+                {tablesDOM}
                 {(explanation || data) && (
                     <div className="mt12">{explanation || data}</div>
                 )}

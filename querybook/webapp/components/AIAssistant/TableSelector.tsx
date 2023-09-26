@@ -1,16 +1,14 @@
 import React, { useCallback, useState } from 'react';
 import AsyncSelect, { Props as AsyncProps } from 'react-select/async';
 
-import { TableTooltipByName } from 'components/CodeMirrorTooltip/TableTooltip';
 import {
     asyncReactSelectStyles,
     makeReactSelectStyle,
 } from 'lib/utils/react-select';
 import { SearchTableResource } from 'resource/search';
 import { overlayRoot } from 'ui/Overlay/Overlay';
-import { Popover } from 'ui/Popover/Popover';
-import { PopoverHoverWrapper } from 'ui/Popover/PopoverHoverWrapper';
-import { HoverIconTag } from 'ui/Tag/HoverIconTag';
+
+import { TableTag } from './TableTag';
 
 interface ITableSelectProps {
     metastoreId: number;
@@ -22,7 +20,6 @@ interface ITableSelectProps {
 
     // remove the selected table name after select
     clearAfterSelect?: boolean;
-    showTablePopoverTooltip?: boolean;
 }
 
 export const TableSelector: React.FunctionComponent<ITableSelectProps> = ({
@@ -32,7 +29,6 @@ export const TableSelector: React.FunctionComponent<ITableSelectProps> = ({
     usePortalMenu = true,
     selectProps = {},
     clearAfterSelect = false,
-    showTablePopoverTooltip = false,
 }) => {
     const [searchText, setSearchText] = useState('');
     const asyncSelectProps: Partial<AsyncProps<any, false>> = {};
@@ -68,41 +64,6 @@ export const TableSelector: React.FunctionComponent<ITableSelectProps> = ({
         [metastoreId, tableNames]
     );
 
-    const getTableTagDOM = (tableName) => (
-        <PopoverHoverWrapper>
-            {(showPopover, anchorElement) => (
-                <>
-                    <HoverIconTag
-                        name={tableName}
-                        iconOnHover="X"
-                        onIconHoverClick={() => {
-                            const newTableNames = tableNames.filter(
-                                (name) => name !== tableName
-                            );
-                            onTableNamesChange(newTableNames);
-                        }}
-                        tooltip={showTablePopoverTooltip ? null : tableName}
-                        tooltipPos="right"
-                        mini
-                        highlighted
-                        light
-                    />
-                    {showTablePopoverTooltip && showPopover && (
-                        <Popover
-                            onHide={() => null}
-                            anchor={anchorElement}
-                            layout={['right']}
-                        >
-                            <TableTooltipByName
-                                metastoreId={metastoreId}
-                                tableFullName={tableName}
-                            />
-                        </Popover>
-                    )}
-                </>
-            )}
-        </PopoverHoverWrapper>
-    );
     return (
         <div className="TableSelect">
             <AsyncSelect
@@ -128,7 +89,18 @@ export const TableSelector: React.FunctionComponent<ITableSelectProps> = ({
             {tableNames.length ? (
                 <div className="flex-row flex-wrap mt8 gap8">
                     {tableNames.map((tableName) => (
-                        <div key={tableName}>{getTableTagDOM(tableName)}</div>
+                        <TableTag
+                            key={tableName}
+                            metastoreId={metastoreId}
+                            tableName={tableName}
+                            onIconClick={() => {
+                                const newTableNames = tableNames.filter(
+                                    (name) => name !== tableName
+                                );
+                                onTableNamesChange(newTableNames);
+                            }}
+                            highlighted
+                        />
                     ))}
                 </div>
             ) : null}
