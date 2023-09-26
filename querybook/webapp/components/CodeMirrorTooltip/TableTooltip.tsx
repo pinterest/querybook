@@ -16,7 +16,7 @@ interface IProps {
     table: IDataTable;
     columns: IDataColumn[];
     schema: IDataSchema;
-    showPinItButton?: boolean;
+    hidePinItButton?: boolean;
     openTableModal?: () => any;
 }
 
@@ -24,7 +24,7 @@ export const TableTooltip: React.FunctionComponent<IProps> = ({
     table,
     columns,
     schema,
-    showPinItButton = true,
+    hidePinItButton = false,
     openTableModal,
 }) => {
     const tableName =
@@ -50,7 +50,7 @@ export const TableTooltip: React.FunctionComponent<IProps> = ({
             className="ml4"
         />
     );
-    const pinToSidebarButton = showPinItButton && (
+    const pinToSidebarButton = !hidePinItButton && (
         <IconButton
             noPadding
             size={18}
@@ -116,12 +116,12 @@ export const TableTooltip: React.FunctionComponent<IProps> = ({
 export const TableTooltipByName: React.FunctionComponent<{
     metastoreId: number;
     tableFullName: string;
-    showPinItButton?: boolean;
+    hidePinItButton?: boolean;
     showDetails?: boolean;
 }> = ({
     metastoreId,
     tableFullName,
-    showPinItButton = false,
+    hidePinItButton = true,
     showDetails = true,
 }) => {
     const dispatch = useDispatch();
@@ -182,7 +182,7 @@ export const TableTooltipByName: React.FunctionComponent<{
             table={table}
             schema={schema}
             columns={columns}
-            showPinItButton={showPinItButton}
+            hidePinItButton={hidePinItButton}
             openTableModal={showDetails ? openTableModal : undefined}
         />
     );
