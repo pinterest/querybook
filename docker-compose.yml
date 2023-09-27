@@ -104,7 +104,7 @@ services:
             cluster.name: docker-cluster
             bootstrap.memory_lock: 'true'
             discovery.type: single-node
-            plugins.security.disabled: true
+            plugins.security.disabled: 'true'
             OPENSEARCH_JAVA_OPTS: -Xms750m -Xmx750m
         ulimits:
             memlock:
