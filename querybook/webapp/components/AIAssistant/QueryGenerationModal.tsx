@@ -240,6 +240,18 @@ export const QueryGenerationModal = ({
             <Button
                 title="Cancel"
                 onClick={() => {
+                    if (newQuery) {
+                        trackClick({
+                            component: ComponentType.AI_ASSISTANT,
+                            element: ElementType.QUERY_GENERATION_REJECT_BUTTON,
+                            aux: {
+                                mode: textToSQLMode,
+                                question,
+                                tables,
+                                query: newQuery,
+                            },
+                        });
+                    }
                     onHide();
                 }}
             />
@@ -255,6 +267,7 @@ export const QueryGenerationModal = ({
                             mode: textToSQLMode,
                             question,
                             tables,
+                            query: newQuery,
                         },
                     });
                     onHide();
@@ -273,6 +286,7 @@ export const QueryGenerationModal = ({
                             mode: textToSQLMode,
                             question,
                             tables,
+                            query: newQuery,
                         },
                     });
                     onHide();
@@ -367,6 +381,7 @@ export const QueryGenerationModal = ({
                                                     mode: textToSQLMode,
                                                     question,
                                                     tables,
+                                                    query: newQuery,
                                                 },
                                             });
                                         }}
