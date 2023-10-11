@@ -1,7 +1,3 @@
-"""This file is for dev server only.
-   DO NOT USE FOR PROD
-"""
-
 from gevent import monkey
 
 monkey.patch_all()

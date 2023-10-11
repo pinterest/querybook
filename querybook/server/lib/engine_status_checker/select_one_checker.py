@@ -5,7 +5,7 @@ from .base_checker import BaseEngineStatusChecker, EngineStatus
 from const.query_execution import QueryEngineStatus
 from lib.query_executor.base_executor import QueryExecutorBaseClass
 from lib.query_executor.base_client import CursorBaseClass
-from lib.utils.utils import Timeout, TimeoutError
+from lib.utils.utils import GeventTimeout, TimeoutError
 
 
 class SelectOneChecker(BaseEngineStatusChecker):
@@ -29,7 +29,7 @@ def check_select_one(
 ) -> EngineStatus:
     result: EngineStatus = {"status": QueryEngineStatus.GOOD.value, "messages": []}
     try:
-        with Timeout(20, "Select 1 took too long"):
+        with GeventTimeout(20, "Select 1 took too long"):
             cursor: CursorBaseClass = executor._get_client(client_settings).cursor()
             cursor.run("select 1")
             cursor.poll_until_finish()

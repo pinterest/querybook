@@ -17,7 +17,6 @@ from logic import query_execution as qe_logic
 from logic.elasticsearch import update_query_execution_by_id
 from tasks.log_query_per_table import log_query_per_table_task
 
-
 LOG = get_task_logger(__name__)
 
 

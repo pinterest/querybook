@@ -1,8 +1,12 @@
+from contextlib import contextmanager
 import inspect
 import signal
 import subprocess
 from datetime import datetime, date
 from functools import wraps
+from typing import Optional, Union
+
+import gevent
 
 from lib.logger import get_logger
 
@@ -91,6 +95,23 @@ class TimeoutError(Exception):
     pass
 
 
+@contextmanager
+def GeventTimeout(
+    sec: Union[int, float] = 1, custom_error_message: Optional[str] = None
+):
+    """This timeout function can be used in gevent celery worker or the web server (which is powered by gevent)"""
+
+    error_message = custom_error_message or f"Timeout Exception: {sec} seconds"
+    timeout = gevent.Timeout(sec, TimeoutError(error_message))
+    timeout.start()
+
+    try:
+        yield
+    finally:
+        timeout.close()
+
+
+# Deprecated: use GeventTimeout if possible, the Timeout would break in gevent worker
 class Timeout:
     def __init__(self, sec, custom_error_message=None):
         self.error_message = custom_error_message or f"Timeout Exception: {sec} seconds"
