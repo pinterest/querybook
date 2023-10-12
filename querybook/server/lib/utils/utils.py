@@ -95,11 +95,33 @@ class TimeoutError(Exception):
     pass
 
 
+def is_gevent_monkey_patched():
+    try:
+        from gevent import monkey
+    except ImportError:
+        return False
+    else:
+        # Choose a random library to test if it's patched
+        return monkey.is_module_patched("socket")
+
+
+@contextmanager
+def Timeout(sec: Union[int, float] = 1, custom_error_message: Optional[str] = None):
+    if is_gevent_monkey_patched():
+        with GeventTimeout(sec, custom_error_message=custom_error_message):
+            yield
+    else:
+        with SignalTimeout(sec, custom_error_message=custom_error_message):
+            yield
+
+
 @contextmanager
 def GeventTimeout(
     sec: Union[int, float] = 1, custom_error_message: Optional[str] = None
 ):
-    """This timeout function can be used in gevent celery worker or the web server (which is powered by gevent)"""
+    """
+    This timeout function can be used in gevent celery worker or the web server (which is powered by gevent)
+    """
 
     error_message = custom_error_message or f"Timeout Exception: {sec} seconds"
     timeout = gevent.Timeout(sec, TimeoutError(error_message))
@@ -112,17 +134,19 @@ def GeventTimeout(
 
 
 # Deprecated: use GeventTimeout if possible, the Timeout would break in gevent worker
-class Timeout:
-    def __init__(self, sec, custom_error_message=None):
+class SignalTimeout:
+    def __init__(
+        self, sec: Union[int, float], custom_error_message: Optional[str] = None
+    ):
         self.error_message = custom_error_message or f"Timeout Exception: {sec} seconds"
         self.sec = sec
 
     def __enter__(self):
         signal.signal(signal.SIGALRM, self.raise_timeout)
-        signal.alarm(self.sec)
+        signal.setitimer(signal.ITIMER_REAL, self.sec)
 
     def __exit__(self, *args):
-        signal.alarm(0)  # disable alarm
+        signal.setitimer(signal.ITIMER_REAL, 0)  # disable alarm
 
     def raise_timeout(self, *args):
         raise TimeoutError(self.error_message)

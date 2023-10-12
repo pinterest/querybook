@@ -43,7 +43,7 @@ services:
         image: *querybook-image
         tty: true
         stdin_open: true
-        command: './querybook/scripts/runservice worker -P gevent -c 5'
+        command: './querybook/scripts/runservice worker -c 5'
         volumes: *querybook-volumes
         depends_on: *querybook-depends-on
     scheduler:

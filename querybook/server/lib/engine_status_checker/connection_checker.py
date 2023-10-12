@@ -4,7 +4,7 @@ from typing import Dict
 from .base_checker import BaseEngineStatusChecker, EngineStatus
 from const.query_execution import QueryEngineStatus
 from lib.query_executor.base_executor import QueryExecutorBaseClass
-from lib.utils.utils import GeventTimeout
+from lib.utils.utils import Timeout
 
 
 class ConnectionChecker(BaseEngineStatusChecker):
@@ -24,7 +24,7 @@ def check_connection(
 ) -> EngineStatus:
     result: EngineStatus = {"status": QueryEngineStatus.GOOD.value, "messages": []}
     try:
-        with GeventTimeout(20, "Connection took too long"):
+        with Timeout(20, "Connection took too long"):
             cursor = executor._get_client(client_settings).cursor()
             utc_now_str = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
             result["messages"].append(

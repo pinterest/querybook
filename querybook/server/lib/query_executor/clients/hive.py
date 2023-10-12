@@ -3,7 +3,7 @@ import re
 
 from pyhive import hive
 from TCLIService.ttypes import TOperationState
-from lib.utils.utils import GeventTimeout
+from lib.utils.utils import Timeout
 from lib.query_executor.base_client import ClientBaseClass, CursorBaseClass
 from lib.query_executor.connection_string.hive import get_hive_connection_conf
 
@@ -21,7 +21,7 @@ class HiveClient(ClientBaseClass):
         *args,
         **kwargs
     ):
-        with GeventTimeout(120, "Timeout connecting to HiveServer"):
+        with Timeout(120, "Timeout connecting to HiveServer"):
             connection_conf = get_hive_connection_conf(connection_string)
 
             port = 10000 if not connection_conf.port else connection_conf.port
