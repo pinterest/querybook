@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Any, Dict, List, Tuple
+from typing import List, Tuple
 from sqlglot import Tokenizer
 from sqlglot.tokens import Token
 
@@ -8,13 +8,12 @@ from lib.query_analysis.validation.base_query_validator import (
     QueryValidationResultObjectType,
     QueryValidationSeverity,
 )
-from lib.query_analysis.validation.base_query_validator import BaseQueryValidator
+from lib.query_analysis.validation.decorators.base_validation_decorator import (
+    BaseValidationDecorator,
+)
 
 
-class BaseSQLGlotValidator(BaseQueryValidator):
-    def __init__(self, name: str = "", config: Dict[str, Any] = {}):
-        super(BaseSQLGlotValidator, self).__init__(name, config)
-
+class BaseSQLGlotValidationDecorator(BaseValidationDecorator):
     @property
     @abstractmethod
     def message(self) -> str:
@@ -65,7 +64,6 @@ class BaseSQLGlotValidator(BaseQueryValidator):
             suggestion=suggestion,
         )
 
-    @abstractmethod
     def validate(
         self,
         query: str,
@@ -74,20 +72,8 @@ class BaseSQLGlotValidator(BaseQueryValidator):
         raw_tokens: List[Token] = None,
         **kwargs,
     ) -> List[QueryValidationResult]:
-        raise NotImplementedError()
-
-
-class BaseSQLGlotDecorator(BaseSQLGlotValidator):
-    def __init__(self, validator: BaseQueryValidator):
-        self._validator = validator
-
-    def validate(
-        self,
-        query: str,
-        uid: int,
-        engine_id: int,
-        raw_tokens: List[Token] = None,
-        **kwargs,
-    ):
-        """Override this method to add suggestions to validation results"""
-        return self._validator.validate(query, uid, engine_id, **kwargs)
+        if raw_tokens is None:
+            raw_tokens = self._tokenize_query(query)
+        return super(BaseSQLGlotValidationDecorator, self).validate(
+            query, uid, engine_id, raw_tokens=raw_tokens, **kwargs
+        )

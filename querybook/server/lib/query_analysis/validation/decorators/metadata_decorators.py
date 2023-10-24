@@ -6,23 +6,14 @@ from lib.elasticsearch import search_table
 from lib.query_analysis.lineage import process_query
 from lib.query_analysis.validation.base_query_validator import (
     QueryValidationResult,
-    QueryValidationSeverity,
 )
-from lib.query_analysis.validation.validators.base_sqlglot_validator import (
-    BaseSQLGlotDecorator,
+from lib.query_analysis.validation.decorators.base_sqlglot_validation_decorator import (
+    BaseValidationDecorator,
 )
-from logic.admin import get_query_engine_by_id
+from logic import admin as admin_logic
 
 
-class BaseColumnNameSuggester(BaseSQLGlotDecorator):
-    @property
-    def severity(self):
-        return QueryValidationSeverity.WARNING  # Unused, severity is not changed
-
-    @property
-    def message(self):
-        return ""  # Unused, message is not changed
-
+class BaseColumnNameSuggester(BaseValidationDecorator):
     @abstractmethod
     def get_column_name_from_error(
         self, validation_result: QueryValidationResult
@@ -32,7 +23,7 @@ class BaseColumnNameSuggester(BaseSQLGlotDecorator):
         raise NotImplementedError()
 
     def _get_tables_in_query(self, query: str, engine_id: int) -> List[str]:
-        engine = get_query_engine_by_id(engine_id)
+        engine = admin_logic.get_query_engine_by_id(engine_id)
         tables_per_statement, _ = process_query(query, language=engine.language)
         return list(chain.from_iterable(tables_per_statement))
 
@@ -69,34 +60,21 @@ class BaseColumnNameSuggester(BaseSQLGlotDecorator):
                     validation_result.start_ch + len(fuzzy_column_name) - 1
                 )
 
-    def validate(
+    def decorate_validation_results(
         self,
+        validation_results: List[QueryValidationResult],
         query: str,
         uid: int,
         engine_id: int,
-        raw_tokens: List[QueryValidationResult] = None,
         **kwargs,
     ) -> List[QueryValidationResult]:
-        if raw_tokens is None:
-            raw_tokens = self._tokenize_query(query)
-        validation_results = self._validator.validate(
-            query, uid, engine_id, raw_tokens=raw_tokens
-        )
         tables_in_query = self._get_tables_in_query(query, engine_id)
         for result in validation_results:
             self._suggest_column_name_if_needed(result, tables_in_query)
         return validation_results
 
 
-class BaseTableNameSuggester(BaseSQLGlotDecorator):
-    @property
-    def severity(self):
-        return QueryValidationSeverity.WARNING  # Unused, severity is not changed
-
-    @property
-    def message(self):
-        return ""  # Unused, message is not changed
-
+class BaseTableNameSuggester(BaseValidationDecorator):
     @abstractmethod
     def get_full_table_name_from_error(self, validation_result: QueryValidationResult):
         """Returns invalid table name if the validation result is a table name error, otherwise
@@ -104,14 +82,21 @@ class BaseTableNameSuggester(BaseSQLGlotDecorator):
         raise NotImplementedError()
 
     def _suggest_table_name_if_needed(
-        self, validation_result: QueryValidationResult
+        self,
+        validation_result: QueryValidationResult,
+        engine_id: int,
     ) -> Optional[str]:
         """Takes validation result and tables in query to update validation result to provide table
         name suggestion"""
         fuzzy_table_name = self.get_full_table_name_from_error(validation_result)
         if not fuzzy_table_name:
             return
-        results, count = search_table.get_table_name_suggestion(fuzzy_table_name)
+        metastore_id = admin_logic.get_query_metastore_id_by_engine_id(engine_id)
+        if metastore_id is None:
+            return
+        results, count = search_table.get_table_name_suggestion(
+            fuzzy_table_name, metastore_id
+        )
         if count > 0:
             table_result = results[0]  # Get top match
             table_suggestion = f"{table_result['schema']}.{table_result['name']}"
@@ -121,19 +106,14 @@ class BaseTableNameSuggester(BaseSQLGlotDecorator):
                 validation_result.start_ch + len(fuzzy_table_name) - 1
             )
 
-    def validate(
+    def decorate_validation_results(
         self,
+        validation_results: List[QueryValidationResult],
         query: str,
         uid: int,
         engine_id: int,
-        raw_tokens: List[QueryValidationResult] = None,
         **kwargs,
     ) -> List[QueryValidationResult]:
-        if raw_tokens is None:
-            raw_tokens = self._tokenize_query(query)
-        validation_results = self._validator.validate(
-            query, uid, engine_id, raw_tokens=raw_tokens
-        )
         for result in validation_results:
-            self._suggest_table_name_if_needed(result)
+            self._suggest_table_name_if_needed(result, engine_id)
         return validation_results

@@ -217,7 +217,9 @@ def get_column_name_suggestion(
     return get_matching_objects(search_query, ES_CONFIG["tables"]["index_name"], True)
 
 
-def get_table_name_suggestion(fuzzy_table_name: str) -> Tuple[Dict, int]:
+def get_table_name_suggestion(
+    fuzzy_table_name: str, metastore_id: int
+) -> Tuple[Dict, int]:
     """Given an invalid table name use fuzzy search to search the correctly-spelled table name"""
 
     schema_name, fuzzy_name = None, fuzzy_table_name
@@ -229,7 +231,12 @@ def get_table_name_suggestion(fuzzy_table_name: str) -> Tuple[Dict, int]:
         {
             "match": {
                 "name": {"query": fuzzy_name, "fuzziness": "AUTO"},
-            }
+            },
+        },
+        {
+            "match": {
+                "metastore_id": metastore_id,
+            },
         },
     ]
     if schema_name:
