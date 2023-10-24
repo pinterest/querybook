@@ -92,6 +92,8 @@ class BaseTableNameSuggester(BaseValidationDecorator):
         if not fuzzy_table_name:
             return
         metastore_id = get_query_metastore_id_by_engine_id(engine_id)
+        if metastore_id is None:
+            return
         results, count = search_table.get_table_name_suggestion(
             fuzzy_table_name, metastore_id
         )
