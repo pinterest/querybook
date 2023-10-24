@@ -65,7 +65,7 @@ def create_task_schedule(
         kwargs=kwargs or {},
         options=options or {},
         enabled=enabled,
-        task_type=get_schedule_task_type(name),
+        task_type=get_schedule_task_type(name).value,
     )
 
     session.add(schedule)
