@@ -10,7 +10,7 @@ from lib.query_analysis.validation.base_query_validator import (
 from lib.query_analysis.validation.decorators.base_sqlglot_validation_decorator import (
     BaseValidationDecorator,
 )
-from logic.admin import get_query_engine_by_id, get_query_metastore_id_by_engine_id
+from logic import admin as admin_logic
 
 
 class BaseColumnNameSuggester(BaseValidationDecorator):
@@ -23,7 +23,7 @@ class BaseColumnNameSuggester(BaseValidationDecorator):
         raise NotImplementedError()
 
     def _get_tables_in_query(self, query: str, engine_id: int) -> List[str]:
-        engine = get_query_engine_by_id(engine_id)
+        engine = admin_logic.get_query_engine_by_id(engine_id)
         tables_per_statement, _ = process_query(query, language=engine.language)
         return list(chain.from_iterable(tables_per_statement))
 
@@ -91,7 +91,7 @@ class BaseTableNameSuggester(BaseValidationDecorator):
         fuzzy_table_name = self.get_full_table_name_from_error(validation_result)
         if not fuzzy_table_name:
             return
-        metastore_id = get_query_metastore_id_by_engine_id(engine_id)
+        metastore_id = admin_logic.get_query_metastore_id_by_engine_id(engine_id)
         if metastore_id is None:
             return
         results, count = search_table.get_table_name_suggestion(

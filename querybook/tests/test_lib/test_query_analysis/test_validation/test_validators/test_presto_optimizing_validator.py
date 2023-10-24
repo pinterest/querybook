@@ -373,6 +373,12 @@ class PrestoColumnNameSuggesterTestCase(BaseValidatorTestCase):
 class PrestoTableNameSuggesterTestCase(BaseValidatorTestCase):
     def setUp(self):
         self._validator = PrestoTableNameSuggester(MagicMock())
+        patch_get_metastore_id = patch(
+            "logic.admin.get_query_metastore_id_by_engine_id"
+        )
+        mock_get_metastore_id = patch_get_metastore_id.start()
+        mock_get_metastore_id.return_value = 1
+        self.addCleanup(patch_get_metastore_id.stop)
 
     def test_get_full_table_name_from_error(self):
         self.assertEquals(
