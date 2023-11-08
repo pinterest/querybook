@@ -167,7 +167,7 @@ class GoogleSheetsExporter(BaseExporter):
             with gspread_sheet(
                 gc,
                 sheet_url,
-                f"Querybook Result {statement_execution_id}, {self._get_query_execution_url_by_statement_id(statement_execution_id)}",
+                f"Querybook Result {statement_execution_id}, {self._get_query_execution_url_by_statement_id(statement_execution_id, uid)}",
             ) as sheet:
                 self.write_csv_to_sheet(
                     sheet,

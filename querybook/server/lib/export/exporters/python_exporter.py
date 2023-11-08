@@ -16,7 +16,7 @@ class PythonExporter(BaseExporter):
         )
 
         return f"""
-# Querybook execution link: {self._get_query_execution_url_by_statement_id(statement_execution_id)}
+# Querybook execution link: {self._get_query_execution_url_by_statement_id(statement_execution_id, uid)}
 url = "{download_url}"
 
 import requests
