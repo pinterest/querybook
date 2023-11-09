@@ -45,7 +45,7 @@ For general configuration, [click here](docs_website/docs/configurations/general
 -   MySQL
 -   Sqlite
 -   PostgreSQL
--   [and many more...](https://www.querybook.org/docs/setup_guide/connect_to_query_engines#all-query-engines)
+-   [and many more...](https://www.querybook.org/docs/setup_guide/query_engines)
 
 ### Authentication
 

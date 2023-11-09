@@ -34,7 +34,7 @@ export default () => {
                 <br />
                 <p className="flex-center">
                     View the full list of supported databases&nbsp;
-                    <Link to="/docs/setup_guide/connect_to_query_engines">
+                    <Link to="/docs/setup_guide/query_engines">
                         here
                     </Link>
                     .

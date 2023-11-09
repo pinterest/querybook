@@ -347,7 +347,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                         supports more, click{' '}
                                         <Link
                                             newTab
-                                            to="https://www.querybook.org/docs/setup_guide/connect_to_query_engines/"
+                                            to="https://www.querybook.org/docs/setup_guide/query_engines/"
                                         >
                                             here
                                         </Link>{' '}

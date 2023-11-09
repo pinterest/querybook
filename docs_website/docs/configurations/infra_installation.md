@@ -54,7 +54,7 @@ If you install the required packages, these integrations will be automatically s
     -   Redshift (via `-r engine/redshift.txt`)
     -   Snowflake (via `-r engine/snowflake.txt`)
     -   Trino (via `-r engine/trino.txt`)
-    -   And [any sqlalchemy supported engines](../setup_guide/connect_to_query_engines.md)
+    -   And [any sqlalchemy supported engines](../setup_guide/query_engines.md)
 -   Metastore:
     -   Hive Metastore (via `-r metastore/hms.txt`)
     -   Hive Metastore with Thrift (install Hive Metastore and Hive)

@@ -29,7 +29,7 @@ Here we'll guide you through the process of adding a query engine for **PostgreS
 touch requirements/local.txt
 ```
 
-2. Check the [engine list](https://www.querybook.org/docs/setup_guide/connect_to_query_engines#all-query-engines) and find the package it depends on.
+2. Check the [engine list](https://www.querybook.org/docs/setup_guide/query_engines) and find the package it depends on.
 3. If the required package is not included by default, add it to the `local.txt` file. For `PostgreSQL`, no additional package is needed. Here is an example for `Amazon Redshift`:
 
 ```bash

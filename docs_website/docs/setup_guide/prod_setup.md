@@ -9,7 +9,7 @@ Once further scalability is desired you can start each service individually in d
 #### Step 1: Choose and Build Docker image
 
 The [public docker image](https://hub.docker.com/r/querybook/querybook) provided only contains a subset of all integrations possible with Querybook.
-To intergrate with your tech stack, please check the [Infra Installations Guide](../configurations/infra_installation.md) and [Query Engines Guide](./connect_to_query_engines.md)
+To intergrate with your tech stack, please check the [Infra Installations Guide](../configurations/infra_installation.md) and [Query Engines Guide](./connect_to_a_query_engine.md)
 to see how to install and use different integrations such as Presto, OAuth, AWS and more.
 
 #### Step 2: Setup Infrastructure
