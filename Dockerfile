@@ -23,7 +23,7 @@ RUN mkdir -p /etc/apt/keyrings && curl -fsSL https://deb.nodesource.com/gpgkey/n
 
 # Install YARN
 RUN npm i -g npm@8.5.0 \
-    && npm i -g yarn@^1.22.10 \
+    && npm i -g yarn@1.22.19 \
     && npm explore npm --global -- npm install node-gyp@9.0.0 \
     && yarn config set cache-folder /mnt/yarn-cache/cache \
     && yarn config set yarn-offline-mirror /mnt/yarn-offline-mirror
