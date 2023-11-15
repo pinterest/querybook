@@ -205,10 +205,6 @@ class PrestoOptimizingValidator(BaseQueryValidator):
     def languages(self):
         return ["presto", "trino"]
 
-    @property
-    def tokenizer(self) -> Tokenizer:
-        return Trino.Tokenizer()
-
     def _get_explain_validator(self):
         return PrestoExplainValidator("")
 

@@ -49,7 +49,10 @@ class BaseSQLGlotValidationDecorator(BaseValidationDecorator):
         end_index: int,
         suggestion: str = None,
         validation_result_object_type=QueryValidationResultObjectType.LINT,
+        message: str = None,
     ):
+        if message is None:
+            message = self.message
         start_line, start_ch = self._get_query_coordinate_by_index(query, start_index)
         end_line, end_ch = self._get_query_coordinate_by_index(query, end_index)
 
@@ -57,7 +60,7 @@ class BaseSQLGlotValidationDecorator(BaseValidationDecorator):
             start_line,
             start_ch,
             self.severity,
-            self.message,
+            message,
             validation_result_object_type,
             end_line=end_line,
             end_ch=end_ch,
