@@ -42,7 +42,7 @@ def make_flask_app():
         )
 
     if QuerybookSettings.TABLE_MAX_UPLOAD_SIZE is not None:
-        app.config["MAX_CONTENT_LENGTH"] = QuerybookSettings.TABLE_MAX_UPLOAD_SIZE
+        app.config["MAX_CONTENT_LENGTH"] = int(QuerybookSettings.TABLE_MAX_UPLOAD_SIZE)
 
     return app
 
