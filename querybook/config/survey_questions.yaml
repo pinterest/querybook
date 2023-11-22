@@ -1,0 +1,4 @@
+table_search: 'Did this search help you find the right table?'
+table_view: 'Do you trust this table?'
+text_to_sql: 'Was Text2SQL helpful with your task?'
+query_authoring: 'Were you able to write this query efficiently?'

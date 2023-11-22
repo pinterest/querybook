@@ -20,6 +20,7 @@ import {
     MetadataType,
 } from 'const/metastore';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
+import { useSurveyTrigger } from 'hooks/ui/useSurveyTrigger';
 import { useTrackView } from 'hooks/useTrackView';
 import { trackClick } from 'lib/analytics';
 import { setBrowserTitle } from 'lib/querybookUI';
@@ -176,6 +177,18 @@ export const DataTableView: React.FC<IDataTableViewProps> = ({ tableId }) => {
     });
 
     useTrackView(ComponentType.TABLE_DETAIL_VIEW);
+    const triggerSurvey = useSurveyTrigger(true);
+    useEffect(() => {
+        if (!tableId || !tableName || !schema) {
+            return;
+        }
+        triggerSurvey('table_view', {
+            table_id: tableId,
+            table_name: tableName,
+            schema: schema?.name,
+        });
+    }, [tableId, tableName, schema, triggerSurvey]);
+
     useEffect(() => {
         getTable(tableId);
         // eslint-disable-next-line react-hooks/exhaustive-deps

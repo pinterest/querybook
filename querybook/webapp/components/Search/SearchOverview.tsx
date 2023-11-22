@@ -15,6 +15,7 @@ import {
     ITablePreview,
 } from 'const/search';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
+import { useSurveyTrigger } from 'hooks/ui/useSurveyTrigger';
 import { useTrackView } from 'hooks/useTrackView';
 import { trackClick, trackView } from 'lib/analytics';
 import { titleize } from 'lib/utils';
@@ -116,8 +117,34 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
     }));
     const metastoreId = _metastoreId ?? queryMetastores?.[0]?.id;
 
-    const results = resultByPage[currentPage] || [];
+    const results = useMemo(
+        () => resultByPage[currentPage] || [],
+        [resultByPage, currentPage]
+    );
     const isLoading = !!searchRequest;
+
+    const triggerSurvey = useSurveyTrigger();
+    useEffect(() => {
+        if (
+            !isLoading &&
+            numberOfResult > 0 &&
+            searchString.length > 0 &&
+            searchType === SearchType.Table
+        ) {
+            triggerSurvey('table_search', {
+                search_query: searchString,
+                search_filter: Object.keys(searchFilters),
+                is_modal: false,
+            });
+        }
+    }, [
+        searchString,
+        numberOfResult,
+        searchType,
+        isLoading,
+        searchFilters,
+        triggerSurvey,
+    ]);
 
     // Log search results
     useEffect(() => {
@@ -129,7 +156,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                 page: currentPage,
             });
         }
-    }, [isLoading, searchString, results]);
+    }, [isLoading, searchString, results, searchType, currentPage]);
 
     const dispatch = useDispatch();
     const handleUpdateSearchString = React.useCallback(
