@@ -9,6 +9,7 @@ import {
     tableNameDataTransferName,
     tableNameDraggableType,
 } from 'const/metastore';
+import { SurveySurfaceType } from 'const/survey';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import { useSurveyTrigger } from 'hooks/ui/useSurveyTrigger';
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
@@ -193,7 +194,7 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
             return;
         }
 
-        triggerSurvey('table_search', {
+        triggerSurvey(SurveySurfaceType.TABLE_SEARCH, {
             search_query: searchString,
             search_filter: Object.keys(searchFilters),
             is_modal: false,

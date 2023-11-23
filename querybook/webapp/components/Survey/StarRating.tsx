@@ -27,6 +27,10 @@ const StyledRatingFilled = css`
 `;
 
 const StyledRating = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     .IconButton {
         ${StyledRatingEmpty}
 

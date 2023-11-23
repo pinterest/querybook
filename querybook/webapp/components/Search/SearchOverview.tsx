@@ -14,6 +14,7 @@ import {
     IQueryPreview,
     ITablePreview,
 } from 'const/search';
+import { SurveySurfaceType } from 'const/survey';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import { useSurveyTrigger } from 'hooks/ui/useSurveyTrigger';
 import { useTrackView } from 'hooks/useTrackView';
@@ -131,7 +132,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
             searchString.length > 0 &&
             searchType === SearchType.Table
         ) {
-            triggerSurvey('table_search', {
+            triggerSurvey(SurveySurfaceType.TABLE_SEARCH, {
                 search_query: searchString,
                 search_filter: Object.keys(searchFilters),
                 is_modal: false,

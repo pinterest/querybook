@@ -32,6 +32,7 @@ import { IDataDocMetaVariable } from 'const/datadoc';
 import KeyMap from 'const/keyMap';
 import { IQueryEngine } from 'const/queryEngine';
 import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
+import { SurveySurfaceType } from 'const/survey';
 import { useDebounceState } from 'hooks/redux/useDebounceState';
 import { useSurveyTrigger } from 'hooks/ui/useSurveyTrigger';
 import { useBrowserTitle } from 'hooks/useBrowserTitle';
@@ -496,7 +497,7 @@ const QueryComposer: React.FC = () => {
                 return data.id;
             }
         );
-        triggerSurvey('query_authoring', {
+        triggerSurvey(SurveySurfaceType.QUERY_AUTHORING, {
             query_execution_id: queryId,
         });
         if (queryId != null) {

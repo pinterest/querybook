@@ -6,6 +6,7 @@ import { QueryComparison } from 'components/TranspileQueryModal/QueryComparison'
 import { AICommandType } from 'const/aiAssistant';
 import { ComponentType, ElementType } from 'const/analytics';
 import { IQueryEngine } from 'const/queryEngine';
+import { SurveySurfaceType } from 'const/survey';
 import { useSurveyTrigger } from 'hooks/ui/useSurveyTrigger';
 import { useAISocket } from 'hooks/useAISocket';
 import { trackClick } from 'lib/analytics';
@@ -131,7 +132,7 @@ export const QueryGenerationModal = ({
         if (!(newQuery && !generating)) {
             return;
         }
-        triggerSurvey('query_authoring', {
+        triggerSurvey(SurveySurfaceType.QUERY_AUTHORING, {
             question,
             tables,
             query: newQuery,

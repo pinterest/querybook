@@ -26,6 +26,7 @@ import { UDFForm } from 'components/UDFForm/UDFForm';
 import { ComponentType, ElementType } from 'const/analytics';
 import { IDataQueryCellMeta, TDataDocMetaVariables } from 'const/datadoc';
 import type { IQueryEngine, IQueryTranspiler } from 'const/queryEngine';
+import { SurveySurfaceType } from 'const/survey';
 import { triggerSurvey } from 'hooks/ui/useSurveyTrigger';
 import { trackClick } from 'lib/analytics';
 import CodeMirror from 'lib/codemirror';
@@ -428,7 +429,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                     )
                 ).id;
 
-                triggerSurvey('query_authoring', {
+                triggerSurvey(SurveySurfaceType.QUERY_AUTHORING, {
                     query_execution_id: queryId,
                     cell_id: this.props.cellId,
                 });

@@ -19,6 +19,7 @@ import {
     MetadataMode,
     MetadataType,
 } from 'const/metastore';
+import { SurveySurfaceType } from 'const/survey';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import { useSurveyTrigger } from 'hooks/ui/useSurveyTrigger';
 import { useTrackView } from 'hooks/useTrackView';
@@ -179,15 +180,14 @@ export const DataTableView: React.FC<IDataTableViewProps> = ({ tableId }) => {
     useTrackView(ComponentType.TABLE_DETAIL_VIEW);
     const triggerSurvey = useSurveyTrigger(true);
     useEffect(() => {
-        if (!tableId || !tableName || !schema) {
+        if (!tableId || !tableName) {
             return;
         }
-        triggerSurvey('table_view', {
+        triggerSurvey(SurveySurfaceType.TABLE_TRUST, {
             table_id: tableId,
             table_name: tableName,
-            schema: schema?.name,
         });
-    }, [tableId, tableName, schema, triggerSurvey]);
+    }, [tableId, tableName, triggerSurvey]);
 
     useEffect(() => {
         getTable(tableId);

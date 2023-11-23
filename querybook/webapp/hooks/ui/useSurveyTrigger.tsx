@@ -2,13 +2,14 @@ import React, { useRef } from 'react';
 import toast from 'react-hot-toast';
 
 import { Survey } from 'components/Survey/Survey';
+import { SurveySurfaceType } from 'const/survey';
 import {
     saveSurveyTriggerRecord,
     shouldTriggerSurvey,
 } from 'lib/survey/triggerLogic';
 
 export async function triggerSurvey(
-    surface: string,
+    surface: SurveySurfaceType,
     surfaceMeta: Record<string, any>
 ) {
     if (!(await shouldTriggerSurvey(surface))) {
@@ -17,10 +18,16 @@ export async function triggerSurvey(
 
     await saveSurveyTriggerRecord(surface);
 
-    const toastId = toast(
-        <Survey surface={surface} surfaceMeta={surfaceMeta} />,
+    const toastId = toast.custom(
+        (toastProps) => (
+            <Survey
+                surface={surface}
+                surfaceMeta={surfaceMeta}
+                toastProps={toastProps}
+            />
+        ),
         {
-            duration: 10 * 1000, // 10 seconds
+            duration: 1 * 60 * 1000, // 1 minute
         }
     );
 
@@ -31,7 +38,7 @@ export function useSurveyTrigger(endSurveyOnUnmount: boolean = false) {
     const toastId = useRef<string | null>(null);
 
     const triggerSurveyHook = React.useCallback(
-        (surface: string, surfaceMeta: Record<string, any>) => {
+        (surface: SurveySurfaceType, surfaceMeta: Record<string, any>) => {
             if (toastId.current) {
                 toast.dismiss(toastId.current);
                 toastId.current = null;

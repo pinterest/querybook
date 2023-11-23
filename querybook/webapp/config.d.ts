@@ -120,10 +120,3 @@ declare module 'config/querybook_public_config.yaml' {
     };
     export default data;
 }
-
-declare module 'config/survey_questions.yaml' {
-    const data: {
-        [surfaceName: string]: string;
-    };
-    export default data;
-}
