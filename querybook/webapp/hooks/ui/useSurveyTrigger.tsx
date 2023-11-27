@@ -58,6 +58,7 @@ export function useSurveyTrigger(endSurveyOnUnmount: boolean = false) {
         return () => {
             if (endSurveyOnUnmount && toastId.current) {
                 toast.dismiss(toastId.current);
+                toastId.current = null;
             }
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps

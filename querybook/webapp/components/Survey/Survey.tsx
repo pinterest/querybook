@@ -62,16 +62,25 @@ export const Survey: React.FC<ISurveyProps> = ({
     );
 };
 
+/**
+ * Render the question with templated vars in surfaceMeta
+ * Note that templated variable must have format `{varName}`
+ *
+ * for example "Do you trust {table}" rendered with surfaceMeta = { "table": "foo.bar" }
+ * becomes "Do you trust foo.bar"
+ *
+ * @param surface must be in SurveyTypeToQuestion
+ * @param surfaceMeta
+ * @returns
+ */
 function getSurveyQuestion(
     surface: SurveySurfaceType,
     surfaceMeta: Record<string, any>
 ) {
-    let question = SurveyTypeToQuestion[surface];
-    question = question.replace(
+    return SurveyTypeToQuestion[surface].replace(
         /\{(\w+)\}/g,
         (_, key) => surfaceMeta[key] ?? ''
     );
-    return question;
 }
 
 const SurveyCreationForm: React.FC<{
@@ -163,7 +172,7 @@ const SurveyUpdateForm: React.FC<{
                 <ResizableTextArea
                     value={comment}
                     onChange={setComment}
-                    placeholder="Please provide additional comments here"
+                    placeholder="(Optional) Provide additional comments here"
                     rows={2}
                     autoResize={false}
                 />

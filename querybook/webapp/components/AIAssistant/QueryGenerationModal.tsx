@@ -129,10 +129,10 @@ export const QueryGenerationModal = ({
 
     const triggerSurvey = useSurveyTrigger();
     useEffect(() => {
-        if (!(newQuery && !generating)) {
+        if (!newQuery || generating) {
             return;
         }
-        triggerSurvey(SurveySurfaceType.QUERY_AUTHORING, {
+        triggerSurvey(SurveySurfaceType.TEXT_TO_SQL, {
             question,
             tables,
             query: newQuery,

@@ -1,6 +1,8 @@
 import { SURVEY_CONFIG } from './config';
 import type { ISurveyLocalRecord, SurveyTime } from './types';
 import localStore from 'lib/local-store';
+import { SURVEY_RECORD_KEY, TSurveyRecord } from 'lib/local-store/const';
+import { SurveySurfaceType } from 'const/survey';
 
 /**
  *
@@ -8,7 +10,9 @@ import localStore from 'lib/local-store';
  * @param surface name of surface, assumed to be in survey config
  * @returns boolean indicating whether survey should be triggered
  */
-export async function shouldTriggerSurvey(surface: string): Promise<boolean> {
+export async function shouldTriggerSurvey(
+    surface: SurveySurfaceType
+): Promise<boolean> {
     if (!SURVEY_CONFIG[surface]) {
         return false;
     }
@@ -47,19 +51,19 @@ export async function shouldTriggerSurvey(surface: string): Promise<boolean> {
 }
 
 async function retrieveAndUpdateRecord(
-    surface: string,
+    surface: SurveySurfaceType,
     callback: (record: ISurveyLocalRecord) => ISurveyLocalRecord
 ) {
     const record = await getLocalRecord(surface);
     const updatedRecord = callback(record);
 
-    await localStore.set('survey', {
-        ...(await localStore.get('survey')),
+    await localStore.set<TSurveyRecord>(SURVEY_RECORD_KEY, {
+        ...(await localStore.get<TSurveyRecord>(SURVEY_RECORD_KEY)),
         [surface]: updatedRecord,
     });
 }
 
-export async function saveSurveyTriggerRecord(surface: string) {
+export async function saveSurveyTriggerRecord(surface: SurveySurfaceType) {
     const now = getSurveyTime();
     await retrieveAndUpdateRecord(surface, (record) => {
         // update last triggered
@@ -83,7 +87,7 @@ export async function saveSurveyTriggerRecord(surface: string) {
     });
 }
 
-export async function saveSurveyRespondRecord(surface: string) {
+export async function saveSurveyRespondRecord(surface: SurveySurfaceType) {
     const now = getSurveyTime();
     await retrieveAndUpdateRecord(surface, (record) => {
         // update last responded
@@ -93,8 +97,10 @@ export async function saveSurveyRespondRecord(surface: string) {
     });
 }
 
-async function getLocalRecord(surface: string): Promise<ISurveyLocalRecord> {
-    const localRecord = await localStore.get('survey');
+async function getLocalRecord(
+    surface: SurveySurfaceType
+): Promise<ISurveyLocalRecord> {
+    const localRecord = await localStore.get<TSurveyRecord>(SURVEY_RECORD_KEY);
     return {
         lastTriggered: 0,
         lastResponded: 0,

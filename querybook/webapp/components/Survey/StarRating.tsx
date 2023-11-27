@@ -55,6 +55,7 @@ const StyledRating = styled.div`
         }
     }
 `;
+
 const STARS = [1, 2, 3, 4, 5];
 
 export const StarRating: React.FC<IStarRatingProps> = ({

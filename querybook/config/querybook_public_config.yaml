@@ -21,5 +21,11 @@ survey:
     global_max_per_week: 6
     global_max_per_day: 3
 
-    # Please refer to the querybook guide on how to enable surveys
-    surfaces: []
+    # surfaces: []
+
+    # Uncomment to enable survey on all surfaces
+    surfaces:
+        - surface: table_search
+        - surface: table_view
+        - surface: text_to_sql
+        - surface: query_authoring

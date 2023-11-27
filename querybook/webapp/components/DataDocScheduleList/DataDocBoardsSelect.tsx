@@ -8,7 +8,7 @@ import { OptionTypeBase } from 'react-select';
 
 export interface IDataDocBoardsSelectProps {
     onChange: (params: OptionTypeBase[]) => void;
-    value: IOption<number>[];
+    value: Array<IOption<number>>;
     label?: string;
     name: string;
 }
@@ -23,14 +23,16 @@ export const DataDocBoardsSelect: React.FC<IDataDocBoardsSelectProps> = ({
         (state: IStoreState) => state.board.boardById
     );
 
-    const boardOptions: IOption<number>[] = useMemo(() => {
-        return Object.values(boardById).map((board) => ({
-            value: board.id,
-            label: board.name,
-        }));
-    }, [boardById]);
+    const boardOptions: Array<IOption<number>> = useMemo(
+        () =>
+            Object.values(boardById).map((board) => ({
+                value: board.id,
+                label: board.name,
+            })),
+        [boardById]
+    );
 
-    const selectedBoards: IOption<number>[] = useMemo(
+    const selectedBoards: Array<IOption<number>> = useMemo(
         () =>
             boardOptions.filter((board) =>
                 value.map((v) => v.value).includes(board.value)

@@ -3,7 +3,7 @@ export interface ISurvey {
     created_at: number;
     updated_at: number;
 
-    surface: string;
+    surface: SurveySurfaceType;
     surface_metadata: Record<string, any>;
     rating: number;
     comment: string;
@@ -12,7 +12,7 @@ export interface ISurvey {
 }
 
 export interface ICreateSurveyFormData {
-    surface: string;
+    surface: SurveySurfaceType;
     surface_metadata: Record<string, any>;
     rating: number;
     comment?: string | null;

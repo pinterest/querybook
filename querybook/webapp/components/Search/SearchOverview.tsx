@@ -128,24 +128,16 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
     useEffect(() => {
         if (
             !isLoading &&
-            numberOfResult > 0 &&
             searchString.length > 0 &&
             searchType === SearchType.Table
         ) {
             triggerSurvey(SurveySurfaceType.TABLE_SEARCH, {
                 search_query: searchString,
                 search_filter: Object.keys(searchFilters),
-                is_modal: false,
+                is_modal: true,
             });
         }
-    }, [
-        searchString,
-        numberOfResult,
-        searchType,
-        isLoading,
-        searchFilters,
-        triggerSurvey,
-    ]);
+    }, [searchString, searchType, isLoading, searchFilters, triggerSurvey]);
 
     // Log search results
     useEffect(() => {
