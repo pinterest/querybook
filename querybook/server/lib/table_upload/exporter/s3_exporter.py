@@ -81,7 +81,8 @@ class S3BaseExporter(BaseTableUploadExporter):
             s3_path: str = self._exporter_config["s3_path"]
 
             return (
-                sanitize_s3_url_with_trailing_slash(s3_path)
+                sanitize_s3_url(s3_path)
+                + "/"
                 + schema_name
                 + "/"
                 + table_name
@@ -98,12 +99,12 @@ class S3BaseExporter(BaseTableUploadExporter):
             if not schema_location_uri:
                 raise Exception("Invalid metastore to use use_schema_location option")
 
-            return sanitize_s3_url_with_trailing_slash(schema_location_uri) + table_name
+            return sanitize_s3_url(schema_location_uri) + "/" + table_name
 
         # Use its actual location for managed tables
         table_location = metastore.get_table_location(schema_name, table_name)
         if table_location:
-            return table_location
+            return sanitize_s3_url(table_location)
 
         raise Exception(
             "Cant get the table location from metastore. Please make sure the query engine supports managed table with default location."
@@ -216,13 +217,13 @@ class S3ParquetExporter(S3BaseExporter):
             S3FileCopier.from_local_file(f).copy_to(self.destination_s3_path())
 
 
-def sanitize_s3_url_with_trailing_slash(uri: str) -> str:
+def sanitize_s3_url(uri: str) -> str:
     """
     This function does two things:
     1. if the uri is s3a:// or s3n://, change it to s3://
-    2. if there is no trailing slash, add it
+    2. remove the trailing slash if it has one
     """
     uri = re.sub(r"^s3[a-z]:", "s3:", uri)
-    if not uri.endswith("/"):
-        uri += "/"
+    if uri.endswith("/"):
+        uri = uri[:-1]
     return uri
