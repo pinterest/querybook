@@ -1,12 +1,8 @@
-import aiAssistantSocket from './ai-assistant/ai-assistant-socketio';
 import axios, { AxiosRequestConfig, Canceler, Method } from 'axios';
 import toast from 'react-hot-toast';
 
-import { AICommandType } from 'const/aiAssistant';
 import { setSessionExpired } from 'lib/querybookUI';
 import { formatError } from 'lib/utils/error';
-
-import { DeltaStreamParser } from './stream';
 
 export interface ICancelablePromise<T> extends Promise<T> {
     cancel?: Canceler;

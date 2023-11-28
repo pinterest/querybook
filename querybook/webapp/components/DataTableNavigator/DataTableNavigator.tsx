@@ -9,7 +9,9 @@ import {
     tableNameDataTransferName,
     tableNameDraggableType,
 } from 'const/metastore';
+import { SurveySurfaceType } from 'const/survey';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
+import { useSurveyTrigger } from 'hooks/ui/useSurveyTrigger';
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
 import * as dataTableSearchActions from 'redux/dataTableSearch/action';
 import {
@@ -140,6 +142,7 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
         if (noMetastore) {
             resetSearch();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [noMetastore]);
 
     const queryMetastore = useMemo(
@@ -184,6 +187,19 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
         },
         [updateSearchString]
     );
+
+    const triggerSurvey = useSurveyTrigger();
+    useEffect(() => {
+        if (searchString === '') {
+            return;
+        }
+
+        triggerSurvey(SurveySurfaceType.TABLE_SEARCH, {
+            search_query: searchString,
+            search_filter: Object.keys(searchFilters),
+            is_modal: false,
+        });
+    }, [searchString, searchFilters, triggerSurvey]);
 
     const tableRowRenderer = useCallback(
         (table: ITableResultWithSelection) => (

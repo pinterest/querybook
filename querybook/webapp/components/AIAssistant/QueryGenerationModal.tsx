@@ -6,6 +6,8 @@ import { QueryComparison } from 'components/TranspileQueryModal/QueryComparison'
 import { AICommandType } from 'const/aiAssistant';
 import { ComponentType, ElementType } from 'const/analytics';
 import { IQueryEngine } from 'const/queryEngine';
+import { SurveySurfaceType } from 'const/survey';
+import { useSurveyTrigger } from 'hooks/ui/useSurveyTrigger';
 import { useAISocket } from 'hooks/useAISocket';
 import { trackClick } from 'lib/analytics';
 import { TableToken } from 'lib/sql-helper/sql-lexer';
@@ -115,7 +117,7 @@ export const QueryGenerationModal = ({
 
     useEffect(() => {
         if (!generating) {
-            setTables(uniq([...tablesInQuery, ...tables]));
+            setTables((tables) => uniq([...tablesInQuery, ...tables]));
         }
     }, [tablesInQuery, generating]);
 
@@ -125,12 +127,25 @@ export const QueryGenerationModal = ({
         setNewQuery(trimSQLQuery(rawNewQuery));
     }, [rawNewQuery]);
 
+    const triggerSurvey = useSurveyTrigger();
+    useEffect(() => {
+        if (!newQuery || generating) {
+            return;
+        }
+        triggerSurvey(SurveySurfaceType.TEXT_TO_SQL, {
+            question,
+            tables,
+            query: newQuery,
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [newQuery, triggerSurvey, generating]);
+
     const onGenerate = useCallback(() => {
         setFoundTables([]);
         generateSQL({
             query_engine_id: engineId,
-            tables: tables,
-            question: question,
+            tables,
+            question,
             original_query: query,
         });
         trackClick({
