@@ -51,7 +51,7 @@ Available options:
     Checkout here for examples in SparkSQL: https://spark.apache.org/docs/latest/sql-ref-syntax-ddl-create-table-hiveformat.html#examples
     For Trino/Presto, it would be the WITH statement: https://trino.io/docs/current/sql/create-table.html
 
-If neither s3_path nor use_schema_location is supplied, it will be treated same as `use_schema_location=False``, and it will be created as managed table.
+If neither s3_path nor use_schema_location is supplied, it will be treated same as `use_schema_location=False`, and it will be created as managed table.
 
 ### S3 Parquet exporter
 
