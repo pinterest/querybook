@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Union
 
 from clients.hms_client import HiveMetastoreClient
 from const.metastore import DataColumn, DataTable
@@ -101,7 +101,7 @@ class HMSMetastoreLoader(BaseMetastoreLoader):
     def get_schema_location(self, schema_name: str) -> str:
         return self.hmc.get_database(schema_name).locationUri
 
-    def get_table_location(self, schema_name: str, table_name: str) -> str:
+    def get_table_location(self, schema_name: str, table_name: str) -> Union[None, str]:
         try:
             return self.hmc.get_table(schema_name, table_name).sd.location
         except NoSuchObjectException:
