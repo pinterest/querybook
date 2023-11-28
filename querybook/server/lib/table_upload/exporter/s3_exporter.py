@@ -32,6 +32,7 @@ LOG = get_logger(__file__)
         if true, the upload root path is inferred by locationUri specified in hms
         to use this option, the engine must be connected to a metastore that uses
         HMSMetastoreLoader (or its derived class)
+        if false, it will be created as managed table, whose location will be determined automatically by the query engine.
     - table_properties (List[str]): list of table properties passed, this must be query engine specific.
         Checkout here for examples in SparkSQL: https://spark.apache.org/docs/latest/sql-ref-syntax-ddl-create-table-hiveformat.html#examples
         For Trino/Presto, it would be the WITH statement: https://trino.io/docs/current/sql/create-table.html
@@ -39,6 +40,13 @@ LOG = get_logger(__file__)
 
 
 class S3BaseExporter(BaseTableUploadExporter):
+    def __init__(self, exporter_config: dict = {}):
+        if ("s3_path" not in exporter_config) and (
+            "use_schema_location" not in exporter_config
+        ):
+            raise Exception("Either s3_path or use_schema_location must be specified")
+        super().__init__(exporter_config)
+
     @abstractmethod
     def UPLOAD_FILE_TYPE(cls) -> str:
         """Override this to specify what kind of file is getting uploaded
@@ -61,40 +69,45 @@ class S3BaseExporter(BaseTableUploadExporter):
         return self.destination_s3_folder(session=session) + "/" + "0000"
 
     @with_session
-    def destination_s3_root(self, session=None) -> str:
-        """Generate the bucket name + prefix before
-           the table specific folder
+    def destination_s3_folder(self, session=None) -> str:
+        """Generate the s3 folder path for the table
 
         Returns:
-            str: s3 path consisting bucket + prefix + schema name
+            str: s3 path consisting bucket + prefix + schema name + table name
         """
+
+        schema_name, table_name = self._fq_table_name
         if "s3_path" in self._exporter_config:
-            schema_name, _ = self._fq_table_name
             s3_path: str = self._exporter_config["s3_path"]
 
-            return sanitize_s3_url_with_trailing_slash(s3_path) + schema_name + "/"
+            return (
+                sanitize_s3_url_with_trailing_slash(s3_path)
+                + schema_name
+                + "/"
+                + table_name
+            )
+
+        query_engine = get_query_engine_by_id(self._engine_id, session=session)
+        metastore = get_metastore_loader(query_engine.metastore_id, session=session)
+
+        if metastore is None:
+            raise Exception("Invalid metastore")
 
         if self._exporter_config.get("use_schema_location", False):
-            query_engine = get_query_engine_by_id(self._engine_id, session=session)
-            metastore = get_metastore_loader(query_engine.metastore_id, session=session)
-
-            if metastore is None:
-                raise Exception("Invalid metastore")
-
-            schema_location_uri = metastore.get_schema_location(
-                self._table_config["schema_name"]
-            )
+            schema_location_uri = metastore.get_schema_location(schema_name)
             if not schema_location_uri:
                 raise Exception("Invalid metastore to use use_schema_location option")
 
-            return sanitize_s3_url_with_trailing_slash(schema_location_uri)
+            return sanitize_s3_url_with_trailing_slash(schema_location_uri) + table_name
 
-        raise Exception("Must specify s3_path or set use_schema_location=True")
+        # Use its actual location for managed tables
+        table_location = metastore.get_table_location(schema_name, table_name)
+        if table_location:
+            return table_location
 
-    @with_session
-    def destination_s3_folder(self, session=None) -> str:
-        _, table_name = self._fq_table_name
-        return self.destination_s3_root(session=session) + table_name
+        raise Exception(
+            "Cant get the table location from metastore. Please make sure the query engine supports managed table with default location."
+        )
 
     @with_session
     def _handle_if_table_exists(self, session=None):
@@ -118,14 +131,14 @@ class S3BaseExporter(BaseTableUploadExporter):
     def _get_table_create_query(self, session=None) -> str:
         query_engine = get_query_engine_by_id(self._engine_id, session=session)
         schema_name, table_name = self._fq_table_name
-        is_external = not self._exporter_config.get("use_schema_location", False)
+        is_managed = self._exporter_config.get("use_schema_location") == False
         return get_create_table_statement(
             language=query_engine.language,
             table_name=table_name,
             schema_name=schema_name,
             column_name_types=self._table_config["column_name_types"],
-            # if use schema location, then no table location is needed for creation
-            file_location=self.destination_s3_folder() if is_external else None,
+            # table location is not needed for managed (non external) table creation
+            file_location=None if is_managed else self.destination_s3_folder(),
             file_format=self.UPLOAD_FILE_TYPE(),
             table_properties=self._exporter_config.get("table_properties", []),
         )

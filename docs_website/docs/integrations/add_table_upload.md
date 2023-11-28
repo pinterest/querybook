@@ -48,6 +48,7 @@ Either s3_path or use_schema_location must be supplied.
 -   use_schema_location (boolean):
     if true, the upload root path is inferred by locationUri specified by the schema/database in HMS. To use this option, the engine must be connected to a metastore that uses
     HMSMetastoreLoader (or its derived class).
+    if false, it will be created as managed table, whose location will be determined automatically by the query engine.
 -   table_properties (List[str]): list of table properties passed, this must be query engine specific.
     Checkout here for examples in SparkSQL: https://spark.apache.org/docs/latest/sql-ref-syntax-ddl-create-table-hiveformat.html#examples
     For Trino/Presto, it would be the WITH statement: https://trino.io/docs/current/sql/create-table.html
