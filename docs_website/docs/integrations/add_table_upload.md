@@ -42,16 +42,16 @@ Included by default: No
 
 Available options:
 
-Either s3_path or use_schema_location must be supplied.
-
--   s3_path (str): if supplied, will use it as the root path for upload. Must be the full s3 path like s3://bucket/key, the trailing / is optional.
--   use_schema_location (boolean):
+-   s3_path (str, optional): if supplied, will use it as the root path for upload. Must be the full s3 path like s3://bucket/key, the trailing / is optional.
+-   use_schema_location (boolean, optional):
     if true, the upload root path is inferred by locationUri specified by the schema/database in HMS. To use this option, the engine must be connected to a metastore that uses
     HMSMetastoreLoader (or its derived class).
     if false, it will be created as managed table, whose location will be determined automatically by the query engine.
 -   table_properties (List[str]): list of table properties passed, this must be query engine specific.
     Checkout here for examples in SparkSQL: https://spark.apache.org/docs/latest/sql-ref-syntax-ddl-create-table-hiveformat.html#examples
     For Trino/Presto, it would be the WITH statement: https://trino.io/docs/current/sql/create-table.html
+
+If neither s3_path nor use_schema_location is supplied, it will be treated same as `use_schema_location=False``, and it will be created as managed table.
 
 ### S3 Parquet exporter
 
