@@ -79,14 +79,7 @@ class S3BaseExporter(BaseTableUploadExporter):
         schema_name, table_name = self._fq_table_name
         if "s3_path" in self._exporter_config:
             s3_path: str = self._exporter_config["s3_path"]
-
-            return (
-                sanitize_s3_url(s3_path)
-                + "/"
-                + schema_name
-                + "/"
-                + table_name
-            )
+            return sanitize_s3_url(s3_path) + "/" + schema_name + "/" + table_name
 
         query_engine = get_query_engine_by_id(self._engine_id, session=session)
         metastore = get_metastore_loader(query_engine.metastore_id, session=session)
