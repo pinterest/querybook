@@ -131,7 +131,7 @@ class S3BaseExporter(BaseTableUploadExporter):
     def _get_table_create_query(self, session=None) -> str:
         query_engine = get_query_engine_by_id(self._engine_id, session=session)
         schema_name, table_name = self._fq_table_name
-        is_managed = self._exporter_config.get("use_schema_location") == False
+        is_managed = self._exporter_config.get("use_schema_location") is False
         return get_create_table_statement(
             language=query_engine.language,
             table_name=table_name,
