@@ -120,7 +120,11 @@ bigquery_template = StructFormField(
     (
         "google_credentials_json",
         FormField(
-            helper="The JSON string used to log in as service account. If not provided then **GOOGLE_CREDS** from settings will be used.",
+            helper="""
+<p>The JSON string used to log in as service account.</p>
+<p>If not provided then **GOOGLE_CREDS** from settings will be used</p>
+<p>If both are empty, Application default credentials are used</p>
+""",
         ),
     )
 )
