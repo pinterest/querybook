@@ -13,6 +13,7 @@ Made below changes for `S3BaseExporter` (csv table uploader feature):
 
 -   Both `s3_path` and `use_schema_location` are optional now
 -   If none is provided, or `use_schema_location=False`, the table will be created as managed table, whose location will be determined by the query engine.
+-   Previously `use_schema_location=True` will create managed table, and now it creates external table.
 
 ## v3.27.0
 
