@@ -25,7 +25,10 @@ class SqlAlchemyMetastoreLoader(BaseMetastoreLoader):
 
     def get_all_table_names_in_schema(self, schema_name: str) -> List[str]:
         if self._engine.dialect.name == "bigquery":
-            return [table.split(".")[1] for table in self._inspect.get_table_names(schema=schema_name)]
+            return [
+                table.split(".")[1]
+                for table in self._inspect.get_table_names(schema=schema_name)
+            ]
         else:
             return self._inspect.get_table_names(schema=schema_name)
 

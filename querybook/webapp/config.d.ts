@@ -103,13 +103,13 @@ declare module 'config/querybook_public_config.yaml' {
                 enabled: boolean;
             };
         };
-        survey: {
-            global_response_cooldown: number;
-            global_trigger_cooldown: number;
-            global_max_per_week: number;
-            global_max_per_day: number;
+        survey?: {
+            global_response_cooldown?: number;
+            global_trigger_cooldown?: number;
+            global_max_per_week?: number;
+            global_max_per_day?: number;
 
-            surfaces: Array<{
+            surfaces?: Array<{
                 surface: string;
                 response_cooldown?: number;
                 trigger_cooldown?: number;
