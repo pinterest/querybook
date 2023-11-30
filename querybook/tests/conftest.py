@@ -78,3 +78,8 @@ def fake_user(monkeypatch):
     monkeypatch.setattr(flask_login.utils, "_get_user", user)
 
     return user
+
+@pytest.fixture
+def fake_open():
+    with mock.patch('builtins.open', mock.mock_open()) as m:
+        yield open

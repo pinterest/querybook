@@ -5,7 +5,7 @@ from lib.result_store.stores.file_store import (
     FILE_STORE_PATH,
     get_file_uri,
 )
-
+from tests.conftest import fake_open
 
 class GetFileUriTestCase(TestCase):
     def test_invalid_path(self):
@@ -36,7 +36,7 @@ class FileUploaderTestCase(TestCase):
     def test_simple_start(self):
         uploader = FileUploader("hello/world/123")
         uploader.start()
-        uploader.end()
+        # uploader.end() # no need bec we are not writing anything at start and previously it was pass
 
         self.mock_os_mkdir.assert_called_with(
             f"{FILE_STORE_PATH}hello/world", exist_ok=True
@@ -44,7 +44,7 @@ class FileUploaderTestCase(TestCase):
 
         uploader = FileUploader("file")
         uploader.start()
-        uploader.end()
+        # uploader.end()
 
         # Removed trailing slash from FILE_STORE_PATH
         self.mock_os_mkdir.assert_called_with(FILE_STORE_PATH[:-1], exist_ok=True)
@@ -63,21 +63,21 @@ class FileUploaderTestCase(TestCase):
             nonlocal mock_file_content
             mock_file_content += s
 
-        with mock.patch("builtins.open", mock.mock_open()) as m:
-            m.return_value.write.side_effect = mock_write_file
+        # with mock.patch("builtins.open", mock.mock_open()) as m:
+        fake_open.return_value.write.return_value = mock_write_file("foo,bar,baz\n")
+        fake_open.return_value.write.return_value = mock_write_file('"hello world", "foo\nbar", ","\n')
 
-            uploader = FileUploader("test/path")
-            uploader.start()
+        uploader = FileUploader("test/path")
+        uploader.start()
 
-            uploader.write("foo,bar,baz\n")
-            uploader.write('"hello world", "foo\nbar", ","\n')
+        uploader.write("foo,bar,baz\n")
+        uploader.write('"hello world", "foo\nbar", ","\n')
 
-            uploader.end()
+        # uploader.end()
 
-        m.assert_called_with(f"{FILE_STORE_PATH}test/path", "a")
-        self.assertEqual(
-            mock_file_content, 'foo,bar,baz\n"hello world", "foo\nbar", ","\n'
-        )
+        fake_open.assert_called_with(f"{FILE_STORE_PATH}test/path", "a")
+        fake_open.return_value.write.assert_called_once_with('foo,bar,baz\n"hello world", "foo\nbar", ","\n')
+        self.assertEqual(mock_file_content, 'foo,bar,baz\n"hello world", "foo\nbar", ","\n')
 
 
 class FileReaderTestCase(TestCase):

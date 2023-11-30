@@ -27,25 +27,33 @@ class FileUploader(BaseUploader):
         self.uri = get_file_uri(uri)
 
     def start(self):
+        self._chunk_size = QuerybookSettings.FILE_CHUNK_SIZE
         self._chunks_length = 0
+        self._chunks = []
         os.makedirs(self.uri_dir_path, exist_ok=True)
 
     def write(self, data: str):
-        # write each line into csv
+        # Append each line to a list and then dump at once in batches
         data_len = len(data)
-        if (
-            QuerybookSettings.DB_MAX_UPLOAD_SIZE > 0
-            and self._chunks_length + data_len > QuerybookSettings.DB_MAX_UPLOAD_SIZE
-        ):
-            return False
-
         self._chunks_length += data_len
-        with open(self.uri, "a") as result_file:
-            result_file.write(data)
+        self._chunks.append(data)
+
+        if self._chunks_length >= self._chunk_size:
+            self.unload()
+            self._chunks = []
+            self._chunks_length = 0
+
         return True
 
+    def unload(self):
+        data = "".join(self._chunks)
+        with open(self.uri, "a") as result_file:
+            size = os.path.getsize(self.uri) + self._chunks_length
+            if size <= QuerybookSettings.FILE_MAX_UPLOAD_SIZE:
+                result_file.write(data)
+
     def end(self):
-        pass
+        self.unload()
 
     @property
     def uri_dir_path(self):
