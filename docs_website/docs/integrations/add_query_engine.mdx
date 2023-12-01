@@ -25,7 +25,7 @@ Adding a query engine in Querybook is simple.
 
 ### Adding the new engine as a plugin
 
-If you cannot include this engine as part of the open source project, you can also add it as a [plugin](plugins.md).
+If you cannot include this engine as part of the open source project, you can also add it as a [plugin](plugins.mdx).
 
 1. Locate the plugin root directory for your customized Querybook, and find the folder called executor_plugin.
 2. Add your engine code similiar to what's above.
@@ -43,7 +43,7 @@ The default query engines require a fixed SQL connection string (e.g. MySQL://us
 -   use user's auth token to connect to the query engine instead
 -   use service discovery such as zookeeper to load balance the host
 
-To add a query engine, you would need to add a client and an executor. When the Querybook initializes the client, it will always pass a parameter called `proxy_user` to the client to represent the user who requested the query. The proxy_user field is the **unique** username string in Querybook database's Users table. You can use this to fetch more information about the user (e.g. email) and pass it to the query engine. For example, the Presto implementation provided by Querybook would write the proxy user to the 'Proxy-Authorization' header of the HTTP requests. If you want to pass additional tokens such as JWT, you would need to first customize the [authentication](add_auth.md) to store the JWT into the user.properties when the user logs in and then pass the `proxy_user`'s JWT to the query engine.
+To add a query engine, you would need to add a client and an executor. When the Querybook initializes the client, it will always pass a parameter called `proxy_user` to the client to represent the user who requested the query. The proxy_user field is the **unique** username string in Querybook database's Users table. You can use this to fetch more information about the user (e.g. email) and pass it to the query engine. For example, the Presto implementation provided by Querybook would write the proxy user to the 'Proxy-Authorization' header of the HTTP requests. If you want to pass additional tokens such as JWT, you would need to first customize the [authentication](add_auth.mdx) to store the JWT into the user.properties when the user logs in and then pass the `proxy_user`'s JWT to the query engine.
 
 To use service discovery, modify the `EXECUTOR_TEMPLATE` so that it accepts the zookeeper connection details. Alternatively, you can also modify how the connection string is parsed. Check out the Hive executor for an example.
 

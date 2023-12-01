@@ -17,7 +17,7 @@ The user/password authentication method is used by default but it cannot be inte
 
 ## Using an existing authentication
 
-We will go through how to setup authentication with OAuth and LDAP starting from the [devserver](../setup_guide/quick_setup.md). Before starting, you should checkout the required fields in [Infra Config](../configurations/infra_config.md#authentication). All fields that starts with OAUTH\_ are required for OAuth, and similarily for LDAP. For Google OAuth, only client id and client secrets are needed since other fields are provided by Google. If you need customized behavior for OAuth/LDAP, you can extend the class, see [below](#adding-a-new-authentication-method) for details.
+We will go through how to setup authentication with OAuth and LDAP starting from the [devserver](../setup_guide/quick_setup.mdx). Before starting, you should checkout the required fields in [Infra Config](../configurations/infra_config.mdx#authentication). All fields that starts with OAUTH\_ are required for OAuth, and similarily for LDAP. For Google OAuth, only client id and client secrets are needed since other fields are provided by Google. If you need customized behavior for OAuth/LDAP, you can extend the class, see [below](#adding-a-new-authentication-method) for details.
 
 ### OAuth
 
@@ -93,7 +93,7 @@ Restart the container with `docker restart querybook_web_1` and it should work.
 
 ## Adding A New Authentication Method
 
-To add a new authentication, add a new file under <project_root>/querybook/server/app/auth/ and name it <auth_method>\_auth.py. Fundamentally every auth file should export the following 3 things:
+To add a new authentication, add a new file under \<project_root\>/querybook/server/app/auth/ and name it \<auth_method\>\_auth.py. Fundamentally every auth file should export the following 3 things:
 
 -   login(request) (**required**): A function that logs in the user. One common implementation would be:
 
@@ -113,8 +113,6 @@ def init_app(app):
 
 Moving on to the login manager itself, you need to use the `QuerybookLoginManager` from auth/utils.py as the login manager as it provides api token access. Use a class that has this login manager as a field (check oauth_auth.py as an example) if you need to initialize resources when app starts or use only functions (check password_auth.py as an example) if nothing needs to be initialized.
 
-<!-- TODO: add examples of adding ldap auth and okta auth as 2 different authentication methods to implement. -->
-
 ## Plugins
 
-If the authentication method is too specific for your org or it has some post-authentication actions (such as adding users to a specific environment based on their permission), it is recommended to add the auth as part of the plugin. Please check the [Plugin Guide](plugins.md) to see how setup plugins. Once it is setup and running, simply put your auth code under auth_plugins/ (or any other folder, it is not an enforced restriction) and set AUTH_BACKEND='auth_plugin.<auth_module_name>' as the environment variable.
+If the authentication method is too specific for your org or it has some post-authentication actions (such as adding users to a specific environment based on their permission), it is recommended to add the auth as part of the plugin. Please check the [Plugin Guide](plugins.mdx) to see how setup plugins. Once it is setup and running, simply put your auth code under auth_plugins/ (or any other folder, it is not an enforced restriction) and set AUTH_BACKEND='auth_plugin.\<auth_module_name\>' as the environment variable.

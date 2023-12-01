@@ -10,7 +10,7 @@ To add more integrations such as query engines, metastores, or authentications, 
 install the Python packages yourself.
 
 Querybook comes with a set of integrations that can be auto included once the Python packages are installed.
-It also supports [plugins](../integrations/plugins.md) for you to add additional integrations that are not yet included.
+It also supports [plugins](../integrations/plugins.mdx) for you to add additional integrations that are not yet included.
 
 ## Out-of-box support
 
@@ -54,7 +54,7 @@ If you install the required packages, these integrations will be automatically s
     -   Redshift (via `-r engine/redshift.txt`)
     -   Snowflake (via `-r engine/snowflake.txt`)
     -   Trino (via `-r engine/trino.txt`)
-    -   And [any sqlalchemy supported engines](../setup_guide/connect_to_query_engines.md)
+    -   And [any sqlalchemy supported engines](../setup_guide/connect_to_a_query_engine.mdx)
 -   Metastore:
     -   Hive Metastore (via `-r metastore/hms.txt`)
     -   Hive Metastore with Thrift (install Hive Metastore and Hive)
@@ -125,7 +125,7 @@ docker push ...
 
 ### Install by extending the prod image
 
-This part is very similar to [plugin installation](../integrations/plugins.md#installing-plugins). Follow the steps to create a custom repo.
+This part is very similar to [plugin installation](../integrations/plugins.mdx#installing-plugins). Follow the steps to create a custom repo.
 Now add the requirements file somewhere, in this example we will put the requirements file called 'custom_deps.txt' at the plugins project root.
 In the requirements file, put the following:
 
@@ -145,4 +145,4 @@ RUN pip install -r /opt/querybook/requirements/custom_deps.txt
 
 ## Additional integrations
 
-If you need to integrate with anything that is not listed above, please refer to the [plugins guide](../integrations/plugins.md) to learn how to add them.
+If you need to integrate with anything that is not listed above, please refer to the [plugins guide](../integrations/plugins.mdx) to learn how to add them.

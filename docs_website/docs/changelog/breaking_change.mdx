@@ -33,20 +33,20 @@ Added two new abstract methods `notify_recipients` and `notifier_help` for `Base
 
 ## v3.6.0
 
-Added a new search index for list search (or boards search internally). Follow the instructions at [Re-Initialize ElasticSearch](../developer_guide/reinitialize_es.md) to recreate ElasticSearch indices.
+Added a new search index for list search (or boards search internally). Follow the instructions at [Re-Initialize ElasticSearch](../developer_guide/reinitialize_es.mdx) to recreate ElasticSearch indices.
 
 ## v3.5.0
 
 The ElasticSearch index mappings for `query_cells` and `query_executions` were updated to include fields to restrict access to queries based on datadoc access permissions. Query cells and executions on private datadocs will only be shown in query search to users that have access to these datadocs.
 
-Follow the instructions at [Re-Initialize ElasticSearch](../developer_guide/reinitialize_es.md) to recreate ElasticSearch indices.
+Follow the instructions at [Re-Initialize ElasticSearch](../developer_guide/reinitialize_es.mdx) to recreate ElasticSearch indices.
 
 Alternatively, you can run the script `querybook/server/scripts/es_3_5_0_upgrade.py` to update only the added fields in the query indices.
 
 ## v3.4.0
 
 There is a new field `feature_params` added to the `query_engine` table to replace `status_checker`.
-Please run [db migrations](../developer_guide/run_db_migration.md) for query engines to continue to work.
+Please run [db migrations](../developer_guide/run_db_migration.mdx) for query engines to continue to work.
 
 `_perform_check` in EngineStatusChecker is now deprecated. Override `perform_check_with_executor` for custom
 health check logic.
@@ -79,7 +79,7 @@ Query cells and query executions are now added as new indices in ElasticSearch.
 
 Depending on your deployment of ElasticSearch, you might need to manually re-initialize the ElasticSearch to create the new query indices and bulk insert existing query cells & executions.
 
-Follow the instructions at [Re-Initialize ElasticSearch](../developer_guide/reinitialize_es.md) to ensure that ElasticSearch will be re-initialized in your deployment.
+Follow the instructions at [Re-Initialize ElasticSearch](../developer_guide/reinitialize_es.mdx) to ensure that ElasticSearch will be re-initialized in your deployment.
 
 ## v3.0.0
 
@@ -116,11 +116,11 @@ The following integrations will now require custom installation:
     -   AWS Based (requests-aws4auth)
 
 Even though these packages are removed from the default installation, these dependencies are
-quite easy to add back! Checkout the [Infra Installation Guide](../configurations/infra_installation.md) to learn how.
+quite easy to add back! Checkout the [Infra Installation Guide](../configurations/infra_installation.mdx) to learn how.
 
 ### ElasticSearch
 
-Depending on deployment of Querybook, re-initialization of indices in ElasticSearch 7 cluster might be needed. Follow the instructions in [Re-Initialize ElasticSearch](../developer_guide/reinitialize_es.md).
+Depending on deployment of Querybook, re-initialization of indices in ElasticSearch 7 cluster might be needed. Follow the instructions in [Re-Initialize ElasticSearch](../developer_guide/reinitialize_es.mdx).
 
 #### Make and Docker-compose
 

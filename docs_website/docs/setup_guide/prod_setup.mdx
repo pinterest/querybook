@@ -9,7 +9,7 @@ Once further scalability is desired you can start each service individually in d
 #### Step 1: Choose and Build Docker image
 
 The [public docker image](https://hub.docker.com/r/querybook/querybook) provided only contains a subset of all integrations possible with Querybook.
-To intergrate with your tech stack, please check the [Infra Installations Guide](../configurations/infra_installation.md) and [Query Engines Guide](./connect_to_query_engines.md)
+To intergrate with your tech stack, please check the [Infra Installations Guide](../configurations/infra_installation.mdx) and [Query Engines Guide](./connect_to_a_query_engine.mdx)
 to see how to install and use different integrations such as Presto, OAuth, AWS and more.
 
 #### Step 2: Setup Infrastructure
@@ -32,7 +32,7 @@ Last but not least, please make sure to only have 1 instance of scheduler runnin
 
 #### Step 4: Update your environment variables configuration
 
-See the [Infra Config](../configurations/infra_config.md) section for this.
+See the [Infra Config](../configurations/infra_config.mdx) section for this.
 
 #### Step 5: Start each service
 
@@ -61,6 +61,6 @@ docker run -it querybook bash  # or if it is already running: docker exec -it qu
 
 5. Create a query engine and now Querybook should be ready to use.
 
-Check out the [general configuration guide](../configurations/general_config.md) for more detailed info about querybook configuration.
+Check out the [general configuration guide](../configurations/general_config.mdx) for more detailed info about querybook configuration.
 
 [^1]: To use PostgresSQL, you need to install the [psycopg2 driver](https://pypi.org/project/psycopg2/) via pip.
