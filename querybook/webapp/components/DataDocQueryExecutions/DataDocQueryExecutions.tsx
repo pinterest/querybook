@@ -23,7 +23,7 @@ interface IProps {
     cellId: number;
     isQueryCollapsed: boolean;
 
-    changeCellContext?: (context: string) => void;
+    changeCellContext?: (context: string, run?: boolean) => void;
 }
 
 export const DataDocQueryExecutions: React.FunctionComponent<IProps> =

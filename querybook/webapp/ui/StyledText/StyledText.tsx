@@ -30,6 +30,7 @@ export interface IStyledTextProps {
         | 'accent'
         | 'accent-dark';
     cursor?: 'default' | 'pointer' | 'not-allowed';
+    isItalic?: boolean;
 
     accentFont?: boolean;
     noUserSelect?: boolean;
@@ -81,6 +82,7 @@ const StyledTextDiv = styled.div`
                 : ''};
 
         ${(props) => (props.noUserSelect ? `user-select: none;` : '')};
+        ${(props) => (props.isItalic ? `font-style: italic;` : '')};
         ${(props) =>
             props.cursor
                 ? ` cursor: ${props.cursor ? props.cursor : 'inherit'}`

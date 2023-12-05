@@ -180,7 +180,6 @@ def cancel_query_execution(query_execution_id):
         "RECEIVED",  # Rare case where task is received but not yet start
         "RETRY",  # Very unlikely case, because query normally do not retry
     ):
-
         task.revoke(terminate=True)  # last attempt to cancel it
         cancel_query_and_notify()
     elif task.state == "ABORTED":

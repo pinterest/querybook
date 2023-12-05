@@ -20,9 +20,9 @@ exports[`matches enzyme snapshots matches snapshot - with options 1`] = `
     <div
       className="Message-header"
     >
-      <p>
+      <div>
         Test Message
-      </p>
+      </div>
     </div>
   </AccentText>
   <div
@@ -58,14 +58,14 @@ exports[`matches test renderer snapshot serializes the styles - error 1`] = `
   className="Message error"
 >
   <div
-    className="StyledText__StyledTextDiv-sc-1ldibmc-0 hAsENf Text"
+    className="StyledText__StyledTextDiv-sc-1ldibmc-0 bwHlci Text"
   >
     <div
       className="Message-header"
     >
-      <p>
+      <div>
         Error
-      </p>
+      </div>
     </div>
   </div>
   <div

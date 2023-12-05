@@ -84,3 +84,19 @@ EVENT_LOGGER_NAME: ~
 
 # --------------- Stats Logging ---------------
 STATS_LOGGER_NAME: ~
+
+# --------------- AI Assistant ---------------
+AI_ASSISTANT_PROVIDER: ~
+AI_ASSISTANT_CONFIG:
+    default:
+        model_args:
+            model_name: ~
+            temperature: ~
+        reserved_tokens: ~
+
+EMBEDDINGS_PROVIDER: ~
+EMBEDDINGS_CONFIG: ~
+VECTOR_STORE_PROVIDER: ~
+VECTOR_STORE_CONFIG:
+    embeddings_arg_name: 'embedding_function'
+    index_name: 'vector_index_v1'

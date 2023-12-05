@@ -1,0 +1,2 @@
+langchain[openai]==0.0.266
+opensearch-py==2.3.0

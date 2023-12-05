@@ -83,3 +83,40 @@ declare module 'config/color_palette.yaml' {
     }>;
     export default data;
 }
+
+declare module 'config/querybook_public_config.yaml' {
+    const data: {
+        ai_assistant: {
+            enabled: boolean;
+            query_title_generation: {
+                enabled: boolean;
+            };
+            query_generation: {
+                enabled: boolean;
+            };
+
+            query_auto_fix: {
+                enabled: boolean;
+            };
+
+            table_vector_search: {
+                enabled: boolean;
+            };
+        };
+        survey?: {
+            global_response_cooldown?: number;
+            global_trigger_cooldown?: number;
+            global_max_per_week?: number;
+            global_max_per_day?: number;
+
+            surfaces?: Array<{
+                surface: string;
+                response_cooldown?: number;
+                trigger_cooldown?: number;
+                max_per_week?: number;
+                max_per_day?: number;
+            }>;
+        };
+    };
+    export default data;
+}

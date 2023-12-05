@@ -13,3 +13,5 @@ from .user import *
 from .tag import *
 from .event_log import *
 from .data_element import *
+from .comment import *
+from .survey import *

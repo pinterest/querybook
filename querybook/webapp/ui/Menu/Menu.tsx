@@ -10,7 +10,7 @@ export const Menu = styled.div.attrs<{
 })`
     ${(props) =>
         props.height &&
-        `maxHeight: ${props.height};
+        `max-height: ${props.height};
         overflow-x: hidden;
         overflow-y: auto;`}
     ${(props) => props.boxShadow && 'box-shadow: var(--box-shadow);'}

@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 
 import DatadocConfig from 'config/datadoc.yaml';
 import { ComponentType, ElementType } from 'const/analytics';
+import { CommentEntityType } from 'const/comment';
 import { IDataCellMeta } from 'const/datadoc';
 import { useBoundFunc } from 'hooks/useBoundFunction';
 import { trackClick } from 'lib/analytics';
@@ -11,6 +12,7 @@ import { copy, sleep, titleize } from 'lib/utils';
 import { getShortcutSymbols, KeyMap } from 'lib/utils/keyboard';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { SoftButton } from 'ui/Button/Button';
+import { CommentButton } from 'ui/Comment/CommentButton';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { IListMenuItem, ListMenu } from 'ui/Menu/ListMenu';
 
@@ -21,6 +23,7 @@ const cellTypes = DatadocConfig.cell_types;
 
 interface IProps {
     index?: number;
+    cellId?: number;
     isHeader: boolean;
 
     numberOfCells: number;
@@ -48,6 +51,7 @@ interface IProps {
 
 export const DataDocCellControl: React.FunctionComponent<IProps> = ({
     index,
+    cellId,
     isHeader,
 
     numberOfCells,
@@ -143,6 +147,16 @@ export const DataDocCellControl: React.FunctionComponent<IProps> = ({
                 tooltipPos: 'right',
                 icon: 'Clipboard',
             });
+        }
+
+        if (cellId) {
+            rightButtons.push(
+                <CommentButton
+                    key="comment"
+                    entityType={CommentEntityType.CELL}
+                    entityId={cellId}
+                />
+            );
         }
     }
 

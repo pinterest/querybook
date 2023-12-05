@@ -7,15 +7,12 @@ from lib.query_analysis.lineage import (
     get_table_statement_type,
 )
 from lib.metastore import get_metastore_loader
-from logic import (
-    query_execution as qe_logic,
-    metastore as m_logic,
-)
+from logic import query_execution as qe_logic, metastore as m_logic
 from lib.lineage.utils import lineage as lineage_logic
 
 
 @celery.task(bind=True)
-def log_query_per_table_task(self, query_execution_id):
+def log_query_per_table_task(self, query_execution_id, execution_type):
     with DBSession() as session:
         query_execution = qe_logic.get_query_execution_by_id(
             query_execution_id, session=session
@@ -40,6 +37,7 @@ def log_query_per_table_task(self, query_execution_id):
             create_lineage_from_query(
                 query_execution, metastore_id, datadoc_cell, session=session
             )
+
         if datadoc_cell is None or not datadoc_cell.doc.public:
             return
 

@@ -486,6 +486,14 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
             # executor_language is List[str]
             return language in executor_language
 
+    @property
+    def query_execution_id(self):
+        return self._query_execution_id
+
+    @property
+    def execution_type(self):
+        return self._execution_type
+
     def __init__(
         self,
         query_execution_id: int,
@@ -496,6 +504,7 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
         execution_type,
     ):
         self._query = query
+        self._query_execution_id = query_execution_id
         self._execution_type = execution_type
 
         if self.SINGLE_QUERY_QUERY_ENGINE():

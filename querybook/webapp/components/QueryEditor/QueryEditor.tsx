@@ -22,6 +22,7 @@ import {
 import { useAutoComplete } from 'hooks/queryEditor/useAutoComplete';
 import { useCodeAnalysis } from 'hooks/queryEditor/useCodeAnalysis';
 import { useLint } from 'hooks/queryEditor/useLint';
+import { useDebouncedFn } from 'hooks/useDebouncedFn';
 import CodeMirror, { CodeMirrorKeyMap } from 'lib/codemirror';
 import { SQL_JINJA_MODE } from 'lib/codemirror/codemirror-mode';
 import {
@@ -29,12 +30,7 @@ import {
     ExcludedTriggerKeys,
 } from 'lib/sql-helper/sql-autocompleter';
 import { format, ISQLFormatOptions } from 'lib/sql-helper/sql-formatter';
-import {
-    ILinterWarning,
-    IRange,
-    IToken,
-    TableToken,
-} from 'lib/sql-helper/sql-lexer';
+import { ILinterWarning, IRange, TableToken } from 'lib/sql-helper/sql-lexer';
 import { formatNumber } from 'lib/utils/number';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { IconButton } from 'ui/Button/IconButton';
@@ -168,6 +164,14 @@ export const QueryEditor: React.FC<
             return list.length > 0 ? list[0] : null;
         }, [queryAnnotations]);
 
+        const annotationSuggestions: ILinterWarning[] = useMemo(
+            () =>
+                queryAnnotations.filter(
+                    (annotation) => annotation.suggestion != null
+                ),
+            [queryAnnotations]
+        );
+
         const openTableModal = useCallback((tableId: number) => {
             navigateWithinEnv(`/table/${tableId}/`, {
                 isModal: true,
@@ -233,6 +237,26 @@ export const QueryEditor: React.FC<
             [getTableByName, codeAnalysisRef]
         );
 
+        const getSuggestionByPosition = useCallback(
+            (pos: CodeMirror.Position) => {
+                const currLine = pos.line;
+                const currCh = pos.ch;
+
+                for (const suggestion of annotationSuggestions) {
+                    if (
+                        suggestion.from.line <= currLine &&
+                        suggestion.to.line >= currLine &&
+                        suggestion.from.ch <= currCh &&
+                        suggestion.to.ch >= currCh
+                    ) {
+                        return suggestion;
+                    }
+                }
+                return null;
+            },
+            [annotationSuggestions]
+        );
+
         const onOpenTableModal = useCallback(
             (editor: CodeMirror.Editor) => {
                 const pos = editor.getDoc().getCursor();
@@ -290,13 +314,10 @@ export const QueryEditor: React.FC<
 
         const markTextAndShowTooltip = (
             editor: CodeMirror.Editor,
-            pos: CodeMirror.Position,
-            token: IToken,
+            markTextFrom: CodeMirror.Position,
+            markTextTo: CodeMirror.Position,
             tooltipProps: Omit<ICodeMirrorTooltipProps, 'hide'>
         ) => {
-            const markTextFrom = { line: pos.line, ch: token.start };
-            const markTextTo = { line: pos.line, ch: token.end };
-
             markerRef.current = editor
                 .getDoc()
                 .markText(markTextFrom, markTextTo, {
@@ -358,54 +379,99 @@ export const QueryEditor: React.FC<
             [language, functionDocumentationByNameByLanguage]
         );
 
-        const onTextHover = useMemo(
-            () =>
-                debounce(
-                    async (editor: CodeMirror.Editor, node, e, pos, token) => {
-                        if (
-                            markerRef.current == null &&
-                            (token.type === 'variable-2' || token.type == null)
-                        ) {
-                            // Check if token is inside a table
-                            const tokenInsideTable = await isTokenInTable(
-                                pos,
-                                token
+        const onTextHoverLongDebounce = useDebouncedFn(
+            async (editor: CodeMirror.Editor, node, e, pos, token) => {
+                if (
+                    markerRef.current == null &&
+                    (token.type === 'variable-2' || token.type == null)
+                ) {
+                    // Check if token is inside a table
+                    const tokenInsideTable = await isTokenInTable(pos, token);
+                    const markTextFrom = {
+                        line: pos.line,
+                        ch: token.start,
+                    };
+                    const markTextTo = {
+                        line: pos.line,
+                        ch: token.end,
+                    };
+                    if (tokenInsideTable) {
+                        const { tableInfo } = tokenInsideTable;
+                        if (tableInfo) {
+                            markTextAndShowTooltip(
+                                editor,
+                                markTextFrom,
+                                markTextTo,
+                                {
+                                    tableId: tableInfo.id,
+                                    openTableModal: () =>
+                                        openTableModal(tableInfo.id),
+                                }
                             );
-
-                            if (tokenInsideTable) {
-                                const { tableInfo } = tokenInsideTable;
-                                if (tableInfo) {
-                                    markTextAndShowTooltip(editor, pos, token, {
-                                        tableId: tableInfo.id,
-                                        openTableModal: () =>
-                                            openTableModal(tableInfo.id),
-                                    });
-                                } else {
-                                    markTextAndShowTooltip(editor, pos, token, {
-                                        error: 'Table does not exist!',
-                                    });
+                        } else {
+                            markTextAndShowTooltip(
+                                editor,
+                                markTextFrom,
+                                markTextTo,
+                                {
+                                    error: 'Table does not exist!',
                                 }
-                            }
-
-                            const nextChar = editor.getDoc().getLine(pos.line)[
-                                token.end
-                            ];
-                            if (nextChar === '(') {
-                                // if it seems like a function call
-                                const functionDef = matchFunctionWithDefinition(
-                                    token.string
-                                );
-                                if (functionDef) {
-                                    markTextAndShowTooltip(editor, pos, token, {
-                                        functionDocumentations: functionDef,
-                                    });
-                                }
-                            }
+                            );
                         }
-                    },
-                    600
-                ),
+                    }
+
+                    const nextChar = editor.getDoc().getLine(pos.line)[
+                        token.end
+                    ];
+                    if (nextChar === '(') {
+                        // if it seems like a function call
+                        const functionDef = matchFunctionWithDefinition(
+                            token.string
+                        );
+                        if (functionDef) {
+                            markTextAndShowTooltip(
+                                editor,
+                                markTextFrom,
+                                markTextTo,
+                                {
+                                    functionDocumentations: functionDef,
+                                }
+                            );
+                        }
+                    }
+                }
+            },
+            600,
             [isTokenInTable, matchFunctionWithDefinition, openTableModal]
+        );
+
+        const onTextHoverShortDebounce = useDebouncedFn(
+            (editor: CodeMirror.Editor, node, e, pos, _token) => {
+                if (markerRef.current == null) {
+                    const suggestionAnnotation = getSuggestionByPosition(pos);
+                    if (suggestionAnnotation != null) {
+                        const { suggestion, from, to } = suggestionAnnotation;
+                        markTextAndShowTooltip(editor, from, to, {
+                            onAcceptSuggestion: (suggestion: string) =>
+                                editor.replaceRange(suggestion, from, to),
+                            suggestionText: suggestion,
+                        });
+                    }
+                }
+            },
+            100,
+            [getSuggestionByPosition]
+        );
+
+        const onTextHover = useCallback(
+            async (editor: CodeMirror.Editor, node, e, pos, token) => {
+                // Debounce asynchronous checks with a longer delay (e.g. for requesting table metadata)
+                onTextHoverLongDebounce(editor, node, e, pos, token);
+
+                // Faster checks use a shorter delay
+                onTextHoverShortDebounce(editor, node, e, pos, token);
+            },
+            [onTextHoverLongDebounce, onTextHoverShortDebounce]
         );
 
         const showAutoCompletion = useMemo(
