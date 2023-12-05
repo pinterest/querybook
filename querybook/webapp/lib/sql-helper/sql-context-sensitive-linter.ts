@@ -33,6 +33,7 @@ export function getContextSensitiveWarnings(
                         line: table.line,
                         ch: table.end,
                     },
+                    suggestion: null,
                 });
             }
         } else {
@@ -71,6 +72,7 @@ export function getContextSensitiveWarnings(
                         line: table.line,
                         ch: table.end,
                     },
+                    suggestion: null,
                 });
             }
         }

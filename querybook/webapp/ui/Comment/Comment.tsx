@@ -1,13 +1,14 @@
 import clsx from 'clsx';
 import * as DraftJS from 'draft-js';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import { UserName } from 'components/UserBadge/UserName';
 import { IComment, IReaction } from 'const/comment';
 import { fromNow } from 'lib/utils/datetime';
-import { IStoreState } from 'redux/store/types';
+import { undoDeleteComment } from 'redux/comment/action';
+import { Dispatch, IStoreState } from 'redux/store/types';
 import { IconButton } from 'ui/Button/IconButton';
 import { RichTextEditor } from 'ui/RichTextEditor/RichTextEditor';
 import { StyledText } from 'ui/StyledText/StyledText';
@@ -18,11 +19,12 @@ import { Reactions } from './Reactions';
 interface IProps {
     comment: IComment;
     editComment: (text: DraftJS.ContentState) => void;
-    deleteComment: () => void;
+    deleteComment: () => Promise<void>;
     isBeingEdited: boolean;
     isBeingRepliedTo: boolean;
     isChild: boolean;
     onCreateChildComment: () => void;
+    onReplyingToClick: () => void;
 }
 
 const formatReactionsByEmoji = (
@@ -45,8 +47,15 @@ export const Comment: React.FunctionComponent<IProps> = ({
     isBeingRepliedTo,
     isChild,
     onCreateChildComment,
+    onReplyingToClick,
 }) => {
+    const dispatch: Dispatch = useDispatch();
+
     const userInfo = useSelector((state: IStoreState) => state.user.myUserInfo);
+
+    const [isDeleting, setIsDeleting] = React.useState<boolean>(false);
+    const [recentlyArchived, setRecentlyArchived] =
+        React.useState<boolean>(false);
 
     const {
         id,
@@ -67,6 +76,12 @@ export const Comment: React.FunctionComponent<IProps> = ({
         () => formatReactionsByEmoji(reactions),
         [reactions]
     );
+
+    const handleUndoDeleteComment = React.useCallback(() => {
+        dispatch(undoDeleteComment(comment.id)).finally(() =>
+            setRecentlyArchived(false)
+        );
+    }, [comment.id, dispatch]);
 
     return (
         <div
@@ -107,60 +122,85 @@ export const Comment: React.FunctionComponent<IProps> = ({
                         </StyledText>
                     ) : null}
                     {isBeingRepliedTo ? (
-                        <StyledText
-                            className="mr8"
-                            color="accent"
-                            weight="bold"
-                            isItalic
-                            cursor="default"
+                        <span
+                            onClick={onReplyingToClick}
+                            aria-label="Cancel Reply To"
+                            data-balloon-pos="up"
                         >
-                            replying to
-                        </StyledText>
+                            <StyledText
+                                className="mr8"
+                                color="accent"
+                                weight="bold"
+                                isItalic
+                                cursor="pointer"
+                            >
+                                replying to
+                            </StyledText>
+                        </span>
                     ) : null}
-                    {archived ? null : (
-                        <div className="Comment-top-right-buttons flex-row">
-                            {isAuthor && !isBeingEdited ? (
-                                <div className="Comment-edit">
-                                    <IconButton
-                                        icon="Edit"
-                                        invertCircle
-                                        size={18}
-                                        tooltip="Edit Comment"
-                                        tooltipPos="left"
-                                        onClick={() => editComment(text)}
-                                    />
-                                    <IconButton
-                                        className="ml8"
-                                        icon="Trash"
-                                        invertCircle
-                                        size={18}
-                                        tooltip="Delete Comment"
-                                        tooltipPos="left"
-                                        onClick={deleteComment}
+                    <div className="Comment-top-right-buttons flex-row">
+                        {archived || isDeleting ? null : (
+                            <>
+                                {isAuthor && !isBeingEdited ? (
+                                    <div className="Comment-edit">
+                                        <IconButton
+                                            icon="Edit"
+                                            invertCircle
+                                            size={18}
+                                            tooltip="Edit Comment"
+                                            tooltipPos="left"
+                                            onClick={() => editComment(text)}
+                                        />
+                                        <IconButton
+                                            className="ml8"
+                                            icon="Trash"
+                                            invertCircle
+                                            size={18}
+                                            tooltip="Delete Comment"
+                                            tooltipPos="left"
+                                            onClick={() => {
+                                                setIsDeleting(true);
+                                                deleteComment().then(() => {
+                                                    setRecentlyArchived(true);
+                                                    setIsDeleting(false);
+                                                });
+                                            }}
+                                        />
+                                    </div>
+                                ) : null}
+                                {isChild ? null : (
+                                    <div className="ml8">
+                                        <IconButton
+                                            icon="MessageCircle"
+                                            invertCircle
+                                            size={18}
+                                            tooltip="Reply to comment"
+                                            tooltipPos="left"
+                                            onClick={onCreateChildComment}
+                                        />
+                                    </div>
+                                )}
+                                <div className="mh8">
+                                    <AddReactionButton
+                                        reactionsByEmoji={reactionsByEmoji}
+                                        commentId={id}
+                                        uid={userInfo.uid}
                                     />
                                 </div>
-                            ) : null}
-                            {isChild ? null : (
-                                <div className="ml8">
-                                    <IconButton
-                                        icon="MessageCircle"
-                                        invertCircle
-                                        size={18}
-                                        tooltip="Reply to comment"
-                                        tooltipPos="left"
-                                        onClick={onCreateChildComment}
-                                    />
-                                </div>
-                            )}
-                            <div className="mh8">
-                                <AddReactionButton
-                                    reactionsByEmoji={reactionsByEmoji}
-                                    commentId={id}
-                                    uid={userInfo.uid}
-                                />
-                            </div>
-                        </div>
-                    )}
+                            </>
+                        )}
+                        {recentlyArchived ? (
+                            <IconButton
+                                className="ml8"
+                                icon="RotateCcw"
+                                invertCircle
+                                size={18}
+                                tooltip="Undo Delete Comment"
+                                tooltipPos="left"
+                                onClick={handleUndoDeleteComment}
+                            />
+                        ) : null}
+                    </div>
                 </div>
             </div>
             <div className="Comment-text mt4">

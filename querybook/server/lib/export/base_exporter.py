@@ -1,9 +1,13 @@
 from abc import ABCMeta, abstractmethod
 from typing import Generator, List
 from app.db import with_session
+from env import QuerybookSettings
 from lib.logger import get_logger
 from logic import query_execution as logic
 from lib.result_store import GenericReader
+from logic.query_execution_permission import (
+    get_default_user_environment_by_execution_id,
+)
 
 
 LOG = get_logger(__file__)
@@ -159,6 +163,24 @@ class BaseExporter(metaclass=ABCMeta):
                 if reader.has_download_url:
                     return reader.get_download_url()
         return None
+
+    @with_session
+    def _get_query_execution_url_by_statement_id(
+        self, statement_execution_id: int, uid: int, session=None
+    ):
+        statement_execution = logic.get_statement_execution_by_id(
+            statement_execution_id, session=session
+        )
+        query_execution_id = statement_execution.query_execution_id
+
+        env = get_default_user_environment_by_execution_id(
+            query_execution_id, uid, session=session
+        )
+        return (
+            f"{QuerybookSettings.PUBLIC_URL}/{env.name}/query_execution/{query_execution_id}/"
+            if env
+            else None
+        )
 
     def to_dict(self):
         return {

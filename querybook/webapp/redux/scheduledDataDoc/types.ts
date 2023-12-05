@@ -18,7 +18,7 @@ interface IBasicScheduledDocFilters {
 
 export interface IScheduledDocFilters extends IBasicScheduledDocFilters {
     status?: StatusType;
-    board_ids?: IOption<number>[];
+    board_ids?: Array<IOption<number>>;
 }
 
 export interface ITransformedScheduledDocFilters

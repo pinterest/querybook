@@ -37,7 +37,7 @@ export const DataTableViewWarnings: React.FC<IProps> = ({
     const createWarning = useCallback(
         (item: IDataTableWarning) =>
             dispatch(
-                createTableWarnings(tableId, item.message, item.severity)
+                createTableWarnings(item.table_id, item.message, item.severity)
             ).then((newWarning) => {
                 setDisplayNewForm(false);
                 return newWarning;
@@ -107,6 +107,7 @@ export const DataTableViewWarnings: React.FC<IProps> = ({
                 <Card title="" width="100%" flexRow>
                     <GenericCRUD<Partial<IDataTableWarning>>
                         item={{
+                            table_id: tableId,
                             message: '',
                             severity: DataTableWarningSeverity.WARNING,
                         }}

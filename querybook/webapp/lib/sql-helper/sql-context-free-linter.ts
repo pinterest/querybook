@@ -56,6 +56,7 @@ const contextFreeLinterWarningsByLanguage: Record<
                                     line: distinct.line,
                                     ch: distinct.end,
                                 },
+                                suggestion: null,
                             });
                         }
                     }
@@ -98,6 +99,7 @@ const contextFreeLinterWarningsByLanguage: Record<
                                 line: firstToken.line,
                                 ch: firstToken.end,
                             },
+                            suggestion: null,
                         });
                     }
                 }

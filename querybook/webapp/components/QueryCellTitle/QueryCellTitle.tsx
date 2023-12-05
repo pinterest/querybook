@@ -1,12 +1,11 @@
-import React, { useCallback, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import PublicConfig from 'config/querybook_public_config.yaml';
+import { AICommandType } from 'const/aiAssistant';
 import { ComponentType, ElementType } from 'const/analytics';
-import { StreamStatus, useStream } from 'hooks/useStream';
+import { useAISocket } from 'hooks/useAISocket';
 import { trackClick } from 'lib/analytics';
 import { trimQueryTitle } from 'lib/stream';
-import { Dispatch } from 'redux/store/types';
 import { IconButton } from 'ui/Button/IconButton';
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
 
@@ -31,31 +30,27 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
     onChange,
     forceSaveQuery,
 }) => {
-    const dispatch: Dispatch = useDispatch();
     const titleGenerationEnabled =
         AIAssistantConfig.enabled &&
         AIAssistantConfig.query_title_generation.enabled &&
         query;
+    const [title, setTitle] = useState<string>('');
 
-    const { streamStatus, startStream, streamData } = useStream(
-        '/ds/ai/query_title/',
-        {
-            data_cell_id: cellId,
-        }
-    );
-    const { data: title } = streamData;
+    const socket = useAISocket(AICommandType.SQL_TITLE, ({ data }) => {
+        setTitle(data.data);
+    });
 
     useEffect(() => {
-        if (streamStatus !== StreamStatus.NOT_STARTED && title) {
+        if (title) {
             onChange(trimQueryTitle(title));
         }
-    }, [streamStatus, title]);
+    }, [title]);
 
     const handleTitleGenerationClick = useCallback(async () => {
         // force save the query beforehand, as we're passing the cellId instead of the actual query for title generation
         await forceSaveQuery();
 
-        startStream();
+        socket.emit({ query });
         trackClick({
             component: ComponentType.AI_ASSISTANT,
             element: ElementType.QUERY_TITLE_GENERATION_BUTTON,
@@ -63,17 +58,13 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
                 cellId,
             },
         });
-    }, [startStream]);
+    }, [socket]);
 
     return (
         <div className="QueryCellTitle">
             {titleGenerationEnabled && (
                 <IconButton
-                    icon={
-                        streamStatus === StreamStatus.STREAMING
-                            ? 'Loading'
-                            : 'Hash'
-                    }
+                    icon={socket.loading ? 'Loading' : 'Hash'}
                     size={18}
                     tooltip="AI: generate title"
                     color={!value && query ? 'accent' : undefined}
@@ -84,11 +75,7 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
                 value={value}
                 onChange={onChange}
                 transparent
-                placeholder={
-                    streamStatus === StreamStatus.STREAMING
-                        ? 'Generating...'
-                        : placeholder
-                }
+                placeholder={socket.loading ? 'Generating...' : placeholder}
                 className={`Title ${titleGenerationEnabled ? 'with-icon' : ''}`}
             />
         </div>

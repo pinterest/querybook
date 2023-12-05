@@ -7,9 +7,22 @@ slug: /changelog
 
 Here are the list of breaking changes that you should be aware of when updating Querybook:
 
+## v3.29.0
+
+Made below changes for `S3BaseExporter` (csv table uploader feature):
+
+-   Both `s3_path` and `use_schema_location` are optional now
+-   If none is provided, or `use_schema_location=False`, the table will be created as managed table, whose location will be determined by the query engine.
+-   Previously `use_schema_location=True` will create managed table, and now it creates external table.
+
+## v3.27.0
+
+Updated properties of `QueryValidationResult` object. `line` and `ch` are replaced with `start_line` and `start_ch` respectively.
+
 ## v3.22.0
 
 Updated the charset of table `data_element` to `utf8mb4`. For those mysql db's default charset is not utf8, please run below sql to update it if needed.
+
 ```sql
 ALTER TABLE data_element CONVERT TO CHARACTER SET utf8mb4
 ```

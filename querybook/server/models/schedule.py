@@ -67,7 +67,9 @@ class TaskSchedule(CRUDMixin, Base):
     no_changes = sql.Column(sql.Boolean, default=False)
 
     task_type = sql.Column(
-        sql.String(length=name_length), nullable=False, default=ScheduleTaskType.PROD
+        sql.String(length=name_length),
+        nullable=False,
+        default=ScheduleTaskType.PROD.value,
     )
 
     def get_cron(self):

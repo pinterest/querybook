@@ -21,11 +21,11 @@ def get_google_credentials(creds_info=None):
         )
 
     cred_to_use = creds_info or QuerybookSettings.GOOGLE_CREDS
-    assert cred_to_use is not None, "Invalid Google credentials"
 
-    credentials = service_account.Credentials.from_service_account_info(cred_to_use)
-
-    return credentials
+    if cred_to_use is not None:
+        return service_account.Credentials.from_service_account_info(cred_to_use)
+    else:
+        return None
 
 
 GOOGLE_AUTH_CONFIG = "https://accounts.google.com/.well-known/openid-configuration"

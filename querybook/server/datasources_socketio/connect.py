@@ -1,6 +1,7 @@
 from flask_login import current_user
 from flask_socketio import ConnectionRefusedError
 
+from const.ai_assistant import AI_ASSISTANT_NAMESPACE
 from const.data_doc import DATA_DOC_NAMESPACE
 from const.query_execution import QUERY_EXECUTION_NAMESPACE
 
@@ -19,4 +20,9 @@ def connect_query_execution(auth):
 
 @register_socket("connect", namespace=DATA_DOC_NAMESPACE)
 def connect_datadoc(auth):
+    on_connect()
+
+
+@register_socket("connect", namespace=AI_ASSISTANT_NAMESPACE)
+def connect_ai_assistant(auth):
     on_connect()

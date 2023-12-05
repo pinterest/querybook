@@ -22,6 +22,8 @@ Jinja2==3.1.2  # From Flask
 
 # Celery
 celery==5.2.7
+kombu==5.3.1 # not a direct dependency (from celery), pinned by due to bug: https://github.com/celery/kombu/issues/1785
+
 
 # Ops
 pyyaml==5.4.1

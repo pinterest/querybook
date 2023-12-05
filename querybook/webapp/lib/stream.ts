@@ -35,15 +35,20 @@ export class DeltaStreamParser {
     private _isPartialKey: boolean;
 
     public constructor() {
+        this.reset();
+    }
+
+    public get result() {
+        // make a copy of the result to avoid modifying the original result by the caller
+        return { ...this._result };
+    }
+
+    public reset() {
         this._buffer = '';
         this._result = {};
         this._currentKey = 'data';
         this._currentValue = '';
         this._isPartialKey = false;
-    }
-    public get result() {
-        // make a copy of the result to avoid modifying the original result by the caller
-        return { ...this._result };
     }
 
     public parse(delta: string) {
