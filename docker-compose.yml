@@ -20,6 +20,26 @@ x-querybook-volumes: &querybook-volumes
     # - file:/opt/store/
 
 services:
+    datadog:
+        image: gcr.io/datadoghq/agent:latest
+        ports:
+            - 8125:8125/udp
+        expose:
+            - 8125/udp
+        environment:
+            DD_DOGSTATSD_NON_LOCAL_TRAFFIC: true
+            DD_USE_DOGSTATSD: true
+            DD_APM_ENABLED: false
+            DD_AC_EXCLUDE: '.*'
+            DD_ENV: 'dev'
+            DD_SERVICE: 'federated-querybook'
+            DD_VERSION: 'latest'
+        env_file:
+            - ./.env.local
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - /proc/:/host/proc/:ro
+            - /sys/fs/cgroup:/host/sys/fs/cgroup:ro
     web:
         container_name: querybook_web
         image: *querybook-image

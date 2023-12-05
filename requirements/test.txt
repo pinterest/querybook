@@ -8,3 +8,4 @@ moto==2.2.4
 -r exporter/gspread.txt
 -r parser/sqlglot.txt
 -r ai/langchain.txt
+-r datadog/datadog.txt
