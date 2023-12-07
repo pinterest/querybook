@@ -91,7 +91,7 @@ def user_has_permission(
     else:
         editor = (
             session.query(DataDocEditor)
-            .filter_by(uid=uid, doc_id=doc_or_board_id)
+            .filter_by(uid=uid, data_doc_id=doc_or_board_id)
             .first()
         )
 
