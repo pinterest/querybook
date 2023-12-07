@@ -10,7 +10,7 @@ from const.datasources import (
 )
 
 from models import User
-from logic.generic_permission import get_all_groups_and_group_members_with_access
+from logic.generic_permission import user_has_permission
 
 
 class DocDoesNotExist(Exception):
@@ -20,52 +20,28 @@ class DocDoesNotExist(Exception):
 @with_session
 def user_can_write(doc_id, uid, session=None):
     datadoc = session.query(DataDoc).filter_by(id=doc_id).first()
+
+    if datadoc is None:
+        raise DocDoesNotExist()
+
     if datadoc.owner_uid == uid:
         return True
 
-    editor = session.query(DataDocEditor).filter_by(uid=uid, data_doc_id=doc_id).first()
-    if editor is not None and editor.write:
-        return True
-
-    inherited_editors = get_all_groups_and_group_members_with_access(
-        doc_or_board_id=doc_id,
-        editor_type=DataDocEditor,
-        uid=uid,
-        session=session,
-    )
-
-    if len(inherited_editors) == 1:
-        # Check if the editor's write privileges are true
-        if inherited_editors[0][3]:
-            return True
-
-    return False
+    return user_has_permission(doc_id, "write", DataDocEditor, uid, session=session)
 
 
 @with_session
 def user_can_read(doc_id, uid, session=None):
     # Check if the doc is public or if the user is the owner
     datadoc = session.query(DataDoc).filter_by(id=doc_id).first()
+
+    if datadoc is None:
+        raise DocDoesNotExist()
+
     if datadoc.public or datadoc.owner_uid == uid:
         return True
 
-    # Check if the user has direct read privileges
-    editor = session.query(DataDocEditor).filter_by(uid=uid, data_doc_id=doc_id).first()
-    if editor is not None and (editor.write or editor.read):
-        return True
-
-    # Check if the user has inherited read privileges
-    inherited_editors = get_all_groups_and_group_members_with_access(
-        doc_or_board_id=doc_id,
-        editor_type=DataDocEditor,
-        uid=uid,
-        session=session,
-    )
-
-    if len(inherited_editors) == 1:
-        return True
-
-    return False
+    return user_has_permission(doc_id, "read", DataDocEditor, uid, session=session)
 
 
 @with_session

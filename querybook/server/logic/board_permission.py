@@ -9,7 +9,7 @@ from const.datasources import (
 )
 
 from models import User
-from logic.generic_permission import get_all_groups_and_group_members_with_access
+from logic.generic_permission import user_has_permission
 
 
 class BoardDoesNotExist(Exception):
@@ -19,49 +19,27 @@ class BoardDoesNotExist(Exception):
 @with_session
 def user_can_edit(board_id, uid, session=None):
     board = session.query(Board).filter_by(id=board_id).first()
+
+    if board is None:
+        raise BoardDoesNotExist()
+
     if board.owner_uid == uid:
         return True
 
-    editor = session.query(BoardEditor).filter_by(uid=uid, board_id=board_id).first()
-    if editor is not None and editor.write:
-        return True
-
-    inherited_editors = get_all_groups_and_group_members_with_access(
-        doc_or_board_id=board_id,
-        editor_type=BoardEditor,
-        uid=uid,
-        session=session,
-    )
-
-    if len(inherited_editors) == 1:
-        # Check if the editor's write privileges are true
-        if inherited_editors[0][3]:
-            return True
-
-    return False
+    return user_has_permission(board_id, "write", BoardEditor, uid, session=session)
 
 
 @with_session
 def user_can_read(board_id, uid, session=None):
     board = session.query(Board).filter_by(id=board_id).first()
+
+    if board is None:
+        raise BoardDoesNotExist()
+
     if board.public or board.owner_uid == uid:
         return True
 
-    editor = session.query(BoardEditor).filter_by(uid=uid, board_id=board_id).first()
-    if editor is not None and (editor.write or editor.read):
-        return True
-
-    inherited_editors = get_all_groups_and_group_members_with_access(
-        doc_or_board_id=board_id,
-        editor_type=BoardEditor,
-        uid=uid,
-        session=session,
-    )
-
-    if len(inherited_editors) == 1:
-        return True
-
-    return False
+    return user_has_permission(board_id, "read", BoardEditor, uid, session=session)
 
 
 @with_session
