@@ -3,7 +3,7 @@
     max-width: 360px;
     padding: 16px 16px 16px 16px;
 
-    background-color: var(--bg-lightest);
+    background-color: var(--bg-light);
     border-radius: var(--border-radius);
 
     position: relative;
@@ -25,7 +25,7 @@
     .Survey-text {
         margin-bottom: 8px;
         textarea {
-            background-color: var(--bg-light);
+            background-color: var(--bg-lightest);
         }
     }
 
