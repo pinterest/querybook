@@ -1,0 +1,66 @@
+.Survey {
+    min-width: 240px;
+    max-width: 360px;
+    padding: 16px 16px 16px 16px;
+
+    background-color: var(--bg-light);
+    border-radius: var(--border-radius);
+
+    position: relative;
+
+    &.Survey-enter {
+        animation: fadeIn 0.2s ease-in-out;
+    }
+    &.Survey-leave {
+        animation: fadeOut 0.2s ease-in-out;
+        opacity: 0;
+    }
+
+    .Survey-rating {
+        margin-bottom: 16px;
+        margin-top: 16px;
+        width: 100%;
+    }
+
+    .Survey-text {
+        margin-bottom: 8px;
+        textarea {
+            background-color: var(--bg-lightest);
+        }
+    }
+
+    .Survey-actions {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .Survey-close {
+        position: absolute;
+        top: 4px;
+        left: 4px;
+    }
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        scale: 0.1;
+    }
+    100% {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+        transform: none;
+    }
+    100% {
+        opacity: 0;
+        scale: 0.1;
+    }
+}

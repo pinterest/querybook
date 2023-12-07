@@ -91,20 +91,29 @@ class ExpandableFormField(AbstractFormField):
 
 
 class StructFormField(AbstractFormField):
-    def __init__(self, **kwargs: Dict[str, "AllFormField"]):
-        self.kwargs = kwargs
+    def __init__(
+        self,
+        *fields: list[tuple[str, "AllFormField"]],
+        # deprecated do not use
+        **kwargs: Dict[str, "AllFormField"]
+    ):
+        self.fields = list(fields) + list(kwargs.items())
 
     def to_dict(self):
         return {
             "field_type": CompositeFormFieldType.Struct.value,
-            "fields": {key: value.to_dict() for key, value in self.kwargs.items()},
+            "fields": [(field[0], field[1].to_dict()) for field in self.fields],
         }
+
+    @property
+    def dict_fields(self):
+        return dict(self.fields)
 
 
 AllFormField = Union[FormField, ExpandableFormField, StructFormField]
 
 
-def validate_form(form: AllFormField, form_value) -> [bool, str]:
+def validate_form(form: AllFormField, form_value) -> tuple[bool, str]:
     """Checks if the form is valid
 
     Arguments:
@@ -117,7 +126,8 @@ def validate_form(form: AllFormField, form_value) -> [bool, str]:
     if isinstance(form, StructFormField):
         if not isinstance(form_value, dict):
             return False, "Field value is not a dictionary"
-        for key, subform in form.kwargs.items():
+
+        for key, subform in form.fields:
             valid, reason = validate_form(subform, form_value.get(key, None))
             if not valid:
                 return valid, reason

@@ -70,9 +70,7 @@ export function validateForm(value: any, form: AllFormField): ValidationResp {
             return [false, 'Invalid value for struct', ''];
         }
 
-        for (const [key, subfield] of Object.entries(
-            (form as IStructFormField).fields
-        )) {
+        for (const [key, subfield] of (form as IStructFormField).fields) {
             const resp = validateForm(value[key], subfield);
             if (!resp[0]) {
                 return [
@@ -113,7 +111,7 @@ export function getDefaultFormValue(
     if (fieldType === 'list') {
         return [];
     } else if (fieldType === 'struct') {
-        return Object.entries((form as IStructFormField).fields).reduce(
+        return (form as IStructFormField).fields.reduce(
             (hash, [key, field]) => {
                 hash[key] = getDefaultFormValue(field);
                 return hash;

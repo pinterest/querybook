@@ -12,9 +12,11 @@ class BigQueryClient(ClientBaseClass):
             if google_credentials_json is not None
             else None
         )
-        cred = get_google_credentials(parsed_google_json)
-
-        client = Client(project=cred.project_id, credentials=cred)
+        if parsed_google_json is not None:
+            cred = get_google_credentials(parsed_google_json)
+            client = Client(project=cred.project_id, credentials=cred)
+        else:
+            client = Client()
 
         self._conn = dbapi.connect(client=client)
         super(BigQueryClient, self).__init__()

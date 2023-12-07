@@ -2,7 +2,10 @@ from flask_login import current_user
 
 from app.datasource import register, api_assert
 from app.db import DBSession
-from app.auth.permission import verify_data_table_permission
+from app.auth.permission import (
+    verify_data_table_permission,
+    verify_data_column_permission,
+)
 from logic import tag as logic
 from models.tag import Tag
 
@@ -11,10 +14,18 @@ from models.tag import Tag
     "/table/<int:table_id>/tag/",
     methods=["GET"],
 )
-def get_tag_by_table_id(table_id: int):
-    with DBSession() as session:
-        verify_data_table_permission(table_id, session=session)
-        return logic.get_tag_by_table_id(table_id=table_id, session=session)
+def get_tags_by_table_id(table_id: int):
+    verify_data_table_permission(table_id)
+    return logic.get_tags_by_table_id(table_id=table_id)
+
+
+@register(
+    "/column/<int:column_id>/tag/",
+    methods=["GET"],
+)
+def get_tags_by_column_id(column_id: int):
+    verify_data_column_permission(column_id)
+    return logic.get_tags_by_column_id(column_id=column_id)
 
 
 @register(

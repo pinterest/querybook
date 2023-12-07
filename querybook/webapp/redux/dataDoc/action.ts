@@ -502,6 +502,18 @@ export function forceSaveDataDoc(docId: number): ThunkResult<void> {
     };
 }
 
+export function forceSaveDataDocCell(
+    cellId: number
+): ThunkResult<Promise<void>> {
+    return async (dispatch, getState) => {
+        const state = getState();
+        const cell = state.dataDoc.dataDocCellById[cellId];
+        if (cell) {
+            await dataCellSaveManager.forceSaveDataCell(cell.id);
+        }
+    };
+}
+
 export function getDataDocEditors(
     docId: number
 ): ThunkResult<Promise<IDataDocEditor[]>> {

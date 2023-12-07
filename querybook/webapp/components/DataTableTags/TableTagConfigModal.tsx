@@ -88,6 +88,11 @@ export const TableTagConfigModal: React.FC<{
             {({ submitForm }) => (
                 <div className="ph12">
                     <FormWrapper minLabelWidth="120px">
+                        <SimpleField
+                            name="type"
+                            type="input"
+                            help="The type of the tag. E.g. table domain"
+                        />
                         <SimpleField name="tooltip" type="input" />
                         <SimpleField
                             name="color"

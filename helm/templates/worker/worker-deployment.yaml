@@ -56,6 +56,10 @@ spec:
                 secretKeyRef:
                   name: {{ include "querybook.fullname" . }}-secret
                   key: ELASTICSEARCH_HOST
+            {{- range $key, $value := .Values.extraEnv }}
+            - name: {{ $key | quote}}
+              value: {{ $value | quote }}
+            {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

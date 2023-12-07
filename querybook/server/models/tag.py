@@ -40,6 +40,11 @@ class TagItem(CRUDMixin, Base):
     table_id = sql.Column(
         sql.Integer, sql.ForeignKey("data_table.id", ondelete="CASCADE"), nullable=True
     )
+    column_id = sql.Column(
+        sql.Integer,
+        sql.ForeignKey("data_table_column.id", ondelete="CASCADE"),
+        nullable=True,
+    )
 
     uid = sql.Column(
         sql.Integer, sql.ForeignKey("user.id", ondelete="SET NULL"), nullable=True
@@ -54,4 +59,9 @@ class TagItem(CRUDMixin, Base):
         "DataTable",
         backref=backref("tags", cascade="all, delete", passive_deletes=True),
         foreign_keys=[table_id],
+    )
+    column = relationship(
+        "DataTableColumn",
+        backref=backref("tags", cascade="all, delete", passive_deletes=True),
+        foreign_keys=[column_id],
     )

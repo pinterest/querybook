@@ -59,7 +59,7 @@ def load_user(uid, session=None):
     if user is None:
         # Invalid user, clear session
         flask_session.clear()
-        flask.abort(401, description="Invalid cookie")
+        flask.abort(UNAUTHORIZED_STATUS_CODE, description="Invalid cookie")
 
     return AuthUser(user)
 
@@ -74,9 +74,11 @@ def load_user_with_api_access_token(request):
                     user = get_user_by_id(token_validation.creator_uid, session=session)
                     return AuthUser(user)
                 else:
-                    flask.abort(401, description="Token is disabled.")
+                    flask.abort(
+                        UNAUTHORIZED_STATUS_CODE, description="Token is disabled."
+                    )
             else:
-                flask.abort(401, description="Token is invalid.")
+                flask.abort(UNAUTHORIZED_STATUS_CODE, description="Token is invalid.")
     return None
 
 

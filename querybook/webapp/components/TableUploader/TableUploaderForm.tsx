@@ -77,7 +77,15 @@ export const TableUploaderForm: React.FC<ITableUploaderFormProps> = ({
                 error: 'Fail to create table',
             });
 
-            navigateWithinEnv(`/table/${tableId}`);
+            // sometimes there will be sync delay between the metastore and querybook
+            // skip the redirection if the table has not been synced over.
+            if (tableId) {
+                navigateWithinEnv(`/table/${tableId}`);
+            } else {
+                toast(
+                    'Waiting for the table to be synced over from the metastore.'
+                );
+            }
             onHide();
         },
         [onHide]

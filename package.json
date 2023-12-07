@@ -1,6 +1,6 @@
 {
     "name": "querybook",
-    "version": "3.18.0",
+    "version": "3.29.0",
     "description": "A Big Data Webapp",
     "private": true,
     "scripts": {
@@ -64,7 +64,7 @@
         "localforage": "^1.10.0",
         "lodash": "4.17.21",
         "lodash-decorators": "6.0.1",
-        "lucide-react": "^0.17.13",
+        "lucide-react": "^0.187.0",
         "markdown-to-jsx": "^7.1.0",
         "memoize-one": "^6.0.0",
         "mini-css-extract-plugin": "^2.7.2",
@@ -97,10 +97,10 @@
         "sass": "^1.50.0",
         "smooth-scroll-into-view-if-needed": "^1.1.27",
         "socket.io-client": "^4.5.2",
-        "sql-formatter": "^12.0.4",
-        "styled-components": "5.3.6",
+        "sql-formatter": "^12.1.2",
+        "styled-components": "5.3.9",
         "typescript": "4.4.4",
-        "webpack": "5.65.0",
+        "webpack": "5.76.0",
         "webpack-cli": "4.7.0",
         "yaml-loader": "^0.8.0",
         "yup": "^0.32.11"
@@ -168,6 +168,7 @@
         "eslint-plugin-unused-imports": "^2.0.0",
         "jest": "26.6.3",
         "jest-esm-transformer": "^1.0.0",
+        "js-yaml": "^4.1.0",
         "postcss-loader": "^6.1.0",
         "postcss-preset-env": "6.7.0",
         "prettier": "2.7.1",

@@ -42,7 +42,7 @@ def make_flask_app():
         )
 
     if QuerybookSettings.TABLE_MAX_UPLOAD_SIZE is not None:
-        app.config["MAX_CONTENT_LENGTH"] = QuerybookSettings.TABLE_MAX_UPLOAD_SIZE
+        app.config["MAX_CONTENT_LENGTH"] = int(QuerybookSettings.TABLE_MAX_UPLOAD_SIZE)
 
     return app
 
@@ -66,6 +66,7 @@ def make_celery(app):
         worker_max_tasks_per_child=1,
         task_track_started=True,
         task_soft_time_limit=172800,
+        worker_proc_alive_timeout=60,
         broker_transport_options={
             # This must be higher than soft time limit,
             # otherwise the task will get retried (in the case of acks_late=True)

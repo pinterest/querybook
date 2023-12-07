@@ -20,11 +20,8 @@ from lib.query_analysis.validation.all_validators import ALL_QUERY_VALIDATORS_BY
 from logic import admin as logic
 from logic import user as user_logic
 from logic import environment as environment_logic
-from logic import schedule as schedule_logic
-from logic import metastore as metastore_logic
 from logic import demo as demo_logic
 from models.admin import Announcement, QueryMetastore, QueryEngine, AdminAuditLog
-from models.schedule import TaskSchedule
 
 
 @register(
@@ -261,7 +258,6 @@ def get_all_query_metastore_loaders_admin():
 )
 @admin_only
 def get_all_query_metastores_admin():
-
     with DBSession() as session:
         metastores = logic.get_all_query_metastore(session=session)
         metastores_dict = [metastore.to_dict_admin() for metastore in metastores]
@@ -551,111 +547,7 @@ def get_api_access_tokens_admin():
 @register("/admin/demo_set_up/", methods=["POST"])
 @admin_only
 def exec_demo_set_up():
-    with DBSession() as session:
-        environment = environment_logic.create_environment(
-            name="demo_environment",
-            description="Demo environment",
-            image="",
-            public=True,
-            commit=False,
-            session=session,
-        )
-
-        local_db_conn = "sqlite:///demo/demo_data.db"
-        metastore_id = QueryMetastore.create(
-            {
-                "name": "demo_metastore",
-                "metastore_params": {
-                    "connection_string": local_db_conn,
-                },
-                "loader": "SqlAlchemyMetastoreLoader",
-                "acl_control": {},
-            },
-            commit=False,
-            session=session,
-        ).id
-
-        engine_id = QueryEngine.create(
-            {
-                "name": "sqlite",
-                "description": "SQLite Engine",
-                "language": "sqlite",
-                "executor": "sqlalchemy",
-                "executor_params": {
-                    "connection_string": local_db_conn,
-                },
-                "environment_id": environment.id,
-                "metastore_id": metastore_id,
-            },
-            commit=False,
-            session=session,
-        ).id
-
-        logic.add_query_engine_to_environment(
-            environment.id, engine_id, commit=False, session=session
-        )
-
-        task_schedule_id = TaskSchedule.create(
-            {
-                "name": "update_metastore_{}".format(metastore_id),
-                "task": "tasks.update_metastore.update_metastore",
-                "cron": "0 0 * * *",
-                "args": [metastore_id],
-                "task_type": "prod",
-                "enabled": True,
-            },
-            # commit=False,
-            session=session,
-        ).id
-        schedule_logic.run_and_log_scheduled_task(
-            scheduled_task_id=task_schedule_id, wait_to_finish=True, session=session
-        )
-
-        golden_table = metastore_logic.get_table_by_name(
-            schema_name="main",
-            name="world_happiness_2019",
-            metastore_id=metastore_id,
-            session=session,
-        )
-        if golden_table:
-            metastore_logic.update_table(
-                id=golden_table.id, golden=True, session=session
-            )
-            metastore_logic.update_table_information(
-                data_table_id=golden_table.id,
-                description="The World Happiness Report is a landmark survey of the state of global happiness. The first report was published in 2012, the second in 2013, the third in 2015, and the fourth in the 2016 Update. The World Happiness 2017, which ranks 155 countries by their happiness levels, was released at the United Nations at an event celebrating International Day of Happiness on March 20th. The report continues to gain global recognition as governments, organizations and civil society increasingly use happiness indicators to inform their policy-making decisions. Leading experts across fields – economics, psychology, survey analysis, national statistics, health, public policy and more – describe how measurements of well-being can be used effectively to assess the progress of nations. The reports review the state of happiness in the world today and show how the new science of happiness explains personal and national variations in happiness.",
-                session=session,
-            )
-            demo_logic.create_demo_table_stats(
-                table_id=golden_table.id, uid=current_user.id, session=session
-            )
-            score_column = metastore_logic.get_column_by_name(
-                name="Score", table_id=golden_table.id, session=session
-            )
-            demo_logic.create_demo_table_column_stats(
-                column_id=score_column.id, uid=current_user.id, session=session
-            )
-
-        schedule_logic.run_and_log_scheduled_task(
-            scheduled_task_id=task_schedule_id, session=session
-        )
-
-        demo_logic.create_demo_lineage(metastore_id, current_user.id, session=session)
-
-        data_doc_id = demo_logic.create_demo_data_doc(
-            environment_id=environment.id,
-            engine_id=engine_id,
-            uid=current_user.id,
-            session=session,
-        )
-
-        if data_doc_id:
-            session.commit()
-
-            return {
-                "environment": environment.name,
-                "data_doc_id": data_doc_id,
-            }
+    return demo_logic.set_up_demo(current_user.id)
 
 
 admin_item_type_values = set(item.value for item in AdminItemType)

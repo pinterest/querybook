@@ -30,7 +30,12 @@ class LDAPAuthErrors:
 
 @dataclass
 class LDAPUserInfo:
-    LDAP_ATTRS = ["cn", "givenName", "mail", "sn"]
+    LDAP_ATTRS = [
+        QuerybookSettings.LDAP_FULLNAME_FIELD,  # default: cn
+        QuerybookSettings.LDAP_FIRSTNAME_FIELD,  # default: givenName
+        QuerybookSettings.LDAP_EMAIL_FIELD,  # default: mail
+        QuerybookSettings.LDAP_LASTNAME_FIELD,  # default: sn
+    ]
 
     cn: Optional[str] = None
     dn: Optional[str] = None
@@ -91,11 +96,11 @@ def _parse_user_info(ldap_user_info: Tuple[str, Dict]) -> LDAPUserInfo:
     try:
         user_info = ldap_user_info[1]
         return LDAPUserInfo(
-            cn=_parse_value(user_info["cn"]),
+            cn=_parse_value(user_info[QuerybookSettings.LDAP_FULLNAME_FIELD]),
             dn=ldap_user_info[0],
-            email=_parse_value(user_info["mail"]),
-            first_name=_parse_value(user_info["givenName"]),
-            last_name=_parse_value(user_info["sn"]),
+            email=_parse_value(user_info[QuerybookSettings.LDAP_EMAIL_FIELD]),
+            first_name=_parse_value(user_info[QuerybookSettings.LDAP_FIRSTNAME_FIELD]),
+            last_name=_parse_value(user_info[QuerybookSettings.LDAP_LASTNAME_FIELD]),
         )
 
     except (IndexError, NameError):

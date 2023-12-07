@@ -17,7 +17,7 @@ usage() {
 
 run_python_unit_test() {
     echo 'Start running python unit tests >>>>>>>>>>>>>>>>>>>>>>>>>>>>'
-    py.test querybook/tests || exit 1
+    python -m gevent.monkey --module pytest querybook/tests || exit 1
 }
 
 run_webpack_test() {

@@ -1,12 +1,131 @@
 from app.db import with_session
 
+from const.data_element import (
+    DataElementTuple,
+    DataElementAssociationTuple,
+    DataElementAssociationType,
+)
+from const.schedule import ScheduleTaskType
+from lib.lineage.utils import lineage as lineage_logic
 from logic import (
+    admin as admin_logic,
+    environment as environment_logic,
     metastore as m_logic,
     datadoc as data_doc_logic,
     user as user_logic,
+    tag as tag_logic,
+    data_element as de_logic,
+    schedule as schedule_logic,
 )
+from models.admin import QueryMetastore, QueryEngine
+from models.schedule import TaskSchedule
 
-from lib.lineage.utils import lineage as lineage_logic
+
+@with_session
+def set_up_demo(uid: int, session=None):
+    environment = environment_logic.create_environment(
+        name="demo_environment",
+        description="Demo environment",
+        image="",
+        public=True,
+        commit=False,
+        session=session,
+    )
+
+    local_db_conn = "sqlite:///demo/demo_data.db"
+    metastore_id = QueryMetastore.create(
+        {
+            "name": "demo_metastore",
+            "metastore_params": {
+                "connection_string": local_db_conn,
+            },
+            "loader": "SqlAlchemyMetastoreLoader",
+            "acl_control": {},
+        },
+        commit=False,
+        session=session,
+    ).id
+
+    engine_id = QueryEngine.create(
+        {
+            "name": "sqlite",
+            "description": "SQLite Engine",
+            "language": "sqlite",
+            "executor": "sqlalchemy",
+            "executor_params": {
+                "connection_string": local_db_conn,
+            },
+            "environment_id": environment.id,
+            "metastore_id": metastore_id,
+        },
+        commit=False,
+        session=session,
+    ).id
+
+    admin_logic.add_query_engine_to_environment(
+        environment.id, engine_id, commit=False, session=session
+    )
+
+    task_schedule_id = TaskSchedule.create(
+        {
+            "name": "update_metastore_{}".format(metastore_id),
+            "task": "tasks.update_metastore.update_metastore",
+            "cron": "0 0 * * *",
+            "args": [metastore_id],
+            "task_type": ScheduleTaskType.PROD.value,
+            "enabled": True,
+        },
+        # commit=False,
+        session=session,
+    ).id
+    schedule_logic.run_and_log_scheduled_task(
+        scheduled_task_id=task_schedule_id, wait_to_finish=True, session=session
+    )
+
+    golden_table = m_logic.get_table_by_name(
+        schema_name="main",
+        name="world_happiness_2019",
+        metastore_id=metastore_id,
+        session=session,
+    )
+    if golden_table:
+        m_logic.update_table(id=golden_table.id, golden=True, session=session)
+        m_logic.update_table_information(
+            data_table_id=golden_table.id,
+            description="The World Happiness Report is a landmark survey of the state of global happiness. The first report was published in 2012, the second in 2013, the third in 2015, and the fourth in the 2016 Update. The World Happiness 2017, which ranks 155 countries by their happiness levels, was released at the United Nations at an event celebrating International Day of Happiness on March 20th. The report continues to gain global recognition as governments, organizations and civil society increasingly use happiness indicators to inform their policy-making decisions. Leading experts across fields – economics, psychology, survey analysis, national statistics, health, public policy and more – describe how measurements of well-being can be used effectively to assess the progress of nations. The reports review the state of happiness in the world today and show how the new science of happiness explains personal and national variations in happiness.",
+            session=session,
+        )
+        create_demo_table_stats(table_id=golden_table.id, uid=uid, session=session)
+        score_column = m_logic.get_column_by_name(
+            name="Score", table_id=golden_table.id, session=session
+        )
+        create_demo_table_column_stats(
+            column_id=score_column.id, uid=uid, session=session
+        )
+
+    create_demo_data_elements(metastore_id, session=session)
+    create_demo_tags(metastore_id, session=session)
+
+    schedule_logic.run_and_log_scheduled_task(
+        scheduled_task_id=task_schedule_id, session=session
+    )
+
+    create_demo_lineage(metastore_id, uid, session=session)
+
+    data_doc_id = create_demo_data_doc(
+        environment_id=environment.id,
+        engine_id=engine_id,
+        uid=uid,
+        session=session,
+    )
+
+    if data_doc_id:
+        session.commit()
+
+        return {
+            "environment": environment.name,
+            "data_doc_id": data_doc_id,
+        }
 
 
 @with_session
@@ -122,7 +241,11 @@ def create_demo_data_doc(environment_id, engine_id, uid, session=None):
         environment_id=environment_id,
         owner_uid=uid,
         title="World Happiness Report (2015-2019)",
-        meta={"Region": "Western Europe"},
+        meta={
+            "variables": [
+                {"name": "Region", "type": "string", "value": "Western Europe"}
+            ]
+        },
         session=session,
     ).id
     # create cells
@@ -433,3 +556,57 @@ FROM
     )
 
     return data_doc_id
+
+
+@with_session
+def create_demo_tags(metastore_id: int, session=None):
+    table = m_logic.get_table_by_name(
+        schema_name="main",
+        name="world_happiness_2019",
+        metastore_id=metastore_id,
+        session=session,
+    )
+    tag = tag_logic.create_or_update_tag(
+        tag_name="latest", commit=False, session=session
+    )
+    tag_logic.add_tag_to_table(table.id, tag.name, uid=1, session=session)
+    session.commit()
+
+
+@with_session
+def create_demo_data_elements(metastore_id: int, session=None):
+    first_user = user_logic.get_user_by_id(1, session=session)
+    de_tuple = DataElementTuple(
+        name="Country",
+        type="STRING",
+        description="Contains all plain country names",
+        properties={},
+        created_by=first_user.username,
+    )
+
+    data_element = de_logic.create_or_update_data_element(
+        metastore_id, data_element_tuple=de_tuple, commit=False, session=session
+    )
+
+    for year in range(2015, 2020):
+        table = m_logic.get_table_by_name(
+            schema_name="main",
+            name=f"world_happiness_{year}",
+            metastore_id=metastore_id,
+            session=session,
+        )
+        column = m_logic.get_column_by_name(
+            name="Country", table_id=table.id, session=session
+        )
+        de_association = DataElementAssociationTuple(
+            type=DataElementAssociationType.REF,
+            value_data_element=data_element.name,
+        )
+        de_logic.create_column_data_element_association(
+            metastore_id,
+            column.id,
+            data_element_association=de_association,
+            commit=False,
+            session=session,
+        )
+    session.commit()

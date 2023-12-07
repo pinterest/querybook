@@ -1,13 +1,10 @@
-from typing import Dict, List, Tuple
-from lib.form import ExpandableFormField, FormField, FormFieldType, StructFormField
-from hmsclient.genthrift.hive_metastore.ttypes import NoSuchObjectException
+from typing import Dict, List, Tuple, Union
 
 from clients.hms_client import HiveMetastoreClient
-from lib.metastore.base_metastore_loader import (
-    BaseMetastoreLoader,
-    DataTable,
-    DataColumn,
-)
+from const.metastore import DataColumn, DataTable
+from hmsclient.genthrift.hive_metastore.ttypes import NoSuchObjectException
+from lib.form import ExpandableFormField, FormField, FormFieldType, StructFormField
+from lib.metastore.base_metastore_loader import BaseMetastoreLoader
 from lib.metastore.loaders.form_fileds import load_partitions_field
 from lib.utils import json as ujson
 
@@ -27,15 +24,18 @@ class HMSMetastoreLoader(BaseMetastoreLoader):
     @classmethod
     def get_metastore_params_template(cls):
         return StructFormField(
-            hms_connection=ExpandableFormField(
-                of=FormField(
-                    required=True,
-                    description="Put url to hive metastore server here",
-                    field_type=FormFieldType.String,
+            (
+                "hms_connection",
+                ExpandableFormField(
+                    of=FormField(
+                        required=True,
+                        description="Put url to hive metastore server here",
+                        field_type=FormFieldType.String,
+                    ),
+                    min=1,
                 ),
-                min=1,
             ),
-            load_partitions=load_partitions_field,
+            ("load_partitions", load_partitions_field),
         )
 
     def get_all_schema_names(self) -> List[str]:
@@ -97,6 +97,15 @@ class HMSMetastoreLoader(BaseMetastoreLoader):
         return get_hive_metastore_table_partitions(
             self.hmc, schema_name, table_name, conditions
         )
+
+    def get_schema_location(self, schema_name: str) -> str:
+        return self.hmc.get_database(schema_name).locationUri
+
+    def get_table_location(self, schema_name: str, table_name: str) -> Union[None, str]:
+        try:
+            return self.hmc.get_table(schema_name, table_name).sd.location
+        except NoSuchObjectException:
+            return None
 
     def _get_hmc(self, metastore_dict):
         return HiveMetastoreClient(

@@ -1,0 +1,26 @@
+.QueryCellTitle {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+    gap: 8px;
+
+    .IconButton {
+        position: absolute;
+        left: 0px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--icon);
+
+        display: flex;
+        align-items: center;
+    }
+
+    .Title {
+        font-weight: var(--bold-font);
+    }
+
+    .with-icon {
+        padding-left: 40px;
+    }
+}

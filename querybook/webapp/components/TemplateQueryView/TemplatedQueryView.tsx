@@ -60,12 +60,18 @@ function useValidateQuery(
             .map((error) => {
                 const token = tokens.find(
                     (token) =>
-                        token.line === error.line && token.start === error.ch
+                        token.line === error.start_line &&
+                        token.start === error.start_ch
                 );
                 if (token) {
                     return {
-                        from: queryPositions[token.line] + token.start,
-                        to: queryPositions[token.line] + token.end,
+                        from: queryPositions[error.start_line] + error.start_ch,
+                        to:
+                            error.end_line && error.end_ch
+                                ? queryPositions[error.end_line] +
+                                  error.end_ch +
+                                  1
+                                : queryPositions[token.line] + token.end,
                         className: 'code-highlight-red',
                     };
                 }
@@ -145,7 +151,8 @@ export const TemplatedQueryView: React.FC<ITemplatedQueryViewProps> = ({
 
             const errorsDOM = queryValidationErrors.map((err, i) => (
                 <p key={i}>
-                    Line: {err.line} Ch: {err.ch}, Message: {err.message}
+                    Line: {err.start_line} Ch: {err.start_ch}, Message:{' '}
+                    {err.message}
                 </p>
             ));
 

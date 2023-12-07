@@ -9,7 +9,9 @@ import {
     tableNameDataTransferName,
     tableNameDraggableType,
 } from 'const/metastore';
+import { SurveySurfaceType } from 'const/survey';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
+import { useSurveyTrigger } from 'hooks/ui/useSurveyTrigger';
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
 import * as dataTableSearchActions from 'redux/dataTableSearch/action';
 import {
@@ -140,16 +142,19 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
         if (noMetastore) {
             resetSearch();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [noMetastore]);
 
+    const queryMetastore = useMemo(
+        () =>
+            queryMetastores?.find((metastore) => metastore.id === metastoreId),
+        [metastoreId, queryMetastores]
+    );
     useEffect(() => {
-        if (
-            queryMetastores.length > 0 &&
-            !queryMetastores.find((metastore) => metastore.id === metastoreId)
-        ) {
+        if (queryMetastores.length > 0 && !queryMetastore) {
             selectMetastore(queryMetastores[0].id);
         }
-    }, [queryMetastores, metastoreId]);
+    }, [queryMetastores, queryMetastore, selectMetastore]);
 
     const handleMetastoreChange = useCallback(
         (evt: React.ChangeEvent<HTMLSelectElement>) => {
@@ -182,6 +187,19 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
         },
         [updateSearchString]
     );
+
+    const triggerSurvey = useSurveyTrigger();
+    useEffect(() => {
+        if (searchString === '') {
+            return;
+        }
+
+        triggerSurvey(SurveySurfaceType.TABLE_SEARCH, {
+            search_query: searchString,
+            search_filter: Object.keys(searchFilters),
+            is_modal: false,
+        });
+    }, [searchString, searchFilters, triggerSurvey]);
 
     const tableRowRenderer = useCallback(
         (table: ITableResultWithSelection) => (
@@ -260,15 +278,17 @@ export const DataTableNavigator: React.FC<IDataTableNavigatorProps> = ({
         <div className="DataTableNavigator SidebarNavigator">
             <div className="list-header">
                 {metastorePicker}
-                <DataTableNavigatorSearch
-                    metastoreId={metastoreId}
-                    searchFilters={searchFilters}
-                    searchString={searchString}
-                    onSearch={handleSearch}
-                    updateSearchFilter={updateSearchFilter}
-                    resetSearchFilter={resetSearchFilter}
-                    showTableSearchResult={showTableSearchResult}
-                />
+                {queryMetastore && (
+                    <DataTableNavigatorSearch
+                        queryMetastore={queryMetastore}
+                        searchFilters={searchFilters}
+                        searchString={searchString}
+                        onSearch={handleSearch}
+                        updateSearchFilter={updateSearchFilter}
+                        resetSearchFilter={resetSearchFilter}
+                        showTableSearchResult={showTableSearchResult}
+                    />
+                )}
             </div>
             <div className="list-content">{tablesDOM}</div>
         </div>

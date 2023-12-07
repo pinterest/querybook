@@ -1,19 +1,28 @@
 import datetime
 import functools
 import json
-import traceback
 import socket
+import time
+import traceback
 
 import flask
-from flask_login import current_user
-from werkzeug.exceptions import Forbidden, NotFound
-
-from app.flask_app import flask_app, limiter
 from app.db import get_session
-from const.datasources import DS_PATH
+from app.flask_app import flask_app, limiter
+from const.datasources import (
+    ACCESS_RESTRICTED_STATUS_CODE,
+    DS_PATH,
+    INVALID_SEMANTIC_STATUS_CODE,
+    OK_STATUS_CODE,
+    UNAUTHORIZED_STATUS_CODE,
+    UNKNOWN_CLIENT_ERROR_STATUS_CODE,
+    UNKNOWN_SERVER_ERROR_STATUS_CODE,
+)
+from flask_login import current_user
+from lib.event_logger import event_logger
+from lib.stats_logger import API_REQUESTS, stats_logger
 from lib.logger import get_logger
 from logic.impression import create_impression
-from lib.event_logger import event_logger
+from werkzeug.exceptions import Forbidden, NotFound
 
 LOG = get_logger(__file__)
 _host = socket.gethostname()
@@ -48,8 +57,11 @@ def register(
         @flask_app.route(r"%s%s" % (DS_PATH, url), methods=methods)
         @functools.wraps(fn)
         def handler(**kwargs):
+            # start the timer for api request duration
+            start_time = time.time()
+
             if require_auth and not current_user.is_authenticated:
-                flask.abort(401, description="Login required.")
+                flask.abort(UNAUTHORIZED_STATUS_CODE, description="Login required.")
 
             params = {}
             if flask.request.method == "GET":
@@ -57,7 +69,7 @@ def register(
             elif flask.request.is_json:
                 params = flask.request.json
 
-            status = 200
+            status = OK_STATUS_CODE
             try:
                 kwargs.update(params)
 
@@ -71,6 +83,14 @@ def register(
 
                 results = fn(**kwargs)
 
+                # stop the timer and record the duration
+                duration_ms = (time.time() - start_time) * 1000.0
+                stats_logger.timing(
+                    API_REQUESTS,
+                    duration_ms,
+                    tags={"endpoint": fn.__name__, "method": flask.request.method},
+                )
+
                 if not custom_response:
                     if not isinstance(results, dict) or "data" not in results:
                         results = {"data": results, "host": _host}
@@ -80,18 +100,18 @@ def register(
                 status = e.code
                 results = {"host": _host, "error": e.description}
             except RequestException as e:
-                status = e.status_code or 500
+                status = e.status_code or UNKNOWN_CLIENT_ERROR_STATUS_CODE
                 results = {"host": _host, "error": str(e), "request_exception": True}
             except Exception as e:
                 LOG.error(e, exc_info=True)
-                status = 500
+                status = UNKNOWN_SERVER_ERROR_STATUS_CODE
                 results = {
                     "host": _host,
                     "error": str(e),
                     "traceback": traceback.format_exc(),
                 }
             finally:
-                if status != 200 and "database_session" in flask.g:
+                if status != OK_STATUS_CODE and "database_session" in flask.g:
                     flask.g.database_session.rollback()
             if custom_response:
                 return results
@@ -140,19 +160,21 @@ def admin_only(fn):
         if current_user.is_authenticated and current_user.is_admin:
             return fn(*args, **kwargs)
         else:
-            flask.abort(403)
+            flask.abort(ACCESS_RESTRICTED_STATUS_CODE)
 
     handler.__raw__ = fn
     return handler
 
 
-def api_assert(value, message="Assertion has failed", status_code=500):
+def api_assert(
+    value, message="Assertion has failed", status_code=INVALID_SEMANTIC_STATUS_CODE
+):
     if not value:
         abort_request(status_code, message)
 
 
 def abort_request(
-    status_code=500,
+    status_code=UNKNOWN_CLIENT_ERROR_STATUS_CODE,
     message=None,
 ):
     raise RequestException(message, status_code)

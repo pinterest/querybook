@@ -1,5 +1,8 @@
 import type { ContentState } from 'draft-js';
 
+import { IDataElementAssociation } from './dataElement';
+import { ITag } from './tag';
+
 // Keep it in sync with MetadataType in server/const/metastore.py
 export enum MetadataType {
     TABLE_DESCRIPTION = 'table_description',
@@ -15,10 +18,22 @@ export enum MetadataMode {
     WRITE_LOCAL = 'write_local',
     WRITE_BACK = 'write_back',
 }
+
+// Keep it in sync with DataOwnerType in server/lib/metastore/metastore_data_types.py
+export interface IDataOwnerType {
+    name: string;
+    display_name: string;
+    description?: string;
+}
+
 export interface IQueryMetastore {
     id: number;
     name: string;
     config: Record<MetadataType, MetadataMode>;
+    owner_types: [IDataOwnerType];
+    flags?: {
+        has_data_element: boolean;
+    };
 }
 
 export interface IDataSchema {
@@ -58,6 +73,7 @@ export interface IDataTable {
     column_info?: {
         partition_keys?: string[];
     };
+    custom_properties?: Record<string, string>;
 
     schema: number;
     schema_id: number;
@@ -106,6 +122,11 @@ export interface IDataColumn {
     name: string;
     table_id: number;
     type: string;
+}
+export interface IDetailedDataColumn extends IDataColumn {
+    stats?: ITableColumnStats[];
+    tags?: ITag[];
+    data_element_association?: IDataElementAssociation;
 }
 
 export interface ILineage {
@@ -175,6 +196,7 @@ export interface IDataTableOwnership {
     data_table_id: number;
     uid: number;
     created_at: number;
+    type: string;
 }
 
 export type TableStatValue = number | string | Array<number | string>;

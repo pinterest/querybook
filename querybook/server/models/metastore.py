@@ -172,6 +172,9 @@ class DataTable(CRUDMixin, TruncateString("name", "type", "location"), Base):
 
     name = sql.Column(sql.String(length=name_length), index=True)
     type = sql.Column(sql.String(length=name_length), index=True)
+
+    # This field is no longer being used, keep it here for backward compatibility only.
+    # Table ownership will be fully managed by DataTableOwnership
     owner = sql.Column(sql.String(length=name_length))
 
     table_created_at = sql.Column(sql.DateTime)
@@ -261,6 +264,7 @@ class DataTableInformation(
     description = sql.Column(sql.Text(length=mediumtext_length))
     hive_metastore_description = sql.Column(sql.Text(length=mediumtext_length))
     column_info = sql.Column(sql.JSON)
+    custom_properties = sql.Column(sql.JSON)
 
     def to_dict(self):
         table_information = {
@@ -269,6 +273,7 @@ class DataTableInformation(
             "description": self.description,
             "hive_metastore_description": self.hive_metastore_description,
             "column_info": self.column_info,
+            "custom_properties": self.custom_properties,
         }
         return table_information
 
@@ -291,6 +296,10 @@ class DataTableColumn(TruncateString("name", "type", "comment"), Base):
 
     table_id = sql.Column(
         sql.Integer, sql.ForeignKey("data_table.id", ondelete="CASCADE")
+    )
+
+    data_elements = relationship(
+        "DataElement", secondary="data_element_association", uselist=True, viewonly=True
     )
 
     def to_dict(self, include_table=False):
@@ -322,6 +331,7 @@ class DataTableOwnership(Base):
     uid = sql.Column(
         sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"), nullable=False
     )
+    type = sql.Column(sql.String(name_length))
 
     def to_dict(self):
         item = {
@@ -329,6 +339,7 @@ class DataTableOwnership(Base):
             "data_table_id": self.data_table_id,
             "created_at": self.created_at,
             "uid": self.uid,
+            "type": self.type,
         }
         return item
 

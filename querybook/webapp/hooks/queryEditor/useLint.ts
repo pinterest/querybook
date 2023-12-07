@@ -74,6 +74,7 @@ function useQueryLintAnnotations(
     editorRef: React.MutableRefObject<CodeMirror.Editor>
 ) {
     const [isLintingQuery, setIsLinting] = useState(false);
+    const [failedToLint, setFailedToLint] = useState(false);
     const [queryAnnotations, setQueryAnnotations] = useState<ILinterWarning[]>(
         []
     );
@@ -94,7 +95,14 @@ function useQueryLintAnnotations(
     useEffect(() => {
         setIsLinting(true);
         getQueryLintAnnotations(query)
-            .then(setQueryAnnotations)
+            .then((annotations) => {
+                setQueryAnnotations(annotations);
+                setFailedToLint(false);
+            })
+            .catch(() => {
+                setFailedToLint(true);
+                setQueryAnnotations([]);
+            })
             .finally(() => {
                 setIsLinting(false);
             });
@@ -102,7 +110,7 @@ function useQueryLintAnnotations(
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debouncedQuery, getQueryLintAnnotations]);
 
-    return { isLintingQuery, queryAnnotations };
+    return { isLintingQuery, queryAnnotations, failedToLint };
 }
 
 function useTableLintAnnotations(
@@ -159,14 +167,16 @@ export function useLint({
         getTableByName,
         !!getLintErrors
     );
-    const { isLintingQuery, queryAnnotations } = useQueryLintAnnotations(
-        query,
-        getLintErrors,
-        editorRef
-    );
+    const { isLintingQuery, queryAnnotations, failedToLint } =
+        useQueryLintAnnotations(query, getLintErrors, editorRef);
     const lintAnnotationsRef = useRef<ILinterWarning[]>([]);
     const lintAnnotations = useMemo(
-        () => tableAnnotations.concat(queryAnnotations),
+        () =>
+            tableAnnotations.concat(
+                queryAnnotations.filter(
+                    (obj: ILinterWarning) => obj.type === 'lint'
+                )
+            ),
         [tableAnnotations, queryAnnotations]
     );
 
@@ -188,8 +198,9 @@ export function useLint({
         return {
             numErrors,
             numWarnings,
+            failedToLint,
         };
-    }, [lintAnnotations]);
+    }, [lintAnnotations, failedToLint]);
 
     useEffect(() => {
         onLintCompletion?.(lintSummary.numErrors > 0);
@@ -211,5 +222,6 @@ export function useLint({
         getLintAnnotations: getCodeMirrorLintAnnotations,
         isLinting: isLintingQuery || isLintingTable,
         lintSummary,
+        queryAnnotations,
     };
 }

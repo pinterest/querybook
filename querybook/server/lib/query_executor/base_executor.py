@@ -486,6 +486,14 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
             # executor_language is List[str]
             return language in executor_language
 
+    @property
+    def query_execution_id(self):
+        return self._query_execution_id
+
+    @property
+    def execution_type(self):
+        return self._execution_type
+
     def __init__(
         self,
         query_execution_id: int,
@@ -496,6 +504,7 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
         execution_type,
     ):
         self._query = query
+        self._query_execution_id = query_execution_id
         self._execution_type = execution_type
 
         if self.SINGLE_QUERY_QUERY_ENGINE():
@@ -597,7 +606,9 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
         try:
             # Try our best to fetch logs again
             if self._cursor:
-                self._logger.on_statement_update(log=self._get_logs())
+                self._logger.on_statement_update(
+                    log=self._get_logs(), meta_info=self.meta_info
+                )
         except Exception:
             # In case of failure just ignore
             pass

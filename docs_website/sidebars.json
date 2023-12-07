@@ -9,9 +9,11 @@
             "setup_guide/setup_overview",
             "setup_guide/quick_setup",
             "setup_guide/troubleshoot",
-            "setup_guide/connect_to_query_engines",
+            "setup_guide/connect_to_a_query_engine",
+            "setup_guide/query_engines",
             "setup_guide/prod_setup",
             "setup_guide/deployment_guide",
+            "setup_guide/helm_guide",
             "setup_guide/update_guide"
         ],
         "Configurations": [
@@ -35,6 +37,9 @@
             "integrations/add_query_transpilation",
             "integrations/add_table_upload",
             "integrations/add_event_logger",
+            "integrations/add_stats_logger",
+            "integrations/add_surveys",
+            "integrations/add_ai_assistant",
             "integrations/customize_html",
             "integrations/embedded_iframe"
         ],
@@ -47,10 +52,15 @@
             "developer_guide/users_and_groups"
         ],
 
-        "User Guide": ["user_guide/api_token", "user_guide/faq"],
+        "User Guide": [
+            "user_guide/ai_assistant",
+            "user_guide/api_token",
+            "user_guide/faq"
+        ],
         "Changelog": [
             "changelog/breaking_changes",
             "changelog/security_advisories",
+            "changelog/sept_2023_9_20_0",
             "changelog/dec_2022_3_15_0",
             "changelog/nov_2020_2_4_2",
             "changelog/may_2020_2_3_0",

@@ -1,8 +1,42 @@
 from typing import Dict, Union
+
+from elasticsearch import Elasticsearch, RequestsHttpConnection
+
+from env import QuerybookSettings
+from lib.config import get_config_value
 from lib.logger import get_logger
-from logic.elasticsearch import get_hosted_es
+from lib.utils.decorators import in_mem_memoized
 
 LOG = get_logger(__file__)
+
+ES_CONFIG = get_config_value("elasticsearch")
+
+
+@in_mem_memoized(3600)
+def get_hosted_es():
+    hosted_es = None
+
+    if QuerybookSettings.ELASTICSEARCH_CONNECTION_TYPE == "naive":
+        hosted_es = Elasticsearch(hosts=QuerybookSettings.ELASTICSEARCH_HOST)
+    elif QuerybookSettings.ELASTICSEARCH_CONNECTION_TYPE == "aws":
+        # TODO: generialize aws region setup
+        from boto3 import session as boto_session
+        from lib.utils.assume_role_aws4auth import AssumeRoleAWS4Auth
+
+        credentials = boto_session.Session().get_credentials()
+        auth = AssumeRoleAWS4Auth(
+            credentials,
+            QuerybookSettings.AWS_REGION,
+            "es",
+        )
+        hosted_es = Elasticsearch(
+            hosts=QuerybookSettings.ELASTICSEARCH_HOST,
+            http_auth=auth,
+            connection_class=RequestsHttpConnection,
+            use_ssl=True,
+            verify_certs=True,
+        )
+    return hosted_es
 
 
 def _parse_results(results, get_count):

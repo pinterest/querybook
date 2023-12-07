@@ -32,9 +32,13 @@
                 align-items: baseline;
 
                 .result-item-title {
-                    overflow: hidden;
+                    overflow-wrap: anywhere;
+                }
+
+                .result-item-timestamp {
+                    text-align: right;
                     white-space: nowrap;
-                    text-overflow: ellipsis;
+                    min-width: 140px;
                 }
             }
 

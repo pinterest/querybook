@@ -145,8 +145,12 @@ export interface IQueryExecutionNotification {
 }
 
 export interface IQueryValidationResult {
-    line: number;
-    ch: number;
+    start_line: number;
+    start_ch: number;
+    end_line: number | null;
+    end_ch: number | null;
     message: string;
     severity: string;
+    type: string;
+    suggestion: string | null;
 }

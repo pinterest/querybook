@@ -4,7 +4,7 @@ import { IOption } from 'lib/utils/react-select';
 import { IScheduledDoc, IScheduledDocFilters, ThunkResult } from './types';
 import { StatusType } from 'const/schedFiltersType';
 
-function reformatBoardIds(boardIds: IOption<number>[]): number[] | null {
+function reformatBoardIds(boardIds: Array<IOption<number>>): number[] | null {
     if (boardIds.length) {
         return boardIds.map((board) => board.value);
     }

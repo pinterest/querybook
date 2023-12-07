@@ -6,6 +6,7 @@ from flask_socketio import disconnect
 from app.flask_app import socketio
 from lib.event_logger import event_logger
 from lib.logger import get_logger
+from lib.stats_logger import WS_CONNECTIONS, stats_logger
 
 LOG = get_logger(__file__)
 
@@ -18,6 +19,10 @@ def register_socket(url, namespace=None, websocket_logging=True):
             if not current_user.is_authenticated:
                 LOG.error("Unauthorized websocket access")
                 disconnect()
+                # incr ws connections counter on disconnect
+                stats_logger.incr(
+                    WS_CONNECTIONS, tags={"namespace": namespace, "event": "disconnect"}
+                )
             else:
                 try:
                     if websocket_logging:
@@ -33,8 +38,20 @@ def register_socket(url, namespace=None, websocket_logging=True):
                         "error",
                         str(e),
                         namespace=namespace,
-                        broadcast=False,
                         room=flask.request.sid,
+                    )
+
+                # increment ws connections counter on connect
+                if url == "connect":
+                    stats_logger.incr(
+                        WS_CONNECTIONS,
+                        tags={"namespace": namespace, "event": "connect"},
+                    )
+                # incr ws connections counter on disconnect
+                elif url == "disconnect":
+                    stats_logger.incr(
+                        WS_CONNECTIONS,
+                        tags={"namespace": namespace, "event": "disconnect"},
                     )
 
         handler.__raw__ = fn

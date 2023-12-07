@@ -15,7 +15,7 @@ case "$SERVICE_NAME" in
     COMMAND="python3 querybook/server/runweb.py"
     ;;
 "worker")
-    COMMAND="watchmedo auto-restart -d querybook -p '*.py' -R -- celery -A tasks.all_tasks worker --loglevel=DEBUG"
+    COMMAND="watchmedo auto-restart -d querybook -p '*.py' -R -- celery -A tasks.all_tasks worker -E --without-heartbeat --without-gossip --without-mingle --loglevel=DEBUG"
     ;;
 "scheduler")
     COMMAND="watchmedo auto-restart -d querybook -p '*.py' -R -- celery -A tasks.all_tasks beat -S scheduler.DatabaseScheduler --loglevel=INFO"
@@ -30,7 +30,7 @@ case "$SERVICE_NAME" in
     COMMAND="uwsgi --ini uwsgi.ini"
     ;;
 "prod_worker")
-    COMMAND="celery -A tasks.all_tasks worker"
+    COMMAND="celery -A tasks.all_tasks worker -E --without-heartbeat --without-gossip --without-mingle"
     ;;
 "prod_scheduler")
     COMMAND="celery -A tasks.all_tasks beat -S scheduler.DatabaseScheduler"

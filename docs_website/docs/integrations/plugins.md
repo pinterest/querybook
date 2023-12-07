@@ -61,11 +61,24 @@ Web page plugin allows you to inject custom js, css to Querybook. Place your cus
 Lineage plugin allows you to extend Querybook to fetch lineage information from a custom data lineage backend. Please check [Add Lineage guide](./add_lineage.md) for more details.
 
 ### Event Logger Plugin
+
 By default, Querybook supports printing/storing event logs(e.g. API requests, frontend instrumentation logs and etc) to console and mysql db. If you'd like to store event logs to somewhere else, you can add a custom event logger. Please check [Add Event Logger guide](./add_event_logger.md) for more details.
 
 ### DAG Exporter Plugin (Experimental)
 
 DAG Exporters allow users to create a workflow from Query Cells in DataDocs. Querybook by default provides "demo_dag_exporter" code as an example but it needs to included in the plugin exporter to be used and does not work out of the box. Please Check [Add DAG Exporter guide](./add_dag_exporter.md) to learn how to add a dag exporter.
+
+### API Plugin
+
+The API plugin enables you to create new or modify existing API endpoints. For examples of its usage, please refer to the `querybook/plugins/api_plugin` folder.
+
+### Monkey Patch Plugin
+
+Similar to the API plugin, the monkey patch plugin allows you to override or modify existing modules or functions. To see examples of how it works, please check the `querybook/plugins/monkey_patch_plugin` folder.
+
+### AI Assistant Plugin
+
+The AI assistant plugin will provide features like title generation, text-to-sql and query auto fix, powered by LLM. Please check [AI Assistant Guide](./add_ai_assistant.md) to learn how to enable it.
 
 ## Installing Plugins
 

@@ -1,5 +1,5 @@
 import { TextMarker } from 'codemirror';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { UnControlled as ReactCodeMirror } from 'react-codemirror2';
 import styled from 'styled-components';
 
@@ -55,10 +55,11 @@ export const CodeHighlightWithMark: React.FC<IProps> = ({
     maxEditorHeight,
     autoHeight = true,
 }) => {
-    const [editor, setEditor] = React.useState<CodeMirror.Editor>(null);
+    const editorRef = React.useRef<CodeMirror.Editor>(null);
     React.useEffect(() => {
         let markedText: TextMarker;
 
+        const editor = editorRef.current;
         if (editor && highlightRanges.length) {
             const doc = editor.getDoc();
 
@@ -80,7 +81,15 @@ export const CodeHighlightWithMark: React.FC<IProps> = ({
                 markedText.clear();
             }
         };
-    }, [editor, highlightRanges]);
+    }, [highlightRanges]);
+
+    useEffect(() => {
+        if (editorRef.current) {
+            setTimeout(() => {
+                editorRef.current.refresh();
+            }, 50);
+        }
+    }, []);
 
     const codeMirrorOptions = useMemo(
         () => ({
@@ -104,8 +113,7 @@ export const CodeHighlightWithMark: React.FC<IProps> = ({
                 options={codeMirrorOptions}
                 value={query}
                 editorDidMount={(newEditor) => {
-                    setEditor(newEditor);
-                    setTimeout(newEditor.refresh, 50);
+                    editorRef.current = newEditor;
                 }}
             />
         </EmbeddedCodeMirrorContainer>

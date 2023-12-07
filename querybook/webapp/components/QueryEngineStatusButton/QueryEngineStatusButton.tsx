@@ -167,7 +167,7 @@ export const QueryEngineStatusButton: React.FC<IProps> = ({
 
         const panelContent = (
             <div className="QueryEngineStatusPopover">
-                <Menu>
+                <Menu height="75vh">
                     <MenuInfoItem>
                         <Timer
                             formatter={timerFormatter}

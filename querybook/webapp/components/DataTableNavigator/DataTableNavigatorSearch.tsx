@@ -1,9 +1,10 @@
 import { startCase } from 'lodash';
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { TableTagGroupSelect } from 'components/DataTableTags/TableTagGroupSelect';
+import { EntitySelect } from 'components/Search/EntitySelect';
 import { ComponentType, ElementType } from 'const/analytics';
+import { IQueryMetastore } from 'const/metastore';
 import { useToggleState } from 'hooks/useToggleState';
 import { trackClick } from 'lib/analytics';
 import {
@@ -12,6 +13,7 @@ import {
 } from 'redux/dataTableSearch/action';
 import { ITableSearchFilters } from 'redux/dataTableSearch/types';
 import { IStoreState } from 'redux/store/types';
+import { DataElementResource, TableTagResource } from 'resource/table';
 import { SoftButton } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 import { OrderByButton } from 'ui/OrderByButton/OrderByButton';
@@ -23,7 +25,7 @@ import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
 import './DataTableNavigatorSearch.scss';
 
 export const DataTableNavigatorSearch: React.FC<{
-    metastoreId: number;
+    queryMetastore: IQueryMetastore;
     searchString: string;
     onSearch: (s: string) => void;
     searchFilters: ITableSearchFilters;
@@ -35,6 +37,7 @@ export const DataTableNavigatorSearch: React.FC<{
 
     showTableSearchResult: boolean;
 }> = ({
+    queryMetastore,
     searchString,
     onSearch,
     searchFilters,
@@ -49,6 +52,11 @@ export const DataTableNavigatorSearch: React.FC<{
         () => Object.keys(searchFilters).length,
         [searchFilters]
     );
+
+    useEffect(() => {
+        resetSearchFilter();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [queryMetastore]);
 
     const { asc: sortTableAsc, key: sortTableKey } = useSelector(
         (state: IStoreState) => state.dataTableSearch.sortTablesBy
@@ -66,6 +74,8 @@ export const DataTableNavigatorSearch: React.FC<{
     );
 
     const dispatch = useDispatch();
+    const queryMetastoreHasDataElements =
+        !!queryMetastore.flags?.has_data_element;
 
     const searchFiltersPickerDOM = showSearchFilter && (
         <Popover
@@ -107,10 +117,32 @@ export const DataTableNavigatorSearch: React.FC<{
                             placeholder="Full schema name"
                         />
                     </SearchFilterRow>
+                    {queryMetastoreHasDataElements && (
+                        <SearchFilterRow title="Data Elements">
+                            <EntitySelect
+                                selectedEntities={
+                                    searchFilters?.data_elements || []
+                                }
+                                loadEntities={DataElementResource.search}
+                                onEntitiesChange={(dataElements) =>
+                                    updateSearchFilter(
+                                        'data_elements',
+                                        dataElements.length
+                                            ? dataElements
+                                            : null
+                                    )
+                                }
+                                placeholder="data elements"
+                            />
+                        </SearchFilterRow>
+                    )}
                     <SearchFilterRow title="Tags">
-                        <TableTagGroupSelect
-                            tags={searchFilters?.tags}
-                            updateTags={updateTags}
+                        <EntitySelect
+                            selectedEntities={searchFilters?.tags || []}
+                            loadEntities={TableTagResource.search}
+                            onEntitiesChange={updateTags}
+                            placeholder="Tag name"
+                            mini
                         />
                     </SearchFilterRow>
                 </div>
@@ -193,7 +225,7 @@ const SearchFilterRow: React.FC<{ title: string; className?: string }> = ({
     className,
 }) => (
     <div className={`search-filter-row ${className ?? ''}`}>
-        <Title className="mr8 search-filter-title" size="text">
+        <Title className="mr8 search-filter-title" size="xsmall">
             {title}
         </Title>
         <div className="search-filter-row-item">{children}</div>

@@ -1,8 +1,9 @@
-import redis
 import functools
+import time
 
+import redis
 from env import QuerybookSettings
-
+from lib.stats_logger import REDIS_OPERATIONS, stats_logger
 
 __redis = None
 
@@ -19,6 +20,9 @@ def with_redis(fn):
 
     @functools.wraps(fn)
     def func(*args, **kwargs):
+        # start the timer for redis latency
+        start_time = time.time()
+
         conn = None
         # If there's no session, create a new one. We will
         # automatically close this after the function is called.
@@ -27,6 +31,13 @@ def with_redis(fn):
             kwargs["redis_conn"] = conn
 
         result = fn(*args, **kwargs)
+
+        # stop the timer and record the duration
+        duration_ms = (time.time() - start_time) * 1000.0
+        stats_logger.timing(
+            REDIS_OPERATIONS, duration_ms, tags={"operation": fn.__name__}
+        )
+
         return result
 
     return func

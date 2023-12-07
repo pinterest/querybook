@@ -99,7 +99,7 @@ const UserSelectOptionRow: React.FC<{ user: IUserSearchResultRow }> = ({
     return (
         <div className="flex-row">
             <UserAvatar tiny uid={user.id} />
-            <span className="ml4">{name}</span>
+            <span className="ml4 one-line-ellipsis">{name}</span>
         </div>
     );
 };

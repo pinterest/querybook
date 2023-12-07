@@ -25,15 +25,14 @@ export const TableTagGroupSelect: React.FC<{
     );
 
     const tagsListDOM = tags.length ? (
-        <div className="tables-tag-list mb8">
+        <div className="mb8">
             {tags.map((tag) => (
                 <HoverIconTag
                     key={tag}
+                    name={tag}
                     iconOnHover={'X'}
                     onIconHoverClick={() => handleTagRemove(tag)}
-                >
-                    <span>{tag}</span>
-                </HoverIconTag>
+                />
             ))}
         </div>
     ) : null;

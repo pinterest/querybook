@@ -5,7 +5,6 @@ import Creatable from 'react-select/creatable';
 import { makeReactSelectStyle } from 'lib/utils/react-select';
 import { overlayRoot } from 'ui/Overlay/Overlay';
 import { AccentText } from 'ui/StyledText/StyledText';
-import { IOption } from 'lib/utils/react-select';
 
 export interface ISelectOption<T> {
     value: T;

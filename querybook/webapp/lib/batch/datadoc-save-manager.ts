@@ -93,9 +93,9 @@ export class DataCellSaveManager {
         });
     }
 
-    public forceSaveDataCell(cellId: number) {
+    public async forceSaveDataCell(cellId: number) {
         if (cellId in this.itemSaverByCellId) {
-            this.itemSaverByCellId[cellId].forceProcess();
+            await this.itemSaverByCellId[cellId].forceProcess();
             delete this.itemSaverByCellId[cellId];
         }
     }

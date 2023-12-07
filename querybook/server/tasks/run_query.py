@@ -11,11 +11,11 @@ from lib.query_executor.notification import notifiy_on_execution_completion
 from lib.query_executor.executor_factory import create_executor_from_execution
 from lib.query_executor.exc import QueryExecutorException
 from lib.query_executor.utils import format_error_message
+from lib.stats_logger import QUERY_EXECUTIONS, stats_logger
 
 from logic import query_execution as qe_logic
 from logic.elasticsearch import update_query_execution_by_id
 from tasks.log_query_per_table import log_query_per_table_task
-
 
 LOG = get_task_logger(__name__)
 
@@ -31,6 +31,8 @@ LOG = get_task_logger(__name__)
 def run_query_task(
     self, query_execution_id, execution_type=QueryExecutionType.ADHOC.value
 ):
+    stats_logger.incr(QUERY_EXECUTIONS, tags={"execution_type": execution_type})
+
     executor = None
     error_message = None
     query_execution_status = QueryExecutionStatus.INITIALIZED
@@ -66,9 +68,14 @@ def run_query_task(
             # Executor exists means the query actually executed
             # This prevents cases when query_execution got executed twice
             if executor and query_execution_status == QueryExecutionStatus.DONE:
-                log_query_per_table_task.delay(query_execution_id)
+                log_query_per_table_task.delay(
+                    query_execution_id, execution_type=execution_type
+                )
 
-    return query_execution_status.value if executor is not None else None
+    return (
+        query_execution_status.value if executor is not None else None,
+        query_execution_id,
+    )
 
 
 def run_executor_until_finish(celery_task, executor):

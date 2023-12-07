@@ -11,13 +11,13 @@ import { IDataChartCellMeta } from 'const/datadoc';
 import {
     ChartDataAggType,
     ChartScaleFormat,
+    chartScaleToChartJSScale,
     ChartScaleType,
     ChartSize,
     ChartValueDisplayType,
     ChartValueSourceType,
     IChartAxisMeta,
     IChartFormValues,
-    chartScaleToChartJSScale,
 } from 'const/dataDocChart';
 import { StatementExecutionDefaultResultSize } from 'const/queryResultLimit';
 import type { DeepPartial } from 'lib/typescript';
@@ -206,7 +206,7 @@ export function mapMetaToChartOptions(
                         return context.chart.data.datasets[context.datasetIndex]
                             .label;
                     }
-                    return value.y;
+                    return value?.y;
                 },
                 display:
                     meta.visual.values?.display === ChartValueDisplayType.TRUE

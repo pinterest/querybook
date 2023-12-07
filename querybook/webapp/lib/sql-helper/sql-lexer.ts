@@ -174,8 +174,10 @@ export interface IRange {
 }
 
 export interface ILinterWarning extends IRange {
+    type: 'lint' | 'general';
     message: string;
-    severity: 'error' | 'warning';
+    severity: 'error' | 'warning' | 'info';
+    suggestion: string | null;
 }
 
 export interface ILineage {
