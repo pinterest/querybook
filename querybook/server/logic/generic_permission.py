@@ -62,3 +62,49 @@ def get_all_groups_and_group_members_with_access(
         q = q.filter(editors.c.uid == uid)
 
     return session.query(q.subquery()).all()
+
+
+@with_session
+def user_has_permission(
+    doc_or_board_id, permission_level, editor_type, uid, session=None
+):
+
+    if editor_type == BoardEditor:
+        editor = (
+            session.query(BoardEditor)
+            .filter_by(uid=uid, board_id=doc_or_board_id)
+            .first()
+        )
+    else:
+        editor = (
+            session.query(DataDocEditor)
+            .filter_by(uid=uid, doc_id=doc_or_board_id)
+            .first()
+        )
+
+    # Check the user's direct permissions
+    if permission_level == "read":
+        if editor is not None and (editor.write or editor.read):
+            return True
+    else:
+        if editor is not None and editor.write:
+            return True
+
+    # Get the user's inherited permissions
+    inherited_editors = get_all_groups_and_group_members_with_access(
+        doc_or_board_id=doc_or_board_id,
+        editor_type=editor_type,
+        uid=uid,
+        session=session,
+    )
+
+    if permission_level == "read":
+        if len(inherited_editors) == 1:
+            return True
+    else:
+        if len(inherited_editors) == 1:
+            # Check if the editor's write privileges are true
+            if inherited_editors[0][3]:
+                return True
+
+    return False
