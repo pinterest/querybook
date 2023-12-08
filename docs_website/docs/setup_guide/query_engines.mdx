@@ -24,7 +24,7 @@ Querybook supports all Sqlalchemy compatible query engines by default. Basic fun
 | Service discovery               | x          | x                 | ✓                  |
 | Language Specific Autocomplete  | x          | x                 | ✓                  |
 
-Tier 1 does not mean engines can be used in production everywhere since different companies/org require different kinds of integrations. However, tier 1 databases provide an excellent foundation to extend additional functionalities. Use them as a reference or subclass them via the [query engine plugin](../integrations/add_query_engine.md).
+Tier 1 does not mean engines can be used in production everywhere since different companies/org require different kinds of integrations. However, tier 1 databases provide an excellent foundation to extend additional functionalities. Use them as a reference or subclass them via the [query engine plugin](../integrations/add_query_engine.mdx).
 
 If you have tried any of the tier 3 databases and confirmed it works, please update this doc to let others know.
 
@@ -34,10 +34,10 @@ Querybook only supports a few of the Tier 1 & 2 databases by default. When Query
 
 ## All Query Engines
 
-**Note**: If the query engine is not included below, but it does have a Sqlalchemy integration, you can still use it in Querybook. Follow the [Connect to a Query Engine](./connect_to_a_query_engine) with 1 additional step before step 4. Visit `<project_root>/querybook/server/lib/query_executor/sqlalchemy.py` and add the query engine to the list variable `SQLALCHEMY_SUPPORTED_DIALECTS`, and continue to step 4. If it works, please contribute to Querybook by submitting a PR of your changes.
+**Note**: If the query engine is not included below, but it does have a Sqlalchemy integration, you can still use it in Querybook. Follow the [Connect to a Query Engine](./connect_to_a_query_engine.mdx) with 1 additional step before step 4. Visit `<project_root>/querybook/server/lib/query_executor/sqlalchemy.py` and add the query engine to the list variable `SQLALCHEMY_SUPPORTED_DIALECTS`, and continue to step 4. If it works, please contribute to Querybook by submitting a PR of your changes.
 
 | Query Engine         | Tier | Package                                                                                                                                                                                                                               |
-| -------------------- | ---- |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| -------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Apache Drill         | 3    | [sqlalchemy-drill](https://pypi.org/project/sqlalchemy-drill/)                                                                                                                                                                        |
 | Apache Hive          | 1    | [pyhive](https://pypi.org/project/PyHive/) OR `-r engines/hive.txt`                                                                                                                                                                   |
 | Apache Kylin         | 3    | [kylinpy](https://pypi.org/project/kylinpy/)                                                                                                                                                                                          |

@@ -19,7 +19,7 @@ and implement the following functions:
 -   `get_table_parent_lineages(table_id, session=None) -> List[TableLineage]`: Used to get the lineage information from the custom lineage backend. Returns a list of `TableLineage` objects corresponding to parent tables of the input table.
 -   `get_table_child_lineages(table_id, session=None) -> List[TableLineage]`: Used to get the lineage information from the custom lineage backend. Returns a list of `TableLineage` objects corresponding to child tables of the input table.
 
-Put the plugin in the plugins directory (see [Plugins Guide](plugins.md) for more details) and set this env variable to tell Querybook to use your plugin for data lineage purposes:
+Put the plugin in the plugins directory (see [Plugins Guide](plugins.mdx) for more details) and set this env variable to tell Querybook to use your plugin for data lineage purposes:
 
 ```yaml
 DATA_LINEAGE_BACKEND: 'path.to.plugin' # path to the plugin relative to the plugins directory

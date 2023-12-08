@@ -29,7 +29,7 @@ The validator runs by transforming the query into `EXPLAIN (TYPE VALIDATE)` quer
 
 ## Plugins
 
-You can provide custom query validators by defining `ALL_PLUGIN_QUERY_VALIDATORS_BY_NAME` under `query_validation_plugin`. To learn how to use plugins, checkout the [plugin guide](plugins.md).
+You can provide custom query validators by defining `ALL_PLUGIN_QUERY_VALIDATORS_BY_NAME` under `query_validation_plugin`. To learn how to use plugins, checkout the [plugin guide](plugins.mdx).
 Note that the custom query validators must inherit `BaseQueryValidator` which lives in `querybook/server/lib/query_analysis/validation/base_query_validator.py`.
 
 ## How to use

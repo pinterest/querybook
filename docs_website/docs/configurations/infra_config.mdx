@@ -7,7 +7,7 @@ sidebar_label: Infra Config
 ## Overview
 
 :::caution
-THIS GUIDE IS ONLY FOR INFRASTRUCTURE SETUP, PLEASE READ THE [GENERAL CONFIG](./general_config.md) TO CONFIGURE ENTITIES SUCH AS QUERY ENGINE & ACCESS PERMISSION.
+THIS GUIDE IS ONLY FOR INFRASTRUCTURE SETUP, PLEASE READ THE [GENERAL CONFIG](./general_config.mdx) TO CONFIGURE ENTITIES SUCH AS QUERY ENGINE & ACCESS PERMISSION.
 :::
 
 Eventhrough Querybook can be launched without any configuration, it is absolutely required for more powerful infrastructure/flexible customization. In this guide we will walkthrough different kind of environment settings you can set for Querybook. You can see all possible options and default values in this repo by checking out `querybook/config/querybook_default_config.yaml`.
@@ -90,7 +90,7 @@ The following settings are only relevant if you are using `s3` and your S3 bucke
     - console: This will print the event logs to the console. Could be used for debugging purpose.
     - db: This will save the event logs to table **event_logs** in querybook mysql db.
 
-You can also add addtional loggers in the event logger plugin. See [Add Event Logger guide](../integrations/add_event_logger.md) for more details.
+You can also add addtional loggers in the event logger plugin. See [Add Event Logger guide](../integrations/add_event_logger.mdx) for more details.
 
 ### Stats Logging
 
@@ -99,7 +99,7 @@ You can also add addtional loggers in the event logger plugin. See [Add Event Lo
     - null: This is the default logger, which does nothing and disregards the logs.
     - console: This will print the stats logs to the console. Could be used for debugging purpose.
 
-You need to add your own stats logger plugin to use it. See [Add Stats Logger guide](../integrations/add_stats_logger.md) for more details.
+You need to add your own stats logger plugin to use it. See [Add Stats Logger guide](../integrations/add_stats_logger.mdx) for more details.
 ## Authentication
 
 `AUTH_BACKEND` (optional, defaults to **app.auth.password_auth**): Python path to the authentication file. By default Querybook provides:

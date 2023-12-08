@@ -15,7 +15,7 @@ Exporter provides a shortcut for users to move their query results to the desire
 
 ## Implementation
 
-To keep the exporting process standardized, please create an exporter under <project_root>/querybook/server/lib/export/exporters. All exporters must inherit from BaseExporter that lives in <project_root>/querybook/server/lib/export/base_exporter.py.
+To keep the exporting process standardized, please create an exporter under \<project_root>/querybook/server/lib/export/exporters. All exporters must inherit from BaseExporter that lives in \<project_root>/querybook/server/lib/export/base_exporter.py.
 
 Here are some fields of exporter that you must configure in the setup process:
 
@@ -27,9 +27,10 @@ Here are some fields of exporter that you must configure in the setup process:
 
 (\* This is because currently db based query store does not provide a download url for security reasons, this should be a non-issue once one time user signed token is implemented on Querybook)
 
-To ensure Querybook more generalizable, all exporters are not included by default. If you want to add an exporter, please do so through plugins (See this [Plugin Guide](plugins.md) to learn how to setup plugins for Querybook).
+To ensure Querybook more generalizable, all exporters are not included by default. If you want to add an exporter, please do so through plugins (See this [Plugin Guide](plugins.mdx) to learn how to setup plugins for Querybook).
 
 Once plugins folder is setup, import the exporter class under `ALL_PLUGIN_EXPORTERS` in `exporter_plugin/__init__.py`. As an example, here is how you can add PythonExporter and RExporter:
+
 ```python
 from lib.export.exporters.python_exporter import PythonExporter
 from lib.export.exporters.r_exporter import RExporter
