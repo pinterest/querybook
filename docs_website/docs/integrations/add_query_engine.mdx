@@ -10,7 +10,7 @@ sidebar_label: Query Engine
 
 Adding a query engine in Querybook is simple.
 
-1.  Configure what data is needed to start the query engine, and what languages it supports. Use FormField from `lib/form/` to determine the shape of the template input. You can then put the template under lib/query_executor/executor_template/\<the name of the engine\>.py
+1.  Configure what data is needed to start the query engine, and what languages it supports. Use FormField from `lib/form/` to determine the shape of the template input. You can then put the template under lib/query_executor/executor_template/\<the name of the engine>.py
 
 2.  Moving on to adding the client and cursor. The client would accept the input that is configured in the template above
     and use that to establish a new connection. The cursor class handles the actual execution of the query and the data

@@ -93,7 +93,7 @@ Restart the container with `docker restart querybook_web_1` and it should work.
 
 ## Adding A New Authentication Method
 
-To add a new authentication, add a new file under \<project_root\>/querybook/server/app/auth/ and name it \<auth_method\>\_auth.py. Fundamentally every auth file should export the following 3 things:
+To add a new authentication, add a new file under \<project_root>/querybook/server/app/auth/ and name it \<auth_method>\_auth.py. Fundamentally every auth file should export the following 3 things:
 
 -   login(request) (**required**): A function that logs in the user. One common implementation would be:
 
@@ -115,4 +115,4 @@ Moving on to the login manager itself, you need to use the `QuerybookLoginManage
 
 ## Plugins
 
-If the authentication method is too specific for your org or it has some post-authentication actions (such as adding users to a specific environment based on their permission), it is recommended to add the auth as part of the plugin. Please check the [Plugin Guide](plugins.mdx) to see how setup plugins. Once it is setup and running, simply put your auth code under auth_plugins/ (or any other folder, it is not an enforced restriction) and set AUTH_BACKEND='auth_plugin.\<auth_module_name\>' as the environment variable.
+If the authentication method is too specific for your org or it has some post-authentication actions (such as adding users to a specific environment based on their permission), it is recommended to add the auth as part of the plugin. Please check the [Plugin Guide](plugins.mdx) to see how setup plugins. Once it is setup and running, simply put your auth code under auth_plugins/ (or any other folder, it is not an enforced restriction) and set AUTH_BACKEND='auth_plugin.\<auth_module_name>' as the environment variable.
