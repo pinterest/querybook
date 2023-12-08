@@ -8,6 +8,7 @@ from const.datasources import (
     RESOURCE_NOT_FOUND_STATUS_CODE,
     ACCESS_RESTRICTED_STATUS_CODE,
 )
+from const.permissions import READ, WRITE
 
 from models import User
 from logic.generic_permission import user_has_permission
@@ -27,7 +28,7 @@ def user_can_write(doc_id, uid, session=None):
     if datadoc.owner_uid == uid:
         return True
 
-    return user_has_permission(doc_id, "write", DataDocEditor, uid, session=session)
+    return user_has_permission(doc_id, WRITE, DataDocEditor, uid, session=session)
 
 
 @with_session
@@ -41,7 +42,7 @@ def user_can_read(doc_id, uid, session=None):
     if datadoc.public or datadoc.owner_uid == uid:
         return True
 
-    return user_has_permission(doc_id, "read", DataDocEditor, uid, session=session)
+    return user_has_permission(doc_id, READ, DataDocEditor, uid, session=session)
 
 
 @with_session
@@ -93,6 +94,6 @@ def assert_is_not_group(id, session=None):
         api_assert(False, "USER_DNE", RESOURCE_NOT_FOUND_STATUS_CODE)
     api_assert(
         user.is_group is False,
-        "GROUP CANNOT BE ASSIGNED AS OWNER",
+        "Group cannot be assigned as owner",
         ACCESS_RESTRICTED_STATUS_CODE,
     )
