@@ -115,8 +115,8 @@ class OktaLoginManager(OAuthLoginManager):
 
     @with_session
     def login_user(self, username, email, fullname, session=None):
-        if not username:
-            raise AuthenticationError("Username must not be empty!")
+        if not username or not isinstance(username, str):
+            raise AuthenticationError("Please provide a valid username")
 
         user = get_user_by_name(username, session=session)
         if not user:
