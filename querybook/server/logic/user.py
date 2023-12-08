@@ -31,6 +31,9 @@ def get_users_by_ids(ids, session=None):
 
 @with_session
 def get_user_by_name(username, case_sensitive=True, session=None):
+    if not isinstance(username, str):
+        raise ValueError("Username should be a string")
+
     if case_sensitive:
         return User.get(username=username, session=session)
     users = (
