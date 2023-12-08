@@ -7,7 +7,7 @@ from const.datasources import (
     ACCESS_RESTRICTED_STATUS_CODE,
     RESOURCE_NOT_FOUND_STATUS_CODE,
 )
-from const.permissions import READ, WRITE
+from const.permissions import Permission
 
 from models import User
 from logic.generic_permission import user_has_permission
@@ -27,7 +27,9 @@ def user_can_edit(board_id, uid, session=None):
     if board.owner_uid == uid:
         return True
 
-    return user_has_permission(board_id, WRITE, BoardEditor, uid, session=session)
+    return user_has_permission(
+        board_id, Permission.WRITE, BoardEditor, uid, session=session
+    )
 
 
 @with_session
@@ -40,7 +42,9 @@ def user_can_read(board_id, uid, session=None):
     if board.public or board.owner_uid == uid:
         return True
 
-    return user_has_permission(board_id, READ, BoardEditor, uid, session=session)
+    return user_has_permission(
+        board_id, Permission.READ, BoardEditor, uid, session=session
+    )
 
 
 @with_session

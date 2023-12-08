@@ -8,7 +8,7 @@ from const.datasources import (
     RESOURCE_NOT_FOUND_STATUS_CODE,
     ACCESS_RESTRICTED_STATUS_CODE,
 )
-from const.permissions import READ, WRITE
+from const.permissions import Permission
 
 from models import User
 from logic.generic_permission import user_has_permission
@@ -28,7 +28,9 @@ def user_can_write(doc_id, uid, session=None):
     if datadoc.owner_uid == uid:
         return True
 
-    return user_has_permission(doc_id, WRITE, DataDocEditor, uid, session=session)
+    return user_has_permission(
+        doc_id, Permission.WRITE, DataDocEditor, uid, session=session
+    )
 
 
 @with_session
@@ -42,7 +44,9 @@ def user_can_read(doc_id, uid, session=None):
     if datadoc.public or datadoc.owner_uid == uid:
         return True
 
-    return user_has_permission(doc_id, READ, DataDocEditor, uid, session=session)
+    return user_has_permission(
+        doc_id, Permission.READ, DataDocEditor, uid, session=session
+    )
 
 
 @with_session
