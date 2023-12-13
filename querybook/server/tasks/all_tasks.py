@@ -15,8 +15,6 @@ from lib.stats_logger import (
     TASK_FAILURES,
     TASK_SUCCESSES,
     TASK_RECEIVED,
-    ACTIVE_WORKERS,
-    ACTIVE_TASKS,
     stats_logger,
 )
 from lib.celery.celery_stats import start_stats_logger_monitor
@@ -95,5 +93,3 @@ def handle_task_received(sender, signal, *args, **kwargs):
 def start_celery_stats_logging(sender=None, conf=None, **kwargs):
     LOG.info("Starting Celery Beat")
     start_stats_logger_monitor(celery)
-    stats_logger.gauge(ACTIVE_WORKERS, 0)
-    stats_logger.gauge(ACTIVE_TASKS, 0)

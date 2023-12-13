@@ -17,7 +17,7 @@ def send_stats_logger_metrics(celery):
                 if len(active[worker]) > 0:
                     active_tasks += 1
 
-        stats_logger.gauge(ACTIVE_WORKERS, len(stats))
+        stats_logger.gauge(ACTIVE_WORKERS, len(active_workers))
         stats_logger.gauge(ACTIVE_TASKS, active_tasks)
         time.sleep(5)
 

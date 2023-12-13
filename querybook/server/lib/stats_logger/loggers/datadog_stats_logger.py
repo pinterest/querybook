@@ -65,4 +65,4 @@ class DatadogStatsLogger(BaseStatsLogger):
         )
 
     def gauge(self, key: str, value: float, tags: dict[str, str] = None) -> None:
-        statsd.set(self.metric_prefix_helper(key), value, tags=self.tag_helper(tags))
+        statsd.gauge(self.metric_prefix_helper(key), value, tags=self.tag_helper(tags))
