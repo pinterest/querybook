@@ -7,15 +7,13 @@ def send_stats_logger_metrics(celery):
     while True:
         i = celery.control.inspect()
 
-        stats = i.stats() or {}
         active = i.active() or {}
 
-        active_workers = list(stats.keys())
+        active_workers = list(active.keys())
         active_tasks = 0
         for worker in active_workers:
             if worker in active:
-                if len(active[worker]) > 0:
-                    active_tasks += 1
+                active_tasks += len(active[worker])
 
         stats_logger.gauge(ACTIVE_WORKERS, len(active_workers))
         stats_logger.gauge(ACTIVE_TASKS, active_tasks)
