@@ -267,7 +267,7 @@ def get_columns_from_table(table_id):
 def get_detailed_columns_from_table(table_id):
     with DBSession() as session:
         verify_data_table_permission(table_id, session=session)
-        return logic.get_detailed_columns_by_table_id(table_id, session=session)
+        return logic.get_detailed_columns_dict_by_table_id(table_id, session=session)
 
 
 @register("/table/<int:table_id>/raw_samples_query/", methods=["GET"])

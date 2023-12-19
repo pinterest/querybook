@@ -21,7 +21,7 @@ export interface IDataTableViewColumnProps {
     onEditColumnDescriptionRedirect?: Nullable<() => Promise<void>>;
 }
 
-type ColumnOrderBy = 'alphabetical' | 'usage';
+type ColumnOrderBy = 'Default' | 'Aa' | 'Usage';
 
 const COLUMN_STATS_USAGE_KEY = 'usage';
 
@@ -35,7 +35,7 @@ export const DataTableViewColumn: React.FunctionComponent<
 }) => {
     const [filterString, setFilterString] = React.useState('');
     const [orderColumnsBy, setOrderColumnsBy] =
-        React.useState<ColumnOrderBy>('usage');
+        React.useState<ColumnOrderBy>('Aa');
     const [orderColumnsByAsc, setOrderColumnsByAsc] = React.useState(false);
     const { data: tableColumns } = useResource(
         React.useCallback(
@@ -55,6 +55,12 @@ export const DataTableViewColumn: React.FunctionComponent<
             }, {}),
         [tableColumns]
     );
+    const canSortByUsage = React.useMemo(
+        () =>
+            !!usageByColumnId &&
+            Object.values(usageByColumnId).some((usage) => usage !== 0),
+        [usageByColumnId]
+    );
     const filteredColumns = React.useMemo(() => {
         if (!tableColumns) {
             return [];
@@ -67,13 +73,13 @@ export const DataTableViewColumn: React.FunctionComponent<
         if (numberOfRows != null) {
             filteredCols.splice(numberOfRows);
         }
-        if (orderColumnsBy === 'alphabetical') {
+        if (orderColumnsBy === 'Aa') {
             filteredCols.sort(
                 (a, b) =>
                     (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1) *
                     (orderColumnsByAsc ? 1 : -1)
             );
-        } else {
+        } else if (orderColumnsBy === 'Usage') {
             filteredCols.sort(
                 (a, b) =>
                     (usageByColumnId[a.id] > usageByColumnId[b.id] ? 1 : -1) *
@@ -83,12 +89,26 @@ export const DataTableViewColumn: React.FunctionComponent<
         return filteredCols;
     }, [
         tableColumns,
-        filterString,
         numberOfRows,
         orderColumnsBy,
+        filterString,
         orderColumnsByAsc,
         usageByColumnId,
     ]);
+
+    const onOrderByFieldToggle = React.useCallback(() => {
+        setOrderColumnsBy((v) => {
+            if (v === 'Aa') {
+                v = canSortByUsage ? 'Usage' : 'Default';
+            } else if (v === 'Usage') {
+                v = 'Default';
+            } else {
+                // v = 'Default'
+                v = 'Aa';
+            }
+            return v;
+        });
+    }, [canSortByUsage]);
 
     if (!table || !tableColumns) {
         return <Loading />;
@@ -97,16 +117,11 @@ export const DataTableViewColumn: React.FunctionComponent<
     const sortButton = (
         <OrderByButton
             asc={orderColumnsByAsc}
+            hideAscToggle={orderColumnsBy === 'Default'}
             onAscToggle={() => setOrderColumnsByAsc((v) => !v)}
             orderByField="name"
-            orderByFieldSymbol={
-                orderColumnsBy === 'alphabetical' ? 'Aa' : 'Usage'
-            }
-            onOrderByFieldToggle={() =>
-                setOrderColumnsBy((v) =>
-                    v === 'alphabetical' ? 'usage' : 'alphabetical'
-                )
-            }
+            orderByFieldSymbol={orderColumnsBy}
+            onOrderByFieldToggle={onOrderByFieldToggle}
         />
     );
 

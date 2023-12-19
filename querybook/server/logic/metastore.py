@@ -521,7 +521,7 @@ def get_detailed_column_dict(column: DataTableColumn, with_table=False, session=
 
 
 @with_session
-def get_detailed_columns_by_table_id(table_id, session=None):
+def get_detailed_columns_dict_by_table_id(table_id, session=None):
     data_table_columns = (
         session.query(DataTableColumn)
         .filter(DataTableColumn.table_id == table_id)

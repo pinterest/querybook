@@ -17,7 +17,7 @@ export const DataTableColumnStats: React.FunctionComponent<IProps> = ({
             ? stat.value.join(', ')
             : stat.value;
         return (
-            <TagGroup key={i}>
+            <TagGroup key={stat.key}>
                 <Tag>{stat.key}</Tag>
                 <Tag highlighted>{formattedValue}</Tag>
             </TagGroup>
