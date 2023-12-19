@@ -281,7 +281,6 @@ export const DataTableView: React.FC<IDataTableViewProps> = ({ tableId }) => {
     const makeColumnsDOM = (numberOfRows = null) => (
         <DataTableViewColumn
             table={table}
-            tableColumns={tableColumns}
             numberOfRows={numberOfRows}
             updateDataColumnDescription={updateDataColumnDescription}
             onEditColumnDescriptionRedirect={getOnEditMetadata(

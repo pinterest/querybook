@@ -1,18 +1,18 @@
 import { ContentState } from 'draft-js';
 import React from 'react';
 
-import { IDataColumn, IDataTable } from 'const/metastore';
+import { IDataTable } from 'const/metastore';
+import { useResource } from 'hooks/useResource';
 import { Nullable } from 'lib/typescript';
+import { TableResource } from 'resource/table';
 import { Loading } from 'ui/Loading/Loading';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { OrderByButton } from 'ui/OrderByButton/OrderByButton';
-
 import { DataTableColumnCard } from './DataTableColumnCard';
 import './DataTableViewColumn.scss';
 
 export interface IDataTableViewColumnProps {
     table: IDataTable;
-    tableColumns: IDataColumn[];
     numberOfRows: number;
     updateDataColumnDescription: (
         columnId: number,
@@ -21,20 +21,44 @@ export interface IDataTableViewColumnProps {
     onEditColumnDescriptionRedirect?: Nullable<() => Promise<void>>;
 }
 
+type ColumnOrderBy = 'alphabetical' | 'usage';
+
+const COLUMN_STATS_USAGE_KEY = 'usage';
+
 export const DataTableViewColumn: React.FunctionComponent<
     IDataTableViewColumnProps
 > = ({
     updateDataColumnDescription,
     table = null,
-    tableColumns = [],
     numberOfRows = null,
     onEditColumnDescriptionRedirect,
 }) => {
     const [filterString, setFilterString] = React.useState('');
-    const [orderColumnsBy, setOrdeColumnsBy] = React.useState(true);
-    const [orderBoardBy, setOrderBoardBy] = React.useState(false);
+    const [orderColumnsBy, setOrderColumnsBy] =
+        React.useState<ColumnOrderBy>('usage');
+    const [orderColumnsByAsc, setOrderColumnsByAsc] = React.useState(false);
+    const { data: tableColumns } = useResource(
+        React.useCallback(
+            () => TableResource.getColumnDetails(table.id),
+            [table.id]
+        )
+    );
 
+    const usageByColumnId = React.useMemo(
+        () =>
+            tableColumns?.reduce((acc, column) => {
+                acc[column.id] =
+                    column.stats?.find(
+                        (stat) => stat.key === COLUMN_STATS_USAGE_KEY
+                    )?.value ?? 0;
+                return acc;
+            }, {}),
+        [tableColumns]
+    );
     const filteredColumns = React.useMemo(() => {
+        if (!tableColumns) {
+            return [];
+        }
         const filteredCols = tableColumns.filter((column) =>
             !!filterString
                 ? column.name.toLowerCase().includes(filterString.toLowerCase())
@@ -43,11 +67,17 @@ export const DataTableViewColumn: React.FunctionComponent<
         if (numberOfRows != null) {
             filteredCols.splice(numberOfRows);
         }
-        if (orderBoardBy) {
+        if (orderColumnsBy === 'alphabetical') {
             filteredCols.sort(
                 (a, b) =>
                     (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1) *
-                    (orderColumnsBy ? 1 : -1)
+                    (orderColumnsByAsc ? 1 : -1)
+            );
+        } else {
+            filteredCols.sort(
+                (a, b) =>
+                    (usageByColumnId[a.id] > usageByColumnId[b.id] ? 1 : -1) *
+                    (orderColumnsByAsc ? 1 : -1)
             );
         }
         return filteredCols;
@@ -56,7 +86,8 @@ export const DataTableViewColumn: React.FunctionComponent<
         filterString,
         numberOfRows,
         orderColumnsBy,
-        orderBoardBy,
+        orderColumnsByAsc,
+        usageByColumnId,
     ]);
 
     if (!table || !tableColumns) {
@@ -65,12 +96,17 @@ export const DataTableViewColumn: React.FunctionComponent<
 
     const sortButton = (
         <OrderByButton
-            asc={orderColumnsBy}
-            hideAscToggle={!orderBoardBy}
-            onAscToggle={() => setOrdeColumnsBy((v) => !v)}
+            asc={orderColumnsByAsc}
+            onAscToggle={() => setOrderColumnsByAsc((v) => !v)}
             orderByField="name"
-            orderByFieldSymbol={orderBoardBy ? 'Aa' : 'Default'}
-            onOrderByFieldToggle={() => setOrderBoardBy((v) => !v)}
+            orderByFieldSymbol={
+                orderColumnsBy === 'alphabetical' ? 'Aa' : 'Usage'
+            }
+            onOrderByFieldToggle={() =>
+                setOrderColumnsBy((v) =>
+                    v === 'alphabetical' ? 'usage' : 'alphabetical'
+                )
+            }
         />
     );
 
