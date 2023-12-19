@@ -502,10 +502,10 @@ def get_column_by_table_id(table_id, session=None):
 
 
 @with_session
-def get_detailed_column_dict(column: DataTableColumn, session=None):
+def get_detailed_column_dict(column: DataTableColumn, with_table=False, session=None):
     from logic import tag as tag_logic
 
-    column_dict = column.to_dict()
+    column_dict = column.to_dict(with_table)
     column_dict["stats"] = DataTableColumnStatistics.get_all(
         column_id=column.id, session=session
     )

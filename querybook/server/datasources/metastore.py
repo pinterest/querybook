@@ -381,7 +381,7 @@ def get_column_by_table(table_id, column_name, with_table=False):
 def get_column(column_id, with_table=False):
     column = logic.get_column_by_id(column_id)
     verify_data_table_permission(column.table_id)
-    return logic.get_detailed_column_dict(column)
+    return logic.get_detailed_column_dict(column, with_table=with_table)
 
 
 @register("/column/<int:column_id>/", methods=["PUT"])
