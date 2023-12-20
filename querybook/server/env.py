@@ -135,6 +135,11 @@ class QuerybookSettings(object):
     AI_ASSISTANT_PROVIDER = get_env_config("AI_ASSISTANT_PROVIDER")
     AI_ASSISTANT_CONFIG = get_env_config("AI_ASSISTANT_CONFIG") or {}
 
+    VECTOR_STORE_PROVIDER = get_env_config("VECTOR_STORE_PROVIDER")
+    VECTOR_STORE_CONFIG = get_env_config("VECTOR_STORE_CONFIG") or {}
+    EMBEDDINGS_PROVIDER = get_env_config("EMBEDDINGS_PROVIDER")
+    EMBEDDINGS_CONFIG = get_env_config("EMBEDDINGS_CONFIG") or {}
+
     # Datadog
     DD_AGENT_HOST = get_env_config("DD_AGENT_HOST", optional=True)
     DD_DOGSTATSD_PORT = int(get_env_config("DD_DOGSTATSD_PORT", optional=True) or 8125)
