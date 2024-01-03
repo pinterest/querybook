@@ -24,17 +24,24 @@ def run_all_db_clean_up_jobs(
     days_to_keep_event_logs=7,
 ):
     with DBSession() as session:
-        clean_up_task_run_record(days_to_keep=days_to_keep_task_record, session=session)
-        clean_up_query_execution(
-            days_to_keep_done=days_to_keep_query_exec_done,
-            days_to_keep_else=days_to_keep_query_exec_else,
-            session=session,
-        )
-        clean_up_impression(days_to_keep=days_to_keep_impression, session=session)
-        clean_up_archived_data_doc(
-            days_to_keep=days_to_keep_archived_data_doc, session=session
-        )
-        clean_up_event_logs(days_to_keep=days_to_keep_event_logs, session=session)
+        if days_to_keep_task_record != -1:
+            clean_up_task_run_record(
+                days_to_keep=days_to_keep_task_record, session=session
+            )
+        if days_to_keep_query_exec_done != -1 and days_to_keep_query_exec_else != -1:
+            clean_up_query_execution(
+                days_to_keep_done=days_to_keep_query_exec_done,
+                days_to_keep_else=days_to_keep_query_exec_else,
+                session=session,
+            )
+        if days_to_keep_impression != -1:
+            clean_up_impression(days_to_keep=days_to_keep_impression, session=session)
+        if days_to_keep_archived_data_doc != -1:
+            clean_up_archived_data_doc(
+                days_to_keep=days_to_keep_archived_data_doc, session=session
+            )
+        if days_to_keep_event_logs != -1:
+            clean_up_event_logs(days_to_keep=days_to_keep_event_logs, session=session)
 
 
 @with_session
@@ -90,7 +97,7 @@ def clean_up_impression(days_to_keep=30, session=None):
 def clean_up_archived_data_doc(days_to_keep=60, session=None):
     last_day = datetime.now() - timedelta(days_to_keep)
 
-    session.query(DataDoc).filter(archived=False).filter(
+    session.query(DataDoc).filter(DataDoc.archived).filter(
         DataDoc.updated_at < last_day
     ).delete(synchronize_session=False)
     session.commit()
