@@ -44,14 +44,18 @@ export function permissionToReadWrite(permission: Permission): {
     read: boolean;
     write: boolean;
 } {
-    if (permission === Permission.CAN_READ) {
+    if (
+        permission === Permission.CAN_READ ||
+        permission === Permission.INHERITED_READ
+    ) {
         return {
             read: true,
             write: false,
         };
     } else if (
         permission === Permission.CAN_WRITE ||
-        permission === Permission.OWNER
+        permission === Permission.OWNER ||
+        permission === Permission.INHERITED_WRITE
     ) {
         return {
             read: true,
