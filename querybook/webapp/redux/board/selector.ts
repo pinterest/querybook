@@ -173,7 +173,7 @@ export function getEditorInfo(
         editor ? editor.write : false,
         board.owner_uid === uid,
         board.public,
-        0 // Do not want to show [INHERITED] permissions for lists
+        editor ? editor.id : -1
     );
     return {
         editorId: editor?.id,
