@@ -136,6 +136,17 @@ export function getRecurrenceLocalTimeString(
         .format(format);
 }
 
+export function getRecurrenceUtcTimeString(
+    recurrence: IRecurrence,
+    format = 'HH:mm'
+): string {
+    return moment
+        .utc()
+        .hour(recurrence.hour)
+        .minute(recurrence.minute)
+        .format(format);
+}
+
 export function validateCronForRecurrrence(cron: string) {
     if (cron.includes('/')) {
         return false;
