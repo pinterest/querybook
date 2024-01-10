@@ -17,6 +17,7 @@ import {
     cronToRecurrence,
     IRecurrence,
     recurrenceOnYup,
+    recurrenceStepYup,
     recurrenceToCron,
     recurrenceTypes,
 } from 'lib/utils/cron';
@@ -63,6 +64,7 @@ const scheduleFormSchema = Yup.object().shape({
         minute: Yup.number().min(0).max(59),
         recurrence: Yup.string().oneOf(recurrenceTypes),
         on: recurrenceOnYup,
+        step: recurrenceStepYup,
     }),
     enabled: Yup.boolean().notRequired(),
     kwargs: Yup.object().shape({

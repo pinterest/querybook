@@ -42,32 +42,69 @@ export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
     const isHourly = recurrence.recurrence === 'hourly';
 
     const hourSecondField = (
-        <FormField
-            label={isHourly ? 'Minute' : 'Hour/Minute (UTC)'}
-            error={recurrenceError?.hour}
-        >
+        <FormField label={'Hour/Minute (UTC)'} error={recurrenceError?.hour}>
             <div className="flex-row">
+                {recurrence.recurrence === 'hourly'
+                    ? [
+                          <div className="editor-text mr12">
+                              {'Every day, every'}
+                          </div>,
+                          <TimePicker
+                              allowEmpty={false}
+                              value={moment().hour(recurrence.step.hour)}
+                              showHour={true}
+                              showMinute={false}
+                              showSecond={false}
+                              disabledHours={() => [0]}
+                              hideDisabledOptions
+                              format={'H'}
+                              onChange={(value) => {
+                                  const newRecurrence = {
+                                      ...recurrence,
+                                      step: { hour: value.hour() },
+                                  };
+                                  setRecurrence(newRecurrence);
+                              }}
+                          />,
+                          <div className="editor-text ml12 mr12">
+                              {'hours at minute'}
+                          </div>,
+                      ]
+                    : ''}
+
                 <TimePicker
                     allowEmpty={false}
-                    value={moment()
-                        .hour(recurrence.hour)
-                        .minute(recurrence.minute)}
+                    value={
+                        recurrence.recurrence === 'hourly'
+                            ? moment().minute(recurrence.minute)
+                            : moment()
+                                  .hour(recurrence.hour)
+                                  .minute(recurrence.minute)
+                    }
                     minuteStep={15}
                     showHour={!(recurrence.recurrence === 'hourly')}
                     showSecond={false}
                     format={isHourly ? 'mm' : 'H:mm'}
                     onChange={(value) => {
-                        const newRecurrence = {
-                            ...recurrence,
-                            hour: value.hour(),
-                            minute: value.minute(),
-                        };
-                        setRecurrence(newRecurrence);
+                        if (recurrence.recurrence === 'hourly') {
+                            const newRecurrence = {
+                                ...recurrence,
+                                minute: value.minute(),
+                            };
+                            setRecurrence(newRecurrence);
+                        } else {
+                            const newRecurrence = {
+                                ...recurrence,
+                                hour: value.hour(),
+                                minute: value.minute(),
+                            };
+                            setRecurrence(newRecurrence);
+                        }
                     }}
                 />
                 <div className="editor-text ml12">
                     {recurrence.recurrence === 'hourly'
-                        ? `Every hour at minute ${recurrence.minute} `
+                        ? ``
                         : `Local Time: ${localTime}`}
                 </div>
             </div>
@@ -88,6 +125,9 @@ export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
                             };
                             if (field.value !== key) {
                                 newRecurrence.on = {};
+                            }
+                            if (key === 'hourly' && !newRecurrence.step.hour) {
+                                newRecurrence.step.hour = Number(1);
                             }
                             setRecurrence(newRecurrence);
                         }}

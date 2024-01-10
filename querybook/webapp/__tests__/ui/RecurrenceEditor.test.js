@@ -9,6 +9,7 @@ const recurrence = {
 
     recurrence: 'daily',
     on: [0],
+    step: 1,
 };
 
 it('renders without crashing', () => {
