@@ -196,6 +196,10 @@ class BaseAIAssistant(ABC):
         socket=None,
         session=None,
     ):
+        streaming = self._get_llm_config(AICommandType.TEXT_TO_SQL.value).get(
+            "streaming", True
+        )
+
         query_engine = admin_logic.get_query_engine_by_id(
             query_engine_id, session=session
         )
@@ -232,6 +236,7 @@ class BaseAIAssistant(ABC):
             table_schemas=table_schemas,
             original_query=original_query,
         )
+
         llm = self._get_llm(
             ai_command=AICommandType.TEXT_TO_SQL.value,
             prompt_length=self._get_token_count(
@@ -239,7 +244,14 @@ class BaseAIAssistant(ABC):
             ),
             callback_handler=StreamingWebsocketCallbackHandler(socket),
         )
-        return llm.predict(text=prompt)
+        response = llm.predict(text=prompt)
+
+        if not streaming:
+            socket.send_delta_data(response)
+            socket.send_delta_end()
+            socket.close()
+
+        return response
 
     @catch_error
     @with_ai_socket(command_type=AICommandType.SQL_TITLE)
@@ -251,13 +263,24 @@ class BaseAIAssistant(ABC):
             stream (bool, optional): Whether to stream the result. Defaults to True.
             callback_handler (CallbackHandler, optional): Callback handler to handle the straming result. Required if stream is True.
         """
+        streaming = self._get_llm_config(AICommandType.SQL_TITLE.value).get(
+            "streaming", True
+        )
+
         prompt = self._get_sql_title_prompt(query=query)
         llm = self._get_llm(
             ai_command=AICommandType.SQL_TITLE.value,
             prompt_length=self._get_token_count(AICommandType.SQL_TITLE.value, prompt),
             callback_handler=StreamingWebsocketCallbackHandler(socket),
         )
-        return llm.predict(text=prompt)
+        response = llm.predict(text=prompt)
+
+        if not streaming:
+            socket.send_delta_data(response)
+            socket.send_delta_end()
+            socket.close()
+
+        return response
 
     @catch_error
     @with_session
@@ -273,6 +296,9 @@ class BaseAIAssistant(ABC):
         Args:
             query_execution_id (int): The failed query execution id
         """
+        streaming = self._get_llm_config(AICommandType.SQL_FIX.value).get(
+            "streaming", True
+        )
         query_execution = qe_logic.get_query_execution_by_id(
             query_execution_id, session=session
         )
@@ -303,7 +329,14 @@ class BaseAIAssistant(ABC):
             prompt_length=self._get_token_count(AICommandType.SQL_FIX.value, prompt),
             callback_handler=StreamingWebsocketCallbackHandler(socket),
         )
-        return llm.predict(text=prompt)
+        response = llm.predict(text=prompt)
+
+        if not streaming:
+            socket.send_delta_data(response)
+            socket.send_delta_end()
+            socket.close()
+
+        return response
 
     @catch_error
     @with_session

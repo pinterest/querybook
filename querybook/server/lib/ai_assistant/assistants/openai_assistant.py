@@ -53,12 +53,14 @@ class OpenAIAssistant(BaseAIAssistant):
 
     def _get_llm(self, ai_command: str, prompt_length: int, callback_handler=None):
         config = self._get_llm_config(ai_command)
-        if not callback_handler:
+
+        if not callback_handler or config.get("streaming") is False:
             # non-streaming
-            return ChatOpenAI(**config)
+            return ChatOpenAI(
+                **{**config, "streaming": False},
+            )
 
         return ChatOpenAI(
-            **config,
-            streaming=True,
-            callback_manager=CallbackManager([callback_handler])
+            **{**config, "streaming": True},
+            callback_manager=CallbackManager([callback_handler]),
         )

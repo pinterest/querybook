@@ -92,6 +92,7 @@ AI_ASSISTANT_CONFIG:
         model_args:
             model_name: ~
             temperature: ~
+            streaming: ~
         reserved_tokens: ~
 
 EMBEDDINGS_PROVIDER: ~
