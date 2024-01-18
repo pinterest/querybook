@@ -125,7 +125,6 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
     const isLoading = !!searchRequest;
 
     const triggerSurvey = useSurveyTrigger();
-
     useEffect(() => {
         if (
             !isLoading &&
