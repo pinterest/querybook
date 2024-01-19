@@ -7,6 +7,20 @@ LOG = get_logger(__file__)
 
 
 class DatadogStatsLogger(BaseStatsLogger):
+    """
+    Stats Logger implemention for Datadog using DogStatsD.
+
+    Required environment variables:
+     - DD_API_KEY: The API key for Datadog.
+     - DD_AGENT_HOST: The host of the Datadog agent.
+     - DD_DOGSTATSD_PORT: The port of the Datadog agent, defaults to 8125.
+     - DD_SERVICE: The service name.
+
+    Optional environment variables:
+     - DD_PREFIX: The prefix for all metrics.
+     - DD_TAGS: Additional tags to be added to all metrics.
+    """
+
     metric_prefix = ""
     dd_tags = []
 
