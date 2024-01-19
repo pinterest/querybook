@@ -1,5 +1,6 @@
 from lib.utils.import_helper import import_module_with_default
 
+from .loggers.datadog_stats_logger import DatadogStatsLogger
 from .loggers.null_stats_logger import NullStatsLogger
 from .loggers.console_stats_logger import ConsoleStatsLogger
 
@@ -12,6 +13,7 @@ ALL_PLUGIN_STATS_LOGGERS = import_module_with_default(
 ALL_STATS_LOGGERS = [
     NullStatsLogger(),
     ConsoleStatsLogger(),
+    DatadogStatsLogger(),
 ] + ALL_PLUGIN_STATS_LOGGERS
 
 

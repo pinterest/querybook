@@ -1,5 +1,4 @@
 from lib.stats_logger.base_stats_logger import BaseStatsLogger
-from datadog import initialize, statsd
 from env import QuerybookSettings
 from lib.logger import get_logger
 
@@ -23,6 +22,7 @@ class DatadogStatsLogger(BaseStatsLogger):
 
     metric_prefix = ""
     dd_tags = []
+    _statsd = None
 
     def metric_prefix_helper(self, key):
         return self.metric_prefix + "." + key
@@ -33,6 +33,15 @@ class DatadogStatsLogger(BaseStatsLogger):
         return []
 
     def initialize(self):
+        try:
+            from datadog import initialize, statsd
+
+            self._statsd = statsd
+        except ImportError:
+            raise ImportError(
+                "Datadog is not installed. Please install `requirements/datadog/datadog.txt` to use the Datadog stats logger."
+            )
+
         if QuerybookSettings.DD_AGENT_HOST and QuerybookSettings.DD_DOGSTATSD_PORT:
             LOG.info("Initializing Datadog")
 
@@ -60,23 +69,25 @@ class DatadogStatsLogger(BaseStatsLogger):
         return "datadog"
 
     def incr(self, key: str, tags: dict[str, str] = None) -> None:
-        statsd.increment(
+        self._statsd.increment(
             self.metric_prefix_helper(key),
             1,
             tags=self.tag_helper(tags),
         )
 
     def decr(self, key: str, tags: dict[str, str] = None) -> None:
-        statsd.decrement(
+        self._statsd.decrement(
             self.metric_prefix_helper(key),
             1,
             tags=self.tag_helper(tags),
         )
 
     def timing(self, key: str, value: float, tags: dict[str, str] = None) -> None:
-        statsd.histogram(
+        self._statsd.histogram(
             self.metric_prefix_helper(key), value, tags=self.tag_helper(tags)
         )
 
     def gauge(self, key: str, value: float, tags: dict[str, str] = None) -> None:
-        statsd.gauge(self.metric_prefix_helper(key), value, tags=self.tag_helper(tags))
+        self._statsd.gauge(
+            self.metric_prefix_helper(key), value, tags=self.tag_helper(tags)
+        )
