@@ -102,6 +102,7 @@ interface IState {
     query: string;
     meta: IDataQueryCellMeta;
 
+    modified: boolean;
     focused: boolean;
     selectedRange: ISelectedRange;
     queryCollapsedOverride: boolean;
@@ -126,6 +127,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         this.state = {
             query: props.query,
             meta: props.meta,
+            modified: false,
             focused: false,
             selectedRange: null,
             queryCollapsedOverride: null,
@@ -347,6 +349,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         this.setState(
             {
                 query,
+                modified: true,
             },
             () => {
                 this.onChangeDebounced({ context: query });
@@ -429,10 +432,12 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                     )
                 ).id;
 
-                triggerSurvey(SurveySurfaceType.QUERY_AUTHORING, {
-                    query_execution_id: queryId,
-                    cell_id: this.props.cellId,
-                });
+                if (this.state.modified) {
+                    triggerSurvey(SurveySurfaceType.QUERY_AUTHORING, {
+                        query_execution_id: queryId,
+                        cell_id: this.props.cellId,
+                    });
+                }
 
                 return queryId;
             }
