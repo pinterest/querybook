@@ -28,6 +28,3 @@
 
 # AI Assistant
 -r ai/langchain.txt
-
-# Datadog
--r datadog/datadog.txt
