@@ -18,7 +18,7 @@ from app.flask_app import flask_app
 from env import QuerybookSettings
 from logic.user import get_user_by_id, update_user_properties
 from lib.export.base_exporter import BaseExporter
-from lib.form import StructFormField, FormField
+from lib.form import StructFormField, FormField, FormFieldType
 from logic.query_execution import (
     get_statement_execution_by_id,
     update_statement_execution,
@@ -118,6 +118,13 @@ class GoogleSheetsExporter(BaseExporter):
                     regex="^[A-Z]{1,3}[1-9][0-9]*$",
                 ),
             ),
+            (
+                "clear_sheet",
+                FormField(
+                    field_type=FormFieldType.Boolean,
+                    helper="If checked, the sheet will be cleared before writing the result",
+                ),
+            ),
         )
 
     @with_session
@@ -159,6 +166,7 @@ class GoogleSheetsExporter(BaseExporter):
         sheet_url=None,
         worksheet_title="Sheet1",
         start_cell="A1",
+        clear_sheet=False,
     ):
         sheet = None
         try:
@@ -174,6 +182,7 @@ class GoogleSheetsExporter(BaseExporter):
                     statement_execution_id,
                     worksheet_title,
                     start_cell,
+                    clear_sheet,
                 )
             sheet_url = f"https://docs.google.com/spreadsheets/d/{sheet.id}"
             self._save_sheet_to_statement_meta(sheet_url, statement_execution_id)
@@ -213,6 +222,7 @@ class GoogleSheetsExporter(BaseExporter):
         statement_execution_id: int,
         worksheet_title: str,
         start_cell: str,
+        clear_sheet: bool,
     ):
         with DBSession() as session:
             max_rows = self._get_max_rows(
@@ -236,6 +246,8 @@ class GoogleSheetsExporter(BaseExporter):
             with gspread_worksheet(
                 sheet, worksheet_title, end_cell_coord[0], end_cell_coord[1]
             ) as worksheet:
+                if clear_sheet:
+                    worksheet.clear()
                 csv = self._get_statement_execution_result_iter(
                     statement_execution_id, number_of_lines=max_rows, session=session
                 )
