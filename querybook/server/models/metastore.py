@@ -1,18 +1,17 @@
 import sqlalchemy as sql
-from sqlalchemy.orm import backref, relationship
-
 from app import db
 from const.db import (
-    utf8mb4_name_length,
+    description_length,
+    mediumtext_length,
     name_length,
     now,
-    description_length,
-    url_length,
-    mediumtext_length,
     type_length,
+    url_length,
+    utf8mb4_name_length,
 )
 from const.metastore import DataTableWarningSeverity
 from lib.sqlalchemy import CRUDMixin, TruncateString
+from sqlalchemy.orm import backref, relationship
 
 Base = db.Base
 
@@ -300,6 +299,11 @@ class DataTableColumn(TruncateString("name", "type", "comment"), Base):
 
     data_elements = relationship(
         "DataElement", secondary="data_element_association", uselist=True, viewonly=True
+    )
+    statistics = relationship(
+        "DataTableColumnStatistics",
+        uselist=True,
+        viewonly=True,
     )
 
     def to_dict(self, include_table=False):
