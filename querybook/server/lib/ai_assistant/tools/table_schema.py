@@ -153,7 +153,7 @@ def get_slimmed_table_schemas(table_schemas: list[dict]) -> list[dict]:
         name
         type
     """
-    column_keys_to_keep = ["name", "type", "stats"]
+    column_keys_to_keep = ["name", "type"]
 
     return [
         {
