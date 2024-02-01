@@ -324,7 +324,9 @@ class DataTableColumn(TruncateString("name", "type", "comment"), Base):
 class DataTableOwnership(Base):
     __tablename__ = "data_table_ownership"
     __table_args__ = (
-        sql.UniqueConstraint("data_table_id", "uid", name="unique_table_ownership"),
+        sql.UniqueConstraint(
+            "data_table_id", "uid", "type", name="unique_table_ownership"
+        ),
     )
 
     id = sql.Column(sql.Integer, primary_key=True)
