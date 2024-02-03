@@ -1,7 +1,6 @@
 import openai
 import tiktoken
-from langchain.callbacks.manager import CallbackManager
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 
 from lib.ai_assistant.base_ai_assistant import BaseAIAssistant
 from lib.logger import get_logger
@@ -46,19 +45,12 @@ class OpenAIAssistant(BaseAIAssistant):
         return len(encoding.encode(prompt))
 
     def _get_error_msg(self, error) -> str:
-        if isinstance(error, openai.error.AuthenticationError):
+        if isinstance(error, openai.AuthenticationError):
             return "Invalid OpenAI API key"
 
         return super()._get_error_msg(error)
 
-    def _get_llm(self, ai_command: str, prompt_length: int, callback_handler=None):
+    def _get_llm(self, ai_command: str, prompt_length: int):
         config = self._get_llm_config(ai_command)
-        if not callback_handler:
-            # non-streaming
-            return ChatOpenAI(**config)
 
-        return ChatOpenAI(
-            **config,
-            streaming=True,
-            callback_manager=CallbackManager([callback_handler])
-        )
+        return ChatOpenAI(**config)

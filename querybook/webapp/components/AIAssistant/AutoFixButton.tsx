@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { QueryComparison } from 'components/TranspileQueryModal/QueryComparison';
 import { AICommandType } from 'const/aiAssistant';
 import { ComponentType, ElementType } from 'const/analytics';
 import { useAISocket } from 'hooks/useAISocket';
 import { trackClick } from 'lib/analytics';
-import { trimSQLQuery } from 'lib/stream';
 import { Button } from 'ui/Button/Button';
 import { Message } from 'ui/Message/Message';
 import { Modal } from 'ui/Modal/Modal';
@@ -21,26 +20,31 @@ interface IProps {
 
 const useSQLFix = () => {
     const [data, setData] = useState<{ [key: string]: string }>({});
+    const [prevFixedQuery, setPrevFixedQuery] = useState('');
 
     const socket = useAISocket(AICommandType.SQL_FIX, ({ data }) => {
-        setData(data);
+        setData(data as { [key: string]: string });
     });
 
     const {
         data: unformattedData,
         explanation,
         fix_suggestion: suggestion,
-        fixed_query: rawFixedQuery,
+        fixed_query: fixedQuery,
     } = data;
 
-    const fixedQuery = trimSQLQuery(rawFixedQuery);
+    useEffect(() => {
+        if (fixedQuery) {
+            setPrevFixedQuery(fixedQuery);
+        }
+    }, [fixedQuery]);
 
     return {
         socket,
         fixed: Object.keys(data).length > 0, // If has data, then it has been fixed
         explanation: explanation || unformattedData,
         suggestion,
-        fixedQuery,
+        fixedQuery: fixedQuery || prevFixedQuery,
     };
 };
 
