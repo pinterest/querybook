@@ -102,10 +102,6 @@ export const QueryGenerationModal = ({
     const [streamData, setStreamData] = useState<{ [key: string]: string }>({});
     const [foundTables, setFoundTables] = useState<string[]>([]);
 
-    const debounceSetStreamData = debounce((data) => {
-        setStreamData(data);
-    }, 200); // Delay updates by 200ms
-
     const onData = useCallback(({ type, data }) => {
         if (type === 'tables') {
             setTables([...data.slice(0, 1)]); // select the first table by default
