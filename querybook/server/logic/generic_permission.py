@@ -1,7 +1,7 @@
 from typing import List, Optional, Tuple, Union
 from app.db import with_session
 from models import UserGroupMember, User, DataDocEditor, BoardEditor
-from sqlalchemy import func, select
+from sqlalchemy import func, select, Integer
 from sqlalchemy.orm import Session
 from const.permissions import Permission
 
@@ -62,10 +62,10 @@ def get_all_groups_and_group_members_with_access(
             func.max(editors.c.id),
             editors.c.uid,
             func.max(
-                editors.c.read.Integer
+                editors.c.read.cast(Integer)
             ),  # Get the most permissive read permissions
             func.max(
-                editors.c.write.Integer
+                editors.c.write.cast(Integer)
             ),  # Get the most permissive write permissions
         ]
     ).group_by(editors.c.uid)
