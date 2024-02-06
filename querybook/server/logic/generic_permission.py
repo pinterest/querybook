@@ -29,10 +29,13 @@ def get_all_groups_and_group_members_with_access(
         appear in the form "(editor_id, uid, read, write)". Editors with inherited permissions have their editor_ID set
         to None.
     """
+
+    # Begin constructing the top query, starting by selecting editors of the required type (doc or board)
     topq = session.query(
         editor_type.id, editor_type.uid, editor_type.read, editor_type.write
     ).select_from(editor_type)
 
+    # Filter by the doc or board ID to get the editors for the specific doc or board
     if editor_type == DataDocEditor:
         topq = topq.filter(editor_type.data_doc_id == doc_or_board_id)
     elif editor_type == BoardEditor:
@@ -40,6 +43,7 @@ def get_all_groups_and_group_members_with_access(
 
     topq = topq.cte("cte", recursive=True)
 
+    # This bottom query determines if the user is a group or a user, and then selects the group members
     bottomq = (
         select([None, UserGroupMember.uid, topq.c.read, topq.c.write])
         .select_from(topq)
@@ -48,6 +52,7 @@ def get_all_groups_and_group_members_with_access(
         .filter(User.is_group)
     )
 
+    # This is then applied recursively to the top query
     recursive_q = topq.union(bottomq)
 
     editors = recursive_q.alias()
@@ -56,8 +61,12 @@ def get_all_groups_and_group_members_with_access(
         [
             func.max(editors.c.id),
             editors.c.uid,
-            func.max(editors.c.read.Integer),
-            func.max(editors.c.write.Integer),
+            func.max(
+                editors.c.read.Integer
+            ),  # Get the most permissive read permissions
+            func.max(
+                editors.c.write.Integer
+            ),  # Get the most permissive write permissions
         ]
     ).group_by(editors.c.uid)
 
