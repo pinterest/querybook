@@ -19,6 +19,10 @@ from env import QuerybookSettings
 from logic.user import get_user_by_id, update_user_properties
 from lib.export.base_exporter import BaseExporter
 from lib.form import StructFormField, FormField
+from logic.query_execution import (
+    get_statement_execution_by_id,
+    update_statement_execution,
+)
 
 
 class UserTokenNotFound(Exception):
@@ -141,6 +145,13 @@ class GoogleSheetsExporter(BaseExporter):
         )
         return max_result_rows - row_offset
 
+    def _save_sheet_to_statement_meta(self, sheet_url: str, statement_id: int):
+        statement_execution = get_statement_execution_by_id(statement_id)
+        meta_info = (
+            statement_execution.meta_info or ""
+        ) + f"Google sheet url: {sheet_url}\n"
+        update_statement_execution(statement_id, meta_info=meta_info)
+
     def export(
         self,
         statement_execution_id,
@@ -154,7 +165,9 @@ class GoogleSheetsExporter(BaseExporter):
             credentials = self.get_credentials(uid)
             gc = gspread.authorize(credentials)
             with gspread_sheet(
-                gc, sheet_url, f"Querybook Result {statement_execution_id}"
+                gc,
+                sheet_url,
+                f"Querybook Result {statement_execution_id}, {self._get_query_execution_url_by_statement_id(statement_execution_id, uid)}",
             ) as sheet:
                 self.write_csv_to_sheet(
                     sheet,
@@ -162,8 +175,9 @@ class GoogleSheetsExporter(BaseExporter):
                     worksheet_title,
                     start_cell,
                 )
-
-            return f"https://docs.google.com/spreadsheets/d/{sheet.id}"
+            sheet_url = f"https://docs.google.com/spreadsheets/d/{sheet.id}"
+            self._save_sheet_to_statement_meta(sheet_url, statement_execution_id)
+            return sheet_url
         except RefreshError:
             # Invalidate user access token
             update_user_properties(uid, gspread_token=None)

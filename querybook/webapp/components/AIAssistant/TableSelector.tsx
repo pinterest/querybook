@@ -7,7 +7,8 @@ import {
 } from 'lib/utils/react-select';
 import { SearchTableResource } from 'resource/search';
 import { overlayRoot } from 'ui/Overlay/Overlay';
-import { HoverIconTag } from 'ui/Tag/HoverIconTag';
+
+import { TableTag } from './TableTag';
 
 interface ITableSelectProps {
     metastoreId: number;
@@ -86,25 +87,20 @@ export const TableSelector: React.FunctionComponent<ITableSelectProps> = ({
                 {...selectProps}
             />
             {tableNames.length ? (
-                <div className="flex-row mt8 gap8">
+                <div className="flex-row flex-wrap mt8 gap8">
                     {tableNames.map((tableName) => (
-                        <div key={tableName}>
-                            <HoverIconTag
-                                name={tableName}
-                                iconOnHover="X"
-                                onIconHoverClick={() => {
-                                    const newTableNames = tableNames.filter(
-                                        (name) => name !== tableName
-                                    );
-                                    onTableNamesChange(newTableNames);
-                                }}
-                                tooltip={tableName}
-                                tooltipPos="right"
-                                mini
-                                highlighted
-                                light
-                            />
-                        </div>
+                        <TableTag
+                            key={tableName}
+                            metastoreId={metastoreId}
+                            tableName={tableName}
+                            onIconClick={() => {
+                                const newTableNames = tableNames.filter(
+                                    (name) => name !== tableName
+                                );
+                                onTableNamesChange(newTableNames);
+                            }}
+                            highlighted
+                        />
                     ))}
                 </div>
             ) : null}

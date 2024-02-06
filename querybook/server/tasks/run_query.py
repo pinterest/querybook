@@ -17,7 +17,6 @@ from logic import query_execution as qe_logic
 from logic.elasticsearch import update_query_execution_by_id
 from tasks.log_query_per_table import log_query_per_table_task
 
-
 LOG = get_task_logger(__name__)
 
 
@@ -69,7 +68,9 @@ def run_query_task(
             # Executor exists means the query actually executed
             # This prevents cases when query_execution got executed twice
             if executor and query_execution_status == QueryExecutionStatus.DONE:
-                log_query_per_table_task.delay(query_execution_id)
+                log_query_per_table_task.delay(
+                    query_execution_id, execution_type=execution_type
+                )
 
     return (
         query_execution_status.value if executor is not None else None,

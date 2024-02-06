@@ -55,7 +55,7 @@ def update_board(id, commit=True, session=None, **fields):
     board = Board.update(
         id,
         fields=fields,
-        field_names=["name", "description", "public"],
+        field_names=["name", "description", "public", "owner_uid"],
         commit=commit,
         session=session,
     )

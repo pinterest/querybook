@@ -102,8 +102,8 @@ export function attachCustomCommand(commands: CommandActions) {
 
     // https://github.com/codemirror/codemirror5/blob/bd1b7d2976d768ae4e3b8cf209ec59ad73c0305a/keymap/sublime.js#L169
     const addCursorToSelection = (cm, dir) => {
-        const ranges = cm.listSelections(),
-            newRanges = [];
+        const ranges = cm.listSelections();
+        const newRanges = [];
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < ranges.length; i++) {
             const range = ranges[i];

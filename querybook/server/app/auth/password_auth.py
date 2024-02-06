@@ -26,8 +26,8 @@ def authenticate(username, password, session=None):
     :raise AuthenticationError: if an error occurred
     :return: a PasswordUser
     """
-    if not username:
-        raise AuthenticationError("Please provide a username")
+    if not username or not isinstance(username, str):
+        raise AuthenticationError("Please provide a valid username")
 
     if not password:
         raise AuthenticationError("Please provide a password")

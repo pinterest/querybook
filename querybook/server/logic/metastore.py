@@ -2,7 +2,7 @@ import datetime
 
 from app.db import with_session
 from const.elasticsearch import ElasticsearchItem
-from const.metastore import DataOwner
+from const.metastore import DataOwner, DataTableWarningSeverity
 from lib.logger import get_logger
 from lib.sqlalchemy import update_model_fields
 from logic.user import get_user_by_name
@@ -17,6 +17,7 @@ from models.metastore import (
     DataTableOwnership,
     DataTableQueryExecution,
     DataTableStatistics,
+    DataTableWarning,
 )
 from models.query_execution import QueryExecution
 from sqlalchemy import and_, func
@@ -75,7 +76,6 @@ def get_schema_by_id(schema_id, session=None):
 
 @with_session
 def update_schema(schema_id, description, session=None):
-
     schema = get_schema_by_id(schema_id, session=session)
 
     schema.description = description
@@ -321,6 +321,37 @@ def create_table_information(
 
 
 @with_session
+def create_table_warnings(
+    table_id,
+    warnings: tuple[DataTableWarningSeverity, str] = [],
+    commit=False,
+    session=None,
+):
+    """This function is used for loading table warnings from metastore.
+
+    For warnings from metastore, created_by will be None.
+    """
+    # delete all warnings without created_by from the table
+    session.query(DataTableWarning).filter_by(
+        table_id=table_id, created_by=None
+    ).delete()
+
+    # add warnings from metastore to the table
+    for severity, message in warnings:
+        DataTableWarning.create(
+            {
+                "message": message,
+                "severity": severity,
+                "table_id": table_id,
+            }
+        )
+    if commit:
+        session.commit()
+    else:
+        session.flush()
+
+
+@with_session
 def delete_table(table_id=None, commit=True, session=None):
     table = get_table_by_id(table_id=table_id, session=session)
     if not table:
@@ -525,7 +556,6 @@ def update_column_by_id(
     commit=True,
     session=None,
 ):
-
     table_column = get_column_by_id(id, session=session)
     if not table_column:
         return
@@ -765,6 +795,16 @@ def get_query_example_concurrences(table_id, limit=5, session=None):
 @with_session
 def get_table_query_samples_count(table_id, session):
     return session.query(DataTableQueryExecution).filter_by(table_id=table_id).count()
+
+
+@with_session
+def get_tables_by_query_execution_id(query_execution_id, session=None):
+    return (
+        session.query(DataTable)
+        .join(DataTableQueryExecution)
+        .filter(DataTableQueryExecution.query_execution_id == query_execution_id)
+        .all()
+    )
 
 
 """

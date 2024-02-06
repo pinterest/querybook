@@ -72,6 +72,7 @@ class PrestoExplainValidator(BaseQueryValidator):
         query: str,
         uid: int,  # who is doing the syntax check
         engine_id: int,  # which engine they are checking against
+        **kwargs,
     ) -> List[QueryValidationResult]:
         validation_errors = []
         (

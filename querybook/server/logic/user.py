@@ -148,7 +148,7 @@ def create_or_update_user_group(user_group: UserGroup, commit=True, session=None
         "fullname": user_group.display_name,
         "email": user_group.email,
         "is_group": True,
-        "properties": {"description": user_group.description},
+        "properties": {"public_info": {"description": user_group.description}},
     }
 
     if not group:
