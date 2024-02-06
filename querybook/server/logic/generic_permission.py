@@ -53,8 +53,8 @@ def get_all_groups_and_group_members_with_access(
         [
             func.max(editors.c.id),
             editors.c.uid,
-            func.max(editors.c.read),
-            func.max(editors.c.write),
+            func.max(editors.c.read.Integer),
+            func.max(editors.c.write.Integer),
         ]
     ).group_by(editors.c.uid)
 
