@@ -49,33 +49,38 @@ export const AddReactionButton: React.FunctionComponent<IProps> = ({
     const addReactionButtonRef = React.useRef<HTMLAnchorElement>();
 
     const [showEmojis, setShowEmojis] = React.useState(false);
+    const [isLoading, setIsLoading] = React.useState(false);
 
     const handleEmojiClick = React.useCallback(
         (emoji: string) => {
             const existingReaction = reactionsByEmoji[emoji]?.find(
                 (reaction) => reaction.created_by === uid
             );
+            setIsLoading(true);
             if (existingReaction) {
                 dispatch(
                     deleteReactionByCommentId(commentId, existingReaction.id)
-                );
+                ).finally(() => setIsLoading(false));
             } else {
-                dispatch(addReactionByCommentId(commentId, emoji));
+                dispatch(addReactionByCommentId(commentId, emoji)).finally(() =>
+                    setIsLoading(false)
+                );
             }
         },
-        [commentId, dispatch, uid, reactionsByEmoji]
+        [reactionsByEmoji, uid, dispatch, commentId]
     );
 
     return (
         <div className="AddReactionButton">
             <IconButton
-                icon="Plus"
+                icon={isLoading ? 'Loading' : 'Plus'}
                 invertCircle
                 size={18}
                 tooltip="React"
                 tooltipPos={tooltipPos}
                 ref={addReactionButtonRef}
                 onClick={() => setShowEmojis(true)}
+                disabled={isLoading}
             />
             {showEmojis ? (
                 <Popover

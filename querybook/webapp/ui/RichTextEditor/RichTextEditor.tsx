@@ -48,6 +48,8 @@ export interface IRichTextEditorProps {
 
     decorator?: DraftJs.CompositeDecorator;
     autoFocus?: boolean;
+
+    onSubmit?: () => void;
 }
 
 export interface IRichTextEditorState {
@@ -155,6 +157,7 @@ export const RichTextEditor = React.forwardRef<
             value,
             placeholder,
             autoFocus,
+            onSubmit,
             decorator,
 
             onChange,
@@ -544,6 +547,12 @@ export const RichTextEditor = React.forwardRef<
                         handled = true;
                     } else if (matchKeyMap(e, KeyMap.richText.italics)) {
                         command = 'italic';
+                        handled = true;
+                    } else if (
+                        matchKeyMap(e, KeyMap.overallUI.submitComment) &&
+                        onSubmit
+                    ) {
+                        onSubmit();
                         handled = true;
                     }
                 }
