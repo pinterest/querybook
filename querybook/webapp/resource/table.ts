@@ -131,6 +131,8 @@ export const TableResource = {
         ds.fetch<IDataTable>(`/table_name/${schemaName}/${tableName}/`, {
             metastore_id: metastoreId,
         }),
+    getColumnDetails: (tableId: number) =>
+        ds.fetch<IDetailedDataColumn[]>(`/table/${tableId}/detailed_column/`),
 
     getMetastoreLink: (tableId: number, metadataType: MetadataType) =>
         ds.fetch<string>(`/table/${tableId}/metastore_link/`, {

@@ -1,35 +1,29 @@
 from typing import Tuple, Union
-from flask_login import current_user
 
 from app.auth.permission import (
-    verify_query_engine_environment_permission,
-    verify_environment_permission,
-    verify_metastore_permission,
+    verify_data_column_permission,
     verify_data_schema_permission,
     verify_data_table_permission,
-    verify_data_column_permission,
+    verify_environment_permission,
+    verify_metastore_permission,
+    verify_query_engine_environment_permission,
 )
+from app.datasource import admin_only, api_assert, register, with_impression
 from app.db import DBSession
-from app.datasource import register, api_assert, with_impression, admin_only
 from app.flask_app import cache, limiter
+from const.datasources import RESOURCE_NOT_FOUND_STATUS_CODE
 from const.impression import ImpressionItemType
 from const.metastore import DataTableWarningSeverity, MetadataType
 from const.time import seconds_in_a_day
-from const.datasources import RESOURCE_NOT_FOUND_STATUS_CODE
+from flask_login import current_user
 from lib.lineage.utils import lineage
-from lib.metastore.utils import DataTableFinder
 from lib.metastore import get_metastore_loader
+from lib.metastore.utils import DataTableFinder
 from lib.query_analysis.samples import make_samples_query
 from lib.utils import mysql_cache
-from logic import metastore as logic
 from logic import admin as admin_logic
-from logic import data_element as data_element_logic
-from logic import tag as tag_logic
-from models.metastore import (
-    DataTableWarning,
-    DataTableStatistics,
-    DataTableColumnStatistics,
-)
+from logic import metastore as logic
+from models.metastore import DataTableStatistics, DataTableWarning
 from tasks.run_sample_query import run_sample_query
 
 
@@ -269,6 +263,13 @@ def get_columns_from_table(table_id):
         return logic.get_column_by_table_id(table_id, session=session)
 
 
+@register("/table/<int:table_id>/detailed_column/", methods=["GET"])
+def get_detailed_columns_from_table(table_id):
+    with DBSession() as session:
+        verify_data_table_permission(table_id, session=session)
+        return logic.get_detailed_columns_dict_by_table_id(table_id, session=session)
+
+
 @register("/table/<int:table_id>/raw_samples_query/", methods=["GET"])
 def get_table_samples_raw_query(
     table_id,
@@ -380,14 +381,7 @@ def get_column_by_table(table_id, column_name, with_table=False):
 def get_column(column_id, with_table=False):
     column = logic.get_column_by_id(column_id)
     verify_data_table_permission(column.table_id)
-    column_dict = column.to_dict(with_table)
-
-    column_dict["stats"] = DataTableColumnStatistics.get_all(column_id=column_id)
-    column_dict["tags"] = tag_logic.get_tags_by_column_id(column_id=column_id)
-    column_dict[
-        "data_element_association"
-    ] = data_element_logic.get_data_element_association_by_column_id(column_id)
-    return column_dict
+    return logic.get_detailed_column_dict(column, with_table=with_table)
 
 
 @register("/column/<int:column_id>/", methods=["PUT"])

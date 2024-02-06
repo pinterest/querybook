@@ -5,6 +5,7 @@ from const.elasticsearch import ElasticsearchItem
 from const.metastore import DataOwner, DataTableWarningSeverity
 from lib.logger import get_logger
 from lib.sqlalchemy import update_model_fields
+from logic import data_element as data_element_logic
 from logic.user import get_user_by_name
 from models.admin import QueryEngineEnvironment
 from models.metastore import (
@@ -498,6 +499,38 @@ def get_column_by_table_id(table_id, session=None):
         .filter(DataTableColumn.table_id == table_id)
         .all()
     )
+
+
+@with_session
+def get_detailed_column_dict(column: DataTableColumn, with_table=False, session=None):
+    from logic import tag as tag_logic
+
+    column_dict = column.to_dict(with_table)
+    column_dict["stats"] = DataTableColumnStatistics.get_all(
+        column_id=column.id, session=session
+    )
+    column_dict["tags"] = tag_logic.get_tags_by_column_id(
+        column_id=column.id, session=session
+    )
+    column_dict[
+        "data_element_association"
+    ] = data_element_logic.get_data_element_association_by_column_id(
+        column.id, session=session
+    )
+    return column_dict
+
+
+@with_session
+def get_detailed_columns_dict_by_table_id(table_id, session=None):
+    data_table_columns = (
+        session.query(DataTableColumn)
+        .filter(DataTableColumn.table_id == table_id)
+        .all()
+    )
+    columns_info = []
+    for col in data_table_columns:
+        columns_info.append(get_detailed_column_dict(col, session=session))
+    return columns_info
 
 
 @with_session
