@@ -23,8 +23,11 @@ def get_all_groups_and_group_members_with_access(
         session: The database session to use.
 
     Returns:
-        A list of tuples containing the editor ID, the group or user ID, and the most permissive read and write permissions.
-        Editors with inherited permissions have their ID set to None.
+        A list of tuples containing the editor ID, the group or user ID, and the most permissive read and write
+        permissions. This means that if a user has write=true but inherits write=false, their write will remain true.
+        Likewise, if a user has write=false and inherits write=true, their write will become true. This tuple will
+        appear in the form "(editor_id, uid, read, write)". Editors with inherited permissions have their editor_ID set
+        to None.
     """
     topq = session.query(
         editor_type.id, editor_type.uid, editor_type.read, editor_type.write
