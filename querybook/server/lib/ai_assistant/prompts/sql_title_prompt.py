@@ -2,7 +2,7 @@ from langchain.prompts import PromptTemplate
 
 
 prompt_template = """
-You are a helpful data scientist that can summerize SQL queries.
+You are a helpful data scientist that can summarize SQL queries.
 
 Generate a brief 10-word-maximum title for the SQL query below.
 
