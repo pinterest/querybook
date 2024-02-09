@@ -95,7 +95,7 @@ def assert_is_not_group(id, session=None):
     if user is None:
         api_assert(False, "USER_DNE", RESOURCE_NOT_FOUND_STATUS_CODE)
     api_assert(
-        user.is_group is False,
+        user.is_group is False or user.is_group is None,
         "Group cannot be assigned as owner",
         ACCESS_RESTRICTED_STATUS_CODE,
     )
