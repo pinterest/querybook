@@ -11,7 +11,6 @@ import { useSurveyTrigger } from 'hooks/ui/useSurveyTrigger';
 import { useAISocket } from 'hooks/useAISocket';
 import { trackClick } from 'lib/analytics';
 import { TableToken } from 'lib/sql-helper/sql-lexer';
-import { trimSQLQuery } from 'lib/stream';
 import { matchKeyPress } from 'lib/utils/keyboard';
 import { analyzeCode } from 'lib/web-worker';
 import { Button } from 'ui/Button/Button';
@@ -124,7 +123,9 @@ export const QueryGenerationModal = ({
     const { explanation, query: rawNewQuery, data } = streamData;
 
     useEffect(() => {
-        setNewQuery(trimSQLQuery(rawNewQuery));
+        if (rawNewQuery) {
+            setNewQuery(rawNewQuery);
+        }
     }, [rawNewQuery]);
 
     const triggerSurvey = useSurveyTrigger();
@@ -146,7 +147,7 @@ export const QueryGenerationModal = ({
             query_engine_id: engineId,
             tables,
             question,
-            original_query: query,
+            original_query: textToSQLMode === TextToSQLMode.EDIT ? query : null,
         });
         trackClick({
             component: ComponentType.AI_ASSISTANT,
@@ -171,6 +172,23 @@ export const QueryGenerationModal = ({
         },
         [onGenerate]
     );
+
+    const handleKeepQuery = useCallback(() => {
+        onUpdateQuery(newQuery, false);
+        setTextToSQLMode(TextToSQLMode.EDIT);
+        setQuestion('');
+        setNewQuery('');
+        trackClick({
+            component: ComponentType.AI_ASSISTANT,
+            element: ElementType.QUERY_GENERATION_KEEP_BUTTON,
+            aux: {
+                mode: textToSQLMode,
+                question,
+                tables,
+                query: newQuery,
+            },
+        });
+    }, [newQuery, onUpdateQuery, textToSQLMode, question, tables]);
 
     const questionBarDOM = (
         <div className="question-bar">
@@ -380,26 +398,7 @@ export const QueryGenerationModal = ({
                                     {<Tag>New Query</Tag>}
                                     <Button
                                         title="Keep the query"
-                                        onClick={() => {
-                                            onUpdateQuery(newQuery, false);
-                                            setTextToSQLMode(
-                                                TextToSQLMode.EDIT
-                                            );
-                                            setQuestion('');
-                                            setNewQuery('');
-                                            trackClick({
-                                                component:
-                                                    ComponentType.AI_ASSISTANT,
-                                                element:
-                                                    ElementType.QUERY_GENERATION_KEEP_BUTTON,
-                                                aux: {
-                                                    mode: textToSQLMode,
-                                                    question,
-                                                    tables,
-                                                    query: newQuery,
-                                                },
-                                            });
-                                        }}
+                                        onClick={handleKeepQuery}
                                         color="confirm"
                                     />
                                 </div>

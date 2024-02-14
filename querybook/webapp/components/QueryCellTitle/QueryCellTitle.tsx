@@ -5,7 +5,6 @@ import { AICommandType } from 'const/aiAssistant';
 import { ComponentType, ElementType } from 'const/analytics';
 import { useAISocket } from 'hooks/useAISocket';
 import { trackClick } from 'lib/analytics';
-import { trimQueryTitle } from 'lib/stream';
 import { IconButton } from 'ui/Button/IconButton';
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
 
@@ -37,12 +36,12 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
     const [title, setTitle] = useState<string>('');
 
     const socket = useAISocket(AICommandType.SQL_TITLE, ({ data }) => {
-        setTitle(data.data);
+        setTitle(data.title);
     });
 
     useEffect(() => {
         if (title) {
-            onChange(trimQueryTitle(title));
+            onChange(title);
         }
     }, [title]);
 
