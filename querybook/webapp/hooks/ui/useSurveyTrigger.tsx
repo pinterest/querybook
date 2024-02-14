@@ -7,6 +7,7 @@ import {
     saveSurveyTriggerRecord,
     shouldTriggerSurvey,
 } from 'lib/survey/triggerLogic';
+import { useDebouncedFn } from 'hooks/useDebouncedFn';
 
 export async function triggerSurvey(
     surface: SurveySurfaceType,
@@ -37,7 +38,7 @@ export async function triggerSurvey(
 export function useSurveyTrigger(endSurveyOnUnmount: boolean = false) {
     const toastId = useRef<string | null>(null);
 
-    const triggerSurveyHook = React.useCallback(
+    const triggerSurveyHook = useDebouncedFn(
         (surface: SurveySurfaceType, surfaceMeta: Record<string, any>) => {
             if (toastId.current) {
                 toast.dismiss(toastId.current);
@@ -50,6 +51,7 @@ export function useSurveyTrigger(endSurveyOnUnmount: boolean = false) {
                 }
             );
         },
+        500,
         []
     );
 
