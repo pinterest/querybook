@@ -4,6 +4,7 @@ import { QueryComparison } from 'components/TranspileQueryModal/QueryComparison'
 import { AICommandType } from 'const/aiAssistant';
 import { ComponentType, ElementType } from 'const/analytics';
 import { useAISocket } from 'hooks/useAISocket';
+import useNonEmptyState from 'hooks/useNonEmptyState';
 import { trackClick } from 'lib/analytics';
 import { Button } from 'ui/Button/Button';
 import { Message } from 'ui/Message/Message';
@@ -20,7 +21,7 @@ interface IProps {
 
 const useSQLFix = () => {
     const [data, setData] = useState<{ [key: string]: string }>({});
-    const [prevFixedQuery, setPrevFixedQuery] = useState('');
+    const [fixedQuery, setFixedQuery] = useNonEmptyState<string>('');
 
     const socket = useAISocket(AICommandType.SQL_FIX, ({ data }) => {
         setData(data as { [key: string]: string });
@@ -30,21 +31,19 @@ const useSQLFix = () => {
         data: unformattedData,
         explanation,
         fix_suggestion: suggestion,
-        fixed_query: fixedQuery,
+        fixed_query: newFixedQuery,
     } = data;
 
     useEffect(() => {
-        if (fixedQuery) {
-            setPrevFixedQuery(fixedQuery);
-        }
-    }, [fixedQuery]);
+        setFixedQuery(newFixedQuery);
+    }, [newFixedQuery]);
 
     return {
         socket,
         fixed: Object.keys(data).length > 0, // If has data, then it has been fixed
         explanation: explanation || unformattedData,
         suggestion,
-        fixedQuery: fixedQuery || prevFixedQuery,
+        fixedQuery,
     };
 };
 

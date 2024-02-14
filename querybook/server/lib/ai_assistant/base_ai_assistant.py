@@ -192,12 +192,12 @@ class BaseAIAssistant(ABC):
 
         chain = llm | JsonOutputParser()
 
-        if self._get_llm_config(command.value).get("streaming", True):
+        if self._get_llm_config(command.value).get("streaming", False):
             for s in chain.stream(prompt_text):
                 socket.send_data(s)
             socket.close()
         else:
-            response = llm.invoke(prompt_text)
+            response = chain.invoke(prompt_text)
             socket.send_data(response)
             socket.close()
 

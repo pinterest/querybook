@@ -1,4 +1,4 @@
-import { debounce, uniq } from 'lodash';
+import { uniq } from 'lodash';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { QueryEngineSelector } from 'components/QueryRunButton/QueryRunButton';
