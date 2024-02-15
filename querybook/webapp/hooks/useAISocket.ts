@@ -1,3 +1,4 @@
+import { applyPatch, Operation } from 'fast-json-patch';
 import { useCallback, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -15,12 +16,23 @@ export function useAISocket(
     onData: (data: { type?: string; data: { [key: string]: string } }) => void
 ): AISocket {
     const [loading, setLoading] = useState(false);
+    const jsonRef = useRef({});
 
     const eventHandler = useCallback(
         (event, payload) => {
             switch (event) {
                 case AISocketEvent.DATA:
                     onData({ type: 'data', data: payload });
+                    break;
+
+                case AISocketEvent.JSON_PATCH:
+                    jsonRef.current = applyPatch(
+                        jsonRef.current,
+                        payload,
+                        true,
+                        false
+                    ).newDocument;
+                    onData({ type: 'data', data: jsonRef.current });
                     break;
 
                 case AISocketEvent.TABLES:

@@ -7,10 +7,10 @@ export enum AICommandType {
     TABLE_SELECT = 'table_select',
 }
 
+// Keep it in sync with AISocketEvent in server/const/ai_assistant.py
 export enum AISocketEvent {
     DATA = 'data',
-    DELTA_DATA = 'delta_data',
-    DELTA_END = 'delta_end',
+    JSON_PATCH = 'json_patch',
     TABLES = 'tables',
     CLOSE = 'close',
     ERROR = 'error',

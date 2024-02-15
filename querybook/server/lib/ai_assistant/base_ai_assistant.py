@@ -188,13 +188,15 @@ class BaseAIAssistant(ABC):
         llm: BaseLanguageModel,
         prompt_text: str,
     ):
-        """Run the prompt and send the response to the websocket. If the command is streaming, send the response in streaming mode."""
+        """Run the prompt and send the response to the websocket. If the command is streaming, send the response in streaming mode.
+        For streaming, it will be in JSON patch diff format. See https://jsonpatch.com/ for more details.
+        """
 
-        chain = llm | JsonOutputParser()
+        chain = llm | JsonOutputParser(diff=True)
 
         if self._get_llm_config(command.value).get("streaming", False):
             for s in chain.stream(prompt_text):
-                socket.send_data(s)
+                socket.send_json_patch(s)
             socket.close()
         else:
             response = chain.invoke(prompt_text)
