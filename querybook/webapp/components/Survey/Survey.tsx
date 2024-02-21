@@ -2,12 +2,14 @@ import clsx from 'clsx';
 import React from 'react';
 import toast, { Toast } from 'react-hot-toast';
 
+import { ComponentType } from 'const/analytics';
 import {
     ISurvey,
     IUpdateSurveyFormData,
     SurveySurfaceType,
     SurveyTypeToQuestion,
 } from 'const/survey';
+import { useTrackView } from 'hooks/useTrackView';
 import { saveSurveyRespondRecord } from 'lib/survey/triggerLogic';
 import { SurveyResource } from 'resource/survey';
 import { TextButton } from 'ui/Button/Button';
@@ -28,6 +30,11 @@ export const Survey: React.FC<ISurveyProps> = ({
     surfaceMeta = {},
     toastProps,
 }) => {
+    useTrackView(ComponentType.SURVEY, undefined, {
+        surface,
+        meta: surfaceMeta,
+    });
+
     const [survey, setSurvey] = React.useState<ISurvey | null>(null);
     const handleDismiss = React.useCallback(() => {
         toast.dismiss(toastProps.id);
