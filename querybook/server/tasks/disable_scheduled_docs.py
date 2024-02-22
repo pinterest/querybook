@@ -279,7 +279,7 @@ def disable_scheduled_docs(
     disable_if_failed_for_n_runs=5,
     disable_if_no_impression_for_n_days=30,
     skip_if_no_impression_but_non_select=True,
-    skip_if_no_impression_with_export=True
+    skip_if_no_impression_with_export=True,
 ):
     tasks_to_disable = disable_deactivated_scheduled_docs(
         dry_run=dry_run,
