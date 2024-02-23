@@ -4,7 +4,8 @@ FLASK_SECRET_KEY: ~
 # Url of the querybook site, used for auth callback and notifications
 PUBLIC_URL: ''
 # Use this config to set cache policy of flask, see https://pythonhosted.org/Flask-Cache/ for details
-FLASK_CACHE_CONFIG: '{"CACHE_TYPE": "simple"}'
+FLASK_CACHE_CONFIG:
+    CACHE_TYPE: 'simple'
 
 # --------------- Celery ---------------
 REDIS_URL: ~
