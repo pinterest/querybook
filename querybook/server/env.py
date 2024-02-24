@@ -14,6 +14,17 @@ class MissingConfigException(Exception):
     pass
 
 
+def is_json(value):
+    """
+    Check if a given value is a valid JSON serialized dict or list
+    """
+    try:
+        parsed = json.loads(value)
+        return isinstance(parsed, (dict, list))
+    except ValueError:
+        return False
+
+
 def get_env_config(name, optional=True):
     found = True
     val = None
@@ -32,6 +43,9 @@ def get_env_config(name, optional=True):
         raise MissingConfigException(
             "{} is required to start the process.".format(name)
         )
+    # Check for string-serialized JSON dicts/lists
+    if isinstance(val, str) and is_json(val):
+        val = json.loads(val)
     return val
 
 
@@ -40,7 +54,8 @@ class QuerybookSettings(object):
     PRODUCTION = os.environ.get("production", "false") == "true"
     PUBLIC_URL = get_env_config("PUBLIC_URL")
     FLASK_SECRET_KEY = get_env_config("FLASK_SECRET_KEY", optional=False)
-    FLASK_CACHE_CONFIG = json.loads(get_env_config("FLASK_CACHE_CONFIG"))
+    FLASK_CACHE_CONFIG = get_env_config("FLASK_CACHE_CONFIG")
+
     # Celery
     REDIS_URL = get_env_config("REDIS_URL", optional=False)
 
@@ -117,7 +132,7 @@ class QuerybookSettings(object):
 
     DB_MAX_UPLOAD_SIZE = int(get_env_config("DB_MAX_UPLOAD_SIZE"))
 
-    GOOGLE_CREDS = json.loads(get_env_config("GOOGLE_CREDS") or "null")
+    GOOGLE_CREDS = get_env_config("GOOGLE_CREDS")
 
     # Logging
     LOG_LOCATION = get_env_config("LOG_LOCATION")
