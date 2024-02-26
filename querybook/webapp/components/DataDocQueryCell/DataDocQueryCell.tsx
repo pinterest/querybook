@@ -26,6 +26,8 @@ import { UDFForm } from 'components/UDFForm/UDFForm';
 import { ComponentType, ElementType } from 'const/analytics';
 import { IDataQueryCellMeta, TDataDocMetaVariables } from 'const/datadoc';
 import type { IQueryEngine, IQueryTranspiler } from 'const/queryEngine';
+import { SurveySurfaceType } from 'const/survey';
+import { triggerSurvey } from 'hooks/ui/useSurveyTrigger';
 import { trackClick } from 'lib/analytics';
 import CodeMirror from 'lib/codemirror';
 import { createSQLLinter } from 'lib/codemirror/codemirror-lint';
@@ -100,6 +102,7 @@ interface IState {
     query: string;
     meta: IDataQueryCellMeta;
 
+    modifiedAt: number;
     focused: boolean;
     selectedRange: ISelectedRange;
     queryCollapsedOverride: boolean;
@@ -124,6 +127,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         this.state = {
             query: props.query,
             meta: props.meta,
+            modifiedAt: 0,
             focused: false,
             selectedRange: null,
             queryCollapsedOverride: null,
@@ -345,6 +349,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         this.setState(
             {
                 query,
+                modifiedAt: Date.now(),
             },
             () => {
                 this.onChangeDebounced({ context: query });
@@ -418,14 +423,25 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         return runQuery(
             await this.getTransformedQuery(),
             this.engineId,
-            async (query, engineId) =>
-                (
+            async (query, engineId) => {
+                const queryId = (
                     await this.props.createQueryExecution(
                         query,
                         engineId,
                         this.props.cellId
                     )
-                ).id
+                ).id;
+
+                // Only trigger survey if the query is modified within 5 minutes
+                if (Date.now() - this.state.modifiedAt < 5 * 60 * 1000) {
+                    triggerSurvey(SurveySurfaceType.QUERY_AUTHORING, {
+                        query_execution_id: queryId,
+                        cell_id: this.props.cellId,
+                    });
+                }
+
+                return queryId;
+            }
         );
     }
 

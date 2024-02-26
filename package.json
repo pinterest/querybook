@@ -1,6 +1,6 @@
 {
     "name": "querybook",
-    "version": "3.28.3",
+    "version": "3.31.1",
     "description": "A Big Data Webapp",
     "private": true,
     "scripts": {

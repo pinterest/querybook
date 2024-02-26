@@ -26,12 +26,6 @@ class AIWebSocket:
     def send_data(self, data: dict):
         self._send("data", data)
 
-    def send_delta_data(self, data: str):
-        self._send("delta_data", data)
-
-    def send_delta_end(self):
-        self._send("delta_end")
-
     def send_tables_for_sql_gen(self, data: list[str]):
         self._send("tables", data)
 

@@ -12,19 +12,16 @@ from lib.query_analysis.validation.base_query_validator import (
 from lib.query_analysis.validation.validators.presto_explain_validator import (
     PrestoExplainValidator,
 )
-from lib.query_analysis.validation.validators.base_sqlglot_validator import (
-    BaseSQLGlotDecorator,
+from lib.query_analysis.validation.decorators.base_sqlglot_validation_decorator import (
+    BaseSQLGlotValidationDecorator,
 )
-from lib.query_analysis.validation.validators.metadata_suggesters import (
+from lib.query_analysis.validation.decorators.metadata_decorators import (
     BaseColumnNameSuggester,
     BaseTableNameSuggester,
 )
 
 
-class BasePrestoSQLGlotDecorator(BaseSQLGlotDecorator):
-    def languages(self):
-        return ["presto", "trino"]
-
+class BasePrestoSQLGlotDecorator(BaseSQLGlotValidationDecorator):
     @property
     def tokenizer(self) -> Tokenizer:
         return Trino.Tokenizer()
@@ -39,19 +36,15 @@ class UnionAllValidator(BasePrestoSQLGlotDecorator):
     def severity(self) -> str:
         return QueryValidationSeverity.WARNING
 
-    def validate(
+    def decorate_validation_results(
         self,
+        validation_results: List[QueryValidationResult],
         query: str,
         uid: int,
         engine_id: int,
-        raw_tokens: List[Token] = None,
+        raw_tokens: List[Token] = [],
         **kwargs,
     ) -> List[QueryValidationResult]:
-        if raw_tokens is None:
-            raw_tokens = self._tokenize_query(query)
-        validation_results = self._validator.validate(
-            query, uid, engine_id, raw_tokens=raw_tokens
-        )
         for i, token in enumerate(raw_tokens):
             if token.token_type == TokenType.UNION:
                 if (
@@ -77,20 +70,15 @@ class ApproxDistinctValidator(BasePrestoSQLGlotDecorator):
     def severity(self) -> str:
         return QueryValidationSeverity.WARNING
 
-    def validate(
+    def decorate_validation_results(
         self,
+        validation_results: List[QueryValidationResult],
         query: str,
         uid: int,
         engine_id: int,
-        raw_tokens: List[Token] = None,
+        raw_tokens: List[Token] = [],
         **kwargs,
     ) -> List[QueryValidationResult]:
-        if raw_tokens is None:
-            raw_tokens = self._tokenize_query(query)
-
-        validation_results = self._validator.validate(
-            query, uid, engine_id, raw_tokens=raw_tokens
-        )
         for i, token in enumerate(raw_tokens):
             if (
                 i < len(raw_tokens) - 2
@@ -125,21 +113,15 @@ class RegexpLikeValidator(BasePrestoSQLGlotDecorator):
         ]
         return f"REGEXP_LIKE({column_name}, '{'|'.join(sanitized_like_strings)}')"
 
-    def validate(
+    def decorate_validation_results(
         self,
+        validation_results: List[QueryValidationResult],
         query: str,
         uid: int,
         engine_id: int,
-        raw_tokens: List[Token] = None,
+        raw_tokens: List[Token] = [],
         **kwargs,
     ) -> List[QueryValidationResult]:
-        if raw_tokens is None:
-            raw_tokens = self._tokenize_query(query)
-
-        validation_results = self._validator.validate(
-            query, uid, engine_id, raw_tokens=raw_tokens
-        )
-
         start_column_token = None
         like_strings = []
         token_idx = 0
@@ -203,7 +185,7 @@ class RegexpLikeValidator(BasePrestoSQLGlotDecorator):
         return validation_results
 
 
-class PrestoColumnNameSuggester(BasePrestoSQLGlotDecorator, BaseColumnNameSuggester):
+class PrestoColumnNameSuggester(BaseColumnNameSuggester):
     def get_column_name_from_error(self, validation_result: QueryValidationResult):
         regex_result = re.match(
             r"line \d+:\d+: Column '(.*)' cannot be resolved", validation_result.message
@@ -211,7 +193,7 @@ class PrestoColumnNameSuggester(BasePrestoSQLGlotDecorator, BaseColumnNameSugges
         return regex_result.groups()[0] if regex_result else None
 
 
-class PrestoTableNameSuggester(BasePrestoSQLGlotDecorator, BaseTableNameSuggester):
+class PrestoTableNameSuggester(BaseTableNameSuggester):
     def get_full_table_name_from_error(self, validation_result: QueryValidationResult):
         regex_result = re.match(
             r"line \d+:\d+: Table '(.*)' does not exist", validation_result.message
@@ -222,10 +204,6 @@ class PrestoTableNameSuggester(BasePrestoSQLGlotDecorator, BaseTableNameSuggeste
 class PrestoOptimizingValidator(BaseQueryValidator):
     def languages(self):
         return ["presto", "trino"]
-
-    @property
-    def tokenizer(self) -> Tokenizer:
-        return Trino.Tokenizer()
 
     def _get_explain_validator(self):
         return PrestoExplainValidator("")

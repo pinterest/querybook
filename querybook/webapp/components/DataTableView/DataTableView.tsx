@@ -19,7 +19,9 @@ import {
     MetadataMode,
     MetadataType,
 } from 'const/metastore';
+import { SurveySurfaceType } from 'const/survey';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
+import { useSurveyTrigger } from 'hooks/ui/useSurveyTrigger';
 import { useTrackView } from 'hooks/useTrackView';
 import { trackClick } from 'lib/analytics';
 import { setBrowserTitle } from 'lib/querybookUI';
@@ -176,6 +178,17 @@ export const DataTableView: React.FC<IDataTableViewProps> = ({ tableId }) => {
     });
 
     useTrackView(ComponentType.TABLE_DETAIL_VIEW);
+    const triggerSurvey = useSurveyTrigger(true);
+    useEffect(() => {
+        if (!tableId || !tableName) {
+            return;
+        }
+        triggerSurvey(SurveySurfaceType.TABLE_TRUST, {
+            table_id: tableId,
+            table_name: tableName,
+        });
+    }, [tableId, tableName, triggerSurvey]);
+
     useEffect(() => {
         getTable(tableId);
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -268,7 +281,6 @@ export const DataTableView: React.FC<IDataTableViewProps> = ({ tableId }) => {
     const makeColumnsDOM = (numberOfRows = null) => (
         <DataTableViewColumn
             table={table}
-            tableColumns={tableColumns}
             numberOfRows={numberOfRows}
             updateDataColumnDescription={updateDataColumnDescription}
             onEditColumnDescriptionRedirect={getOnEditMetadata(

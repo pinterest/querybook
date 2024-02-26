@@ -1,33 +1,28 @@
-from langchain import PromptTemplate
+from langchain.prompts import PromptTemplate
 
 
-prompt_template = (
-    "You are a SQL expert that can help fix SQL query errors.\n\n"
-    "Please help fix the query below based on the given error message and table schemas. \n\n"
-    "===SQL dialect\n"
-    "{dialect}\n\n"
-    "===Query\n"
-    "{query}\n\n"
-    "===Error\n"
-    "{error}\n\n"
-    "===Table Schemas\n"
-    "{table_schemas}\n\n"
-    "===Response Format\n"
-    "<@key-1@>\n"
-    "value-1\n\n"
-    "<@key-2@>\n"
-    "value-2\n\n"
-    "===Example response:\n"
-    "<@explanation@>\n"
-    "This is an explanation about the error\n\n"
-    "<@fix_suggestion@>\n"
-    "This is a recommended fix for the error\n\n"
-    "<@fixed_query@>\n"
-    "The fixed SQL query\n\n"
-    "===Response Guidelines\n"
-    "1. For the <@fixed_query@> section, it can only be a valid SQL query without any explanation.\n"
-    "2. If there is insufficient context to address the query error, you may leave the fixed_query section blank and provide a general suggestion instead.\n"
-    "3. Maintain the original query format and case in the fixed_query section, including comments, except when correcting the erroneous part.\n"
-)
+prompt_template = """You are a {dialect} expert that can help fix SQL query errors.
+
+Please help fix below {dialect} query based on the given error message and table schemas.
+
+===Query
+{query}
+
+===Error
+{error}
+
+===Table Schemas
+{table_schemas}
+
+===Response Guidelines
+1. If there is insufficient context to address the query error, please leave fixed_query blank and provide a general suggestion instead.
+2. Maintain the original query format and case for the fixed_query, including comments, except when correcting the erroneous part.
+===Response Format
+{{
+    "explanation": "An explanation about the error",
+    "fix_suggestion": "A recommended fix for the error"",
+    "fixed_query": "A valid and well formatted fixed query"
+}}
+"""
 
 SQL_FIX_PROMPT = PromptTemplate.from_template(prompt_template)

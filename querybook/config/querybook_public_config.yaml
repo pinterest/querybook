@@ -1,3 +1,4 @@
+# Public Configs are shared between backend and frontend and are not sensitive
 # --------------- AI Assistant ---------------
 ai_assistant:
     enabled: false
@@ -13,3 +14,18 @@ ai_assistant:
 
     table_vector_search:
         enabled: false
+
+survey:
+    global_response_cooldown: 2592000 # 30 days
+    global_trigger_cooldown: 600 # 10 minutes
+    global_max_per_week: 6
+    global_max_per_day: 3
+
+    surfaces: []
+
+    # Uncomment to enable survey on all surfaces
+    # surfaces:
+    #     - surface: table_search
+    #     - surface: table_view
+    #     - surface: text_to_sql
+    #     - surface: query_authoring
