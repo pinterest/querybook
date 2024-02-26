@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import AsyncSelect from 'react-select/async';
 import {
     makeReactSelectStyle,
@@ -23,8 +23,6 @@ export const SearchSchemaSelect: React.FC<ISearchSchemaSelectProps> = ({
     schema,
     metastoreId,
 }) => {
-    const [searchText, setSearchText] = useState('');
-
     const handleUpdateSearchFilter = useCallback((option: IOptions<string>) => {
         updateSearchFilter(
             'schema',
@@ -59,12 +57,11 @@ export const SearchSchemaSelect: React.FC<ISearchSchemaSelectProps> = ({
         <AsyncSelect
             styles={tableReactSelectStyle}
             placeholder={'search schema name'}
+            value={selectedSchemaItems}
             onChange={handleUpdateSearchFilter}
             loadOptions={loadOptions}
             defaultOptions={[]}
-            inputValue={searchText}
-            onInputChange={(text) => setSearchText(text)}
-            noOptionsMessage={() => (searchText ? 'No schema found.' : null)}
+            noOptionsMessage={() => 'No schema found.'}
             isMulti
         />
     );
