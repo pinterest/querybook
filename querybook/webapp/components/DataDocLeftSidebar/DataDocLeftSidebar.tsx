@@ -5,8 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { DataTableViewMini } from 'components/DataTableViewMini/DataTableViewMini';
 import { IDataCell } from 'const/datadoc';
-import { useResizeToCollapseSidebar } from 'hooks/useResizeToCollapse';
 import { useEvent } from 'hooks/useEvent';
+import { useResizeToCollapseSidebar } from 'hooks/useResizeToCollapse';
 import { enableResizable } from 'lib/utils';
 import { getShortcutSymbols, KeyMap, matchKeyMap } from 'lib/utils/keyboard';
 import { setSidebarTableId } from 'redux/querybookUI/action';
@@ -26,7 +26,6 @@ interface IProps {
 
 type LeftSidebarContentState = 'contents' | 'table' | 'default';
 const TOGGLE_TOC_SHORTCUT = getShortcutSymbols(KeyMap.dataDoc.toggleToC.key);
-const HIDDEN_SIDEBAR_WIDTH = 36;
 const DEFAULT_SIDEBAR_WIDTH = 280;
 
 export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
@@ -41,7 +40,6 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
 
     const [contentState, setContentState] =
         useState<LeftSidebarContentState>('default');
-    const [sidebarWidth, setSidebarWidth] = useState(HIDDEN_SIDEBAR_WIDTH);
 
     useEvent(
         'keydown',
@@ -59,13 +57,10 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
         }, [])
     );
 
-    useEffect(
-        () => () => {
-            clearSidebarTableId();
-            setContentState('default');
-        },
-        []
-    );
+    useEffect(() => {
+        clearSidebarTableId();
+        setContentState('default');
+    }, []);
 
     useEffect(() => {
         if (sidebarTableId != null) {
@@ -84,14 +79,6 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
             setContentState('default');
         }, [])
     );
-
-    useEffect(() => {
-        if (contentState === 'default') {
-            setSidebarWidth(HIDDEN_SIDEBAR_WIDTH);
-        } else {
-            setSidebarWidth(DEFAULT_SIDEBAR_WIDTH);
-        }
-    }, [contentState]);
 
     let contentDOM: React.ReactChild;
     if (contentState === 'contents') {
@@ -152,8 +139,8 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
                 <> {contentDOM} </>
             ) : (
                 <Resizable
-                    defaultSize={{ width: `${sidebarWidth}px` }}
-                    minWidth={sidebarWidth}
+                    defaultSize={{ width: `${DEFAULT_SIDEBAR_WIDTH}px` }}
+                    minWidth={DEFAULT_SIDEBAR_WIDTH}
                     enable={enableResizable({ right: true })}
                     onResize={resizeToCollapseSidebar}
                 >
