@@ -59,26 +59,24 @@ export const DataDocSchedsFilters: React.FC<{
                         }}
                         onSubmit={() => undefined} // Just for fixing ts
                     >
-                        {({}) => {
-                            return (
-                                <>
-                                    <SimpleField
-                                        label="Status"
-                                        type="select"
-                                        name="status"
-                                        options={enabledOptions}
-                                        onChange={handleUpdateStatus}
-                                        value={filters.status}
-                                    />
-                                    <DataDocBoardsSelect
-                                        label="Lists"
-                                        name="board_ids"
-                                        value={filters.board_ids}
-                                        onChange={handleUpdateList}
-                                    />
-                                </>
-                            );
-                        }}
+                        {({}) => (
+                            <>
+                                <SimpleField
+                                    label="Status"
+                                    type="select"
+                                    name="status"
+                                    options={enabledOptions}
+                                    onChange={handleUpdateStatus}
+                                    value={filters.status}
+                                />
+                                <DataDocBoardsSelect
+                                    label="Lists"
+                                    name="board_ids"
+                                    value={filters.board_ids}
+                                    onChange={handleUpdateList}
+                                />
+                            </>
+                        )}
                     </Formik>
                 </div>
             </div>

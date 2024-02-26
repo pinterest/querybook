@@ -6,10 +6,11 @@ import { QueryComparison } from 'components/TranspileQueryModal/QueryComparison'
 import { AICommandType } from 'const/aiAssistant';
 import { ComponentType, ElementType } from 'const/analytics';
 import { IQueryEngine } from 'const/queryEngine';
+import { SurveySurfaceType } from 'const/survey';
+import { useSurveyTrigger } from 'hooks/ui/useSurveyTrigger';
 import { useAISocket } from 'hooks/useAISocket';
 import { trackClick } from 'lib/analytics';
 import { TableToken } from 'lib/sql-helper/sql-lexer';
-import { trimSQLQuery } from 'lib/stream';
 import { matchKeyPress } from 'lib/utils/keyboard';
 import { analyzeCode } from 'lib/web-worker';
 import { Button } from 'ui/Button/Button';
@@ -115,23 +116,38 @@ export const QueryGenerationModal = ({
 
     useEffect(() => {
         if (!generating) {
-            setTables(uniq([...tablesInQuery, ...tables]));
+            setTables((tables) => uniq([...tablesInQuery, ...tables]));
         }
     }, [tablesInQuery, generating]);
 
     const { explanation, query: rawNewQuery, data } = streamData;
 
     useEffect(() => {
-        setNewQuery(trimSQLQuery(rawNewQuery));
+        if (rawNewQuery) {
+            setNewQuery(rawNewQuery);
+        }
     }, [rawNewQuery]);
+
+    const triggerSurvey = useSurveyTrigger();
+    useEffect(() => {
+        if (!newQuery || generating) {
+            return;
+        }
+        triggerSurvey(SurveySurfaceType.TEXT_TO_SQL, {
+            question,
+            tables,
+            query: newQuery,
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [newQuery, triggerSurvey, generating]);
 
     const onGenerate = useCallback(() => {
         setFoundTables([]);
         generateSQL({
             query_engine_id: engineId,
-            tables: tables,
-            question: question,
-            original_query: query,
+            tables,
+            question,
+            original_query: textToSQLMode === TextToSQLMode.EDIT ? query : null,
         });
         trackClick({
             component: ComponentType.AI_ASSISTANT,
@@ -156,6 +172,23 @@ export const QueryGenerationModal = ({
         },
         [onGenerate]
     );
+
+    const handleKeepQuery = useCallback(() => {
+        onUpdateQuery(newQuery, false);
+        setTextToSQLMode(TextToSQLMode.EDIT);
+        setQuestion('');
+        setNewQuery('');
+        trackClick({
+            component: ComponentType.AI_ASSISTANT,
+            element: ElementType.QUERY_GENERATION_KEEP_BUTTON,
+            aux: {
+                mode: textToSQLMode,
+                question,
+                tables,
+                query: newQuery,
+            },
+        });
+    }, [newQuery, onUpdateQuery, textToSQLMode, question, tables]);
 
     const questionBarDOM = (
         <div className="question-bar">
@@ -365,26 +398,7 @@ export const QueryGenerationModal = ({
                                     {<Tag>New Query</Tag>}
                                     <Button
                                         title="Keep the query"
-                                        onClick={() => {
-                                            onUpdateQuery(newQuery, false);
-                                            setTextToSQLMode(
-                                                TextToSQLMode.EDIT
-                                            );
-                                            setQuestion('');
-                                            setNewQuery('');
-                                            trackClick({
-                                                component:
-                                                    ComponentType.AI_ASSISTANT,
-                                                element:
-                                                    ElementType.QUERY_GENERATION_KEEP_BUTTON,
-                                                aux: {
-                                                    mode: textToSQLMode,
-                                                    question,
-                                                    tables,
-                                                    query: newQuery,
-                                                },
-                                            });
-                                        }}
+                                        onClick={handleKeepQuery}
                                         color="confirm"
                                     />
                                 </div>

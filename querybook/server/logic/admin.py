@@ -225,6 +225,12 @@ def get_query_metastore_by_name(name, session=None):
 
 
 @with_session
+def get_query_metastore_id_by_engine_id(engine_id: int, session=None):
+    query_engine = get_query_engine_by_id(engine_id, session=session)
+    return query_engine.metastore_id if query_engine else None
+
+
+@with_session
 def get_all_query_metastore(session=None):
     return session.query(QueryMetastore).all()
 

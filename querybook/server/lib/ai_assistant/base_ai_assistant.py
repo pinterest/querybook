@@ -1,6 +1,9 @@
 import functools
-import json
 from abc import ABC, abstractmethod
+
+from langchain_core.language_models.base import BaseLanguageModel
+from langchain_core.output_parsers import JsonOutputParser, StrOutputParser
+from pydantic import ValidationError
 
 from app.db import with_session
 from const.ai_assistant import (
@@ -17,16 +20,15 @@ from logic.elasticsearch import get_sample_query_cells_by_table_name
 from logic.metastore import get_table_by_name
 from models.metastore import DataTableColumn
 from models.query_execution import QueryExecution
-from pydantic.error_wrappers import ValidationError
 
-from .ai_socket import with_ai_socket
+from .ai_socket import AIWebSocket, with_ai_socket
+from .prompts.sql_edit_prompt import SQL_EDIT_PROMPT
 from .prompts.sql_fix_prompt import SQL_FIX_PROMPT
 from .prompts.sql_summary_prompt import SQL_SUMMARY_PROMPT
 from .prompts.sql_title_prompt import SQL_TITLE_PROMPT
 from .prompts.table_select_prompt import TABLE_SELECT_PROMPT
 from .prompts.table_summary_prompt import TABLE_SUMMARY_PROMPT
 from .prompts.text_to_sql_prompt import TEXT_TO_SQL_PROMPT
-from .streaming_web_socket_callback_handler import StreamingWebsocketCallbackHandler
 from .tools.table_schema import (
     get_slimmed_table_schemas,
     get_table_schema_by_name,
@@ -57,11 +59,7 @@ class BaseAIAssistant(ABC):
             except Exception as e:
                 LOG.error(e, exc_info=True)
                 err_msg = self._get_error_msg(e)
-                callback_handler = kwargs.get("callback_handler")
-                if callback_handler:
-                    callback_handler.stream.send_error(err_msg)
-                else:
-                    raise Exception(err_msg) from e
+                raise Exception(err_msg) from e
 
         return wrapper
 
@@ -96,14 +94,12 @@ class BaseAIAssistant(ABC):
         self,
         ai_command: str,
         prompt_length: int,
-        callback_handler: StreamingWebsocketCallbackHandler = None,
-    ):
+    ) -> BaseLanguageModel:
         """return the large language model to use.
 
         Args:
             ai_command (str): AI command type
             prompt_length (str): The number of tokens in the prompt. Can be used to decide which model to use.
-            callback_handler (StreamingWebsocketCallbackHandler, optional): Callback handler to handle the straming result.
         """
         raise NotImplementedError()
 
@@ -112,7 +108,8 @@ class BaseAIAssistant(ABC):
 
     def _get_text_to_sql_prompt(self, dialect, question, table_schemas, original_query):
         context_limit = self._get_usable_token_count(AICommandType.TEXT_TO_SQL.value)
-        prompt = TEXT_TO_SQL_PROMPT.format(
+        prompt_template = SQL_EDIT_PROMPT if original_query else TEXT_TO_SQL_PROMPT
+        prompt = prompt_template.format(
             dialect=dialect,
             question=question,
             table_schemas=table_schemas,
@@ -122,7 +119,7 @@ class BaseAIAssistant(ABC):
 
         if token_count > context_limit:
             # if the prompt is too long, use slimmed table schemas
-            prompt = TEXT_TO_SQL_PROMPT.format(
+            prompt = prompt_template.format(
                 dialect=dialect,
                 question=question,
                 table_schemas=get_slimmed_table_schemas(table_schemas),
@@ -184,6 +181,26 @@ class BaseAIAssistant(ABC):
 
         return error[:1000]
 
+    def _run_prompt_and_send(
+        self,
+        socket: AIWebSocket,
+        command: AICommandType,
+        llm: BaseLanguageModel,
+        prompt_text: str,
+    ):
+        """Run the prompt and send the response to the websocket. If the command is streaming, send the response in streaming mode."""
+
+        chain = llm | JsonOutputParser()
+
+        if self._get_llm_config(command.value).get("streaming", False):
+            for s in chain.stream(prompt_text):
+                socket.send_data(s)
+            socket.close()
+        else:
+            response = chain.invoke(prompt_text)
+            socket.send_data(response)
+            socket.close()
+
     @catch_error
     @with_session
     @with_ai_socket(command_type=AICommandType.TEXT_TO_SQL)
@@ -213,7 +230,9 @@ class BaseAIAssistant(ABC):
                 # not finding any relevant tables
                 # ask user to provide table names
                 socket.send_data(
-                    "Sorry, I can't find any relevant tables by the given context. Please provide table names above."
+                    {
+                        "explanation": "Sorry, I can't find any relevant tables by the given context. Please provide table names above."
+                    }
                 )
 
             socket.close()
@@ -237,9 +256,14 @@ class BaseAIAssistant(ABC):
             prompt_length=self._get_token_count(
                 AICommandType.TEXT_TO_SQL.value, prompt
             ),
-            callback_handler=StreamingWebsocketCallbackHandler(socket),
         )
-        return llm.predict(text=prompt)
+
+        self._run_prompt_and_send(
+            socket=socket,
+            command=AICommandType.TEXT_TO_SQL,
+            llm=llm,
+            prompt_text=prompt,
+        )
 
     @catch_error
     @with_ai_socket(command_type=AICommandType.SQL_TITLE)
@@ -248,16 +272,18 @@ class BaseAIAssistant(ABC):
 
         Args:
             query (str): SQL query
-            stream (bool, optional): Whether to stream the result. Defaults to True.
-            callback_handler (CallbackHandler, optional): Callback handler to handle the straming result. Required if stream is True.
         """
         prompt = self._get_sql_title_prompt(query=query)
         llm = self._get_llm(
             ai_command=AICommandType.SQL_TITLE.value,
             prompt_length=self._get_token_count(AICommandType.SQL_TITLE.value, prompt),
-            callback_handler=StreamingWebsocketCallbackHandler(socket),
         )
-        return llm.predict(text=prompt)
+        self._run_prompt_and_send(
+            socket=socket,
+            command=AICommandType.SQL_TITLE,
+            llm=llm,
+            prompt_text=prompt,
+        )
 
     @catch_error
     @with_session
@@ -268,7 +294,7 @@ class BaseAIAssistant(ABC):
         socket=None,
         session=None,
     ):
-        """Generate title from SQL query.
+        """Fix a SQL query from the error message of a failed query execution.
 
         Args:
             query_execution_id (int): The failed query execution id
@@ -301,9 +327,13 @@ class BaseAIAssistant(ABC):
         llm = self._get_llm(
             ai_command=AICommandType.SQL_FIX.value,
             prompt_length=self._get_token_count(AICommandType.SQL_FIX.value, prompt),
-            callback_handler=StreamingWebsocketCallbackHandler(socket),
         )
-        return llm.predict(text=prompt)
+        self._run_prompt_and_send(
+            socket=socket,
+            command=AICommandType.SQL_FIX,
+            llm=llm,
+            prompt_text=prompt,
+        )
 
     @catch_error
     @with_session
@@ -337,9 +367,9 @@ class BaseAIAssistant(ABC):
             prompt_length=self._get_token_count(
                 AICommandType.TABLE_SUMMARY.value, prompt
             ),
-            callback_handler=None,
         )
-        return llm.predict(text=prompt)
+        chain = llm | StrOutputParser()
+        return chain.invoke(prompt)
 
     @catch_error
     @with_session
@@ -365,9 +395,9 @@ class BaseAIAssistant(ABC):
             prompt_length=self._get_token_count(
                 AICommandType.SQL_SUMMARY.value, prompt
             ),
-            callback_handler=None,
         )
-        return llm.predict(text=prompt)
+        chain = llm | StrOutputParser()
+        return chain.invoke(prompt)
 
     @with_session
     def find_tables(self, metastore_id, question, session=None):
@@ -422,9 +452,9 @@ class BaseAIAssistant(ABC):
                 prompt_length=self._get_token_count(
                     AICommandType.TABLE_SELECT.value, prompt
                 ),
-                callback_handler=None,
             )
-            return json.loads(llm.predict(text=prompt))
+            chain = llm | JsonOutputParser()
+            return chain.invoke(prompt)
         except Exception as e:
             LOG.error(e, exc_info=True)
             return []

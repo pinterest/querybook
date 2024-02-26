@@ -15,8 +15,9 @@ class PythonExporter(BaseExporter):
             statement_execution_id
         )
 
-        return """
-url = "{}"
+        return f"""
+# Querybook execution link: {self._get_query_execution_url_by_statement_id(statement_execution_id, uid)}
+url = "{download_url}"
 
 import requests
 import pandas
@@ -26,6 +27,4 @@ with requests.Session() as s:
     download = s.get(url)
     decoded_content = download.content.decode('utf-8')
     df = pandas.read_csv(StringIO(decoded_content))
-        """.format(
-            download_url
-        )
+        """

@@ -5,11 +5,10 @@ import { DataElement } from 'components/DataElement/DataElement';
 import { DataElementDescription } from 'components/DataElement/DataElementDescription';
 import { DataTableColumnStats } from 'components/DataTableStats/DataTableColumnStats';
 import { TableTag } from 'components/DataTableTags/DataTableTags';
-import { IDataColumn } from 'const/metastore';
-import { useResource } from 'hooks/useResource';
+import { IDetailedDataColumn } from 'const/metastore';
+import { convertRawToContentState } from 'lib/richtext/serialize';
 import { Nullable } from 'lib/typescript';
 import { parseType } from 'lib/utils/complex-types';
-import { TableColumnResource } from 'resource/table';
 import { Card } from 'ui/Card/Card';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
 import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
@@ -20,7 +19,7 @@ import { DataTableColumnCardNestedType } from './DataTableColumnCardNestedType';
 import './DataTableColumnCard.scss';
 
 interface IProps {
-    column: IDataColumn;
+    column: IDetailedDataColumn;
     onEditColumnDescriptionRedirect?: Nullable<() => Promise<void>>;
     updateDataColumnDescription: (
         columnId: number,
@@ -33,27 +32,25 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
     onEditColumnDescriptionRedirect,
     updateDataColumnDescription,
 }) => {
-    const { data: detailedColumn } = useResource(
-        React.useCallback(() => TableColumnResource.get(column.id), [column.id])
-    );
     const parsedType = useMemo(() => parseType('', column.type), [column.type]);
 
-    const tagsDOM = (detailedColumn?.tags || []).map((tag) => (
+    const tagsDOM = (column?.tags || []).map((tag) => (
         <TableTag tag={tag} readonly={true} key={tag.id} mini={true} />
     ));
 
+    const columnDescription = convertRawToContentState(
+        column.description as string
+    );
     const descriptionContent = (
         <div>
-            {detailedColumn?.data_element_association &&
-                !(column.description as ContentState).hasText() && (
+            {column?.data_element_association &&
+                !columnDescription.hasText() && (
                     <DataElementDescription
-                        dataElementAssociation={
-                            detailedColumn.data_element_association
-                        }
+                        dataElementAssociation={column.data_element_association}
                     />
                 )}
             <EditableTextField
-                value={column.description as ContentState}
+                value={columnDescription}
                 onSave={updateDataColumnDescription.bind(null, column.id)}
                 placeholder="add column description"
                 onEditRedirect={onEditColumnDescriptionRedirect}
@@ -86,12 +83,10 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
                             </div>
                         </KeyContentDisplay>
                     )}
-                    {detailedColumn?.data_element_association && (
+                    {column?.data_element_association && (
                         <KeyContentDisplay keyString="Data Element">
                             <DataElement
-                                association={
-                                    detailedColumn.data_element_association
-                                }
+                                association={column.data_element_association}
                             />
                         </KeyContentDisplay>
                     )}
@@ -103,7 +98,9 @@ export const DataTableColumnCard: React.FunctionComponent<IProps> = ({
                     <KeyContentDisplay keyString="Description">
                         {descriptionContent}
                     </KeyContentDisplay>
-                    <DataTableColumnStats stats={detailedColumn?.stats} />
+                    {!!column?.stats?.length && (
+                        <DataTableColumnStats stats={column.stats} />
+                    )}
                 </div>
             </Card>
         </div>

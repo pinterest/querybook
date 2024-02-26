@@ -1,6 +1,6 @@
 import * as DraftJs from 'draft-js';
 import type { Stack } from 'immutable';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { Link } from 'ui/Link/Link';
 
@@ -10,9 +10,25 @@ interface IUrlLinkProps {
 }
 
 const UrlLink: React.FunctionComponent<IUrlLinkProps> = (props) => {
-    const { url } = props.contentState.getEntity(props.entityKey).getData();
+    const { url }: { url: string } = props.contentState
+        .getEntity(props.entityKey)
+        .getData();
+    const sanitizedUrl = useMemo(() => {
+        // sanitize URL to prevent XSS
+        try {
+            const urlObj = new URL(url);
+            if (['http:', 'https:'].includes(urlObj.protocol)) {
+                return urlObj.href;
+            } else {
+                return undefined;
+            }
+        } catch (error) {
+            return undefined;
+        }
+    }, [url]);
+
     return (
-        <Link to={url} newTab>
+        <Link to={sanitizedUrl ?? 'about:blank'} newTab>
             {props.children}
         </Link>
     );

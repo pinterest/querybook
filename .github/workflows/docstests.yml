@@ -1,0 +1,28 @@
+name: Docs Build
+
+on:
+    push:
+        branches:
+            - master
+        paths:
+            - 'docs_website/**/*'
+    pull_request:
+        paths:
+            - 'docs_website/**/*'
+
+jobs:
+    test-docs-build:
+        name: Test Docs Build
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: 18
+                  cache: yarn
+            - name: Change to docs_website directory
+              run: cd docs_website
+            - name: Install dependencies
+              run: yarn install --frozen-lockfile
+            - name: Test build website
+              run: yarn build

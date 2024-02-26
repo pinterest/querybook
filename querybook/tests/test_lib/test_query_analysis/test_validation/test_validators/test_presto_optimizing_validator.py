@@ -373,6 +373,12 @@ class PrestoColumnNameSuggesterTestCase(BaseValidatorTestCase):
 class PrestoTableNameSuggesterTestCase(BaseValidatorTestCase):
     def setUp(self):
         self._validator = PrestoTableNameSuggester(MagicMock())
+        patch_get_metastore_id = patch(
+            "logic.admin.get_query_metastore_id_by_engine_id"
+        )
+        mock_get_metastore_id = patch_get_metastore_id.start()
+        mock_get_metastore_id.return_value = 1
+        self.addCleanup(patch_get_metastore_id.stop)
 
     def test_get_full_table_name_from_error(self):
         self.assertEquals(
@@ -411,7 +417,7 @@ class PrestoTableNameSuggesterTestCase(BaseValidatorTestCase):
         mock_table_suggestion.return_value = [
             {"schema": "main", "name": "world_happiness_rank_2015"}
         ], 1
-        self._validator._suggest_table_name_if_needed(validation_result)
+        self._validator._suggest_table_name_if_needed(validation_result, 0)
         self.assertEquals(
             validation_result.suggestion, "main.world_happiness_rank_2015"
         )
@@ -430,7 +436,7 @@ class PrestoTableNameSuggesterTestCase(BaseValidatorTestCase):
             {"schema": "main", "name": "world_happiness_rank_2015"},
             {"schema": "main", "name": "world_happiness_rank_2016"},
         ], 2
-        self._validator._suggest_table_name_if_needed(validation_result)
+        self._validator._suggest_table_name_if_needed(validation_result, 0)
         self.assertEquals(
             validation_result.suggestion, "main.world_happiness_rank_2015"
         )
@@ -446,7 +452,7 @@ class PrestoTableNameSuggesterTestCase(BaseValidatorTestCase):
             "line 0:1: Table 'world_happiness_15' does not exist",
         )
         mock_table_suggestion.return_value = [], 0
-        self._validator._suggest_table_name_if_needed(validation_result)
+        self._validator._suggest_table_name_if_needed(validation_result, 0)
         self.assertEquals(validation_result.suggestion, None)
 
 

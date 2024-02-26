@@ -38,6 +38,7 @@
             "integrations/add_table_upload",
             "integrations/add_event_logger",
             "integrations/add_stats_logger",
+            "integrations/add_surveys",
             "integrations/add_ai_assistant",
             "integrations/customize_html",
             "integrations/embedded_iframe"

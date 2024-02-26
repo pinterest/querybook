@@ -32,7 +32,9 @@ import { IDataDocMetaVariable } from 'const/datadoc';
 import KeyMap from 'const/keyMap';
 import { IQueryEngine } from 'const/queryEngine';
 import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
+import { SurveySurfaceType } from 'const/survey';
 import { useDebounceState } from 'hooks/redux/useDebounceState';
+import { useSurveyTrigger } from 'hooks/ui/useSurveyTrigger';
 import { useBrowserTitle } from 'hooks/useBrowserTitle';
 import { useTrackView } from 'hooks/useTrackView';
 import { trackClick } from 'lib/analytics';
@@ -467,6 +469,7 @@ const QueryComposer: React.FC = () => {
         return getSelectedQuery(query, selectedRange);
     }, [query, queryEditorRef]);
 
+    const triggerSurvey = useSurveyTrigger();
     const handleRunQuery = React.useCallback(async () => {
         trackClick({
             component: ComponentType.ADHOC_QUERY,
@@ -494,6 +497,9 @@ const QueryComposer: React.FC = () => {
                 return data.id;
             }
         );
+        triggerSurvey(SurveySurfaceType.QUERY_AUTHORING, {
+            query_execution_id: queryId,
+        });
         if (queryId != null) {
             setExecutionId(queryId);
             setResultsCollapsed(false);
@@ -506,6 +512,7 @@ const QueryComposer: React.FC = () => {
         getCurrentSelectedQuery,
         setExecutionId,
         hasLintErrors,
+        triggerSurvey,
     ]);
 
     const keyMap = useKeyMap(clickOnRunButton, queryEngines, setEngineId);
