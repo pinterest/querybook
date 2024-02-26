@@ -104,7 +104,7 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
         );
     } else if (contentState === 'table') {
         contentDOM = (
-            <div className="sidebar-content sidebar-content-contents">
+            <div className="sidebar-content sidebar-content-table">
                 <DataTableViewMini
                     tableId={sidebarTableId}
                     onHide={() => clearSidebarTableId()}
