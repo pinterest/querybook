@@ -57,10 +57,13 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
         }, [])
     );
 
-    useEffect(() => {
-        clearSidebarTableId();
-        setContentState('default');
-    }, []);
+    useEffect(
+        () => () => {
+            clearSidebarTableId();
+            setContentState('default');
+        },
+        []
+    );
 
     useEffect(() => {
         if (sidebarTableId != null) {
