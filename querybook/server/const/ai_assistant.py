@@ -11,6 +11,15 @@ class AICommandType(Enum):
     TABLE_SELECT = "table_select"
 
 
+# KEEP IT CONSISTENT AS webapp/const/aiAssistant.ts
+class AISocketEvent(Enum):
+    DATA = "data"
+    JSON_PATCH = "json_patch"
+    TABLES = "tables"
+    CLOSE = "close"
+    ERROR = "error"
+
+
 AI_ASSISTANT_NAMESPACE = "/ai_assistant"
 
 
