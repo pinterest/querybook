@@ -57,10 +57,13 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
         }, [])
     );
 
-    useEffect(() => {
-        clearSidebarTableId();
-        setContentState('default');
-    }, []);
+    useEffect(
+        () => () => {
+            clearSidebarTableId();
+            setContentState('default');
+        },
+        []
+    );
 
     useEffect(() => {
         if (sidebarTableId != null) {
@@ -74,10 +77,7 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
     const resizeToCollapseSidebar = useResizeToCollapseSidebar(
         DEFAULT_SIDEBAR_WIDTH,
         1 / 3,
-        React.useCallback(() => {
-            clearSidebarTableId();
-            setContentState('default');
-        }, [])
+        React.useCallback(() => setContentState('default'), [])
     );
 
     let contentDOM: React.ReactChild;
