@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import DOMPurify from 'dompurify';
 import { debounce } from 'lodash';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -103,7 +104,9 @@ export const StatementLog: React.FunctionComponent<IStatementLogProps> = ({
             }}
             className="statement-execution-log-container"
             dangerouslySetInnerHTML={{
-                __html: logText,
+                __html: DOMPurify.sanitize(logText, {
+                    USE_PROFILES: { html: true },
+                }),
             }}
         />
     );

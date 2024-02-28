@@ -1,10 +1,11 @@
 import { getLanguageSetting, ILanguageSetting } from './sql-setting';
+import DOMPurify from 'dompurify';
+import { bind } from 'lodash-decorators';
 
 import CodeMirror from 'lib/codemirror';
 import { ICodeAnalysis, TableToken } from 'lib/sql-helper/sql-lexer';
 import { reduxStore } from 'redux/store';
 import { SearchTableResource } from 'resource/search';
-import { bind } from 'lodash-decorators';
 
 interface ILineAnalysis {
     statementNum: number;
@@ -408,14 +409,17 @@ export class SqlAutoCompleter {
 
         const div = document.createElement('div');
         div.className = 'code-editor-autocomplete-wrapper';
-        div.innerHTML = `
+        div.innerHTML = DOMPurify.sanitize(
+            `
             <span class="code-editor-autocomplete-span code-editor-text-span">
                 ${text}
             </span>
             <span class="code-editor-autocomplete-span code-editor-tooltip-span">
                 ${tooltip}
             </span>
-        `;
+        `,
+            { USE_PROFILES: { html: true } }
+        );
 
         element.appendChild(div);
     }
