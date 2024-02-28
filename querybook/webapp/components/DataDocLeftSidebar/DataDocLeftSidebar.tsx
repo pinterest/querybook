@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import Resizable from 're-resizable';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { DataTableViewMini } from 'components/DataTableViewMini/DataTableViewMini';
@@ -39,7 +39,7 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
     const clearSidebarTableId = () => dispatch(setSidebarTableId(null));
 
     const [contentState, setContentState] =
-        React.useState<LeftSidebarContentState>('default');
+        useState<LeftSidebarContentState>('default');
 
     useEvent(
         'keydown',
@@ -64,6 +64,7 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
         },
         []
     );
+
     useEffect(() => {
         if (sidebarTableId != null) {
             setContentState('table');
@@ -76,39 +77,33 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
     const resizeToCollapseSidebar = useResizeToCollapseSidebar(
         DEFAULT_SIDEBAR_WIDTH,
         1 / 3,
-        React.useCallback(() => setContentState('default'), [])
+        React.useCallback(() => {
+            clearSidebarTableId();
+            setContentState('default');
+        }, [])
     );
 
     let contentDOM: React.ReactChild;
     if (contentState === 'contents') {
         contentDOM = (
-            <Resizable
-                defaultSize={{
-                    width: `${DEFAULT_SIDEBAR_WIDTH}px`,
-                }}
-                minWidth={DEFAULT_SIDEBAR_WIDTH}
-                enable={enableResizable({ right: true })}
-                onResize={resizeToCollapseSidebar}
-            >
-                <div className="sidebar-content sidebar-content-contents">
-                    <Level className="contents-panel-header">
-                        <IconButton
-                            icon="ArrowLeft"
-                            onClick={() => setContentState('default')}
-                        />
-                        <div className="flex-row">
-                            <span className="mr4">
-                                contents ({TOGGLE_TOC_SHORTCUT})
-                            </span>
-                            <InfoButton layout={['right', 'top']}>
-                                Click to jump to the corresponding cell. Drag
-                                cells to reorder them.
-                            </InfoButton>
-                        </div>
-                    </Level>
-                    <DataDocContents cells={cells} docId={docId} />
-                </div>
-            </Resizable>
+            <div className="sidebar-content sidebar-content-contents">
+                <Level className="contents-panel-header">
+                    <IconButton
+                        icon="ArrowLeft"
+                        onClick={() => setContentState('default')}
+                    />
+                    <div className="flex-row">
+                        <span className="mr4">
+                            contents ({TOGGLE_TOC_SHORTCUT})
+                        </span>
+                        <InfoButton layout={['right', 'top']}>
+                            Click to jump to the corresponding cell. Drag cells
+                            to reorder them.
+                        </InfoButton>
+                    </div>
+                </Level>
+                <DataDocContents cells={cells} docId={docId} />
+            </div>
         );
     } else if (contentState === 'table') {
         contentDOM = (
@@ -143,7 +138,18 @@ export const DataDocLeftSidebar: React.FunctionComponent<IProps> = ({
                 hidden: cells.length === 0,
             })}
         >
-            {contentDOM}
+            {contentState === 'default' ? (
+                <> {contentDOM} </>
+            ) : (
+                <Resizable
+                    defaultSize={{ width: `${DEFAULT_SIDEBAR_WIDTH}px` }}
+                    minWidth={DEFAULT_SIDEBAR_WIDTH}
+                    enable={enableResizable({ right: true })}
+                    onResize={resizeToCollapseSidebar}
+                >
+                    {contentDOM}
+                </Resizable>
+            )}
         </div>
     );
 };
