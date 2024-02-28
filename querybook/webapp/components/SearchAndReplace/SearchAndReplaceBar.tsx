@@ -143,11 +143,11 @@ export const SearchAndReplaceBar = React.forwardRef<
 
         const noPrevRes = React.useMemo(
             () => searchResults.length <= 1,
-            [searchResults.length, currentSearchResultIndex]
+            [searchResults.length]
         );
         const noNextRes = React.useMemo(
             () => searchResults.length <= 1,
-            [searchResults.length, currentSearchResultIndex]
+            [searchResults.length]
         );
 
         const searchRow = (
