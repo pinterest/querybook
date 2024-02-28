@@ -171,7 +171,7 @@ export const dataDocViewerInfosSelector = createSelector(
             Object.entries(editorsByUserId).filter(
                 // Filter out any editors inherited from groups
                 // (i.e. editors with a uid but no id)
-                ([_userId, editor]) => editor.id != null || editor.uid === uid
+                ([_userId, editor]) => editor.id !== null || editor.uid === uid
             )
         );
         const allUserIds = [

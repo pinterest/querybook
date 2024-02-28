@@ -20,7 +20,7 @@ class DocDoesNotExist(Exception):
 
 @with_session
 def user_can_write(doc_id, uid, session=None):
-    datadoc = session.query(DataDoc).filter_by(id=doc_id).first()
+    datadoc = session.query(DataDoc).get(doc_id)
 
     if datadoc is None:
         raise DocDoesNotExist()
@@ -36,7 +36,7 @@ def user_can_write(doc_id, uid, session=None):
 @with_session
 def user_can_read(doc_id, uid, session=None):
     # Check if the doc is public or if the user is the owner
-    datadoc = session.query(DataDoc).filter_by(id=doc_id).first()
+    datadoc = session.query(DataDoc).get(doc_id)
 
     if datadoc is None:
         raise DocDoesNotExist()
@@ -76,7 +76,7 @@ def assert_can_write(doc_id, session=None):
 @with_session
 def assert_is_owner(doc_id, session=None):
     try:
-        doc = session.query(DataDoc).filter(DataDoc.id == doc_id).first()
+        doc = session.query(DataDoc).get(doc_id)
         if doc is None:
             raise DocDoesNotExist
         api_assert(
@@ -90,7 +90,7 @@ def assert_is_owner(doc_id, session=None):
 
 @with_session
 def assert_is_not_group(id, session=None):
-    editor = session.query(DataDocEditor).filter_by(id=id).first()
+    editor = session.query(DataDocEditor).get(id)
     if editor is None:
         api_assert(False, "EDITOR_DNE", RESOURCE_NOT_FOUND_STATUS_CODE)
     user = session.query(User).filter_by(id=editor.uid).first()
