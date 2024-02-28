@@ -79,8 +79,12 @@ def get_all_groups_and_group_members_with_access(
 
 @with_session
 def user_has_permission(
-    doc_or_board_id, permission_level, editor_type, uid, session=None
-):
+    doc_or_board_id: int,
+    permission_level: Permission,
+    editor_type: Union[DataDocEditor, BoardEditor],
+    uid: int,
+    session: Optional[Session] = None,
+) -> bool:
     """
     Check if the user has the specified permission for the specified datadoc or board.
 

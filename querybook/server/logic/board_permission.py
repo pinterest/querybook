@@ -19,7 +19,7 @@ class BoardDoesNotExist(Exception):
 
 @with_session
 def user_can_edit(board_id, uid, session=None):
-    board = session.query(Board).filter_by(id=board_id).first()
+    board = session.query(Board).get(board_id)
 
     if board is None:
         raise BoardDoesNotExist()
@@ -34,7 +34,7 @@ def user_can_edit(board_id, uid, session=None):
 
 @with_session
 def user_can_read(board_id, uid, session=None):
-    board = session.query(Board).filter_by(id=board_id).first()
+    board = session.query(Board).get(board_id)
 
     if board is None:
         raise BoardDoesNotExist()
@@ -74,7 +74,7 @@ def assert_can_read(board_id, session=None):
 @with_session
 def assert_is_owner(board_id, session=None):
     try:
-        board = session.query(Board).filter(Board.id == board_id).first()
+        board = session.query(Board).get(board_id)
         if board is None:
             raise BoardDoesNotExist
         api_assert(
@@ -88,7 +88,7 @@ def assert_is_owner(board_id, session=None):
 
 @with_session
 def assert_is_not_group(id, session=None):
-    editor = session.query(BoardEditor).filter_by(id=id).first()
+    editor = session.query(BoardEditor).get(id)
     if editor is None:
         api_assert(False, "EDITOR_DNE", RESOURCE_NOT_FOUND_STATUS_CODE)
     user = session.query(User).filter_by(id=editor.uid).first()

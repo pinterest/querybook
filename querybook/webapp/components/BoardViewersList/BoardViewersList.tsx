@@ -82,7 +82,7 @@ export const BoardViewersList: React.FunctionComponent<IProps> = ({
         (uid: number) => {
             if (
                 uid === board.owner_uid ||
-                (uid in editorsByUid && editorsByUid[uid].id != null)
+                (uid in editorsByUid && editorsByUid[uid].id !== null)
             ) {
                 toast.error('User already added.');
             } else {
