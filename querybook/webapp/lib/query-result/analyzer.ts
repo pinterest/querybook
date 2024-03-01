@@ -9,6 +9,19 @@ function arrToBigNumber(values: any[]) {
 
 export const columnStatsAnalyzers: IColumnStatsAnalyzer[] = [
     {
+        key: 'sum',
+        name: 'Sum',
+        appliesToType: ['number'],
+        generator: (values: any[]) => {
+            const bigNumberArray = arrToBigNumber(values);
+            const sum = bigNumberArray.reduce(
+                (s, value) => s.plus(value),
+                new BigNumber(0)
+            );
+            return sum.toFormat(2);
+        },
+    },
+    {
         key: 'average',
         name: 'Average',
         appliesToType: ['number'],
