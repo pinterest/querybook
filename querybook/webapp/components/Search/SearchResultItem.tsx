@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 import { escape, escapeRegExp } from 'lodash';
 import React, { useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -55,7 +56,9 @@ const HighlightTitle: React.FunctionComponent<{
             <div
                 className="result-item-title"
                 dangerouslySetInnerHTML={{
-                    __html: highlightedTitle,
+                    __html: DOMPurify.sanitize(highlightedTitle, {
+                        USE_PROFILES: { html: true },
+                    }),
                 }}
             />
         </AccentText>
@@ -166,8 +169,9 @@ export const QueryItem: React.FunctionComponent<IQueryItemProps> = ({
             {!isQueryTextExpanded ? (
                 <span
                     dangerouslySetInnerHTML={{
-                        __html: formatHighlightStrings(
-                            queryTextHighlightedContent
+                        __html: DOMPurify.sanitize(
+                            formatHighlightStrings(queryTextHighlightedContent),
+                            { USE_PROFILES: { html: true } }
                         ),
                     }}
                 />
@@ -281,7 +285,10 @@ export const DataDocItem: React.FunctionComponent<IDataDocItemProps> = ({
         <span
             className="result-item-description"
             dangerouslySetInnerHTML={{
-                __html: formatHighlightStrings(dataDocContent),
+                __html: DOMPurify.sanitize(
+                    formatHighlightStrings(dataDocContent),
+                    { USE_PROFILES: { html: true } }
+                ),
             }}
         />
     );
@@ -381,7 +388,10 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
     const descriptionDOM = highlightedDescription ? (
         <span
             dangerouslySetInnerHTML={{
-                __html: formatHighlightStrings(highlightedDescription),
+                __html: DOMPurify.sanitize(
+                    formatHighlightStrings(highlightedDescription),
+                    { USE_PROFILES: { html: true } }
+                ),
             }}
         />
     ) : (
@@ -484,7 +494,10 @@ export const BoardItem: React.FunctionComponent<{
     const descriptionDOM = highlightedDescription ? (
         <span
             dangerouslySetInnerHTML={{
-                __html: formatHighlightStrings(highlightedDescription),
+                __html: DOMPurify.sanitize(
+                    formatHighlightStrings(highlightedDescription),
+                    { USE_PROFILES: { html: true } }
+                ),
             }}
         />
     ) : (
