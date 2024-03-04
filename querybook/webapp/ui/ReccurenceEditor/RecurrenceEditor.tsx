@@ -3,7 +3,6 @@ import moment from 'moment';
 import * as React from 'react';
 import Select from 'react-select';
 
-import { DescribeCron } from 'components/DescribeCron/DescribeCron';
 import {
     getMonthdayOptions,
     getRecurrenceLocalTimeString,
@@ -20,6 +19,8 @@ import { FormField } from 'ui/Form/FormField';
 import { overlayRoot } from 'ui/Overlay/Overlay';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { TimePicker } from 'ui/TimePicker/TimePicker';
+
+import { RecurrenceEditorCronPicker } from './RecurrenceEditorCronPicker';
 
 import './RecurrenceEditor.scss';
 
@@ -81,25 +82,7 @@ export const RecurrenceEditor: React.FunctionComponent<IProps> = ({
     let datePickerField: React.ReactNode;
 
     if (recurrence.recurrence === 'cron') {
-        datePickerField = (
-            <FormField label="Cron Expression">
-                <Field
-                    name="recurrence.cron"
-                    render={({ field }) => (
-                        <>
-                            <input
-                                {...field}
-                                className="editor-input"
-                                placeholder="* * * * *"
-                            />
-                            <div className="editor-text mt12">
-                                <DescribeCron cron={recurrence.cron} />
-                            </div>
-                        </>
-                    )}
-                />
-            </FormField>
-        );
+        datePickerField = <RecurrenceEditorCronPicker cron={recurrence.cron} />;
     } else {
         const isHourly = recurrence.recurrence === 'hourly';
 

@@ -81,25 +81,29 @@ export function recurrenceToCron(recurrence: IRecurrence): string {
         return recurrence.cron;
     }
 
-    const { minute } = recurrence;
+    try {
+        const { minute } = recurrence;
 
-    let hour = recurrence.hour.toString();
-    let dayMonth = '*';
-    let month = '*';
-    let dayWeek = '*';
+        let hour = recurrence.hour.toString();
+        let dayMonth = '*';
+        let month = '*';
+        let dayWeek = '*';
 
-    if (recurrence.recurrence === 'yearly') {
-        month = recurrence.on.month.join(',');
-        dayMonth = recurrence.on.dayMonth.join(',');
-    } else if (recurrence.recurrence === 'monthly') {
-        dayMonth = recurrence.on.dayMonth.join(',');
-    } else if (recurrence.recurrence === 'weekly') {
-        dayWeek = recurrence.on.dayWeek.join(',');
-    } else if (recurrence.recurrence === 'hourly') {
-        hour = '*';
+        if (recurrence.recurrence === 'yearly') {
+            month = recurrence.on.month.join(',');
+            dayMonth = recurrence.on.dayMonth.join(',');
+        } else if (recurrence.recurrence === 'monthly') {
+            dayMonth = recurrence.on.dayMonth.join(',');
+        } else if (recurrence.recurrence === 'weekly') {
+            dayWeek = recurrence.on.dayWeek.join(',');
+        } else if (recurrence.recurrence === 'hourly') {
+            hour = '*';
+        }
+
+        return `${minute} ${hour} ${dayMonth} ${month} ${dayWeek}`;
+    } catch (error) {
+        return '';
     }
-
-    return `${minute} ${hour} ${dayMonth} ${month} ${dayWeek}`;
 }
 
 export const WEEKDAYS = [
