@@ -157,13 +157,20 @@ def delete_data_cell_from_doc(doc_id, cell_id):
 
 
 @register("/datadoc/<int:id>/clone/", methods=["POST"])
-def clone_data_doc(id):
+def clone_data_doc(id, environment_id=None):
     with DBSession() as session:
         assert_can_read(id, session=session)
+
+        if environment_id is not None:
+            verify_environment_permission([environment_id])
+
         try:
             verify_data_doc_permission(id, session=session)
             data_doc = logic.clone_data_doc(
-                id=id, owner_uid=current_user.id, session=session
+                id=id,
+                owner_uid=current_user.id,
+                environment_id=environment_id,
+                session=session,
             )
             doc_dict = data_doc.to_dict(with_cells=True)
         except AssertionError as e:

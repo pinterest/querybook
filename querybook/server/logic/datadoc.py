@@ -206,14 +206,17 @@ def delete_data_doc(session=None):
 
 # You cannot delete data doc
 @with_session
-def clone_data_doc(id, owner_uid, commit=True, session=None):
+def clone_data_doc(id, owner_uid, environment_id=None, commit=True, session=None):
     data_doc = get_data_doc_by_id(id, session=session)
 
     # Check to see if author has permission
     assert data_doc is not None, "Invalid data doc id"
 
+    # Clone into the same environment if not specified
+    environment_id = environment_id or data_doc.environment_id
+
     new_data_doc = create_data_doc(
-        environment_id=data_doc.environment_id,
+        environment_id=environment_id,
         public=data_doc.public,
         archived=False,
         owner_uid=owner_uid,
