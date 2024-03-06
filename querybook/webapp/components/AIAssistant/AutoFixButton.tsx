@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { QueryComparison } from 'components/TranspileQueryModal/QueryComparison';
 import { AICommandType } from 'const/aiAssistant';
 import { ComponentType, ElementType } from 'const/analytics';
 import { useAISocket } from 'hooks/useAISocket';
+import useNonEmptyState from 'hooks/useNonEmptyState';
 import { trackClick } from 'lib/analytics';
-import { trimSQLQuery } from 'lib/stream';
 import { Button } from 'ui/Button/Button';
 import { Message } from 'ui/Message/Message';
 import { Modal } from 'ui/Modal/Modal';
@@ -21,19 +21,22 @@ interface IProps {
 
 const useSQLFix = () => {
     const [data, setData] = useState<{ [key: string]: string }>({});
+    const [fixedQuery, setFixedQuery] = useNonEmptyState<string>('');
 
     const socket = useAISocket(AICommandType.SQL_FIX, ({ data }) => {
-        setData(data);
+        setData(data as { [key: string]: string });
     });
 
     const {
         data: unformattedData,
         explanation,
         fix_suggestion: suggestion,
-        fixed_query: rawFixedQuery,
+        fixed_query: newFixedQuery,
     } = data;
 
-    const fixedQuery = trimSQLQuery(rawFixedQuery);
+    useEffect(() => {
+        setFixedQuery(newFixedQuery);
+    }, [newFixedQuery]);
 
     return {
         socket,

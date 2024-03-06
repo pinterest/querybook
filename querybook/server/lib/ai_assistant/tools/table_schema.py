@@ -1,9 +1,9 @@
 from typing import Callable
 
 from app.db import with_session
+from lib.vector_store import get_vector_store
 from logic import metastore as m_logic
 from models.metastore import DataTable, DataTableColumn
-from lib.vector_store import get_vector_store
 
 
 def get_table_documentation(table: DataTable) -> str:
@@ -32,6 +32,11 @@ def _get_column(column: DataTableColumn) -> dict[str, str]:
         # TODO: only handling the REF data element for now. Need to handle ARRAY, MAP and etc in the future.
         column_json["description"] = column.data_elements[0].description
         column_json["data_element"] = column.data_elements[0].name
+
+    if len(column.statistics):
+        column_json["statistics"] = {
+            stat.key: stat.value for stat in column.statistics if stat.value is not None
+        }
 
     return column_json
 
