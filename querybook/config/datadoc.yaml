@@ -17,12 +17,14 @@ cell_types:
             collapsed: false
             query_collapsed: false
             limit: 0
+            sample_rate: 0.0
         meta_default:
             title: ''
             engine: null
             collapsed: false
             query_collapsed: false
             limit: 0
+            sample_rate: 0
     chart:
         key: 'chart'
         name: 'Chart'

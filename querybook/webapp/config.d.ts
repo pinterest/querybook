@@ -117,6 +117,11 @@ declare module 'config/querybook_public_config.yaml' {
                 max_per_day?: number;
             }>;
         };
+        table_sampling?: {
+            enabled: boolean;
+            sample_rates: Array<number>;
+            default_sample_rate: number;
+        };
     };
     export default data;
 }

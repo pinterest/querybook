@@ -112,7 +112,9 @@ def get_table_by_name(
         table = logic.get_table_by_name(
             schema_name, table_name, metastore_id, session=session
         )
-        api_assert(table, "{}.{} does not exist".format(schema_name, table_name))
+        if not table:
+            return None
+
         verify_data_schema_permission(table.schema_id, session=session)
         table_dict = table.to_dict(with_schema, with_column, with_warnings)
 

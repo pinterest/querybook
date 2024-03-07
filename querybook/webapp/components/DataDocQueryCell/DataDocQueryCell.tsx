@@ -24,7 +24,11 @@ import { TemplatedQueryView } from 'components/TemplateQueryView/TemplatedQueryV
 import { TranspileQueryModal } from 'components/TranspileQueryModal/TranspileQueryModal';
 import { UDFForm } from 'components/UDFForm/UDFForm';
 import { ComponentType, ElementType } from 'const/analytics';
-import { IDataQueryCellMeta, TDataDocMetaVariables } from 'const/datadoc';
+import {
+    IDataQueryCellMeta,
+    ISamplingTables,
+    TDataDocMetaVariables,
+} from 'const/datadoc';
 import type { IQueryEngine, IQueryTranspiler } from 'const/queryEngine';
 import { SurveySurfaceType } from 'const/survey';
 import { triggerSurvey } from 'hooks/ui/useSurveyTrigger';
@@ -35,6 +39,7 @@ import {
     getQueryAsExplain,
     getSelectedQuery,
     IRange,
+    TableToken,
 } from 'lib/sql-helper/sql-lexer';
 import { DEFAULT_ROW_LIMIT } from 'lib/sql-helper/sql-limiter';
 import { getPossibleTranspilers } from 'lib/templated-query/transpile';
@@ -110,6 +115,7 @@ interface IState {
     showRenderedTemplateModal: boolean;
     showUDFModal: boolean;
     hasLintError: boolean;
+    samplingTables: ISamplingTables;
 
     transpilerConfig?: {
         toEngine: IQueryEngine;
@@ -135,6 +141,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             showRenderedTemplateModal: false,
             showUDFModal: false,
             hasLintError: false,
+            samplingTables: {},
         };
     }
 
@@ -195,6 +202,22 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
     public get rowLimit() {
         return this.state.meta.limit ?? DEFAULT_ROW_LIMIT;
+    }
+
+    public get sampleRate() {
+        return this.state.meta.sample_rate ?? -1;
+    }
+
+    public get samplingTables() {
+        const samplingTables = this.state.samplingTables;
+        for (const table in samplingTables) {
+            samplingTables[table].sample_rate = this.sampleRate;
+        }
+        return samplingTables;
+    }
+
+    public get hasSamplingTables() {
+        return Object.keys(this.samplingTables).length > 0;
     }
 
     @decorate(memoizeOne)
@@ -395,6 +418,11 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
+    public handleMetaSampleRateChange(sampleRate: number) {
+        return this.handleMetaChange('sample_rate', sampleRate);
+    }
+
+    @bind
     public async getTransformedQuery() {
         const { templatedVariables = [] } = this.props;
         const { query } = this.state;
@@ -405,9 +433,12 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
         return transformQuery(
             rawQuery,
+            this.queryEngine.language,
             templatedVariables,
             this.queryEngine,
-            this.rowLimit
+            this.rowLimit,
+            this.samplingTables,
+            this.sampleRate
         );
     }
 
@@ -644,6 +675,27 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         );
     }
 
+    @bind
+    public async handleTablesChange(tableReferences: TableToken[]) {
+        const samplingTables = {};
+        await Promise.all(
+            tableReferences.map(async (table) => {
+                const tableInfo = await this.fetchDataTableByNameIfNeeded(
+                    table.schema,
+                    table.name
+                );
+
+                if (tableInfo?.custom_properties?.sampling) {
+                    samplingTables[`${table.schema}.${table.name}`] = {
+                        sampled_table:
+                            tableInfo.custom_properties?.sampled_table,
+                    };
+                }
+            })
+        );
+        this.setState({ samplingTables });
+    }
+
     public componentDidMount() {
         this.updateFocus();
     }
@@ -724,6 +776,13 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                                 ? this.handleMetaRowLimitChange
                                 : null
                         }
+                        hasSamplingTables={this.hasSamplingTables}
+                        sampleRate={this.sampleRate}
+                        onSampleRateChange={
+                            this.hasSamplingTables
+                                ? this.handleMetaSampleRateChange
+                                : null
+                        }
                     />
                     {this.getAdditionalDropDownButtonDOM()}
                 </div>
@@ -781,6 +840,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                     onFocus={this.onFocus}
                     onBlur={this.onBlur}
                     onSelection={this.onSelection}
+                    onTablesChange={this.handleTablesChange}
                     readOnly={!isEditable}
                     keyMap={this.keyMap}
                     ref={this.queryEditorRef}

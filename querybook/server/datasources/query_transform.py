@@ -1,0 +1,19 @@
+from app.datasource import register
+from lib.query_analysis.transform import (
+    get_sampled_query,
+)
+
+
+@register("/query/transform/sampling/", methods=["POST"])
+def query_sampling(
+    query: str,
+    language: str,
+    sampling_tables: dict[str, dict[str, str]],
+):
+    try:
+        return get_sampled_query(
+            query=query, language=language, tsampling_tables=sampling_tables
+        )
+    except Exception as e:
+        # If parsing fails, return the original query
+        return query

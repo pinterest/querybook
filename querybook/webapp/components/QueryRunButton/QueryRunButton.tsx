@@ -3,6 +3,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
+import PublicConfig from 'config/querybook_public_config.yaml';
 import { IQueryEngine, QueryEngineStatus } from 'const/queryEngine';
 import { queryEngineStatusToIconStatus } from 'const/queryStatusIcon';
 import { TooltipDirection } from 'const/tooltip';
@@ -26,6 +27,8 @@ import { Tag } from 'ui/Tag/Tag';
 
 import './QueryRunButton.scss';
 
+const TableSamplingConfig = PublicConfig.table_sampling;
+
 const EXECUTE_QUERY_SHORTCUT = getShortcutSymbols(
     KeyMap.queryEditor.runQuery.key
 );
@@ -38,6 +41,10 @@ interface IQueryRunButtonProps extends IQueryEngineSelectorProps {
     rowLimit?: number;
     onRunClick: () => any;
     onRowLimitChange?: (rowLimit: number) => void;
+
+    hasSamplingTables?: boolean;
+    sampleRate?: number;
+    onSampleRateChange?: (sampleRate: number) => void;
 }
 
 export interface IQueryRunButtonHandles {
@@ -60,6 +67,10 @@ export const QueryRunButton = React.forwardRef<
             onEngineIdSelect,
             rowLimit,
             onRowLimitChange,
+
+            hasSamplingTables,
+            sampleRate,
+            onSampleRateChange,
         },
         ref
     ) => {
@@ -93,6 +104,15 @@ export const QueryRunButton = React.forwardRef<
             />
         );
 
+        const tableSamplingDOM =
+            !disabled && TableSamplingConfig.enabled && hasSamplingTables ? (
+                <TableSamplingSelector
+                    sampleRate={sampleRate}
+                    setSampleRate={onSampleRateChange}
+                    tooltipPos={runButtonTooltipPos}
+                />
+            ) : null;
+
         const isRowLimitEnabled =
             queryEngineById[engineId]?.feature_params.row_limit;
         const rowLimitDOM =
@@ -113,6 +133,7 @@ export const QueryRunButton = React.forwardRef<
                     engineId={engineId}
                     onEngineIdSelect={onEngineIdSelect}
                 />
+                {tableSamplingDOM}
                 {rowLimitDOM}
                 {runButtonDOM}
             </div>
@@ -246,6 +267,58 @@ const QueryLimitSelector: React.FC<{
             layout={['bottom', 'right']}
         >
             <ListMenu items={rowLimitMenuItems} type="select" />
+        </Dropdown>
+    );
+};
+
+const sampleRateOptions = [{ label: 'none', value: 0 }].concat(
+    TableSamplingConfig.sample_rates.map((value) => ({
+        label: value + '%',
+        value,
+    }))
+);
+const DEFAULT_SAMPLE_RATE = TableSamplingConfig.default_sample_rate;
+const TableSamplingSelector: React.FC<{
+    sampleRate: number;
+    setSampleRate: (sampleRate: number) => void;
+    tooltipPos: TooltipDirection;
+}> = ({ sampleRate, setSampleRate, tooltipPos }) => {
+    React.useEffect(() => {
+        if (!sampleRateOptions.some((option) => option.value === sampleRate)) {
+            setSampleRate(DEFAULT_SAMPLE_RATE);
+        }
+    }, [sampleRate, setSampleRate]);
+
+    const selectedSampleRateText = React.useMemo(() => {
+        if (sampleRate > 0) {
+            return sampleRate + '%';
+        }
+        return 'none';
+    }, [sampleRate]);
+
+    const sampleRateMenuItems = sampleRateOptions.map((option) => ({
+        name: <span>{option.label}</span>,
+        onClick: () => setSampleRate(option.value),
+        checked: option.value === sampleRate,
+    }));
+
+    return (
+        <Dropdown
+            customButtonRenderer={() => (
+                <div
+                    className="flex-center ph4"
+                    aria-label="Only applies to tables support sampling"
+                    data-balloon-pos={tooltipPos}
+                >
+                    <span className="mr4">
+                        Sample: {selectedSampleRateText}
+                    </span>
+                    <Icon name="ChevronDown" size={24} color="light" />
+                </div>
+            )}
+            layout={['bottom', 'right']}
+        >
+            <ListMenu items={sampleRateMenuItems} type="select" />
         </Dropdown>
     );
 };

@@ -1,1 +1,1 @@
-sqlglot==17.8.0
+sqlglot[rs]==22.1.1

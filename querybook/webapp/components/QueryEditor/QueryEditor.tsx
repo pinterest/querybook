@@ -67,6 +67,7 @@ export interface IQueryEditorProps extends IStyledQueryEditorProps {
     onFocus?: (editor: CodeMirror.Editor, event: React.SyntheticEvent) => any;
     onBlur?: (editor: CodeMirror.Editor, event: React.SyntheticEvent) => any;
     onSelection?: (str: string, selection: IRange) => any;
+    onTablesChange?: (tables: TableToken[]) => any;
     getTableByName?: (schema: string, name: string) => any;
 
     getLintErrors?: (
@@ -120,6 +121,7 @@ export const QueryEditor: React.FC<
             onFocus,
             onBlur,
             onSelection,
+            onTablesChange,
             getTableByName,
 
             getLintErrors,
@@ -507,6 +509,14 @@ export const QueryEditor: React.FC<
         useEffect(() => {
             editorRef.current?.refresh();
         }, [fullScreen]);
+
+        useEffect(() => {
+            const tableReferences: TableToken[] = [].concat.apply(
+                [],
+                Object.values(codeAnalysis?.lineage.references ?? {})
+            );
+            onTablesChange?.(tableReferences);
+        }, [codeAnalysis]);
 
         useImperativeHandle(
             ref,

@@ -1,7 +1,7 @@
 import React from 'react';
 import toast from 'react-hot-toast';
 
-import { TDataDocMetaVariables } from 'const/datadoc';
+import { ISamplingTables, TDataDocMetaVariables } from 'const/datadoc';
 import { IQueryEngine } from 'const/queryEngine';
 import { sendConfirm } from 'lib/querybookUI';
 import { getDroppedTables } from 'lib/sql-helper/sql-checker';
@@ -12,14 +12,18 @@ import {
 import { renderTemplatedQuery } from 'lib/templated-query';
 import { Nullable } from 'lib/typescript';
 import { formatError } from 'lib/utils/error';
+import { QueryTransformResource } from 'resource/queryTransform';
 import { Content } from 'ui/Content/Content';
 import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 
 export async function transformQuery(
     query: string,
+    language: string,
     templatedVariables: TDataDocMetaVariables,
     engine: IQueryEngine,
-    rowLimit: Nullable<number>
+    rowLimit: Nullable<number>,
+    samplingTables: ISamplingTables,
+    sampleRate: Nullable<number>
 ): Promise<string> {
     if (!query) {
         return '';
@@ -35,8 +39,15 @@ export async function transformQuery(
         return '';
     }
 
-    const limitedQuery = await transformLimitedQuery(
+    const sampledQuery = await transformTableSamplingQuery(
         templatizedQuery,
+        language,
+        samplingTables,
+        sampleRate
+    );
+
+    const limitedQuery = await transformLimitedQuery(
+        sampledQuery,
         rowLimit,
         engine
     );
@@ -129,6 +140,24 @@ async function transformLimitedQuery(
             confirmText: 'Run without LIMIT',
         });
     });
+}
+
+async function transformTableSamplingQuery(
+    query: string,
+    language: string,
+    tables: Record<string, { sampled_table?: string; sample_rate?: number }>,
+    sampleRate: Nullable<number>
+) {
+    if (sampleRate == null || sampleRate <= 0) {
+        return query;
+    }
+
+    const { data } = await QueryTransformResource.getSampledQuery(
+        query,
+        language,
+        tables
+    );
+    return data;
 }
 
 async function confirmIfDroppingTablesThenRunQuery(
