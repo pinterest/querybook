@@ -1,7 +1,10 @@
 from typing import List, Optional, Union
-from sqlglot import exp, parse, parse_one, transpile
+from sqlglot import exp, parse, parse_one, transpile, errors
 
+from lib.logger import get_logger
 from const.sqlglot import QUERYBOOK_TO_SQLGLOT_LANGUAGE_MAPPING
+
+LOG = get_logger(__file__)
 
 
 def _get_sqlglot_dialect(language: Optional[str] = None):
@@ -49,8 +52,6 @@ def get_select_statement_limit(
     limit = -1
     limit_clause = statement.args.get("limit")
 
-    print("##", limit_clause)
-
     if isinstance(limit_clause, exp.Limit):
         limit = limit_clause.expression.this
     elif isinstance(limit_clause, exp.Fetch):
@@ -79,7 +80,7 @@ def has_query_contains_unlimited_select(query: str, language: str) -> bool:
     Returns:
         bool: True if the query contains a select statement without a limit, False otherwise
     """
-    statements = parse(query, dialect=QUERYBOOK_TO_SQLGLOT_LANGUAGE_MAPPING[language])
+    statements = parse(query, dialect=_get_sqlglot_dialect[language])
     return any(get_select_statement_limit(s) == -1 for s in statements)
 
 
@@ -107,6 +108,7 @@ def _get_sampled_statement(
     sampling_tables: dict[str, dict[str, str]],
 ):
     """Apply sampling to a sglglot statement AST for the given tables."""
+
     def transformer(node):
         if isinstance(node, exp.Table):
             full_table_name = f"{node.db}.{node.name}" if node.db else node.name
@@ -151,11 +153,17 @@ def get_sampled_query(
     Returns:
         str: The sampled query
     """
-    dialect = _get_sqlglot_dialect(language)
-    statements = parse(query, dialect=dialect)
-    sampled_statements = [
-        _get_sampled_statement(s, sampling_tables) for s in statements
-    ]
-    return _statements_to_query(
-        [s.sql(dialect=dialect, pretty=True) for s in sampled_statements]
-    )
+    try:
+        dialect = _get_sqlglot_dialect(language)
+        statements = parse(query, dialect=dialect)
+        sampled_statements = [
+            _get_sampled_statement(s, sampling_tables) for s in statements
+        ]
+        return _statements_to_query(
+            [s.sql(dialect=dialect, pretty=True) for s in sampled_statements]
+        )
+
+    except errors.ParseError as e:
+        LOG.error(e, exc_info=True)
+        # If parsing fails, return the original query
+        return query

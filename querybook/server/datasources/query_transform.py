@@ -10,10 +10,6 @@ def query_sampling(
     language: str,
     sampling_tables: dict[str, dict[str, str]],
 ):
-    try:
-        return get_sampled_query(
-            query=query, language=language, tsampling_tables=sampling_tables
-        )
-    except Exception as e:
-        # If parsing fails, return the original query
-        return query
+    return get_sampled_query(
+        query=query, language=language, sampling_tables=sampling_tables
+    )
