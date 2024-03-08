@@ -30,6 +30,7 @@ import { UDFForm } from 'components/UDFForm/UDFForm';
 import { ComponentType, ElementType } from 'const/analytics';
 import { IDataDocMetaVariable } from 'const/datadoc';
 import KeyMap from 'const/keyMap';
+import { IDataTable } from 'const/metastore';
 import { IQueryEngine } from 'const/queryEngine';
 import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
 import { SurveySurfaceType } from 'const/survey';
@@ -40,7 +41,7 @@ import { useTrackView } from 'hooks/useTrackView';
 import { trackClick } from 'lib/analytics';
 import { createSQLLinter } from 'lib/codemirror/codemirror-lint';
 import { replaceStringIndices, searchText } from 'lib/data-doc/search';
-import { getSelectedQuery, IRange } from 'lib/sql-helper/sql-lexer';
+import { getSelectedQuery, IRange, TableToken } from 'lib/sql-helper/sql-lexer';
 import { DEFAULT_ROW_LIMIT } from 'lib/sql-helper/sql-limiter';
 import { getPossibleTranspilers } from 'lib/templated-query/transpile';
 import { enableResizable, getQueryEngineId, sleep } from 'lib/utils';
@@ -159,6 +160,24 @@ const useRowLimit = (dispatch: Dispatch, environmentId: number) => {
     );
 
     return { rowLimit, setRowLimit };
+};
+
+const useTableSampleRate = (dispatch: Dispatch, environmentId: number) => {
+    const sampleRate = useSelector(
+        (state: IStoreState) => state.adhocQuery[environmentId]?.sampleRate ?? 0
+    );
+    const setSampleRate = useCallback(
+        (newSampleRate: number) =>
+            dispatch(
+                adhocQueryActions.receiveAdhocQuery(
+                    { sampleRate: newSampleRate },
+                    environmentId
+                )
+            ),
+        [dispatch, environmentId]
+    );
+
+    return { sampleRate, setSampleRate };
 };
 
 const useTemplatedVariables = (dispatch: Dispatch, environmentId: number) => {
@@ -393,6 +412,11 @@ const QueryComposer: React.FC = () => {
         environmentId
     );
     const { rowLimit, setRowLimit } = useRowLimit(dispatch, environmentId);
+    const { sampleRate, setSampleRate } = useTableSampleRate(
+        dispatch,
+        environmentId
+    );
+    const [samplingTables, setSamplingTables] = useState({});
 
     const [resultsCollapsed, setResultsCollapsed] = useState(false);
 
@@ -482,9 +506,12 @@ const QueryComposer: React.FC = () => {
         await sleep(250);
         const transformedQuery = await transformQuery(
             getCurrentSelectedQuery(),
+            engine.language,
             templatedVariables,
             engine,
-            rowLimit
+            rowLimit,
+            samplingTables,
+            sampleRate
         );
 
         const queryId = await runQuery(
@@ -506,6 +533,8 @@ const QueryComposer: React.FC = () => {
         }
     }, [
         rowLimit,
+        sampleRate,
+        samplingTables,
         engine,
         templatedVariables,
         dispatch,
@@ -537,6 +566,22 @@ const QueryComposer: React.FC = () => {
         []
     );
 
+    const handleTablesChange = React.useCallback(
+        async (tables: Record<string, IDataTable>) => {
+            const samplingTables = {};
+            Object.keys(tables).forEach((tableName) => {
+                const table = tables[tableName];
+                if (table?.custom_properties?.sampling) {
+                    samplingTables[tableName] = {
+                        sampled_table: table.custom_properties?.sampled_table,
+                    };
+                }
+            });
+            setSamplingTables(samplingTables);
+        },
+        [setSamplingTables]
+    );
+
     const editorDOM = (
         <>
             <BoundQueryEditor
@@ -550,6 +595,7 @@ const QueryComposer: React.FC = () => {
                 onSelection={handleEditorSelection}
                 getLintErrors={getLintAnnotations}
                 onLintCompletion={setHasLintErrors}
+                onTablesChange={handleTablesChange}
             />
         </>
     );
@@ -644,6 +690,9 @@ const QueryComposer: React.FC = () => {
                 runButtonTooltipPos={'down'}
                 rowLimit={rowLimit}
                 onRowLimitChange={setRowLimit}
+                hasSamplingTables={Object.keys(samplingTables).length > 0}
+                sampleRate={sampleRate}
+                onSampleRateChange={setSampleRate}
             />
         </div>
     );

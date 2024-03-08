@@ -29,6 +29,7 @@ import {
     ISamplingTables,
     TDataDocMetaVariables,
 } from 'const/datadoc';
+import { IDataTable } from 'const/metastore';
 import type { IQueryEngine, IQueryTranspiler } from 'const/queryEngine';
 import { SurveySurfaceType } from 'const/survey';
 import { triggerSurvey } from 'hooks/ui/useSurveyTrigger';
@@ -39,7 +40,6 @@ import {
     getQueryAsExplain,
     getSelectedQuery,
     IRange,
-    TableToken,
 } from 'lib/sql-helper/sql-lexer';
 import { DEFAULT_ROW_LIMIT } from 'lib/sql-helper/sql-limiter';
 import { getPossibleTranspilers } from 'lib/templated-query/transpile';
@@ -210,9 +210,9 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
     public get samplingTables() {
         const samplingTables = this.state.samplingTables;
-        for (const table in samplingTables) {
-            samplingTables[table].sample_rate = this.sampleRate;
-        }
+        Object.keys(samplingTables).forEach((tableName) => {
+            samplingTables[tableName].sample_rate = this.sampleRate;
+        });
         return samplingTables;
     }
 
@@ -676,23 +676,16 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
-    public async handleTablesChange(tableReferences: TableToken[]) {
+    public async handleTablesChange(tables: Record<string, IDataTable>) {
         const samplingTables = {};
-        await Promise.all(
-            tableReferences.map(async (table) => {
-                const tableInfo = await this.fetchDataTableByNameIfNeeded(
-                    table.schema,
-                    table.name
-                );
-
-                if (tableInfo?.custom_properties?.sampling) {
-                    samplingTables[`${table.schema}.${table.name}`] = {
-                        sampled_table:
-                            tableInfo.custom_properties?.sampled_table,
-                    };
-                }
-            })
-        );
+        Object.keys(tables).forEach((tableName) => {
+            const table = tables[tableName];
+            if (table?.custom_properties?.sampling) {
+                samplingTables[tableName] = {
+                    sampled_table: table.custom_properties?.sampled_table,
+                };
+            }
+        });
         this.setState({ samplingTables });
     }
 

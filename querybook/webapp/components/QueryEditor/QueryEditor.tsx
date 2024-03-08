@@ -17,6 +17,7 @@ import { ICodeMirrorTooltipProps } from 'components/CodeMirrorTooltip/CodeMirror
 import KeyMap from 'const/keyMap';
 import {
     FunctionDocumentationCollection,
+    IDataTable,
     tableNameDataTransferName,
 } from 'const/metastore';
 import { useAutoComplete } from 'hooks/queryEditor/useAutoComplete';
@@ -67,7 +68,7 @@ export interface IQueryEditorProps extends IStyledQueryEditorProps {
     onFocus?: (editor: CodeMirror.Editor, event: React.SyntheticEvent) => any;
     onBlur?: (editor: CodeMirror.Editor, event: React.SyntheticEvent) => any;
     onSelection?: (str: string, selection: IRange) => any;
-    onTablesChange?: (tables: TableToken[]) => any;
+    onTablesChange?: (tables: Record<string, IDataTable>) => any;
     getTableByName?: (schema: string, name: string) => any;
 
     getLintErrors?: (
@@ -515,7 +516,24 @@ export const QueryEditor: React.FC<
                 [],
                 Object.values(codeAnalysis?.lineage.references ?? {})
             );
-            onTablesChange?.(tableReferences);
+            Promise.all(
+                tableReferences.map((tableRef) =>
+                    getTableByName(tableRef.schema, tableRef.name)
+                )
+            ).then((tables) => {
+                const tablesMap = tableReferences.reduce(
+                    (obj, tableRef, index) => {
+                        if (tables[index]) {
+                            const fullTableName = `${tableRef.schema}.${tableRef.name}`;
+                            return { ...obj, [fullTableName]: tables[index] };
+                        } else {
+                            return obj;
+                        }
+                    },
+                    {}
+                );
+                onTablesChange?.(tablesMap);
+            });
         }, [codeAnalysis]);
 
         useImperativeHandle(
