@@ -105,6 +105,19 @@ class QueryEngine(CRUDMixin, Base):
         ),
     )
 
+    def get_default_schema(self):
+        default_schema = "default"
+        connection_string = self.executor_params.get("connection_string")
+        try:
+            connection_url = sql.engine.make_url(connection_string)
+        except Exception:
+            connection_url = None
+
+        if connection_url:
+            default_schema = connection_url.database or default_schema
+
+        return default_schema
+
     def to_dict(self):
         # IMPORTANT: do not expose executor params unless it is for admin
         return {
@@ -115,6 +128,7 @@ class QueryEngine(CRUDMixin, Base):
             "metastore_id": self.metastore_id,
             "feature_params": self.get_feature_params(),
             "executor": self.executor,
+            "default_schema": self.get_default_schema(),
         }
 
     def to_dict_admin(self):

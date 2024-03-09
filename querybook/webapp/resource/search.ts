@@ -33,9 +33,9 @@ export const SearchTableResource = {
             count: number;
         }>('/search/tables/vector/', { ...params }),
 
-    suggest: (metastoreId: number, prefix: string) =>
+    suggest: (metastoreId: number, prefix: string, active_schema: string = 'default') =>
         ds.fetch<string[]>(`/suggest/${metastoreId}/tables/`, {
-            prefix,
+            prefix, active_schema: active_schema
         }),
 };
 
