@@ -12,11 +12,20 @@ Notifiers provide the option for users to be notified upon completion of their q
 -   Slack
 -   Microsoft Teams
 
+## Provided Notifiers
+
+The following notifiers are provided by default, and will automatically enable themselves if the necessary configurations are provided:
+
+-   `EmailNotifier`: Sends an email to the user(s) or email address(es) provided. Requires the `EMAILER_CONN` and `QUERYBOOK_EMAIL_ADDRESS` configurations to be set.
+-   `SlackNotifier`: Sends a message to a Slack channel or user(s). Requires the `QUERYBOOK_SLACK_TOKEN` configuration to be set.
+
+If no notifiers are enabled and configured, a `NoopNotifier` will be used, which logs the notification message to the server logs along with a suggestion to enable a notifier.
+
 ## Implementation
 
-To keep the notification process standardized, the standard notifiers are included under \<project_root>/querybook/server/lib/notify/notifiers,
-but for custom notifiers create them under \<project_root>/plugins/notifier_plugin/.
-All notifiers must inherit from BaseNotifier that lives in \<project_root>/querybook/server/lib/notify/base_notifier.py.
+To keep the notification process standardized, the standard notifiers are included under `/querybook/server/lib/notify/notifiers`,
+but custom notifiers should be created under `/plugins/notifier_plugin/`.
+All notifiers must inherit from `BaseNotifier` that lives in `/querybook/server/lib/notify/base_notifier.py`.
 
 Here are some fields of notifier that you must configure in the setup process:
 
@@ -29,4 +38,20 @@ Here are some fields of notifier that you must configure in the setup process:
 
 If you want to add a notifier that's specific to your own use case, please do so through plugins (See this [Plugin Guide](plugins.mdx) to learn how to setup plugins for Querybook).
 
-Once plugins folder is setup, import the notifier class under `ALL_PLUGIN_NOTIFIERS` in notifier_plugin/**init**.py .
+Once plugins folder is setup, import the notifier class under `ALL_PLUGIN_NOTIFIERS` in `notifier_plugin/__init__.py`.
+
+```python
+from lib.notify.notifier.email_notifier import EmailNotifier
+from lib.notify.notifier.slack_notifier import SlackNotifier
+
+
+ALL_PLUGIN_NOTIFIERS = [
+    EmailNotifier(),
+    SlackNotifier(),
+    # Add your notifier here
+]
+```
+
+:::warning
+If you configure the `ALL_PLUGIN_NOTIFIERS`, the default notifiers will not enabled automatically. You will need to include them in the notifiers list if you want to use them.
+:::
