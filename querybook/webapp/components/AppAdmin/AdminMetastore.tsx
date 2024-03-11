@@ -11,12 +11,14 @@ import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { AdminMetastoreResource } from 'resource/admin/metastore';
 import { TextButton } from 'ui/Button/Button';
+import { InfoButton } from 'ui/Button/InfoButton';
 import { Card } from 'ui/Card/Card';
 import { SimpleField } from 'ui/FormikField/SimpleField';
 import { GenericCRUD } from 'ui/GenericCRUD/GenericCRUD';
 import { Icon } from 'ui/Icon/Icon';
 import { Level } from 'ui/Level/Level';
 import { Loading } from 'ui/Loading/Loading';
+import { Markdown } from 'ui/Markdown/Markdown';
 import {
     getDefaultFormValue,
     SmartForm,
@@ -302,10 +304,23 @@ export const AdminMetastore: React.FunctionComponent<IProps> = ({
                             </div>
                         )}
                         <div className="AdminForm-section">
-                            <div className="AdminForm-section-top flex-row">
+                            <div className="AdminForm-section-top flex-row horizontal-space-between">
                                 <div className="AdminForm-section-title">
                                     ACL Control
                                 </div>
+                                <InfoButton layout={['bottom', 'right']}>
+                                    <Markdown>{`Access Control Lists (ACL)
+are used to limit access to tables in the metastore. If no ACL rules are specified,
+all schemas/tables are allowed.  Either an allowlist or a denylist can be configured.
+
+Each value in the list should be in one of the following formats:
+
+- \`schema.*\`: Allow or deny all tables in a schema
+- \`schema.table*\`: Allow or deny all tables in a schema matching a prefix
+- \`schema.table\`: Allow or deny a specific table
+
+This feature affects both the metastore sync and the query engine.`}</Markdown>
+                                </InfoButton>
                             </div>
                             <div className="AdminForm-section-content">
                                 {getMetastoreACLControlDOM(
