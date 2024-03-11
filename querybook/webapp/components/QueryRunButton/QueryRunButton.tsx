@@ -27,8 +27,6 @@ import { Tag } from 'ui/Tag/Tag';
 
 import './QueryRunButton.scss';
 
-const TableSamplingConfig = PublicConfig.table_sampling;
-
 const EXECUTE_QUERY_SHORTCUT = getShortcutSymbols(
     KeyMap.queryEditor.runQuery.key
 );
@@ -271,6 +269,11 @@ const QueryLimitSelector: React.FC<{
     );
 };
 
+const TableSamplingConfig = PublicConfig.table_sampling ?? {
+    enabled: false,
+    sample_rates: [],
+    default_sample_rate: 0,
+};
 const sampleRateOptions = [{ label: 'none', value: 0 }].concat(
     TableSamplingConfig.sample_rates.map((value) => ({
         label: value + '%',

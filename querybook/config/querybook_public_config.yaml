@@ -31,7 +31,7 @@ survey:
     #     - surface: query_authoring
 
 table_sampling:
-    enabled: true
+    enabled: false
     sample_rates:
         - 0.1
     default_sample_rate: 0 # 0 means no sampling
