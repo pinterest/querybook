@@ -7,6 +7,13 @@ slug: /changelog
 
 Here are the list of breaking changes that you should be aware of when updating Querybook:
 
+## v3.31.0
+
+Upgraded langchain to [0.1.6](https://blog.langchain.dev/langchain-v0-1-0/).
+
+-   Some langchain packages are imported from different paths, e.g. `PromptTemplate` is now from `langchain.prompts`
+-   Removed `StreamingWebsocketCallbackHandler` to adopt the new streaming approach.
+
 ## v3.29.0
 
 Made below changes for `S3BaseExporter` (csv table uploader feature):
