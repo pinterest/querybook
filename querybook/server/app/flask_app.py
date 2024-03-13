@@ -117,9 +117,9 @@ def make_limiter(app):
             response.headers["flask-limit-amount"] = limiter.current_limit.limit.amount
             response.headers["flask-limit-key"] = limiter.current_limit.key
             response.headers["flask-limit-reset-at"] = limiter.current_limit.reset_at
-            response.headers["flask-limit-window-size"] = (
-                limiter.current_limit.limit.get_expiry()
-            )
+            response.headers[
+                "flask-limit-window-size"
+            ] = limiter.current_limit.limit.get_expiry()
         return response
 
     return limiter
