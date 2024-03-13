@@ -228,6 +228,7 @@ export function getMoreDataTable(): ThunkResult<Promise<ITableSearchResult[]>> {
     return async (dispatch, getState) => {
         const state = getState().dataTableSearch;
         const count = state.count;
+        const tableSort = state.sortTablesBy;
         const resultsCount = state.results.length;
         if (resultsCount >= count) {
             return;
@@ -241,6 +242,15 @@ export function getMoreDataTable(): ThunkResult<Promise<ITableSearchResult[]>> {
                 ...mapStateToSearch(state),
                 offset: resultsCount,
             };
+
+            if (tableSort.key === 'name') {
+                const tableSortAsc = tableSort.asc ? 'asc' : 'desc';
+                searchParams['sort_key'] = ['schema', 'name'];
+                searchParams['sort_order'] = [tableSortAsc, tableSortAsc];
+            } else if (tableSort.key === 'relevance') {
+                searchParams['sort_key'] = '_score';
+                searchParams['sort_order'] = 'desc';
+            }
 
             const searchRequest =
                 SearchTableResource.searchConcise(searchParams);
