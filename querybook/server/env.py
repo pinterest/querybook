@@ -55,6 +55,7 @@ class QuerybookSettings(object):
     PUBLIC_URL = get_env_config("PUBLIC_URL")
     FLASK_SECRET_KEY = get_env_config("FLASK_SECRET_KEY", optional=False)
     FLASK_CACHE_CONFIG = get_env_config("FLASK_CACHE_CONFIG")
+    WS_CORS_ALLOWED_ORIGINS = get_env_config("WS_CORS_ALLOWED_ORIGINS", optional=False)
 
     # Celery
     REDIS_URL = get_env_config("REDIS_URL", optional=False)
