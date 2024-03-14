@@ -212,12 +212,17 @@ def create_table(
         "name": name,
         "type": type,
         "owner": owner,
-        "table_created_at": datetime.datetime.fromtimestamp(float(table_created_at))
-        if table_created_at
-        else None,
-        "table_updated_by": datetime.datetime.fromtimestamp(float(table_updated_at))
-        if table_updated_at
-        else None,
+        "table_created_at": (
+            datetime.datetime.fromtimestamp(float(table_created_at))
+            if table_created_at
+            else None
+        ),
+        "table_updated_at": (
+            datetime.datetime.fromtimestamp(float(table_updated_at))
+            if table_updated_at
+            else None
+        ),
+        "table_updated_by": table_updated_by,
         "data_size_bytes": data_size_bytes,
         "location": location,
         "column_count": column_count,
