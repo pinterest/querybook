@@ -567,10 +567,10 @@ const QueryComposer: React.FC = () => {
     );
 
     const handleTablesChange = React.useCallback(
-        async (tables: Record<string, IDataTable>) => {
+        async (tablesByName: Record<string, IDataTable>) => {
             const samplingTables = {};
-            Object.keys(tables).forEach((tableName) => {
-                const table = tables[tableName];
+            Object.keys(tablesByName).forEach((tableName) => {
+                const table = tablesByName[tableName];
                 if (table?.custom_properties?.sampling) {
                     samplingTables[tableName] = {
                         sampled_table: table.custom_properties?.sampled_table,

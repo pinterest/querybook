@@ -103,7 +103,7 @@ export const QueryRunButton = React.forwardRef<
         );
 
         const tableSamplingDOM =
-            !disabled && TableSamplingConfig.enabled && hasSamplingTables ? (
+            !disabled && TABLE_SAMPLING_CONFIG.enabled && hasSamplingTables ? (
                 <TableSamplingSelector
                     sampleRate={sampleRate}
                     setSampleRate={onSampleRateChange}
@@ -269,18 +269,18 @@ const QueryLimitSelector: React.FC<{
     );
 };
 
-const TableSamplingConfig = PublicConfig.table_sampling ?? {
+const TABLE_SAMPLING_CONFIG = PublicConfig.table_sampling ?? {
     enabled: false,
     sample_rates: [],
     default_sample_rate: 0,
 };
 const sampleRateOptions = [{ label: 'none', value: 0 }].concat(
-    TableSamplingConfig.sample_rates.map((value) => ({
+    TABLE_SAMPLING_CONFIG.sample_rates.map((value) => ({
         label: value + '%',
         value,
     }))
 );
-const DEFAULT_SAMPLE_RATE = TableSamplingConfig.default_sample_rate;
+const DEFAULT_SAMPLE_RATE = TABLE_SAMPLING_CONFIG.default_sample_rate;
 const TableSamplingSelector: React.FC<{
     sampleRate: number;
     setSampleRate: (sampleRate: number) => void;

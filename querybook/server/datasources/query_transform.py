@@ -1,6 +1,6 @@
 from app.datasource import register
 from lib.query_analysis.transform import (
-    get_sampled_query,
+    transform_to_sampled_query,
 )
 
 
@@ -10,6 +10,6 @@ def query_sampling(
     language: str,
     sampling_tables: dict[str, dict[str, str]],
 ):
-    return get_sampled_query(
+    return transform_to_sampled_query(
         query=query, language=language, sampling_tables=sampling_tables
     )

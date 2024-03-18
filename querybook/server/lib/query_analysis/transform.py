@@ -8,11 +8,7 @@ LOG = get_logger(__file__)
 
 
 def _get_sqlglot_dialect(language: Optional[str] = None):
-    return (
-        QUERYBOOK_TO_SQLGLOT_LANGUAGE_MAPPING[language]
-        if language in QUERYBOOK_TO_SQLGLOT_LANGUAGE_MAPPING
-        else None
-    )
+    return QUERYBOOK_TO_SQLGLOT_LANGUAGE_MAPPING.get(language, None)
 
 
 def _statements_to_query(statements: List[str]):
@@ -56,8 +52,6 @@ def get_select_statement_limit(
         limit = limit_clause.expression.this
     elif isinstance(limit_clause, exp.Fetch):
         limit = limit_clause.args.get("count").this
-    else:  # dont have a limit or fetch clause
-        limit = -1
 
     return int(limit)
 
@@ -67,7 +61,7 @@ def get_limited_select_statement(statement_ast: exp.Expression, limit: int):
     It returns a new statement with the limit applied and the original statement is not modified.
     """
     current_limit = get_select_statement_limit(statement_ast)
-    if current_limit is None or current_limit > 0:
+    if current_limit is None or current_limit >= 0:
         return statement_ast
 
     return statement_ast.limit(limit)
@@ -84,23 +78,29 @@ def has_query_contains_unlimited_select(query: str, language: str) -> bool:
     return any(get_select_statement_limit(s) == -1 for s in statements)
 
 
-def get_limited_query(query: str, limit: int = None, language: str = None) -> str:
+def transform_to_limited_query(
+    query: str, limit: int = None, language: str = None
+) -> str:
     """Apply a limit to all select statements in a query if they don't already have a limit.
     It returns a new query with the limit applied and the original query is not modified.
     """
     if not limit:
-        return format_query(query, language)
+        return query
 
-    dialect = _get_sqlglot_dialect(language)
-    statements = parse(query, dialect=dialect)
+    try:
+        dialect = _get_sqlglot_dialect(language)
+        statements = parse(query, dialect=dialect)
 
-    updated_statements = [get_limited_select_statement(s, limit) for s in statements]
-    return _statements_to_query(
-        [
-            s.sql(dialect=dialect, pretty=True, comments=False)
-            for s in updated_statements
+        updated_statements = [
+            get_limited_select_statement(s, limit) for s in statements
         ]
-    )
+        return _statements_to_query(
+            [s.sql(dialect=dialect, pretty=True) for s in updated_statements]
+        )
+    except errors.ParseError as e:
+        LOG.error(e, exc_info=True)
+        # If parsing fails, return the original query
+        return query
 
 
 def _get_sampled_statement(
@@ -112,26 +112,26 @@ def _get_sampled_statement(
     def transformer(node):
         if isinstance(node, exp.Table):
             full_table_name = f"{node.db}.{node.name}" if node.db else node.name
-            if full_table_name in sampling_tables:
-                if (
-                    sampled_table := sampling_tables[full_table_name].get(
-                        "sampled_table"
-                    )
-                ) is not None:
-                    node.set("this", exp.to_identifier(sampled_table, quoted=False))
-                    node.set("db", None)
-                elif (
-                    sample_rate := sampling_tables[full_table_name].get("sample_rate")
-                ) is not None:
-                    return exp.TableSample(
-                        this=node, method="SYSTEM", percent=str(sample_rate)
-                    )
+            if full_table_name not in sampling_tables:
+                return node
+
+            if (
+                sampled_table := sampling_tables[full_table_name].get("sampled_table")
+            ) is not None:
+                node.set("this", exp.to_identifier(sampled_table, quoted=False))
+                node.set("db", None)
+            elif (
+                sample_rate := sampling_tables[full_table_name].get("sample_rate")
+            ) is not None:
+                return exp.TableSample(
+                    this=node, method="SYSTEM", percent=str(sample_rate)
+                )
         return node
 
     return statement_ast.transform(transformer)
 
 
-def get_sampled_query(
+def transform_to_sampled_query(
     query: str,
     language: str = None,
     sampling_tables: dict[str, dict[str, str]] = {},

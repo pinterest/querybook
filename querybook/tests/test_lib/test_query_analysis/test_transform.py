@@ -3,8 +3,8 @@ from unittest import TestCase
 from lib.query_analysis.transform import (
     format_query,
     get_select_statement_limit,
-    get_limited_query,
-    get_sampled_query,
+    transform_to_limited_query,
+    transform_to_sampled_query,
 )
 
 
@@ -57,7 +57,7 @@ class GetLimitedQueryTestCase(TestCase):
         ]
         for query in tests:
             with self.subTest(query=query):
-                self.assertEqual(get_limited_query(query), format_query(query))
+                self.assertEqual(transform_to_limited_query(query), format_query(query))
 
     def test_query_has_limit(self):
         tests = [
@@ -68,7 +68,9 @@ class GetLimitedQueryTestCase(TestCase):
         ]
         for query in tests:
             with self.subTest(query=query):
-                self.assertEqual(get_limited_query(query, 100), format_query(query))
+                self.assertEqual(
+                    transform_to_limited_query(query, 100), format_query(query)
+                )
 
     def test_query_limited(self):
         tests = [
@@ -105,7 +107,9 @@ class GetLimitedQueryTestCase(TestCase):
         ]
         for query, expected in tests:
             with self.subTest(query=query):
-                self.assertEqual(get_limited_query(query, 100), format_query(expected))
+                self.assertEqual(
+                    transform_to_limited_query(query, 100), format_query(expected)
+                )
 
 
 class GetSampledQueryTestCase(TestCase):
@@ -114,7 +118,7 @@ class GetSampledQueryTestCase(TestCase):
         tables = {"default.users": {"sampled_table": "default.users_sampled"}}
         expected = "SELECT * FROM default.users_sampled;"
         self.assertEqual(
-            get_sampled_query(query, sampling_tables=tables),
+            transform_to_sampled_query(query, sampling_tables=tables),
             format_query(expected),
         )
 
@@ -124,11 +128,13 @@ class GetSampledQueryTestCase(TestCase):
         trino_expected = "SELECT * FROM default.users TABLESAMPLE SYSTEM (75);"
         spark_expected = "SELECT * FROM default.users TABLESAMPLE (75 PERCENT);"
         self.assertEqual(
-            get_sampled_query(query, sampling_tables=tables, language="trino"),
+            transform_to_sampled_query(query, sampling_tables=tables, language="trino"),
             format_query(trino_expected, language="trino"),
         )
         self.assertEqual(
-            get_sampled_query(query, sampling_tables=tables, language="sparksql"),
+            transform_to_sampled_query(
+                query, sampling_tables=tables, language="sparksql"
+            ),
             format_query(spark_expected, language="sparksql"),
         )
 
@@ -137,7 +143,7 @@ class GetSampledQueryTestCase(TestCase):
         tables = {"default.users": {"sampled_table": "default.users_sampled"}}
         expected = "SELECT * FROM default.users_sampled as u;"
         self.assertEqual(
-            get_sampled_query(query, sampling_tables=tables),
+            transform_to_sampled_query(query, sampling_tables=tables),
             format_query(expected),
         )
 
@@ -147,11 +153,13 @@ class GetSampledQueryTestCase(TestCase):
         spark_expected = "SELECT * FROM default.users TABLESAMPLE (75 PERCENT) as u;"
         tables = {"default.users": {"sample_rate": "75"}}
         self.assertEqual(
-            get_sampled_query(query, sampling_tables=tables, language="trino"),
+            transform_to_sampled_query(query, sampling_tables=tables, language="trino"),
             format_query(trino_expected, language="trino"),
         )
         self.assertEqual(
-            get_sampled_query(query, sampling_tables=tables, language="sparksql"),
+            transform_to_sampled_query(
+                query, sampling_tables=tables, language="sparksql"
+            ),
             format_query(spark_expected, language="sparksql"),
         )
 
@@ -163,7 +171,7 @@ class GetSampledQueryTestCase(TestCase):
         }
         expected = "SELECT * FROM default.users_1_sampled;\nSELECT * FROM default.users_2_sampled"
         self.assertEqual(
-            get_sampled_query(query, sampling_tables=tables),
+            transform_to_sampled_query(query, sampling_tables=tables),
             format_query(expected),
         )
 
@@ -176,11 +184,13 @@ class GetSampledQueryTestCase(TestCase):
         trino_expected = "SELECT * FROM users_1 TABLESAMPLE SYSTEM (15);\nSELECT * FROM default.users_2 TABLESAMPLE SYSTEM (35)"
         spark_expected = "SELECT * FROM users_1 TABLESAMPLE (15 PERCENT);\nSELECT * FROM default.users_2 TABLESAMPLE (35 PERCENT)"
         self.assertEqual(
-            get_sampled_query(query, sampling_tables=tables, language="trino"),
+            transform_to_sampled_query(query, sampling_tables=tables, language="trino"),
             format_query(trino_expected, language="trino"),
         )
         self.assertEqual(
-            get_sampled_query(query, sampling_tables=tables, language="sparksql"),
+            transform_to_sampled_query(
+                query, sampling_tables=tables, language="sparksql"
+            ),
             format_query(spark_expected, language="sparksql"),
         )
 
@@ -199,7 +209,7 @@ class GetSampledQueryTestCase(TestCase):
         SELECT a FROM x where a > 10
         """
         self.assertEqual(
-            get_sampled_query(query, sampling_tables=tables),
+            transform_to_sampled_query(query, sampling_tables=tables),
             format_query(expected),
         )
 
@@ -224,11 +234,13 @@ class GetSampledQueryTestCase(TestCase):
         SELECT a FROM x where a > 10
         """
         self.assertEqual(
-            get_sampled_query(query, sampling_tables=tables, language="trino"),
+            transform_to_sampled_query(query, sampling_tables=tables, language="trino"),
             format_query(trino_expected, language="trino"),
         )
         self.assertEqual(
-            get_sampled_query(query, sampling_tables=tables, language="sparksql"),
+            transform_to_sampled_query(
+                query, sampling_tables=tables, language="sparksql"
+            ),
             format_query(spark_expected, language="sparksql"),
         )
 
@@ -242,7 +254,7 @@ class GetSampledQueryTestCase(TestCase):
         }
         trino_expected = "SELECT * FROM default.users_sampled JOIN default.pins TABLESAMPLE SYSTEM (15) ON users.id = pins.user_id"
         self.assertEqual(
-            get_sampled_query(query, sampling_tables=tables, language="trino"),
+            transform_to_sampled_query(query, sampling_tables=tables, language="trino"),
             format_query(trino_expected, language="trino"),
         )
         tables = {
@@ -251,6 +263,8 @@ class GetSampledQueryTestCase(TestCase):
         }
         spark_expected = "SELECT * FROM default.users TABLESAMPLE (15 PERCENT) JOIN default.pins_sampled ON users.id = pins.user_id"
         self.assertEqual(
-            get_sampled_query(query, sampling_tables=tables, language="sparksql"),
+            transform_to_sampled_query(
+                query, sampling_tables=tables, language="sparksql"
+            ),
             format_query(spark_expected, language="sparksql"),
         )

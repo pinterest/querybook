@@ -676,10 +676,10 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
-    public async handleTablesChange(tables: Record<string, IDataTable>) {
+    public async handleTablesChange(tablesByName: Record<string, IDataTable>) {
         const samplingTables = {};
-        Object.keys(tables).forEach((tableName) => {
-            const table = tables[tableName];
+        Object.keys(tablesByName).forEach((tableName) => {
+            const table = tablesByName[tableName];
             if (table?.custom_properties?.sampling) {
                 samplingTables[tableName] = {
                     sampled_table: table.custom_properties?.sampled_table,
