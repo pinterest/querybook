@@ -152,6 +152,10 @@ export function fetchDataTableByName(
                 tableName
             );
 
+            if (!data) {
+                return null;
+            }
+
             const normalizedData = normalize(data, dataTableSchema);
             const {
                 dataSchema = {},

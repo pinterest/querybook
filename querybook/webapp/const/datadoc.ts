@@ -1,6 +1,7 @@
 import { ContentState } from 'draft-js';
-import { WithOptional } from 'lib/typescript';
 import { Edge, Node } from 'reactflow';
+
+import { WithOptional } from 'lib/typescript';
 
 import { IChartConfig } from './dataDocChart';
 
@@ -24,6 +25,7 @@ export interface IDataQueryCellMeta extends IDataCellMetaBase {
     engine?: number;
     query_collapsed?: boolean;
     limit?: number;
+    sample_rate?: number;
 }
 
 export interface IDataQueryCell extends IDataCellBase {
@@ -135,3 +137,8 @@ export interface IDataDocDAGExporter {
     engines: number[];
     meta: IFormField | IStructFormField | IExpandableFormField;
 }
+
+export type ISamplingTables = Record<
+    string,
+    { sampled_table?: string; sample_rate?: number }
+>;

@@ -29,3 +29,9 @@ survey:
     #     - surface: table_view
     #     - surface: text_to_sql
     #     - surface: query_authoring
+
+table_sampling:
+    enabled: false
+    sample_rates:
+        - 0.1
+    default_sample_rate: 0 # 0 means no sampling

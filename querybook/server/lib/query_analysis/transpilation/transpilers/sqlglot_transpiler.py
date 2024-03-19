@@ -2,25 +2,8 @@ import sqlglot
 
 from typing import List
 
+from const.sqlglot import QUERYBOOK_TO_SQLGLOT_LANGUAGE_MAPPING
 from lib.query_analysis.transpilation.base_query_transpiler import BaseQueryTranspiler
-
-# Mapping from Querybook languages to SQLGlot languages
-QUERYBOOK_TO_SQLGLOT_LANGUAGE_MAPPING = {
-    # same name
-    "presto": "presto",
-    "trino": "trino",
-    "bigquery": "bigquery",
-    "clickhouse": "clickhouse",
-    "hive": "hive",
-    "mysql": "mysql",
-    "oracle": "oracle",
-    "sqlite": "sqlite",
-    "snowflake": "snowflake",
-    # different name
-    "mssql": "tsql",
-    "postgresql": "postgres",
-    "sparksql": "spark",
-}
 
 
 def statements_to_query(statements: List[str]):
