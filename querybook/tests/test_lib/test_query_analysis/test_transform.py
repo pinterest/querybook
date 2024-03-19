@@ -57,7 +57,7 @@ class GetLimitedQueryTestCase(TestCase):
         ]
         for query in tests:
             with self.subTest(query=query):
-                self.assertEqual(transform_to_limited_query(query), format_query(query))
+                self.assertEqual(transform_to_limited_query(query), query)
 
     def test_query_has_limit(self):
         tests = [
@@ -82,7 +82,7 @@ class GetLimitedQueryTestCase(TestCase):
             ),
             (
                 "SELECT * FROM table_1 -- limit here",
-                "SELECT * FROM table_1 LIMIT 100",
+                "SELECT * FROM table_1 /* limit here */ LIMIT 100",
             ),
             (
                 "SELECT id, account, 'limit' FROM querybook2.table ORDER by 'limit' ASC",
