@@ -211,9 +211,15 @@ export function fetchDataDocIfNeeded(docId: number): ThunkResult<Promise<any>> {
     };
 }
 
-export function cloneDataDoc(docId: number): ThunkResult<Promise<IRawDataDoc>> {
+export function cloneDataDoc(
+    docId: number,
+    environmentId: number
+): ThunkResult<Promise<IRawDataDoc>> {
     return async (dispatch) => {
-        const { data: rawDataDoc } = await DataDocResource.clone(docId);
+        const { data: rawDataDoc } = await DataDocResource.clone(
+            docId,
+            environmentId
+        );
         const { dataDoc, dataDocCellById } = normalizeRawDataDoc(rawDataDoc);
 
         dispatch(receiveDataDoc(dataDoc, dataDocCellById));
