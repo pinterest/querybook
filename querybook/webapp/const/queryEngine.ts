@@ -6,6 +6,7 @@ export interface IQueryEngine {
     name: string;
     language: string;
     description: string;
+    default_schema: string;
 
     metastore_id: number;
     executor: string;
