@@ -39,6 +39,7 @@ def run_datadoc(self, *args, **kwargs):
 def run_datadoc_with_config(
     self,
     doc_id,
+    start_index=0,
     notifications=[],
     user_id=None,
     execution_type=QueryExecutionType.SCHEDULED.value,
@@ -56,7 +57,7 @@ def run_datadoc_with_config(
             return
 
         runner_id = user_id if user_id is not None else data_doc.owner_uid
-        query_cells = data_doc.get_query_cells()
+        query_cells = (data_doc.get_query_cells())[start_index:]
 
         # Create db entry record only for scheduled run
         if execution_type == QueryExecutionType.SCHEDULED.value:
