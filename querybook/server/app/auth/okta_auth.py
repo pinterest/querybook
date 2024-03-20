@@ -28,7 +28,7 @@ class NoopAuth(requests.auth.AuthBase):
 
 
 class OktaLoginManager(OAuthLoginManager):
-    def get_okta_urls(self):
+    def get_oauth_urls(self):
         okta_base_url = get_env_config("OKTA_BASE_URL")
         authorization_url = f"{okta_base_url}/v1/authorize"
         token_url = f"{okta_base_url}/v1/token"
@@ -38,7 +38,7 @@ class OktaLoginManager(OAuthLoginManager):
     @property
     @in_mem_memoized()
     def oauth_config(self):
-        authorization_url, token_url, profile_url = self.get_okta_urls()
+        authorization_url, token_url, profile_url = self.get_oauth_urls()
 
         return {
             "callback_url": "{}{}".format(

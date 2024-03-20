@@ -73,6 +73,16 @@ OAUTH_CLIENT_ID: '---Redacted---'
 OAUTH_CLIENT_SECRET: '---Redacted---'
 ```
 
+#### Auth0
+
+```yaml
+AUTH_BACKEND: 'app.auth.auth0_auth'
+OAUTH_CLIENT_ID: '---Redacted---'
+OAUTH_CLIENT_SECRET: '---Redacted---'
+AUTH0_BASE_URL: https://[Redacted].[Redacted].auth0.com/
+PUBLIC_URL: http://localhost:10001
+```
+
 :::caution
 DO NOT CHECK IN `OAUTH_CLIENT_SECRET` to the codebase. The example above is for testing only. For production, please use environment variables to provide this value.
 :::
