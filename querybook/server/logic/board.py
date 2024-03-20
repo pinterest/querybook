@@ -1,12 +1,13 @@
 import datetime
 
-from sqlalchemy import or_
 from app.db import with_session
 from const.elasticsearch import ElasticsearchItem
 from models.board import Board, BoardItem, BoardEditor
 from models.access_request import AccessRequest
 from lib.sqlalchemy import update_model_fields
 from tasks.sync_elasticsearch import sync_elasticsearch
+from sqlalchemy import or_
+from logic.generic_permission import get_all_groups_and_group_members_with_access
 
 
 @with_session
@@ -232,13 +233,35 @@ def get_board_editor_by_id(id, session=None):
 
 @with_session
 def get_board_editors_by_board_id(board_id, session=None):
-    return session.query(BoardEditor).filter_by(board_id=board_id).all()
+    editors = get_all_groups_and_group_members_with_access(
+        doc_or_board_id=board_id,
+        editor_type=BoardEditor,
+        session=session,
+    )
+
+    return [
+        BoardEditor(
+            # [0] is id, [1] is uid, [2] is read, [3] is write
+            board_id=board_id,
+            id=editor[0],
+            uid=editor[1],
+            read=editor[2],
+            write=editor[3],
+        )
+        for editor in editors
+    ]
 
 
 @with_session
 def create_board_editor(
     board_id, uid, read=False, write=False, commit=True, session=None
 ):
+    existing_editor = (
+        session.query(BoardEditor).filter_by(board_id=board_id, uid=uid).first()
+    )
+    if existing_editor is not None:
+        return existing_editor
+
     editor = BoardEditor(board_id=board_id, uid=uid, read=read, write=write)
 
     session.add(editor)

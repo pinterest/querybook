@@ -11,7 +11,12 @@ from app.auth.permission import (
 from const.datasources import RESOURCE_NOT_FOUND_STATUS_CODE
 from logic import board as logic
 from logic import user as user_logic
-from logic.board_permission import assert_can_read, assert_can_edit, assert_is_owner
+from logic.board_permission import (
+    assert_can_read,
+    assert_can_edit,
+    assert_is_owner,
+    assert_is_not_group,
+)
 from logic.query_execution import get_environments_by_execution_id
 
 from models.board import Board, BoardItem
@@ -293,6 +298,7 @@ def update_board_owner(board_id, next_owner_id, originator=None):
     with DBSession() as session:
         # Add previous owner as an editor to the doc
         assert_is_owner(board_id, session=session)
+        assert_is_not_group(next_owner_id, session=session)
         current_owner_editor = logic.create_board_editor(
             board_id=board_id,
             uid=current_user.id,

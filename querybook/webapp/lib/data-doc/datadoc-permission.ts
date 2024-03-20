@@ -7,6 +7,8 @@ export enum Permission {
     CAN_WRITE = 'edit',
     OWNER = 'owner',
     NULL = 'no access',
+    INHERITED_READ = '[INHERITED] read only',
+    INHERITED_WRITE = '[INHERITED] edit',
 }
 
 export interface IViewerInfo {
@@ -20,18 +22,21 @@ export function readWriteToPermission(
     read: boolean,
     write: boolean,
     isOwner: boolean,
-    publicDoc: boolean
+    publicDoc: boolean,
+    id: number
 ): Permission {
     if (isOwner) {
         return Permission.OWNER;
     }
+    if (id < 0) {
+        return Permission.NULL;
+    }
     if (write) {
-        return Permission.CAN_WRITE;
+        return id == null ? Permission.INHERITED_WRITE : Permission.CAN_WRITE;
     }
-    if (read || publicDoc) {
-        return Permission.CAN_READ;
+    if (read) {
+        return id == null ? Permission.INHERITED_READ : Permission.CAN_READ;
     }
-
     return Permission.NULL;
 }
 
@@ -39,14 +44,18 @@ export function permissionToReadWrite(permission: Permission): {
     read: boolean;
     write: boolean;
 } {
-    if (permission === Permission.CAN_READ) {
+    if (
+        permission === Permission.CAN_READ ||
+        permission === Permission.INHERITED_READ
+    ) {
         return {
             read: true,
             write: false,
         };
     } else if (
         permission === Permission.CAN_WRITE ||
-        permission === Permission.OWNER
+        permission === Permission.OWNER ||
+        permission === Permission.INHERITED_WRITE
     ) {
         return {
             read: true,
@@ -64,14 +73,21 @@ export function getViewerInfo(
     uid: number,
     editorsByUserId: Record<number, IDataDocEditor>,
     dataDoc: IDataDoc,
-    viewerIds: number[]
+    viewerIds: number[],
+    nonExplicitEditorPermissions: Record<number, IDataDocEditor>
 ): IViewerInfo {
-    const editor = uid in editorsByUserId ? editorsByUserId[uid] : null;
+    let editor = null;
+    if (uid in editorsByUserId) {
+        editor = editorsByUserId[uid];
+    } else if (uid in nonExplicitEditorPermissions) {
+        editor = nonExplicitEditorPermissions[uid];
+    }
     const permission = readWriteToPermission(
         editor ? editor.read : false,
         editor ? editor.write : false,
         dataDoc.owner_uid === uid,
-        dataDoc.public
+        dataDoc.public,
+        editor ? editor.id : -1
     );
     const online = viewerIds.includes(uid);
     return {
