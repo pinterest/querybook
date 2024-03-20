@@ -81,6 +81,16 @@ const queryResultTransformers: IColumnTransformer[] = [
         transform: (v: string): React.ReactNode => v.toLocaleUpperCase(),
     },
     {
+        key: 'preformatted',
+        name: 'Preformatted',
+        appliesToType: ['multiline'],
+        priority: 0,
+        auto: true,
+        transform: (v: string): React.ReactNode => (
+            <div className={'preformatted'}>{v}</div>
+        ),
+    },
+    {
         key: 'url',
         name: 'Url Links',
         appliesToType: ['url'],
