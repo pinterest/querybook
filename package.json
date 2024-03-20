@@ -38,7 +38,7 @@
         "@babel/preset-typescript": "^7.16.0",
         "@types/diff": "^5.0.2",
         "@welldone-software/why-did-you-render": "^6.1.1",
-        "axios": "^1.2.2",
+        "axios": "^1.6.4",
         "bignumber.js": "^9.0.1",
         "chart.js": "^3.9.1",
         "chartjs-adapter-moment": "^1.0.0",
