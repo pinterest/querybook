@@ -13,7 +13,6 @@ import {
     recurrenceOnYup,
     recurrenceToCron,
     recurrenceTypes,
-    validateCronForRecurrrence,
 } from 'lib/utils/cron';
 import { TaskScheduleResource } from 'resource/taskSchedule';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
@@ -26,7 +25,6 @@ import { RecurrenceEditor } from 'ui/ReccurenceEditor/RecurrenceEditor';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { TimeFromNow } from 'ui/Timer/TimeFromNow';
 import { Title } from 'ui/Title/Title';
-import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 
 import './TaskEditor.scss';
 
@@ -42,20 +40,14 @@ interface IProps {
 const taskFormSchema = Yup.object().shape({
     name: Yup.string().required(),
     task: Yup.string().required(),
-    isCron: Yup.boolean(),
-    recurrence: Yup.object().when('isCron', (isCron, schema) =>
-        !isCron
-            ? schema.shape({
-                  hour: Yup.number().min(0).max(23),
-                  minute: Yup.number().min(0).max(59),
-                  recurrence: Yup.string().oneOf(recurrenceTypes),
-                  on: recurrenceOnYup,
-              })
-            : schema
-    ),
-    cron: Yup.string().when('isCron', (isCron, schema) =>
-        isCron ? schema.required() : schema
-    ),
+
+    recurrence: Yup.object().shape({
+        hour: Yup.number().min(0).max(23),
+        minute: Yup.number().min(0).max(59),
+        recurrence: Yup.string().oneOf(recurrenceTypes),
+        on: recurrenceOnYup,
+        cron: Yup.string().optional(),
+    }),
     enabled: Yup.boolean().required(),
     arg: Yup.array().of(Yup.mixed()),
     kwargs: Yup.array().of(Yup.mixed()),
@@ -100,9 +92,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
 
     const handleTaskEditSubmit = React.useCallback(
         (editedValues) => {
-            const editedCron = editedValues.isCron
-                ? editedValues.cron
-                : recurrenceToCron(editedValues.recurrence);
+            const editedCron = recurrenceToCron(editedValues.recurrence);
             const editedArgs = editedValues.args
                 .filter((arg) => !(arg === ''))
                 .map(stringToTypedVal);
@@ -173,9 +163,7 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
         return {
             name: task.name || '',
             task: task.task || '',
-            isCron: !validateCronForRecurrrence(cron),
             recurrence,
-            cron,
             enabled: task.enabled ?? true,
             args: task.args || [],
             kwargs: Object.entries(task.kwargs || {}),
@@ -299,8 +287,6 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
             </div>
         );
 
-        const canUseRecurrence = validateCronForRecurrrence(values.cron);
-
         return (
             <div className="TaskEditor-form">
                 <FormWrapper minLabelWidth="180px" size={7}>
@@ -349,63 +335,16 @@ export const TaskEditor: React.FunctionComponent<IProps> = ({
                                 />
                             </div>
                             {values.enabled ? (
-                                <div className="TaskEditor-schedule horizontal-space-between">
-                                    {values.isCron || !canUseRecurrence ? (
-                                        <SimpleField
-                                            label="Cron Schedule"
-                                            type="input"
-                                            name="cron"
-                                        />
-                                    ) : (
-                                        <FormField stacked label="Schedule">
-                                            <RecurrenceEditor
-                                                recurrence={values.recurrence}
-                                                recurrenceError={
-                                                    errors?.recurrence
-                                                }
-                                                setRecurrence={(val) =>
-                                                    setFieldValue(
-                                                        'recurrence',
-                                                        val
-                                                    )
-                                                }
-                                            />
-                                        </FormField>
-                                    )}
-                                    {canUseRecurrence ? (
-                                        <div className="TaskEditor-schedule-toggle mr16">
-                                            <ToggleButton
-                                                checked={values.isCron}
-                                                onClick={(val: boolean) => {
-                                                    setFieldValue(
-                                                        'isCron',
-                                                        val
-                                                    );
-                                                    if (val) {
-                                                        setFieldValue(
-                                                            'cron',
-                                                            recurrenceToCron(
-                                                                values.recurrence
-                                                            )
-                                                        );
-                                                    } else {
-                                                        setFieldValue(
-                                                            'recurrence',
-                                                            cronToRecurrence(
-                                                                values.cron
-                                                            )
-                                                        );
-                                                    }
-                                                }}
-                                                title={
-                                                    values.isCron
-                                                        ? 'Use Recurrence Editor'
-                                                        : 'Use Cron'
-                                                }
-                                            />
-                                        </div>
-                                    ) : null}
-                                </div>
+                                <FormField stacked label="Schedule">
+                                    <RecurrenceEditor
+                                        recurrence={values.recurrence}
+                                        recurrenceError={errors?.recurrence}
+                                        setRecurrence={(val) =>
+                                            setFieldValue('recurrence', val)
+                                        }
+                                        allowCron={true}
+                                    />
+                                </FormField>
                             ) : null}
                         </div>
                         <div className="TaskEditor-form-controls right-align mt16">
