@@ -168,7 +168,7 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
                         noPadding={true}
                         anchor={anchorRef.current}
                         layout={['bottom', 'left']}
-                        onHide={() => {}}
+                        onHide={() => null}
                     >
                         <div className="AICommandInput-popover">
                             {filteredCommands.map((cmd, index) => {
