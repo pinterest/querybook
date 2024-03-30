@@ -136,6 +136,10 @@ const DEFAULT_KEY_MAP = {
             key: 'Cmd-Alt-Down',
             name: 'Select the same position on the below line and then edit all selected lines together',
         },
+        focusCommandInput: {
+            key: 'Cmd-I',
+            name: 'Focus command input',
+        },
     },
 };
 

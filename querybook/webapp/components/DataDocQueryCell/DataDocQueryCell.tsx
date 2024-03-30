@@ -8,7 +8,7 @@ import React from 'react';
 import toast from 'react-hot-toast';
 import { connect } from 'react-redux';
 
-import { QueryGenerationButton } from 'components/AIAssistant/QueryGenerationButton';
+import { AICommandBar } from 'components/AIAssistant/AICommandBar';
 import { DataDocQueryExecutions } from 'components/DataDocQueryExecutions/DataDocQueryExecutions';
 import { QueryCellTitle } from 'components/QueryCellTitle/QueryCellTitle';
 import { runQuery, transformQuery } from 'components/QueryComposer/RunQuery';
@@ -61,6 +61,7 @@ import { Dropdown } from 'ui/Dropdown/Dropdown';
 import { Icon } from 'ui/Icon/Icon';
 import { IListMenuItem, ListMenu } from 'ui/Menu/ListMenu';
 import { Modal } from 'ui/Modal/Modal';
+import { IResizableTextareaHandles } from 'ui/ResizableTextArea/ResizableTextArea';
 import { AccentText } from 'ui/StyledText/StyledText';
 
 import { ISelectedRange } from './common';
@@ -126,6 +127,7 @@ interface IState {
 class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     private queryEditorRef = React.createRef<IQueryEditorHandles>();
     private runButtonRef = React.createRef<IQueryRunButtonHandles>();
+    private commandInputRef = React.createRef<IResizableTextareaHandles>();
 
     public constructor(props) {
         super(props);
@@ -746,40 +748,64 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         );
 
         return (
-            <div className="query-metadata">
-                <AccentText className="query-title" weight="bold" size="large">
-                    {queryTitleDOM}
-                </AccentText>
-                <div className="query-controls flex-row">
-                    <QueryRunButton
-                        ref={this.runButtonRef}
-                        queryEngineById={queryEngineById}
-                        queryEngines={queryEngines}
-                        disabled={!isEditable}
-                        hasSelection={selectedRange != null}
+            <>
+                <div className="query-metadata">
+                    <AccentText
+                        className="query-title"
+                        weight="bold"
+                        size="large"
+                    >
+                        {queryTitleDOM}
+                    </AccentText>
+                    <div className="query-controls flex-row">
+                        <QueryRunButton
+                            ref={this.runButtonRef}
+                            queryEngineById={queryEngineById}
+                            queryEngines={queryEngines}
+                            disabled={!isEditable}
+                            hasSelection={selectedRange != null}
+                            engineId={this.engineId}
+                            onRunClick={this.onRunButtonClick}
+                            onEngineIdSelect={this.handleMetaChange.bind(
+                                this,
+                                'engine'
+                            )}
+                            rowLimit={this.rowLimit}
+                            onRowLimitChange={
+                                this.hasRowLimit
+                                    ? this.handleMetaRowLimitChange
+                                    : null
+                            }
+                            hasSamplingTables={this.hasSamplingTables}
+                            sampleRate={this.sampleRate}
+                            onSampleRateChange={
+                                this.hasSamplingTables
+                                    ? this.handleMetaSampleRateChange
+                                    : null
+                            }
+                        />
+                        {this.getAdditionalDropDownButtonDOM()}
+                    </div>
+                </div>
+                {isEditable && (
+                    <AICommandBar
+                        query={query}
+                        queryEngine={queryEngineById[this.engineId]}
                         engineId={this.engineId}
-                        onRunClick={this.onRunButtonClick}
-                        onEngineIdSelect={this.handleMetaChange.bind(
+                        onUpdateQuery={this.handleChange}
+                        queryEngineById={queryEngineById}
+                        queryEngines={this.props.queryEngines}
+                        onUpdateEngineId={this.handleMetaChange.bind(
                             this,
                             'engine'
                         )}
-                        rowLimit={this.rowLimit}
-                        onRowLimitChange={
-                            this.hasRowLimit
-                                ? this.handleMetaRowLimitChange
-                                : null
-                        }
-                        hasSamplingTables={this.hasSamplingTables}
-                        sampleRate={this.sampleRate}
-                        onSampleRateChange={
-                            this.hasSamplingTables
-                                ? this.handleMetaSampleRateChange
-                                : null
-                        }
+                        onFormatQuery={this.formatQuery.bind(this, {
+                            case: 'upper',
+                        })}
+                        ref={this.commandInputRef}
                     />
-                    {this.getAdditionalDropDownButtonDOM()}
-                </div>
-            </div>
+                )}
+            </>
         );
     }
 
@@ -813,18 +839,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
         const editorDOM = !queryCollapsed && (
             <div className="editor">
-                <QueryGenerationButton
-                    dataCellId={cellId}
-                    query={query}
-                    engineId={this.engineId}
-                    onUpdateQuery={this.handleChange}
-                    queryEngineById={queryEngineById}
-                    queryEngines={this.props.queryEngines}
-                    onUpdateEngineId={this.handleMetaChange.bind(
-                        this,
-                        'engine'
-                    )}
-                />
                 <BoundQueryEditor
                     value={query}
                     lineWrapping={true}
@@ -850,6 +864,9 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                             : null
                     }
                     onLintCompletion={this.onLintCompletion}
+                    focusCommandInput={() => {
+                        this.commandInputRef.current?.focus();
+                    }}
                 />
                 {openSnippetDOM}
             </div>

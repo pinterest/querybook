@@ -1,0 +1,82 @@
+.AICommandInput {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    background-color: var(--bg-lightest);
+    border-radius: var(--border-radius-sm);
+
+    &:hover {
+        background-color: var(--bg-hover);
+    }
+
+    .stars-icon {
+        position: relative;
+        color: var(--icon);
+        width: 40px;
+        height: 40px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .command-container {
+        height: 40px;
+    }
+
+    .command {
+        color: var(--color-accent-dark);
+        background-color: var(--bg-dark);
+        line-height: 24px;
+        margin-top: var(--margin-xs);
+        padding-left: 2px;
+        padding-right: 2px;
+        vertical-align: middle;
+        font-weight: bold;
+        border-radius: 4px;
+    }
+
+    .text2sql-mode {
+        color: var(--color-pink-dark);
+    }
+
+    .question-text-area {
+        flex: 1;
+        min-width: auto;
+        line-height: 24px;
+        min-height: 40px;
+        overflow: hidden;
+        padding: 8px 8px;
+    }
+
+    .button {
+        height: 28px;
+        margin: 6px;
+    }
+}
+
+.AICommandInput-popover {
+    border-radius: var(--border-radius-sm);
+    overflow: hidden;
+
+    .command-item {
+        display: flex;
+        gap: 8px;
+        justify-content: space-between;
+        font-size: var(--xsmall-text-size);
+        padding: 6px 12px;
+
+        .command-name {
+            font-weight: bold;
+        }
+
+        .command-hint {
+            color: var(--text-light);
+        }
+    }
+
+    .active {
+        background-color: var(--bg-hover);
+    }
+}

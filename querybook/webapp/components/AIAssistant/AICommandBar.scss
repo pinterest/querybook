@@ -1,0 +1,25 @@
+.AICommandBar {
+    position: relative;
+
+    .command-popup-view {
+        position: absolute;
+        top: calc(
+            -1 * var(--padding) - 36px - 1 * var(--margin-xs)
+        ); // 36px is the height of the warning message
+        left: calc(-1 * var(--padding));
+        right: calc(-1 * var(--padding));
+        z-index: 10;
+        border-radius: var(--border-radius-sm);
+        padding: var(--padding);
+        background-color: var(--bg);
+        box-shadow: 0 0px 8px var(--bg-dark);
+
+        .warning-message {
+            height: 36px;
+        }
+    }
+
+    .popup-placeholder {
+        height: 40px;
+    }
+}
