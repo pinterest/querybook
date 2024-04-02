@@ -31,19 +31,12 @@ interface AICommandInputProps {
 
 export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
     (
-        {
-            commands = [],
-            placeholder,
-            running,
-            onCommandChange,
-            onSubmit,
-            cancelGeneration,
-        },
+        { commands = [], running, onCommandChange, onSubmit, cancelGeneration },
         ref
     ) => {
         const textareaRef = useForwardedRef<IResizableTextareaHandles>(ref);
         const anchorRef = useRef<HTMLDivElement>(null);
-        const [commandName, setCommandName] = useState('');
+        const [command, setCommand] = useState<IQueryCellCommand>();
         const [commandValue, setCommandValue] = useState('');
 
         const [filteredCommands, setFilteredCommands] = useState([]);
@@ -51,32 +44,48 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
             useState(0);
 
         useEffect(() => {
-            const command = commands.find((cmd) => cmd.name === commandName);
             onCommandChange(command, commandValue);
-        }, [commandName, commandValue]);
+        }, [command, commandValue]);
 
-        const handleChange = (value: string) => {
-            if (commandName || !value.startsWith('/')) {
-                setCommandValue(value);
-                setFilteredCommands([]);
-                return;
-            }
-
-            // when value starts with "/"
-            const prefix = value.slice(1).toLocaleLowerCase(); // trim the leading '/'
-
-            // found a matching command
-            if (commands.map((cmd) => cmd.name).includes(prefix)) {
-                setCommandName(prefix);
+        const setNewCommand = useCallback(
+            (newCommand: IQueryCellCommand) => {
+                setCommand(newCommand);
                 setFilteredCommands([]);
                 setCommandValue('');
-            } else {
-                setCommandValue(value);
-                setFilteredCommands(
-                    commands.filter((cmd) => cmd.name.startsWith(prefix))
-                );
-            }
-        };
+            },
+            [setCommand, setCommandValue, setFilteredCommands]
+        );
+
+        const handleChange = useCallback(
+            (value: string) => {
+                if (command || !value.startsWith('/')) {
+                    setCommandValue(value);
+                    setFilteredCommands([]);
+                    return;
+                }
+
+                // when value starts with "/"
+                const prefix = value.trimStart().slice(1).toLocaleLowerCase(); // trim the leading '/'
+                const newCommand = commands.find((cmd) => cmd.name === prefix);
+
+                // found a matching command
+                if (newCommand) {
+                    setNewCommand(newCommand);
+                } else {
+                    setCommandValue(value);
+                    setFilteredCommands(
+                        commands.filter((cmd) => cmd.name.startsWith(prefix))
+                    );
+                }
+            },
+            [
+                command,
+                commands,
+                setNewCommand,
+                setCommandValue,
+                setFilteredCommands,
+            ]
+        );
 
         const onKeyDown = useCallback(
             (event: React.KeyboardEvent) => {
@@ -85,11 +94,9 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
                         matchKeyPress(event, 'Enter') ||
                         matchKeyPress(event, 'Tab')
                     ) {
-                        setCommandName(
-                            filteredCommands[currentCommandItemIndex].name
+                        setNewCommand(
+                            filteredCommands[currentCommandItemIndex]
                         );
-                        setCommandValue('');
-                        setFilteredCommands([]);
                         event.preventDefault();
                         return;
                     }
@@ -114,7 +121,7 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
                     }
                     event.preventDefault();
                 } else if (matchKeyPress(event, 'Delete') && !commandValue) {
-                    setCommandName('');
+                    setCommand(undefined);
                 }
             },
             [
@@ -144,8 +151,8 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
                     />
                 </span>
                 <div ref={anchorRef} className="command-container">
-                    {commandName && (
-                        <div className="command">{'/' + commandName}</div>
+                    {command && (
+                        <div className="command">{'/' + command.name}</div>
                     )}
                 </div>
                 <ResizableTextArea
@@ -153,8 +160,8 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
                     onChange={handleChange}
                     className="question-text-area"
                     placeholder={
-                        commandName
-                            ? placeholder
+                        command
+                            ? command.hint
                             : 'Ask AI to generate/edit the query, or type / to see more options'
                     }
                     onKeyDown={onKeyDown}
@@ -176,9 +183,7 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
                                     <div
                                         key={cmd.name}
                                         onClick={() => {
-                                            setCommandName(cmd.name);
-                                            setFilteredCommands([]);
-                                            setCommandValue('');
+                                            setNewCommand(cmd);
                                             textareaRef.current?.focus();
                                         }}
                                         className={

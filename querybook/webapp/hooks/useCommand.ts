@@ -4,38 +4,28 @@ import { AICommandType } from 'const/aiAssistant';
 import { IQueryCellCommand, QueryCellCommandType } from 'const/command';
 import { useAISocket } from 'hooks/useAISocket';
 
-const COMMANDS_TO_AI_COMMAND_TYPE = {
-    generate: AICommandType.TEXT_TO_SQL,
-    edit: AICommandType.TEXT_TO_SQL,
-    fix: AICommandType.SQL_FIX,
-};
-
 type SyncCommandRunner = (kwargs: Record<string, any>) => any;
-type AsyncCommandRunner = (
-    kwargs: Record<string, string>,
-    callback: (data: any) => void
-) => void;
+type AsyncCommandRunner = (kwargs: Record<string, any>) => Promise<any>;
 
 export type CommandRunner = SyncCommandRunner | AsyncCommandRunner;
 
 export const useCommand = (
     command: IQueryCellCommand,
-    commandRunner?: CommandRunner,
-    resetResult?: boolean
-) => {
+    commandRunner?: CommandRunner
+): {
+    runCommand: (kwargs: Record<string, any>) => void;
+    isRunning: boolean;
+    commandResult: any;
+    cancelCommand: () => void;
+    resetCommandResult: () => void;
+} => {
     const [isRunning, setIsRunning] = useState(false);
     const [commandResult, setCommandResult] = useState<any>();
 
     const socket = useAISocket(command.aiCommand, setCommandResult);
 
-    useEffect(() => {
-        if (resetResult) {
-            setCommandResult(undefined);
-        }
-    }, [resetResult]);
-
     const runCommand = useCallback(
-        (kwargs) => {
+        (kwargs: Record<string, any>) => {
             if (command.type === QueryCellCommandType.SYNC) {
                 setIsRunning(true);
                 const result = (commandRunner as SyncCommandRunner)(kwargs);
@@ -43,10 +33,15 @@ export const useCommand = (
                 setIsRunning(false);
             } else if (command.type === QueryCellCommandType.ASYNC) {
                 setIsRunning(true);
-                (commandRunner as AsyncCommandRunner)(kwargs, (result) => {
-                    setCommandResult(result);
-                    setIsRunning(false);
-                });
+                (commandRunner as AsyncCommandRunner)(kwargs)
+                    .then((result) => {
+                        if (!isRunning) {
+                            setCommandResult(result);
+                        }
+                    })
+                    .finally(() => {
+                        setIsRunning(false);
+                    });
             } else if (
                 command.type === QueryCellCommandType.AI &&
                 socket.emit
@@ -70,5 +65,6 @@ export const useCommand = (
                 : () => {
                       setIsRunning(false);
                   },
+        resetCommandResult: () => setCommandResult(undefined),
     };
 };

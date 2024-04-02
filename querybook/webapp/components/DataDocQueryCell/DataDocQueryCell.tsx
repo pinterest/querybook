@@ -23,6 +23,7 @@ import { QuerySnippetInsertionModal } from 'components/QuerySnippetInsertionModa
 import { TemplatedQueryView } from 'components/TemplateQueryView/TemplatedQueryView';
 import { TranspileQueryModal } from 'components/TranspileQueryModal/TranspileQueryModal';
 import { UDFForm } from 'components/UDFForm/UDFForm';
+import PublicConfig from 'config/querybook_public_config.yaml';
 import { ComponentType, ElementType } from 'const/analytics';
 import {
     IDataQueryCellMeta,
@@ -44,7 +45,12 @@ import {
 import { DEFAULT_ROW_LIMIT } from 'lib/sql-helper/sql-limiter';
 import { getPossibleTranspilers } from 'lib/templated-query/transpile';
 import { enableResizable } from 'lib/utils';
-import { getShortcutSymbols, KeyMap, matchKeyPress } from 'lib/utils/keyboard';
+import {
+    getShortcutSymbols,
+    KeyMap,
+    matchKeyMap,
+    matchKeyPress,
+} from 'lib/utils/keyboard';
 import { doesLanguageSupportUDF } from 'lib/utils/udf';
 import * as dataDocActions from 'redux/dataDoc/action';
 import * as dataSourcesActions from 'redux/dataSources/action';
@@ -68,6 +74,8 @@ import { ISelectedRange } from './common';
 import { ErrorQueryCell } from './ErrorQueryCell';
 
 import './DataDocQueryCell.scss';
+
+const AIAssistantConfig = PublicConfig.ai_assistant;
 
 const ON_CHANGE_DEBOUNCE_MS = 500;
 const FORMAT_QUERY_SHORTCUT = getShortcutSymbols(
@@ -351,6 +359,8 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             matchKeyPress(event, 'down')
         ) {
             this.props.onDownKeyPressed();
+        } else if (matchKeyMap(event, KeyMap.queryEditor.focusCommandInput)) {
+            this.commandInputRef.current?.focus();
         } else {
             stopEvent = false;
         }
@@ -787,7 +797,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                         {this.getAdditionalDropDownButtonDOM()}
                     </div>
                 </div>
-                {isEditable && (
+                {AIAssistantConfig.enabled && isEditable && (
                     <AICommandBar
                         query={query}
                         queryEngine={queryEngineById[this.engineId]}
@@ -864,9 +874,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                             : null
                     }
                     onLintCompletion={this.onLintCompletion}
-                    focusCommandInput={() => {
-                        this.commandInputRef.current?.focus();
-                    }}
                 />
                 {openSnippetDOM}
             </div>

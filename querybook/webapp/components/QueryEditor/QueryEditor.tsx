@@ -76,7 +76,6 @@ export interface IQueryEditorProps extends IStyledQueryEditorProps {
         editor: CodeMirror.Editor
     ) => Promise<ILinterWarning[]>;
     onLintCompletion?: (hasError?: boolean) => void;
-    focusCommandInput?: () => void;
 }
 
 export interface IQueryEditorHandles {
@@ -131,7 +130,6 @@ export const QueryEditor: React.FC<
             // props from IStyledQueryEditorProps
             height = 'auto',
             fontSize,
-            focusCommandInput,
         },
         ref
     ) => {
@@ -588,8 +586,6 @@ export const QueryEditor: React.FC<
 
                     [KeyMap.queryEditor.openTable.key]: onOpenTableModal,
                     [KeyMap.queryEditor.formatQuery.key]: formatQuery,
-                    [KeyMap.queryEditor.focusCommandInput.key]:
-                        focusCommandInput,
                     ...keyMap,
                 },
                 indentUnit: 4,
