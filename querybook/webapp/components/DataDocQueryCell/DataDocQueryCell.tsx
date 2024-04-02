@@ -234,6 +234,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     public _keyMapMemo(engines: IQueryEngine[]) {
         const keyMap = {
             [KeyMap.queryEditor.runQuery.key]: this.clickOnRunButton,
+            [KeyMap.queryEditor.focusCommandInput.key]: this.focusCommandInput,
         };
 
         for (const [index, engine] of engines.entries()) {
@@ -359,8 +360,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             matchKeyPress(event, 'down')
         ) {
             this.props.onDownKeyPressed();
-        } else if (matchKeyMap(event, KeyMap.queryEditor.focusCommandInput)) {
-            this.commandInputRef.current?.focus();
         } else {
             stopEvent = false;
         }
@@ -377,6 +376,11 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             // emulate a click
             this.runButtonRef.current.clickRunButton();
         }
+    }
+
+    @bind
+    public focusCommandInput() {
+        this.commandInputRef.current?.focus();
     }
 
     @bind
