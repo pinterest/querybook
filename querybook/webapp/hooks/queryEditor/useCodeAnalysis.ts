@@ -1,7 +1,7 @@
-import { useDebounce } from 'hooks/useDebounce';
-import { ICodeAnalysis } from 'lib/sql-helper/sql-lexer';
 import { useEffect, useRef, useState } from 'react';
 
+import { useDebounce } from 'hooks/useDebounce';
+import { ICodeAnalysis } from 'lib/sql-helper/sql-lexer';
 import { analyzeCode } from 'lib/web-worker';
 
 interface IUseCodeAnalysisParams {

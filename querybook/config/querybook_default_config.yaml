@@ -54,6 +54,10 @@ LDAP_LASTNAME_FIELD: sn
 LDAP_FIRSTNAME_FIELD: givenName
 LDAP_FULLNAME_FIELD: cn
 
+# Websocket CORS allowed origins
+WS_CORS_ALLOWED_ORIGINS:
+    - http://localhost:10001
+
 # --------------- Result Store ---------------
 RESULT_STORE_TYPE: db
 

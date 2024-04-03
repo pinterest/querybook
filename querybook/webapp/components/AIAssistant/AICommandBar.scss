@@ -1,0 +1,73 @@
+.AICommandBar {
+    position: relative;
+
+    .command-popup-view {
+        position: absolute;
+        top: calc(
+            -1 * var(--padding) - 36px - 1 * var(--margin-xs)
+        ); // 36px is the height of the warning message
+        left: calc(-1 * var(--padding));
+        right: calc(-1 * var(--padding));
+        z-index: 20;
+        border-radius: var(--border-radius-sm);
+        padding: var(--padding);
+        background-color: var(--bg);
+        box-shadow: 0 0px 8px var(--bg-dark);
+        overflow: hidden;
+
+        .warning-message {
+            height: 36px;
+        }
+
+        .discard-confirm-view {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            .discard-confirm-background {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: var(--bg-invert);
+                opacity: 0.5;
+                z-index: 21;
+            }
+
+            .discard-confirm-dialog {
+                padding: var(--padding-lg);
+                border-radius: var(--border-radius-sm);
+                background-color: var(--bg);
+                z-index: 22;
+            }
+        }
+    }
+
+    .popup-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 19;
+    }
+
+    .popup-placeholder {
+        height: 40px;
+    }
+
+    .cover-controls-banner {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: -100px;
+        height: 100px;
+        background-color: var(--bg);
+    }
+}

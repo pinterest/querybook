@@ -34,6 +34,10 @@ Otherwise you can also pass the environment variable directly when launching the
 
 `FLASK_CACHE_CONFIG` (optional): This can be used to provide caching for API endpoints and internal logic. Follow https://pythonhosted.org/Flask-Cache/ for more details. You should provide a serialized JSON dictionary to be passed into the config.
 
+### WebSocket
+
+`WS_CORS_ALLOWED_ORIGINS`: (**required for production**): This is the allowed list of origins for CORS. For dev environment, all origins will be allowed.
+
 ### Database
 
 `DATABASE_CONN` (**required**): A sqlalchemy connection string to the database. Please check here https://docs.sqlalchemy.org/en/13/core/engines.html for formatting.
@@ -100,6 +104,7 @@ You can also add addtional loggers in the event logger plugin. See [Add Event Lo
     - console: This will print the stats logs to the console. Could be used for debugging purpose.
 
 You need to add your own stats logger plugin to use it. See [Add Stats Logger guide](../integrations/add_stats_logger.mdx) for more details.
+
 ## Authentication
 
 `AUTH_BACKEND` (optional, defaults to **app.auth.password_auth**): Python path to the authentication file. By default Querybook provides:
@@ -119,31 +124,34 @@ the next few configurations are only relevant if you are using OAuth based authe
 
 for LDAP authentication:
 
-- `LDAP_CONN`(**required**)
-- `LDAP_USE_TLS` (optional, defaults to `False`)
-- `LDAP_USE_BIND_USER` (optional, defaults to `False`)
-  - If `False`: Direct LDAP login
-    - Additional configuration:
-      - `LDAP_USER_DN` (**required**) DN with {} for username/etc (ex. `uid={},dc=example,dc=com`)
-    - Login flow:
-      - Direct login using formatted `LDAP_USER_DN` + password
-  - If `True`: Advanced LDAP login using _bind user_
-    - Additional configuration:
-      - `LDAP_BIND_USER` (**required**) Name of a _bind user_
-      - `LDAP_BIND_PASSWORD` (**required**) Password of a _bind user_
-      - `LDAP_SEARCH` (**required**) LDAP search base (ex. `ou=people,dc=example,dc=com`)
-      - `LDAP_FILTER` (optional) LDAP filter condition (ex. `(departmentNumber=01000)`)
-      - `LDAP_UID_FIELD` (optional) Field that matches the username when searching for the account to bind to (defaults to `uid`)
-      - `LDAP_EMAIL_FIELD`: (optional) Field that matches the user email (default to `mail`)
-      - `LDAP_LASTNAME_FIELD`: (optional) Field that matches the user surname (default to `sn`)
-      - `LDAP_FIRSTNAME_FIELD`: (optional) Field that matches the user given name (default to `givenName`)
-      - `LDAP_FULLNAME_FIELD`: (optional) Field that matches the user full/common name (default to `cn`)
+-   `LDAP_CONN`(**required**)
+-   `LDAP_USE_TLS` (optional, defaults to `False`)
+-   `LDAP_USE_BIND_USER` (optional, defaults to `False`)
 
-    - Login flow:
-      1) Initialized connection for the _bind user_.
-      2) Searching the _login user_ using the _bind user_ in LDAP dictionary based on `LDAP_SEARCH` and `LDAP_FILTER`.
-      3) The _login user_ credentials are tested in direct login.
-      4) If the previous steps were OK, the user is passed on.
+    -   If `False`: Direct LDAP login
+        -   Additional configuration:
+            -   `LDAP_USER_DN` (**required**) DN with {} for username/etc (ex. `uid={},dc=example,dc=com`)
+        -   Login flow:
+            -   Direct login using formatted `LDAP_USER_DN` + password
+    -   If `True`: Advanced LDAP login using _bind user_
+
+        -   Additional configuration:
+
+            -   `LDAP_BIND_USER` (**required**) Name of a _bind user_
+            -   `LDAP_BIND_PASSWORD` (**required**) Password of a _bind user_
+            -   `LDAP_SEARCH` (**required**) LDAP search base (ex. `ou=people,dc=example,dc=com`)
+            -   `LDAP_FILTER` (optional) LDAP filter condition (ex. `(departmentNumber=01000)`)
+            -   `LDAP_UID_FIELD` (optional) Field that matches the username when searching for the account to bind to (defaults to `uid`)
+            -   `LDAP_EMAIL_FIELD`: (optional) Field that matches the user email (default to `mail`)
+            -   `LDAP_LASTNAME_FIELD`: (optional) Field that matches the user surname (default to `sn`)
+            -   `LDAP_FIRSTNAME_FIELD`: (optional) Field that matches the user given name (default to `givenName`)
+            -   `LDAP_FULLNAME_FIELD`: (optional) Field that matches the user full/common name (default to `cn`)
+
+        -   Login flow:
+            1. Initialized connection for the _bind user_.
+            2. Searching the _login user_ using the _bind user_ in LDAP dictionary based on `LDAP_SEARCH` and `LDAP_FILTER`.
+            3. The _login user_ credentials are tested in direct login.
+            4. If the previous steps were OK, the user is passed on.
 
 If you want to force the user to login again after a certain time, you can the following variable:
 

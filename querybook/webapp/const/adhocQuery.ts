@@ -6,4 +6,5 @@ export interface IAdhocQuery {
     engineId?: number;
     executionId?: number;
     rowLimit?: number;
+    sampleRate?: number;
 }

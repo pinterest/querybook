@@ -1,9 +1,19 @@
 import clsx from 'clsx';
 import { throttle } from 'lodash';
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, {
+    forwardRef,
+    useCallback,
+    useEffect,
+    useImperativeHandle,
+    useRef,
+} from 'react';
 import styled from 'styled-components';
 
 import { useResizeObserver } from 'hooks/useResizeObserver';
+
+export interface IResizableTextareaHandles {
+    focus: () => void;
+}
 
 export interface IResizableTextareaProps
     extends Omit<
@@ -16,6 +26,7 @@ export interface IResizableTextareaProps
     disabled?: boolean;
     autoResize?: boolean;
     rows?: number;
+    ref?: React.Ref<IResizableTextareaHandles>;
 
     onChange: (value: string) => any;
 }
@@ -46,56 +57,74 @@ const StyledTextarea = styled.textarea`
     }
 `;
 
-export const ResizableTextArea: React.FC<IResizableTextareaProps> = ({
-    value = '',
-    className = '',
-    transparent = false,
-    disabled = false,
-    autoResize = true,
-    rows = 1,
-    onChange,
+export const ResizableTextArea = forwardRef<
+    IResizableTextareaHandles,
+    IResizableTextareaProps
+>(
+    (
+        {
+            value = '',
+            className = '',
+            transparent = false,
+            disabled = false,
+            autoResize = true,
+            rows = 1,
+            onChange,
 
-    ...textareaProps
-}) => {
-    const textareaRef = useRef<HTMLTextAreaElement>();
-    const autoHeight = useCallback(
-        throttle(() => {
-            if (textareaRef.current && autoResize) {
-                const textarea = textareaRef.current;
-                textarea.style.height = 'auto';
-                textarea.style.height = `${textarea.scrollHeight}px`;
-            }
-        }, 500),
-        [autoResize]
-    );
-
-    useEffect(() => {
-        autoHeight();
-    }, [value, autoResize]);
-
-    useResizeObserver(textareaRef.current, autoHeight);
-
-    const handleChange = useCallback(
-        (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
-            onChange(evt.target.value);
+            ...textareaProps
         },
-        [onChange]
-    );
+        ref
+    ) => {
+        const textareaRef = useRef<HTMLTextAreaElement>();
+        const autoHeight = useCallback(
+            throttle(() => {
+                if (textareaRef.current && autoResize) {
+                    const textarea = textareaRef.current;
+                    textarea.style.height = 'auto';
+                    textarea.style.height = `${textarea.scrollHeight}px`;
+                }
+            }, 500),
+            [autoResize]
+        );
 
-    return (
-        <StyledTextarea
-            className={clsx({
-                ResizableTextArea: true,
-                [className]: Boolean(className),
-            })}
-            rows={rows}
-            ref={textareaRef}
-            value={value}
-            onChange={handleChange}
-            onInput={autoHeight}
-            disabled={disabled}
-            transparent={transparent}
-            {...textareaProps}
-        />
-    );
-};
+        useEffect(() => {
+            autoHeight();
+        }, [value, autoResize]);
+
+        useResizeObserver(textareaRef.current, autoHeight);
+
+        const handleChange = useCallback(
+            (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
+                onChange(evt.target.value);
+            },
+            [onChange]
+        );
+
+        useImperativeHandle(
+            ref,
+            () => ({
+                focus: () => {
+                    textareaRef.current?.focus();
+                },
+            }),
+            []
+        );
+
+        return (
+            <StyledTextarea
+                className={clsx({
+                    ResizableTextArea: true,
+                    [className]: Boolean(className),
+                })}
+                rows={rows}
+                ref={textareaRef}
+                value={value}
+                onChange={handleChange}
+                onInput={autoHeight}
+                disabled={disabled}
+                transparent={transparent}
+                {...textareaProps}
+            />
+        );
+    }
+);

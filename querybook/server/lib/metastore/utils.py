@@ -29,6 +29,8 @@ class MetastoreTableACLChecker(object):
             for schema_table in self._tables_by_schema[schema]:
                 if schema_table == table or schema_table == "*":
                     return True
+                elif schema_table.endswith("*") and table.startswith(schema_table[:-1]):
+                    return True
         return False
 
     def is_table_valid(
