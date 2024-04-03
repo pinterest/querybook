@@ -289,7 +289,12 @@ def download_statement_execution_result(statement_execution_id):
             # We read the raw file and download it for the user
             reader.start()
             raw = reader.read_raw()
-            response = Response(raw)
+
+            # Add Byte-Order-Mark to the utf8 file to make Excel happy
+            raw_bytes = raw.encode()  # get bytes instead of string
+            BOM = b"\xEF\xBB\xBF"
+            raw_with_bom = BOM + raw_bytes
+            response = Response(raw_with_bom)
             response.headers["Content-Type"] = "text/csv"
             response.headers[
                 "Content-Disposition"
