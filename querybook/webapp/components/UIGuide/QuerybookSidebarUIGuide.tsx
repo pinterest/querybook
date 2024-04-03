@@ -80,7 +80,7 @@ function getQuerybookSidebarTourSteps() {
                 <>
                     <p>
                         This is the Adhoc Editor for running simple queries. It
-                        will show you an query editor in the workspace.
+                        will show you a query editor in the workspace.
                     </p>
                     <hr />
                     <p>
