@@ -1,4 +1,4 @@
-import { uniq } from 'lodash';
+import { set, uniq } from 'lodash';
 import React, { forwardRef, useCallback, useEffect, useState } from 'react';
 
 import { AICommandInput } from 'components/AIAssistant/AICommandInput';
@@ -17,8 +17,11 @@ import { trackClick } from 'lib/analytics';
 import { TableToken } from 'lib/sql-helper/sql-lexer';
 import { matchKeyPress } from 'lib/utils/keyboard';
 import { analyzeCode } from 'lib/web-worker';
+import { Button, TextButton } from 'ui/Button/Button';
+import { IconButton } from 'ui/Button/IconButton';
 import { Message } from 'ui/Message/Message';
 import { IResizableTextareaHandles } from 'ui/ResizableTextArea/ResizableTextArea';
+import { StyledText } from 'ui/StyledText/StyledText';
 
 import './AICommandBar.scss';
 
@@ -72,6 +75,7 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
         const [commandKwargs, setCommandKwargs] = useState<Record<string, any>>(
             {}
         );
+        const [showConfirm, setShowConfirm] = useState(false);
 
         const {
             runCommand,
@@ -124,16 +128,6 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
             }
         }, [command, runCommand, setShowPopupView, commandKwargs]);
 
-        const onEscapeKeyDown = React.useCallback(
-            (evt) => {
-                if (matchKeyPress(evt, 'Esc')) {
-                    setShowPopupView(false);
-                }
-            },
-            [matchKeyPress, setShowPopupView]
-        );
-        useEvent('keydown', onEscapeKeyDown);
-
         const getCommandResultView = () => {
             if (!commandResult) {
                 return null;
@@ -168,16 +162,58 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
             return null;
         };
 
+        const discardConfirmDOM = (
+            <div className="close-confirm-view">
+                <div className="close-confirm-background"></div>
+                <div className="close-confirm-dialog">
+                    <StyledText size="med" weight="bold">
+                        Are you sure you want to discard the changes?
+                    </StyledText>
+                    <div className="flex-right" style={{ marginTop: 12 }}>
+                        <Button
+                            title="Cancel"
+                            onClick={() => setShowConfirm(false)}
+                        />
+                        <Button
+                            title="Confirm"
+                            color="confirm"
+                            onClick={() => {
+                                setShowPopupView(false);
+                                setShowConfirm(false);
+                            }}
+                        />
+                    </div>
+                </div>
+            </div>
+        );
+
         return (
             <div
-                style={{
-                    position: 'relative',
-                }}
-                tabIndex={0}
                 className="AICommandBar"
+                onMouseOver={(evt) => {
+                    console.log('Mouse over AICommandBar');
+                    evt.stopPropagation();
+                    evt.preventDefault();
+                }}
             >
-                {/* Placeholder to prevent layout shift */}
-                {showPopupView && <div className="popup-placeholder" />}
+                {showPopupView && (
+                    <>
+                        {/* This is a workaround to hide the query cell controls when hovering */}
+                        <div className="cover-controls-banner" />
+                        <div
+                            className="popup-backdrop"
+                            onClick={() => {
+                                if (commandResult) {
+                                    setShowConfirm(true);
+                                } else {
+                                    setShowPopupView(false);
+                                }
+                            }}
+                        />
+                        {/* Placeholder to prevent layout shift */}
+                        <div className="popup-placeholder" />
+                    </>
+                )}
                 <div
                     className={showPopupView ? 'command-popup-view' : undefined}
                 >
@@ -203,6 +239,7 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
                         ref={commandInputRef}
                     />
                     {showPopupView && getCommandResultView()}
+                    {showConfirm && discardConfirmDOM}
                 </div>
             </div>
         );

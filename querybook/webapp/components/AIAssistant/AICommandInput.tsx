@@ -147,7 +147,7 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
                     <Icon
                         name={running ? 'Loading' : 'Stars'}
                         size={18}
-                        color="accent"
+                        // color="accent"
                     />
                 </span>
                 <div ref={anchorRef} className="command-container">
