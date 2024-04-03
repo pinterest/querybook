@@ -163,9 +163,9 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
         };
 
         const discardConfirmDOM = (
-            <div className="close-confirm-view">
-                <div className="close-confirm-background"></div>
-                <div className="close-confirm-dialog">
+            <div className="discard-confirm-view">
+                <div className="discard-confirm-background"></div>
+                <div className="discard-confirm-dialog">
                     <StyledText size="med" weight="bold">
                         Are you sure you want to discard the changes?
                     </StyledText>
@@ -188,14 +188,7 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
         );
 
         return (
-            <div
-                className="AICommandBar"
-                onMouseOver={(evt) => {
-                    console.log('Mouse over AICommandBar');
-                    evt.stopPropagation();
-                    evt.preventDefault();
-                }}
-            >
+            <div className="AICommandBar">
                 {showPopupView && (
                     <>
                         {/* This is a workaround to hide the query cell controls when hovering */}

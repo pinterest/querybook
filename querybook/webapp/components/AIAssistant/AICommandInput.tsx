@@ -2,6 +2,7 @@ import React, {
     forwardRef,
     useCallback,
     useEffect,
+    useMemo,
     useRef,
     useState,
 } from 'react';
@@ -38,10 +39,17 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
         const anchorRef = useRef<HTMLDivElement>(null);
         const [command, setCommand] = useState<IQueryCellCommand>();
         const [commandValue, setCommandValue] = useState('');
-
-        const [filteredCommands, setFilteredCommands] = useState([]);
         const [currentCommandItemIndex, setCurrentCommandItemIndex] =
             useState(0);
+
+        const filteredCommands = useMemo(() => {
+            if (command || !commandValue.startsWith('/')) {
+                return [];
+            }
+            return commands.filter((cmd) =>
+                ('/' + cmd.name).startsWith(commandValue.toLowerCase())
+            );
+        }, [command, commandValue, commands]);
 
         useEffect(() => {
             onCommandChange(command, commandValue);
@@ -50,41 +58,31 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
         const setNewCommand = useCallback(
             (newCommand: IQueryCellCommand) => {
                 setCommand(newCommand);
-                setFilteredCommands([]);
                 setCommandValue('');
             },
-            [setCommand, setCommandValue, setFilteredCommands]
+            [setCommand, setCommandValue]
         );
 
         const handleChange = useCallback(
             (value: string) => {
                 if (command || !value.startsWith('/')) {
                     setCommandValue(value);
-                    setFilteredCommands([]);
                     return;
                 }
 
                 // when value starts with "/"
-                const prefix = value.trimStart().slice(1).toLocaleLowerCase(); // trim the leading '/'
-                const newCommand = commands.find((cmd) => cmd.name === prefix);
+                const newCommand = commands.find(
+                    (cmd) => '/' + cmd.name === value.toLowerCase()
+                );
 
                 // found a matching command
                 if (newCommand) {
                     setNewCommand(newCommand);
                 } else {
                     setCommandValue(value);
-                    setFilteredCommands(
-                        commands.filter((cmd) => cmd.name.startsWith(prefix))
-                    );
                 }
             },
-            [
-                command,
-                commands,
-                setNewCommand,
-                setCommandValue,
-                setFilteredCommands,
-            ]
+            [command, commands, setNewCommand, setCommandValue]
         );
 
         const onKeyDown = useCallback(

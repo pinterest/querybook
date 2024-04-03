@@ -251,12 +251,7 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> =
             });
 
             const innerCellContentDOM = (
-                <div
-                    className={innerCellClassName}
-                    onMouseOver={(evt) => {
-                        console.log('Mouse over DataDocCell');
-                    }}
-                >
+                <div className={innerCellClassName}>
                     <div className="data-doc-cell-users flex-column">
                         {uidDOM}
                     </div>
