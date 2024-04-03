@@ -66,7 +66,6 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
                     icon={socket.loading ? 'Loading' : 'Hash'}
                     size={18}
                     tooltip="AI: generate title"
-                    color={!value && query ? 'accent' : undefined}
                     onClick={handleTitleGenerationClick}
                 />
             )}

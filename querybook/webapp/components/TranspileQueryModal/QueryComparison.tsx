@@ -14,6 +14,7 @@ export const QueryComparison: React.FC<{
     toQueryTitle?: string | React.ReactNode;
     disableHighlight?: boolean;
     hideEmptyQuery?: boolean;
+    autoHeight?: boolean;
 }> = ({
     fromQuery,
     toQuery,
@@ -21,6 +22,7 @@ export const QueryComparison: React.FC<{
     toQueryTitle,
     disableHighlight,
     hideEmptyQuery,
+    autoHeight = false,
 }) => {
     const hasHiddenQuery = hideEmptyQuery && (!fromQuery || !toQuery);
 
@@ -76,7 +78,7 @@ export const QueryComparison: React.FC<{
                         highlightRanges={removedRanges}
                         query={fromQuery}
                         maxEditorHeight={'40vh'}
-                        autoHeight={false}
+                        autoHeight={autoHeight}
                     />
                 </div>
             )}
@@ -95,7 +97,7 @@ export const QueryComparison: React.FC<{
                         highlightRanges={addedRanges}
                         query={toQuery}
                         maxEditorHeight={'40vh'}
-                        autoHeight={false}
+                        autoHeight={autoHeight}
                     />
                 </div>
             )}
