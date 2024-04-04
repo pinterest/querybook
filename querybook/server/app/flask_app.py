@@ -36,6 +36,13 @@ def make_flask_app():
     app.json_encoder = JSONEncoder
     app.secret_key = QuerybookSettings.FLASK_SECRET_KEY
 
+    if QuerybookSettings.PRODUCTION:
+        app.config.update(
+            SESSION_COOKIE_SECURE=True,
+            SESSION_COOKIE_HTTPONLY=True,
+            SESSION_COOKIE_SAMESITE="Lax",
+        )
+
     if QuerybookSettings.LOGS_OUT_AFTER > 0:
         app.permanent_session_lifetime = timedelta(
             seconds=QuerybookSettings.LOGS_OUT_AFTER
@@ -117,9 +124,9 @@ def make_limiter(app):
             response.headers["flask-limit-amount"] = limiter.current_limit.limit.amount
             response.headers["flask-limit-key"] = limiter.current_limit.key
             response.headers["flask-limit-reset-at"] = limiter.current_limit.reset_at
-            response.headers[
-                "flask-limit-window-size"
-            ] = limiter.current_limit.limit.get_expiry()
+            response.headers["flask-limit-window-size"] = (
+                limiter.current_limit.limit.get_expiry()
+            )
         return response
 
     return limiter
