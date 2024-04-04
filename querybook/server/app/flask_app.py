@@ -36,6 +36,13 @@ def make_flask_app():
     app.json_encoder = JSONEncoder
     app.secret_key = QuerybookSettings.FLASK_SECRET_KEY
 
+    if QuerybookSettings.PRODUCTION:
+        app.config.update(
+            SESSION_COOKIE_SECURE=True,
+            SESSION_COOKIE_HTTPONLY=True,
+            SESSION_COOKIE_SAMESITE="Lax",
+        )
+
     if QuerybookSettings.LOGS_OUT_AFTER > 0:
         app.permanent_session_lifetime = timedelta(
             seconds=QuerybookSettings.LOGS_OUT_AFTER
