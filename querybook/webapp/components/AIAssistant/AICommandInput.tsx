@@ -6,17 +6,16 @@ import React, {
     useRef,
     useState,
 } from 'react';
+import { Mention, MentionsInput } from 'react-mentions';
 
 import { IQueryCellCommand } from 'const/command';
 import { useForwardedRef } from 'hooks/useForwardedRef';
-import { matchKeyPress } from 'lib/utils/keyboard';
+import { KeyMap, matchKeyMap, matchKeyPress } from 'lib/utils/keyboard';
+import { SearchTableResource } from 'resource/search';
 import { Button } from 'ui/Button/Button';
 import { Icon } from 'ui/Icon/Icon';
 import { Popover } from 'ui/Popover/Popover';
-import {
-    IResizableTextareaHandles,
-    ResizableTextArea,
-} from 'ui/ResizableTextArea/ResizableTextArea';
+import { IResizableTextareaHandles } from 'ui/ResizableTextArea/ResizableTextArea';
 
 import './AICommandInput.scss';
 
@@ -24,19 +23,65 @@ interface AICommandInputProps {
     commands: Array<IQueryCellCommand>;
     placeholder?: string;
     running: boolean;
+    tables: string[];
+    metastoreId: number;
     onCommandChange: (command: IQueryCellCommand, commandArg: string) => void;
+    onTablesChange: (tables: string[]) => void;
     onSubmit: () => void;
     cancelGeneration: () => void;
     ref: React.Ref<IResizableTextareaHandles>;
 }
 
+const mentionInputStyle = {
+    flex: 1,
+    control: {
+        minHeight: '40px',
+    },
+    highlighter: {
+        border: 'none',
+        padding: '8px',
+        lineHeight: '24px',
+    },
+    input: {
+        border: 'none',
+        padding: '8px',
+        lineHeight: '24px',
+    },
+    suggestions: {
+        backgroundColor: 'var(--bg)',
+        borderRadius: '6px',
+        overflow: 'hidden',
+        zIndex: 19,
+        boxShadow: '0 0px 4px var(--bg-dark)',
+        item: {
+            fontSize: 'var(--xsmall-text-size)',
+            padding: '6px 12px',
+            textAlign: 'left',
+            backgroundColor: 'transparent',
+            '&focused': {
+                backgroundColor: 'var(--bg-hover)',
+            },
+        },
+    },
+};
+
 export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
     (
-        { commands = [], running, onCommandChange, onSubmit, cancelGeneration },
+        {
+            commands = [],
+            running,
+            tables,
+            metastoreId,
+            onCommandChange,
+            onTablesChange,
+            onSubmit,
+            cancelGeneration,
+        },
         ref
     ) => {
         const textareaRef = useForwardedRef<IResizableTextareaHandles>(ref);
         const anchorRef = useRef<HTMLDivElement>(null);
+        const [showCommands, setShowCommands] = useState(false);
         const [command, setCommand] = useState<IQueryCellCommand>();
         const [commandValue, setCommandValue] = useState('');
         const [currentCommandItemIndex, setCurrentCommandItemIndex] =
@@ -64,7 +109,13 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
         );
 
         const handleChange = useCallback(
-            (value: string) => {
+            (
+                evt,
+                value: string,
+                newPlainTextValue,
+                mentions: Array<{ id: string; display: string }>
+            ) => {
+                onTablesChange(mentions.map((mention) => mention.id));
                 if (command || !value.startsWith('/')) {
                     setCommandValue(value);
                     return;
@@ -80,6 +131,7 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
                     setNewCommand(newCommand);
                 } else {
                     setCommandValue(value);
+                    setShowCommands(true);
                 }
             },
             [command, commands, setNewCommand, setCommandValue]
@@ -87,7 +139,13 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
 
         const onKeyDown = useCallback(
             (event: React.KeyboardEvent) => {
-                if (filteredCommands.length > 0) {
+                let handled = true;
+                // Cmd + / will reset the command and value and open the command options
+                if (matchKeyMap(event, KeyMap.commandBar.openCommands)) {
+                    setNewCommand(undefined);
+                    setCommandValue('/');
+                    setShowCommands(true);
+                } else if (filteredCommands.length > 0) {
                     if (
                         matchKeyPress(event, 'Enter') ||
                         matchKeyPress(event, 'Tab')
@@ -95,31 +153,30 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
                         setNewCommand(
                             filteredCommands[currentCommandItemIndex]
                         );
-                        event.preventDefault();
-                        return;
-                    }
-
-                    if (matchKeyPress(event, 'Up')) {
+                    } else if (matchKeyPress(event, 'Up')) {
                         setCurrentCommandItemIndex((prev) =>
                             Math.max(prev - 1, 0)
                         );
-                        event.preventDefault();
-                        return;
-                    }
-                    if (matchKeyPress(event, 'Down')) {
+                    } else if (matchKeyPress(event, 'Down')) {
                         setCurrentCommandItemIndex((prev) =>
                             Math.min(prev + 1, filteredCommands.length - 1)
                         );
-                        event.preventDefault();
-                        return;
+                    } else {
+                        handled = false;
                     }
                 } else if (matchKeyPress(event, 'Enter') && !event.shiftKey) {
                     if (!running) {
                         onSubmit();
                     }
-                    event.preventDefault();
                 } else if (matchKeyPress(event, 'Delete') && !commandValue) {
                     setCommand(undefined);
+                } else {
+                    handled = false;
+                }
+
+                if (handled) {
+                    event.preventDefault();
+                    event.stopPropagation();
                 }
             },
             [
@@ -139,6 +196,33 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
             </div>
         );
 
+        const loadTables = useCallback(
+            (keywords: string, callback) => {
+                if (!keywords) {
+                    return;
+                }
+
+                SearchTableResource.searchConcise({
+                    metastore_id: metastoreId,
+                    keywords,
+                }).then(({ data }) => {
+                    const filteredTableNames = data.results.filter(
+                        (result) =>
+                            tables.indexOf(
+                                `${result.schema}.${result.name}`
+                            ) === -1
+                    );
+                    const tableNameOptions = filteredTableNames.map(
+                        ({ id, schema, name }) => ({
+                            id: `${schema}.${name}`,
+                            display: `${schema}.${name}`,
+                        })
+                    );
+                    callback(tableNameOptions);
+                });
+            },
+            [metastoreId, tables]
+        );
         return (
             <div className="AICommandInput">
                 <span className="stars-icon">
@@ -153,21 +237,35 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
                         <div className="command">{'/' + command.name}</div>
                     )}
                 </div>
-                <ResizableTextArea
+                <MentionsInput
                     value={commandValue}
                     onChange={handleChange}
-                    className="question-text-area"
+                    onKeyDown={onKeyDown}
+                    style={mentionInputStyle}
                     placeholder={
                         command
                             ? command.hint
-                            : 'Ask AI to generate/edit the query, or type / to see more options'
+                            : 'Ask AI to generate/edit the query. Type / to see more commands. Type @ to select a table. Type Cmd+/ to reset the command.'
                     }
-                    onKeyDown={onKeyDown}
-                    disabled={running}
-                    transparent
-                    ref={textareaRef}
-                />
-                {filteredCommands.length > 0 && (
+                    onBlur={() => setShowCommands(false)}
+                    inputRef={textareaRef}
+                >
+                    <Mention
+                        markup={`{{@__id__}}`}
+                        appendSpaceOnAdd={true}
+                        displayTransform={(mention) => `@${mention}`}
+                        trigger="@"
+                        data={loadTables}
+                        style={{
+                            position: 'relative',
+                            zIndex: 1,
+                            color: 'var(--color-accent-dark)',
+                            backgroundColor: 'var(--color-accent-lightest-0)',
+                            borderRadius: '4px',
+                        }}
+                    />
+                </MentionsInput>
+                {showCommands && filteredCommands.length > 0 && (
                     <Popover
                         hideArrow={true}
                         noPadding={true}

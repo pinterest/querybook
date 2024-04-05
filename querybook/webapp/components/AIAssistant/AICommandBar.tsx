@@ -1,4 +1,4 @@
-import { set, uniq } from 'lodash';
+import { uniq } from 'lodash';
 import React, { forwardRef, useCallback, useEffect, useState } from 'react';
 
 import { AICommandInput } from 'components/AIAssistant/AICommandInput';
@@ -11,14 +11,11 @@ import {
 } from 'const/command';
 import { IQueryEngine } from 'const/queryEngine';
 import { CommandRunner, useCommand } from 'hooks/useCommand';
-import { useEvent } from 'hooks/useEvent';
 import { useForwardedRef } from 'hooks/useForwardedRef';
 import { trackClick } from 'lib/analytics';
 import { TableToken } from 'lib/sql-helper/sql-lexer';
-import { matchKeyPress } from 'lib/utils/keyboard';
 import { analyzeCode } from 'lib/web-worker';
-import { Button, TextButton } from 'ui/Button/Button';
-import { IconButton } from 'ui/Button/IconButton';
+import { Button } from 'ui/Button/Button';
 import { Message } from 'ui/Message/Message';
 import { IResizableTextareaHandles } from 'ui/ResizableTextArea/ResizableTextArea';
 import { StyledText } from 'ui/StyledText/StyledText';
@@ -66,6 +63,7 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
         );
         const tablesInQuery = useTablesInQuery(query, queryEngine.language);
         const [tables, setTables] = useState(tablesInQuery);
+        const [mentionedTables, setMentionedTables] = useState([]);
         const commandInputRef = useForwardedRef<IResizableTextareaHandles>(ref);
         const [showPopupView, setShowPopupView] = useState(false);
         const [command, setCommand] =
@@ -86,8 +84,23 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
         } = useCommand(command, commandRunner);
 
         useEffect(() => {
-            setTables((tables) => uniq([...tablesInQuery, ...tables]));
-        }, [tablesInQuery]);
+            setTables((tables) => {
+                if (mentionedTables.length > 0) {
+                    return mentionedTables;
+                } else {
+                    return uniq([...tablesInQuery, ...tables]);
+                }
+            });
+        }, [tablesInQuery, mentionedTables]);
+
+        useEffect(() => {
+            if (!query && mentionedTables.length === 1) {
+                onUpdateQuery(
+                    `SELECT\n  *\nFROM\n  ${mentionedTables[0]}\nLIMIT\n  10`,
+                    false
+                );
+            }
+        }, [mentionedTables]);
 
         useEffect(() => {
             if (command.name === 'format') {
@@ -226,6 +239,9 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
                             );
                             setCommandInputValue(inputValue);
                         }}
+                        tables={mentionedTables}
+                        onTablesChange={setMentionedTables}
+                        metastoreId={queryEngine.metastore_id}
                         onSubmit={handleCommand}
                         running={isRunning}
                         cancelGeneration={cancelCommand}

@@ -85,6 +85,12 @@ const DEFAULT_KEY_MAP = {
             name: 'Delete current cell',
         },
     },
+    commandBar: {
+        openCommands: {
+            key: 'Cmd-/',
+            name: 'Open commands',
+        },
+    },
     queryEditor: {
         runQuery: {
             key: 'Shift-Enter',
