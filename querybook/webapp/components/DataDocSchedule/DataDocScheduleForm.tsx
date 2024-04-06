@@ -276,6 +276,7 @@ export const DataDocScheduleForm: React.FunctionComponent<
                                     <RecurrenceEditor
                                         recurrence={values.recurrence}
                                         recurrenceError={errors?.recurrence}
+                                        allowCron={false}
                                         setRecurrence={(val) =>
                                             setFieldValue('recurrence', val)
                                         }
