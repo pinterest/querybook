@@ -1,17 +1,6 @@
-import requests
 from env import get_env_config
 
 from app.auth.okta_auth import OAUTH_CALLBACK_PATH, OktaLoginManager
-
-
-class NoopAuth(requests.auth.AuthBase):
-    """
-    This auth doesn't do anything.
-    It only used to override oauthlib's behavior.
-    """
-
-    def __call__(self, r):
-        return r
 
 
 class Auth0LoginManager(OktaLoginManager):
