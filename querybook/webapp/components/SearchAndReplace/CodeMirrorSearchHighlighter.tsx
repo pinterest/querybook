@@ -61,7 +61,7 @@ export const CodeMirrorSearchHighlighter: React.FC<{
                 }
             );
         }
-    }, [currentSearchResultIndex]);
+    }, [currentSearchItem]);
 
     return null;
 };
