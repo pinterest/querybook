@@ -1,5 +1,11 @@
 import { uniq } from 'lodash';
-import React, { forwardRef, useCallback, useEffect, useState } from 'react';
+import React, {
+    forwardRef,
+    useCallback,
+    useEffect,
+    useMemo,
+    useState,
+} from 'react';
 
 import { AICommandInput } from 'components/AIAssistant/AICommandInput';
 import { AICommandResultView } from 'components/AIAssistant/AICommandResultView';
@@ -62,8 +68,8 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
             (cmd) => cmd.name === (query ? 'edit' : 'generate')
         );
         const tablesInQuery = useTablesInQuery(query, queryEngine.language);
-        const [tables, setTables] = useState(tablesInQuery);
-        const [mentionedTables, setMentionedTables] = useState([]);
+        const [tables, setTables] = useState<string[]>([]);
+        const [mentionedTables, setMentionedTables] = useState<string[]>([]);
         const commandInputRef = useForwardedRef<IResizableTextareaHandles>(ref);
         const [showPopupView, setShowPopupView] = useState(false);
         const [command, setCommand] =
@@ -75,6 +81,14 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
         );
         const [showConfirm, setShowConfirm] = useState(false);
 
+        const finalTablesToUse = useMemo(() => {
+            if (mentionedTables.length > 0) {
+                return mentionedTables;
+            } else {
+                return uniq([...tablesInQuery, ...tables]);
+            }
+        }, [tablesInQuery, mentionedTables, tables]);
+
         const {
             runCommand,
             isRunning,
@@ -82,16 +96,6 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
             commandResult,
             resetCommandResult,
         } = useCommand(command, commandRunner);
-
-        useEffect(() => {
-            setTables((tables) => {
-                if (mentionedTables.length > 0) {
-                    return mentionedTables;
-                } else {
-                    return uniq([...tablesInQuery, ...tables]);
-                }
-            });
-        }, [tablesInQuery, mentionedTables]);
 
         useEffect(() => {
             if (!query && mentionedTables.length === 1) {
@@ -109,7 +113,7 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
             } else if (command.name === 'generate' || command.name === 'edit') {
                 setCommandKwargs({
                     query_engine_id: queryEngine.id,
-                    tables: tables,
+                    tables: finalTablesToUse,
                     question: commandInputValue,
                     original_query: command.name === 'generate' ? '' : query,
                 });
@@ -135,7 +139,7 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
                     aux: {
                         mode: command.name,
                         question: commandKwargs.question,
-                        tables,
+                        tables: finalTablesToUse,
                     },
                 });
             }
@@ -153,7 +157,8 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
                         commandKwargs={commandKwargs}
                         metastoreId={queryEngine.metastore_id}
                         commandResult={commandResult}
-                        tables={tables}
+                        tables={finalTablesToUse}
+                        hasMentionedTables={mentionedTables.length > 0}
                         originalQuery={query}
                         isStreaming={isRunning}
                         onContinue={handleCommand}
@@ -239,8 +244,8 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
                             );
                             setCommandInputValue(inputValue);
                         }}
-                        tables={mentionedTables}
-                        onTablesChange={setMentionedTables}
+                        mentionedTables={mentionedTables}
+                        onMentionedTablesChange={setMentionedTables}
                         metastoreId={queryEngine.metastore_id}
                         onSubmit={handleCommand}
                         running={isRunning}

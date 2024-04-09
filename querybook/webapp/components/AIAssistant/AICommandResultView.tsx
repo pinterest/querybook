@@ -14,6 +14,7 @@ interface IAICommandResultViewProps {
     metastoreId: number;
     originalQuery: string;
     tables: string[];
+    hasMentionedTables: boolean;
     commandResult: Record<string, any>;
     isStreaming: boolean;
     onContinue: () => void;
@@ -28,6 +29,7 @@ export const AICommandResultView = ({
     metastoreId,
     originalQuery,
     tables,
+    hasMentionedTables,
     commandResult,
     isStreaming,
     onContinue,
@@ -98,7 +100,7 @@ export const AICommandResultView = ({
                     setFoundTables(true);
                 }}
             />
-            {foundTables && tables.length > 0 && (
+            {(foundTables || tables.length > 0) && (
                 <div className="mt12">
                     <Button
                         title="Continue"
@@ -133,7 +135,7 @@ export const AICommandResultView = ({
 
     return (
         <div>
-            {tablesDOM}
+            {!hasMentionedTables && tablesDOM}
             {explanation && <div className="mt12">{explanation}</div>}
             {queryDiffDOM}
             {actionButtonsDOM}

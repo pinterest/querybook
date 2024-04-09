@@ -85,7 +85,7 @@ const DEFAULT_KEY_MAP = {
             name: 'Delete current cell',
         },
     },
-    commandBar: {
+    aiCommandBar: {
         openCommands: {
             key: 'Cmd-/',
             name: 'Open commands',

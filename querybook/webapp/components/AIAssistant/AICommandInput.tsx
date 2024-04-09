@@ -23,10 +23,10 @@ interface AICommandInputProps {
     commands: Array<IQueryCellCommand>;
     placeholder?: string;
     running: boolean;
-    tables: string[];
+    mentionedTables: string[];
     metastoreId: number;
     onCommandChange: (command: IQueryCellCommand, commandArg: string) => void;
-    onTablesChange: (tables: string[]) => void;
+    onMentionedTablesChange: (tables: string[]) => void;
     onSubmit: () => void;
     cancelGeneration: () => void;
     ref: React.Ref<IResizableTextareaHandles>;
@@ -70,10 +70,10 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
         {
             commands = [],
             running,
-            tables,
+            mentionedTables,
             metastoreId,
             onCommandChange,
-            onTablesChange,
+            onMentionedTablesChange,
             onSubmit,
             cancelGeneration,
         },
@@ -115,7 +115,7 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
                 newPlainTextValue,
                 mentions: Array<{ id: string; display: string }>
             ) => {
-                onTablesChange(mentions.map((mention) => mention.id));
+                onMentionedTablesChange(mentions.map((mention) => mention.id));
                 if (command || !value.startsWith('/')) {
                     setCommandValue(value);
                     return;
@@ -141,7 +141,7 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
             (event: React.KeyboardEvent) => {
                 let handled = true;
                 // Cmd + / will reset the command and value and open the command options
-                if (matchKeyMap(event, KeyMap.commandBar.openCommands)) {
+                if (matchKeyMap(event, KeyMap.aiCommandBar.openCommands)) {
                     setNewCommand(undefined);
                     setCommandValue('/');
                     setShowCommands(true);
@@ -197,7 +197,12 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
         );
 
         const loadTables = useCallback(
-            (keywords: string, callback) => {
+            (
+                keywords: string,
+                callback: (
+                    options: Array<{ id: string; display: string }>
+                ) => void
+            ) => {
                 if (!keywords) {
                     return;
                 }
@@ -208,9 +213,9 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
                 }).then(({ data }) => {
                     const filteredTableNames = data.results.filter(
                         (result) =>
-                            tables.indexOf(
+                            !mentionedTables.includes(
                                 `${result.schema}.${result.name}`
-                            ) === -1
+                            )
                     );
                     const tableNameOptions = filteredTableNames.map(
                         ({ id, schema, name }) => ({
@@ -221,7 +226,7 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
                     callback(tableNameOptions);
                 });
             },
-            [metastoreId, tables]
+            [metastoreId, mentionedTables]
         );
         return (
             <div className="AICommandInput">
@@ -245,7 +250,7 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
                     placeholder={
                         command
                             ? command.hint
-                            : 'Ask AI to generate/edit the query. Type / to see more commands. Type @ to select a table. Type Cmd+/ to reset the command.'
+                            : 'Ask AI to generate/edit the query. Type @ to select a table. Type / to see more commands. Type Cmd+/ to reset the command.'
                     }
                     onBlur={() => setShowCommands(false)}
                     inputRef={textareaRef}
