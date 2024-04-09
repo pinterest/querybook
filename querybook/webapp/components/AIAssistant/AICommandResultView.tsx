@@ -30,7 +30,7 @@ export const AICommandResultView = ({
     originalQuery,
     tables,
     hasMentionedTables,
-    commandResult,
+    commandResult = {},
     isStreaming,
     onContinue,
     onTablesChange,
@@ -42,7 +42,7 @@ export const AICommandResultView = ({
     const [foundTables, setFoundTables] = useState<boolean>(false);
 
     useEffect(() => {
-        const { type, data } = commandResult;
+        const { type, data = {} } = commandResult;
 
         if (type === 'tables') {
             onTablesChange(data);
@@ -100,7 +100,7 @@ export const AICommandResultView = ({
                     setFoundTables(true);
                 }}
             />
-            {(foundTables || tables.length > 0) && (
+            {foundTables && tables.length > 0 && (
                 <div className="mt12">
                     <Button
                         title="Continue"

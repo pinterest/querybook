@@ -146,10 +146,6 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
         }, [command, runCommand, setShowPopupView, commandKwargs]);
 
         const getCommandResultView = () => {
-            if (!commandResult) {
-                return null;
-            }
-
             if (command.name === 'generate' || command.name === 'edit') {
                 return (
                     <AICommandResultView
