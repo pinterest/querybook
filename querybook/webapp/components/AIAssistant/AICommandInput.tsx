@@ -198,33 +198,29 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
 
         const loadTables = useCallback(
             (
-                keywords: string,
+                keyword: string,
                 callback: (
                     options: Array<{ id: string; display: string }>
                 ) => void
             ) => {
-                if (!keywords) {
+                if (!keyword) {
                     return;
                 }
 
-                SearchTableResource.searchConcise({
-                    metastore_id: metastoreId,
-                    keywords,
-                }).then(({ data }) => {
-                    const filteredTableNames = data.results.filter(
-                        (result) =>
-                            !mentionedTables.includes(
-                                `${result.schema}.${result.name}`
-                            )
-                    );
-                    const tableNameOptions = filteredTableNames.map(
-                        ({ schema, name }) => ({
-                            id: `${schema}.${name}`,
-                            display: `${schema}.${name}`,
-                        })
-                    );
-                    callback(tableNameOptions);
-                });
+                SearchTableResource.suggest(metastoreId, keyword).then(
+                    ({ data }) => {
+                        const filteredTableNames = data.filter(
+                            (table) => !mentionedTables.includes(table)
+                        );
+                        const tableNameOptions = filteredTableNames.map(
+                            (table) => ({
+                                id: table,
+                                display: table,
+                            })
+                        );
+                        callback(tableNameOptions);
+                    }
+                );
             },
             [metastoreId, mentionedTables]
         );

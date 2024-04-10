@@ -1,17 +1,18 @@
 def construct_suggest_table_query(
-    prefix: str,
+    keyword: str,
     limit: int,
     metastore_id: int,
 ):
     return {
-        "suggest": {
-            "suggest": {
-                "text": prefix,
-                "completion": {
-                    "field": "completion_name",
-                    "size": limit,
-                    "contexts": {"metastore_id": metastore_id},
+        "from": 0,
+        "size": limit,
+        "query": {
+            "bool": {
+                "must": {
+                    "match": {"full_name_ngram": {"query": keyword, "operator": "and"}}
                 },
+                "filter": {"match": {"metastore_id": metastore_id}},
             }
         },
+        "_source": ["id", "full_name"],
     }
