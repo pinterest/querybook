@@ -100,9 +100,10 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
         useEffect(() => {
             if (!query && mentionedTables.length === 1) {
                 onUpdateQuery(
-                    `SELECT\n  *\nFROM\n  ${mentionedTables[0]}\nLIMIT\n  10`,
+                    `SELECT * FROM ${mentionedTables[0]} LIMIT 10`,
                     false
                 );
+                onFormatQuery();
             }
         }, [mentionedTables]);
 
