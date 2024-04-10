@@ -29,6 +29,30 @@ Gets rendered to:
 SELECT * FROM users WHERE created_at = '2022-02-24';
 ```
 
+`{{ current_user }}`: Map to the current user's username in Querybook. Example use case:
+
+```sql
+SELECT * FROM tickets WHERE assigned_to = '{{ current_user }}';
+```
+
+Gets rendered to:
+
+```sql
+SELECT * FROM tickets WHERE assigned_to = 'john_doe';
+```
+
+`{{ current_user_email }}`: Map to the current user's email in Querybook. Example use case:
+
+```sql
+SELECT * FROM tickets WHERE assigned_to_email = '{{ current_user_email }}';
+```
+
+Gets rendered to:
+
+```sql
+SELECT * FROM tickets WHERE assigned_to_email = 'john_doe@querybook.org'
+```
+
 ## Functions
 
 `{{ latest_partition('<schema_name>.<table_name>', '<partition_key>') }}`:
@@ -65,4 +89,22 @@ This gets rendered to:
 ```sql
 SELECT * FROM default.pins
 WHERE dt = '2022-02-25';
+```
+
+## Filters
+
+Filters transform the output of template variables, and are applied using the pipe character `|`. Filters can be chained together by using multiple pipe characters. A list of built-in filters can be found [here](https://jinja.palletsprojects.com/en/3.1.x/templates/#list-of-builtin-filters).
+
+Custom filters are also available:
+
+`{{ ... | slugify }}`: Transforms a string into a format suitable for use in table names, column names, URLs, etc. It converts all characters to lowercase and replaces spaces with underscores. It also removes special characters and Unicode. Example use case:
+
+```sql
+CREATE TABLE default.report_{{ today | slugify }} AS ...
+```
+
+Gets rendered to:
+
+```sql
+CREATE TABLE default.report_2022_02_25 AS ...
 ```
