@@ -14,6 +14,7 @@ interface IAICommandResultViewProps {
     metastoreId: number;
     originalQuery: string;
     tables: string[];
+    hasMentionedTables: boolean;
     commandResult: Record<string, any>;
     isStreaming: boolean;
     onContinue: () => void;
@@ -28,7 +29,8 @@ export const AICommandResultView = ({
     metastoreId,
     originalQuery,
     tables,
-    commandResult,
+    hasMentionedTables,
+    commandResult = {},
     isStreaming,
     onContinue,
     onTablesChange,
@@ -40,7 +42,7 @@ export const AICommandResultView = ({
     const [foundTables, setFoundTables] = useState<boolean>(false);
 
     useEffect(() => {
-        const { type, data } = commandResult;
+        const { type, data = {} } = commandResult;
 
         if (type === 'tables') {
             onTablesChange(data);
@@ -133,7 +135,7 @@ export const AICommandResultView = ({
 
     return (
         <div>
-            {tablesDOM}
+            {!hasMentionedTables && tablesDOM}
             {explanation && <div className="mt12">{explanation}</div>}
             {queryDiffDOM}
             {actionButtonsDOM}

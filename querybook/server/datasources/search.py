@@ -130,20 +130,14 @@ def vector_search_tables(
 
 
 @register("/suggest/<int:metastore_id>/tables/", methods=["GET"])
-def suggest_tables(metastore_id, prefix, limit=10):
+def suggest_tables(metastore_id, keyword, limit=10):
     api_assert(limit is None or limit <= 100, "Requesting too many tables")
     verify_metastore_permission(metastore_id)
 
-    query = construct_suggest_table_query(prefix, limit, metastore_id)
+    query = construct_suggest_table_query(keyword, limit, metastore_id)
     options = get_matching_suggestions(query, ES_CONFIG["tables"]["index_name"])
-    texts = [
-        "{}.{}".format(
-            option.get("_source", {}).get("schema", ""),
-            option.get("_source", {}).get("name", ""),
-        )
-        for option in options
-    ]
-    return texts
+    tables = [option.get("_source", {}).get("full_name") for option in options]
+    return tables
 
 
 # /search/ but it is actually suggest

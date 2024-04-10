@@ -1,6 +1,6 @@
 {
     "name": "querybook",
-    "version": "3.33.1",
+    "version": "3.33.2",
     "description": "A Big Data Webapp",
     "private": true,
     "scripts": {
@@ -84,6 +84,7 @@
         "react-hot-toast": "^2.4.0",
         "react-json-view": "^1.21.3",
         "react-lazyload": "^3.2.0",
+        "react-mentions": "^4.4.10",
         "react-redux": "7.2.4",
         "react-router-dom": "5.1.2",
         "react-select": "4.3.1",

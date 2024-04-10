@@ -6,10 +6,6 @@
     background-color: var(--bg-lightest);
     border-radius: var(--border-radius-sm);
 
-    &:hover {
-        background-color: var(--bg-hover);
-    }
-
     .stars-icon {
         position: relative;
         color: var(--icon);
@@ -41,15 +37,6 @@
         color: var(--color-pink-dark);
     }
 
-    .question-text-area {
-        flex: 1;
-        min-width: auto;
-        line-height: 24px;
-        min-height: 40px;
-        overflow: hidden;
-        padding: 8px 8px;
-    }
-
     .button {
         height: 28px;
         margin: 6px;
@@ -59,6 +46,7 @@
 .AICommandInput-popover {
     border-radius: var(--border-radius-sm);
     overflow: hidden;
+    box-shadow: 0 0px 4px var(--bg-dark);
 
     .command-item {
         display: flex;

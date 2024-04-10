@@ -1,5 +1,11 @@
-import { set, uniq } from 'lodash';
-import React, { forwardRef, useCallback, useEffect, useState } from 'react';
+import { uniq } from 'lodash';
+import React, {
+    forwardRef,
+    useCallback,
+    useEffect,
+    useMemo,
+    useState,
+} from 'react';
 
 import { AICommandInput } from 'components/AIAssistant/AICommandInput';
 import { AICommandResultView } from 'components/AIAssistant/AICommandResultView';
@@ -11,14 +17,11 @@ import {
 } from 'const/command';
 import { IQueryEngine } from 'const/queryEngine';
 import { CommandRunner, useCommand } from 'hooks/useCommand';
-import { useEvent } from 'hooks/useEvent';
 import { useForwardedRef } from 'hooks/useForwardedRef';
 import { trackClick } from 'lib/analytics';
 import { TableToken } from 'lib/sql-helper/sql-lexer';
-import { matchKeyPress } from 'lib/utils/keyboard';
 import { analyzeCode } from 'lib/web-worker';
-import { Button, TextButton } from 'ui/Button/Button';
-import { IconButton } from 'ui/Button/IconButton';
+import { Button } from 'ui/Button/Button';
 import { Message } from 'ui/Message/Message';
 import { IResizableTextareaHandles } from 'ui/ResizableTextArea/ResizableTextArea';
 import { StyledText } from 'ui/StyledText/StyledText';
@@ -65,7 +68,8 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
             (cmd) => cmd.name === (query ? 'edit' : 'generate')
         );
         const tablesInQuery = useTablesInQuery(query, queryEngine.language);
-        const [tables, setTables] = useState(tablesInQuery);
+        const [tables, setTables] = useState<string[]>([]);
+        const [mentionedTables, setMentionedTables] = useState<string[]>([]);
         const commandInputRef = useForwardedRef<IResizableTextareaHandles>(ref);
         const [showPopupView, setShowPopupView] = useState(false);
         const [command, setCommand] =
@@ -77,6 +81,14 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
         );
         const [showConfirm, setShowConfirm] = useState(false);
 
+        const finalTablesToUse = useMemo(() => {
+            if (mentionedTables.length > 0) {
+                return mentionedTables;
+            } else {
+                return uniq([...tablesInQuery, ...tables]);
+            }
+        }, [tablesInQuery, mentionedTables, tables]);
+
         const {
             runCommand,
             isRunning,
@@ -86,8 +98,14 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
         } = useCommand(command, commandRunner);
 
         useEffect(() => {
-            setTables((tables) => uniq([...tablesInQuery, ...tables]));
-        }, [tablesInQuery]);
+            if (!query && mentionedTables.length === 1) {
+                onUpdateQuery(
+                    `SELECT * FROM ${mentionedTables[0]} LIMIT 10`,
+                    false
+                );
+                onFormatQuery();
+            }
+        }, [mentionedTables]);
 
         useEffect(() => {
             if (command.name === 'format') {
@@ -96,7 +114,7 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
             } else if (command.name === 'generate' || command.name === 'edit') {
                 setCommandKwargs({
                     query_engine_id: queryEngine.id,
-                    tables: tables,
+                    tables: finalTablesToUse,
                     question: commandInputValue,
                     original_query: command.name === 'generate' ? '' : query,
                 });
@@ -122,17 +140,13 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
                     aux: {
                         mode: command.name,
                         question: commandKwargs.question,
-                        tables,
+                        tables: finalTablesToUse,
                     },
                 });
             }
         }, [command, runCommand, setShowPopupView, commandKwargs]);
 
         const getCommandResultView = () => {
-            if (!commandResult) {
-                return null;
-            }
-
             if (command.name === 'generate' || command.name === 'edit') {
                 return (
                     <AICommandResultView
@@ -140,7 +154,8 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
                         commandKwargs={commandKwargs}
                         metastoreId={queryEngine.metastore_id}
                         commandResult={commandResult}
-                        tables={tables}
+                        tables={finalTablesToUse}
+                        hasMentionedTables={mentionedTables.length > 0}
                         originalQuery={query}
                         isStreaming={isRunning}
                         onContinue={handleCommand}
@@ -226,6 +241,9 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
                             );
                             setCommandInputValue(inputValue);
                         }}
+                        mentionedTables={mentionedTables}
+                        onMentionedTablesChange={setMentionedTables}
+                        metastoreId={queryEngine.metastore_id}
                         onSubmit={handleCommand}
                         running={isRunning}
                         cancelGeneration={cancelCommand}
