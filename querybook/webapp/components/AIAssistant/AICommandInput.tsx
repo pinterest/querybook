@@ -218,7 +218,7 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
                             )
                     );
                     const tableNameOptions = filteredTableNames.map(
-                        ({ id, schema, name }) => ({
+                        ({ schema, name }) => ({
                             id: `${schema}.${name}`,
                             display: `${schema}.${name}`,
                         })
