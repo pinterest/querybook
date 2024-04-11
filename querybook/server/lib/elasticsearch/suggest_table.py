@@ -8,9 +8,7 @@ def construct_suggest_table_query(
         "size": limit,
         "query": {
             "bool": {
-                "must": {
-                    "match": {"full_name_ngram": {"query": keyword, "operator": "and"}}
-                },
+                "must": [{"match_phrase_prefix": {"full_name": {"query": keyword}}}],
                 "filter": {"match": {"metastore_id": metastore_id}},
             }
         },
