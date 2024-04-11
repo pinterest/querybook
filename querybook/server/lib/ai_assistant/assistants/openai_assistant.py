@@ -13,6 +13,7 @@ OPENAI_MODEL_CONTEXT_WINDOW_SIZE = {
     "gpt-3.5-turbo-16k": 16385,
     "gpt-4": 8192,
     "gpt-4-32k": 32768,
+    "gpt-4-turbo": 128000,
 }
 DEFAULT_MODEL_NAME = "gpt-3.5-turbo"
 
