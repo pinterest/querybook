@@ -207,20 +207,24 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
                     return;
                 }
 
-                SearchTableResource.suggest(metastoreId, keyword).then(
-                    ({ data }) => {
-                        const filteredTableNames = data.filter(
-                            (table) => !mentionedTables.includes(table)
-                        );
-                        const tableNameOptions = filteredTableNames.map(
-                            (table) => ({
-                                id: table,
-                                display: table,
-                            })
-                        );
-                        callback(tableNameOptions);
-                    }
-                );
+                SearchTableResource.searchConcise({
+                    metastore_id: metastoreId,
+                    keywords: keyword,
+                }).then(({ data }) => {
+                    const filteredTableNames = data.results.filter(
+                        (result) =>
+                            !mentionedTables.includes(
+                                `${result.schema}.${result.name}`
+                            )
+                    );
+                    const tableNameOptions = filteredTableNames.map(
+                        ({ schema, name }) => ({
+                            id: `${schema}.${name}`,
+                            display: `${schema}.${name}`,
+                        })
+                    );
+                    callback(tableNameOptions);
+                });
             },
             [metastoreId, mentionedTables]
         );

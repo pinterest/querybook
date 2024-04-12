@@ -212,7 +212,7 @@ tables:
                 full_name_ngram:
                     type: text
                     analyzer: edge_ngram_lowercase
-                completion_name: # to be deprecated
+                completion_name:
                     type: completion
                     analyzer: keyword
                     contexts:
