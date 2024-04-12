@@ -79,6 +79,8 @@ def get_matching_suggestions(query: Union[str, Dict], index_name: str):
         if result is None:
             result = {}
 
-    options = result.get("hits", {}).get("hits", [])
+    options = next(iter(result.get("suggest", {}).get("suggest", [])), {}).get(
+        "options", []
+    )
 
     return options

@@ -19,8 +19,6 @@ import { IQueryEngine } from 'const/queryEngine';
 import { CommandRunner, useCommand } from 'hooks/useCommand';
 import { useForwardedRef } from 'hooks/useForwardedRef';
 import { trackClick } from 'lib/analytics';
-import { TableToken } from 'lib/sql-helper/sql-lexer';
-import { analyzeCode } from 'lib/web-worker';
 import { Button } from 'ui/Button/Button';
 import { Message } from 'ui/Message/Message';
 import { IResizableTextareaHandles } from 'ui/ResizableTextArea/ResizableTextArea';
@@ -31,44 +29,28 @@ import './AICommandBar.scss';
 interface IQueryCellCommandBarProps {
     query: string;
     queryEngine: IQueryEngine;
-    engineId: number;
-    queryEngines: IQueryEngine[];
-    queryEngineById: Record<number, IQueryEngine>;
+    tablesInQuery: string[];
     onUpdateQuery: (query: string, run: boolean) => void;
     onUpdateEngineId: (engineId: number) => void;
     onFormatQuery: () => void;
     ref: React.Ref<IResizableTextareaHandles>;
 }
 
-const useTablesInQuery = (query: string, language: string) => {
-    const [tables, setTables] = useState<string[]>([]);
-
-    useEffect(() => {
-        if (!query) {
-            return;
-        }
-
-        analyzeCode(query, 'autocomplete', language).then((codeAnalysis) => {
-            const tableReferences: TableToken[] = [].concat.apply(
-                [],
-                Object.values(codeAnalysis?.lineage.references ?? {})
-            );
-            setTables(
-                tableReferences.map(({ schema, name }) => `${schema}.${name}`)
-            );
-        });
-    }, [query, language]);
-
-    return tables;
-};
-
 export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
-    ({ query = '', queryEngine, onUpdateQuery, onFormatQuery }, ref) => {
+    (
+        {
+            query = '',
+            queryEngine,
+            tablesInQuery = [],
+            onUpdateQuery,
+            onFormatQuery,
+        },
+        ref
+    ) => {
         const defaultCommand = QUERY_CELL_COMMANDS.find(
             (cmd) => cmd.name === (query ? 'edit' : 'generate')
         );
-        const tablesInQuery = useTablesInQuery(query, queryEngine.language);
-        const [tables, setTables] = useState<string[]>([]);
+        const [tables, setTables] = useState<string[]>(tablesInQuery);
         const [mentionedTables, setMentionedTables] = useState<string[]>([]);
         const commandInputRef = useForwardedRef<IResizableTextareaHandles>(ref);
         const [showPopupView, setShowPopupView] = useState(false);
@@ -81,13 +63,25 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
         );
         const [showConfirm, setShowConfirm] = useState(false);
 
-        const finalTablesToUse = useMemo(() => {
-            if (mentionedTables.length > 0) {
-                return mentionedTables;
-            } else {
-                return uniq([...tablesInQuery, ...tables]);
-            }
-        }, [tablesInQuery, mentionedTables, tables]);
+        /**
+         * There are three types of tables:
+         * 1. Tables used in the query.
+         * 2. Tables mentioned in the command.
+         * 3. Tables selected in the table selector.
+         *
+         * Regarding which tables to use:
+         * - If there are mentioned tables in the command, use those.
+         * - If there are no mentioned tables, use the tables in the query (type 1) merged with the selected tables (type 3).
+         * - However, selected tables will override the tables in the query. If a table is deselected, it will be removed from the list, including the tables in the query.
+         */
+        useEffect(() => {
+            setTables(uniq([...tables, ...tablesInQuery]));
+        }, [tablesInQuery]);
+
+        const finalTablesToUse = useMemo(
+            () => (mentionedTables.length ? mentionedTables : tables),
+            [mentionedTables, tables]
+        );
 
         const {
             runCommand,
@@ -154,7 +148,7 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
                         commandKwargs={commandKwargs}
                         metastoreId={queryEngine.metastore_id}
                         commandResult={commandResult}
-                        tables={finalTablesToUse}
+                        tables={tables}
                         hasMentionedTables={mentionedTables.length > 0}
                         originalQuery={query}
                         isStreaming={isRunning}

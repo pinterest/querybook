@@ -601,7 +601,6 @@ def table_to_es(table, fields=None, session=None):
         "name": table_name,
         "full_name": full_name,
         "full_name_ngram": full_name,
-        # To be deprecated: completion_name is not used anymore
         "completion_name": get_completion_name,
         "description": get_table_description,
         "created_at": lambda: DATETIME_TO_UTC(table.created_at),
