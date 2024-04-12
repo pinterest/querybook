@@ -210,6 +210,10 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
                 SearchTableResource.searchConcise({
                     metastore_id: metastoreId,
                     keywords: keyword,
+                    fields: ['table_name'],
+                    sort_key: '_score',
+                    sort_order: 'desc',
+                    limit: 10,
                 }).then(({ data }) => {
                     const filteredTableNames = data.results.filter(
                         (result) =>
