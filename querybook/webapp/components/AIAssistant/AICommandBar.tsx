@@ -19,8 +19,6 @@ import { IQueryEngine } from 'const/queryEngine';
 import { CommandRunner, useCommand } from 'hooks/useCommand';
 import { useForwardedRef } from 'hooks/useForwardedRef';
 import { trackClick } from 'lib/analytics';
-import { TableToken } from 'lib/sql-helper/sql-lexer';
-import { analyzeCode } from 'lib/web-worker';
 import { Button } from 'ui/Button/Button';
 import { Message } from 'ui/Message/Message';
 import { IResizableTextareaHandles } from 'ui/ResizableTextArea/ResizableTextArea';
