@@ -57,10 +57,6 @@ export const TableSelect: React.FunctionComponent<ITableSelectProps> = ({
             const { data } = await SearchTableResource.searchConcise({
                 metastore_id: metastoreId,
                 keywords: tableName,
-                fields: ['table_name'],
-                sort_key: '_score',
-                sort_order: 'desc',
-                limit: 10,
             });
             const filteredTableNames = data.results.filter(
                 (result) =>

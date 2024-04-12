@@ -15,11 +15,25 @@ import ds from 'lib/datasource';
 import type { ITableSearchResult } from 'redux/dataTableSearch/types';
 
 export const SearchTableResource = {
-    searchConcise: (params: ISearchTableParams) =>
-        ds.fetch<{
+    searchConcise: (params: ISearchTableParams) => {
+        const {
+            fields = ['table_name'],
+            sort_key = '_score',
+            sort_order = 'desc',
+            limit = 10,
+        } = params;
+        return ds.fetch<{
             results: ITableSearchResult[];
             count: number;
-        }>('/search/tables/', { ...params, concise: true }),
+        }>('/search/tables/', {
+            ...params,
+            fields,
+            sort_key,
+            sort_order,
+            limit,
+            concise: true,
+        });
+    },
 
     search: (params: ISearchTableParams) =>
         ds.fetch<{
