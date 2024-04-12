@@ -16,6 +16,7 @@ import type { ITableSearchResult } from 'redux/dataTableSearch/types';
 
 export const SearchTableResource = {
     searchConcise: (params: ISearchTableParams) => {
+        // eslint-disable-next-line
         const {
             fields = ['table_name'],
             sort_key = '_score',
