@@ -38,28 +38,6 @@ interface IQueryCellCommandBarProps {
     ref: React.Ref<IResizableTextareaHandles>;
 }
 
-// const useTablesInQuery = (query: string, language: string) => {
-//     const [tables, setTables] = useState<string[]>([]);
-
-//     useEffect(() => {
-//         if (!query) {
-//             return;
-//         }
-
-//         analyzeCode(query, 'autocomplete', language).then((codeAnalysis) => {
-//             const tableReferences: TableToken[] = [].concat.apply(
-//                 [],
-//                 Object.values(codeAnalysis?.lineage.references ?? {})
-//             );
-//             setTables(
-//                 tableReferences.map(({ schema, name }) => `${schema}.${name}`)
-//             );
-//         });
-//     }, [query, language]);
-
-//     return tables;
-// };
-
 export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
     (
         {
