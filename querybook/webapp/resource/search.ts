@@ -16,21 +16,21 @@ import type { ITableSearchResult } from 'redux/dataTableSearch/types';
 
 export const SearchTableResource = {
     searchConcise: (params: ISearchTableParams) => {
-        // eslint-disable-next-line
         const {
             fields = ['table_name'],
-            sort_key = '_score',
-            sort_order = 'desc',
+            sort_key: sortKey = '_score',
+            sort_order: sortOrder = 'desc',
             limit = 10,
         } = params;
+
         return ds.fetch<{
             results: ITableSearchResult[];
             count: number;
         }>('/search/tables/', {
             ...params,
             fields,
-            sort_key,
-            sort_order,
+            sort_key: sortKey,
+            sort_order: sortOrder,
             limit,
             concise: true,
         });
