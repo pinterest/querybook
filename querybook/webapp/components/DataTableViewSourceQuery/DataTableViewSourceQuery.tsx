@@ -34,6 +34,7 @@ export const DataTableViewSourceQuery: React.FunctionComponent<IProps> = ({
     dataJobMetadataById,
 }) => {
     const [showOldJobMetadata, setShowOldJobMetadata] = useState(false);
+
     const jobMetadataIds = useMemo(
         () =>
             Array.from(
@@ -74,11 +75,30 @@ export const DataTableViewSourceQuery: React.FunctionComponent<IProps> = ({
         const loaded = !(dataJobMetadataById[id] as any).__loading;
         const dataJobMetadata = dataJobMetadataById[id];
         return loaded ? (
-            <DataJobMetadataInfo key={id} dataJobMetadata={dataJobMetadata} />
+            <DataJobMetadataInfo
+                key={id}
+                dataJobMetadata={dataJobMetadata}
+                table={table}
+            />
         ) : (
             <Loading key={id} />
         );
     });
+
+    const customProperties = table.custom_properties ?? {};
+    const workflowValue = customProperties['workflow']?.toString() ?? null;
+    const workflowDOM = workflowValue ? (
+        <div className="DataTableViewSourceQuery-workflow">
+            <div className="data-job-source-query-top">
+                <Title size="med" className="mb12">
+                    Workflow
+                </Title>
+            </div>
+            <Link to={workflowValue} newTab>
+                {workflowValue}
+            </Link>
+        </div>
+    ) : null;
 
     const errorDOM =
         jobMetadataIds.length > 0 ? null : (
@@ -100,6 +120,7 @@ export const DataTableViewSourceQuery: React.FunctionComponent<IProps> = ({
     return (
         <div className="DataTableViewSourceQuery">
             {parentDOM}
+            {workflowDOM}
             {errorDOM}
             {showMoreDOM}
         </div>
@@ -108,7 +129,8 @@ export const DataTableViewSourceQuery: React.FunctionComponent<IProps> = ({
 
 const DataJobMetadataInfo: React.FC<{
     dataJobMetadata: IDataJobMetadata;
-}> = ({ dataJobMetadata }) => {
+    table: IDataTable;
+}> = ({ dataJobMetadata, table }) => {
     const queryExecutionUrlRows = [];
     if (
         dataJobMetadata.is_adhoc &&
