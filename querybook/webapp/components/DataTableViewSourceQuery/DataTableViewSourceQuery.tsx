@@ -34,6 +34,7 @@ export const DataTableViewSourceQuery: React.FunctionComponent<IProps> = ({
     dataJobMetadataById,
 }) => {
     const [showOldJobMetadata, setShowOldJobMetadata] = useState(false);
+
     const jobMetadataIds = useMemo(
         () =>
             Array.from(
@@ -80,6 +81,21 @@ export const DataTableViewSourceQuery: React.FunctionComponent<IProps> = ({
         );
     });
 
+    const customProperties = table.custom_properties ?? {};
+    const workflowValue = customProperties['workflow']?.toString() ?? null;
+    const workflowDOM = workflowValue ? (
+        <div className="DataTableViewSourceQuery-workflow">
+            <div className="data-job-source-query-top">
+                <Title size="med" className="mb12">
+                    Workflow
+                </Title>
+            </div>
+            <Link to={workflowValue} newTab>
+                {workflowValue}
+            </Link>
+        </div>
+    ) : null;
+
     const errorDOM =
         jobMetadataIds.length > 0 ? null : (
             <EmptyText className="m24">
@@ -100,6 +116,7 @@ export const DataTableViewSourceQuery: React.FunctionComponent<IProps> = ({
     return (
         <div className="DataTableViewSourceQuery">
             {parentDOM}
+            {workflowDOM}
             {errorDOM}
             {showMoreDOM}
         </div>
