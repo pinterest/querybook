@@ -82,6 +82,24 @@ function useRefreshMetastore(table: IDataTable) {
     return [handleRefreshTable, isRefreshing] as const;
 }
 
+function createChannelLinkDOM(customProperties) {
+    const channelsKey = 'channels';
+    const channelsValue = customProperties[channelsKey]?.toString() ?? '';
+    const channelsName = channelsValue.slice(1);
+    const channelLink = `https://pinterest.slack.com/app_redirect?channel=${channelsName}`;
+
+    return channelsValue === '' ? null : (
+        <KeyContentDisplay
+            key={channelsKey}
+            keyString={titleize(channelsKey, '_', ' ')}
+        >
+            <Link to={channelLink} newTab>
+                {channelsValue}
+            </Link>
+        </KeyContentDisplay>
+    );
+}
+
 export interface IQuerybookTableViewOverviewProps {
     table: IDataTable;
     tableName: string;
@@ -151,22 +169,30 @@ export const DataTableViewOverview: React.FC<
             );
         });
 
-    const customPropertiesDOM = Object.entries(
-        table.custom_properties ?? {}
-    ).map(([key, value]) => {
-        const valueStr = value?.toString() ?? '';
-        return (
-            <KeyContentDisplay key={key} keyString={titleize(key, '_', ' ')}>
-                {valueStr && /https?:\/\/[^\s]+/.test(valueStr.trim()) ? (
-                    <Link to={valueStr} newTab>
-                        {valueStr}
-                    </Link>
-                ) : (
-                    valueStr
-                )}
-            </KeyContentDisplay>
-        );
-    });
+    const customProperties = table.custom_properties ?? {};
+    const channelsDOM = createChannelLinkDOM(customProperties);
+
+    const customPropertiesDOM = Object.entries(customProperties)
+        .filter(([key, value]) => {
+            return key !== 'channels';
+        })
+        .map(([key, value]) => {
+            const valueStr = value?.toString() ?? '';
+            return (
+                <KeyContentDisplay
+                    key={key}
+                    keyString={titleize(key, '_', ' ')}
+                >
+                    {valueStr && /https?:\/\/[^\s]+/.test(valueStr.trim()) ? (
+                        <Link to={valueStr} newTab>
+                            {valueStr}
+                        </Link>
+                    ) : (
+                        valueStr
+                    )}
+                </KeyContentDisplay>
+            );
+        });
 
     const rawMetastoreInfoDOM = table.hive_metastore_description ? (
         <pre className="raw-metastore-info">
@@ -209,6 +235,7 @@ export const DataTableViewOverview: React.FC<
     );
     const detailsSection = (
         <DataTableViewOverviewSection title="Details">
+            {channelsDOM}
             {detailsDOM}
             {customPropertiesDOM}
         </DataTableViewOverviewSection>
