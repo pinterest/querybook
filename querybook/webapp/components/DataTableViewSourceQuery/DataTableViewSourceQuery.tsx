@@ -75,7 +75,11 @@ export const DataTableViewSourceQuery: React.FunctionComponent<IProps> = ({
         const loaded = !(dataJobMetadataById[id] as any).__loading;
         const dataJobMetadata = dataJobMetadataById[id];
         return loaded ? (
-            <DataJobMetadataInfo key={id} dataJobMetadata={dataJobMetadata} />
+            <DataJobMetadataInfo
+                key={id}
+                dataJobMetadata={dataJobMetadata}
+                table={table}
+            />
         ) : (
             <Loading key={id} />
         );
@@ -125,7 +129,8 @@ export const DataTableViewSourceQuery: React.FunctionComponent<IProps> = ({
 
 const DataJobMetadataInfo: React.FC<{
     dataJobMetadata: IDataJobMetadata;
-}> = ({ dataJobMetadata }) => {
+    table: IDataTable;
+}> = ({ dataJobMetadata, table }) => {
     const queryExecutionUrlRows = [];
     if (
         dataJobMetadata.is_adhoc &&
