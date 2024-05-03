@@ -5,6 +5,7 @@ import {
     IDataTable,
     ILineageCollection,
 } from 'const/metastore';
+import { isValidUrl } from 'lib/utils';
 import { getAppName } from 'lib/utils/global';
 import { getWithinEnvUrl } from 'lib/utils/query-string';
 import { Button } from 'ui/Button/Button';
@@ -91,7 +92,7 @@ export const DataTableViewSourceQuery: React.FunctionComponent<IProps> = ({
                         Workflow
                     </Title>
                 </div>
-                {/https?:\/\/[^\s]+/.test(workflowValue.trim()) ? (
+                {isValidUrl(workflowValue) ? (
                     <Link to={workflowValue} newTab>
                         {workflowValue}
                     </Link>
