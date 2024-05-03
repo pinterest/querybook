@@ -85,7 +85,7 @@ export const DataTableViewSourceQuery: React.FunctionComponent<IProps> = ({
     const workflowValue = customProperties['workflow']?.toString() ?? null;
     const workflowDOM = workflowValue ? (
         <div className="DataTableViewSourceQuery-workflow">
-            <div className="data-job-source-query-top">
+            <div className="data-table-workflow">
                 <Title size="med" className="mb12">
                     Workflow
                 </Title>
@@ -115,8 +115,8 @@ export const DataTableViewSourceQuery: React.FunctionComponent<IProps> = ({
 
     return (
         <div className="DataTableViewSourceQuery">
-            {parentDOM}
             {workflowDOM}
+            {parentDOM}
             {errorDOM}
             {showMoreDOM}
         </div>
