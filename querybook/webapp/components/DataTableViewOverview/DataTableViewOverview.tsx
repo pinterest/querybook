@@ -85,17 +85,13 @@ function useRefreshMetastore(table: IDataTable) {
 function createChannelLinkDOM(customProperties) {
     const channelsKey = 'channels';
     const channelsValue = customProperties[channelsKey]?.toString() ?? '';
-    const channelsName = channelsValue.slice(1);
-    const channelLink = `https://pinterest.slack.com/app_redirect?channel=${channelsName}`;
 
     return channelsValue === '' ? null : (
         <KeyContentDisplay
             key={channelsKey}
             keyString={titleize(channelsKey, '_', ' ')}
         >
-            <Link to={channelLink} newTab>
-                {channelsValue}
-            </Link>
+            {channelsValue}
         </KeyContentDisplay>
     );
 }
