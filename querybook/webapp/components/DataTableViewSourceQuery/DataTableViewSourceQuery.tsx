@@ -82,19 +82,24 @@ export const DataTableViewSourceQuery: React.FunctionComponent<IProps> = ({
     });
 
     const customProperties = table.custom_properties ?? {};
-    const workflowValue = customProperties['workflow']?.toString() ?? null;
-    const workflowDOM = workflowValue ? (
-        <div className="DataTableViewSourceQuery-workflow">
-            <div className="data-table-workflow">
-                <Title size="med" className="mb12">
-                    Workflow
-                </Title>
+    const workflowValue = customProperties['workflow'];
+    const workflowDOM =
+        workflowValue && typeof workflowValue === 'string' ? (
+            <div className="DataTableViewSourceQuery-workflow">
+                <div className="data-table-workflow">
+                    <Title size="med" className="mb12">
+                        Workflow
+                    </Title>
+                </div>
+                {/https?:\/\/[^\s]+/.test(workflowValue.trim()) ? (
+                    <Link to={workflowValue} newTab>
+                        {workflowValue}
+                    </Link>
+                ) : (
+                    workflowValue
+                )}
             </div>
-            <Link to={workflowValue} newTab>
-                {workflowValue}
-            </Link>
-        </div>
-    ) : null;
+        ) : null;
 
     const errorDOM =
         jobMetadataIds.length > 0 ? null : (
