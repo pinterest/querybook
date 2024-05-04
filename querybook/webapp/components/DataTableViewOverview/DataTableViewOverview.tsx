@@ -56,6 +56,26 @@ const dataTableDetailsRows = [
     'column_count',
 ];
 
+/**
+ * Any custom properties in this array will be shown on top following the order of the array
+ */
+const pinnedCustomProperties = ['channels'];
+
+function createKeyContentDisplayElement(key: string, value: string | number) {
+    const valueStr = value?.toString() ?? '';
+    return (
+        <KeyContentDisplay key={key} keyString={titleize(key, '_', ' ')}>
+            {valueStr && /https?:\/\/[^\s]+/.test(valueStr.trim()) ? (
+                <Link to={valueStr} newTab>
+                    {valueStr}
+                </Link>
+            ) : (
+                valueStr
+            )}
+        </KeyContentDisplay>
+    );
+}
+
 function useRefreshMetastore(table: IDataTable) {
     const dispatch = useDispatch();
     const isMounted = useMounted();
@@ -80,20 +100,6 @@ function useRefreshMetastore(table: IDataTable) {
     }, [dispatch, table.id]);
 
     return [handleRefreshTable, isRefreshing] as const;
-}
-
-function createChannelLinkDOM(customProperties) {
-    const channelsKey = 'channels';
-    const channelsValue = customProperties[channelsKey]?.toString() ?? '';
-
-    return channelsValue === '' ? null : (
-        <KeyContentDisplay
-            key={channelsKey}
-            keyString={titleize(channelsKey, '_', ' ')}
-        >
-            {channelsValue}
-        </KeyContentDisplay>
-    );
 }
 
 export interface IQuerybookTableViewOverviewProps {
@@ -165,30 +171,22 @@ export const DataTableViewOverview: React.FC<
             );
         });
 
-    const customProperties = table.custom_properties ?? {};
-    const channelsDOM = createChannelLinkDOM(customProperties);
+    const customProperties = Object.entries(table.custom_properties ?? {});
 
-    const customPropertiesDOM = Object.entries(customProperties)
-        .filter(([key, value]) => {
-            return key !== 'channels';
+    // Get pinned custom properties and display based on order of pinnedCustomProperties
+    const pinnedPropertiesDOM = customProperties
+        .filter(([key]) => pinnedCustomProperties.includes(key))
+        .sort(([key1], [key2]) => {
+            const aIndex = pinnedCustomProperties.indexOf(key1);
+            const bIndex = pinnedCustomProperties.indexOf(key2);
+            return aIndex - bIndex;
         })
-        .map(([key, value]) => {
-            const valueStr = value?.toString() ?? '';
-            return (
-                <KeyContentDisplay
-                    key={key}
-                    keyString={titleize(key, '_', ' ')}
-                >
-                    {valueStr && /https?:\/\/[^\s]+/.test(valueStr.trim()) ? (
-                        <Link to={valueStr} newTab>
-                            {valueStr}
-                        </Link>
-                    ) : (
-                        valueStr
-                    )}
-                </KeyContentDisplay>
-            );
-        });
+        .map(([key, value]) => createKeyContentDisplayElement(key, value));
+
+    // Get unpinned custom properties
+    const unpinnedPropertiesDOM = customProperties
+        .filter(([key]) => !pinnedCustomProperties.includes(key))
+        .map(([key, value]) => createKeyContentDisplayElement(key, value));
 
     const rawMetastoreInfoDOM = table.hive_metastore_description ? (
         <pre className="raw-metastore-info">
@@ -231,9 +229,9 @@ export const DataTableViewOverview: React.FC<
     );
     const detailsSection = (
         <DataTableViewOverviewSection title="Details">
-            {channelsDOM}
+            {pinnedPropertiesDOM}
             {detailsDOM}
-            {customPropertiesDOM}
+            {unpinnedPropertiesDOM}
         </DataTableViewOverviewSection>
     );
 
