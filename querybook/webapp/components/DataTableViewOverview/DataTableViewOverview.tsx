@@ -25,7 +25,7 @@ import {
 } from 'const/metastore';
 import { useMounted } from 'hooks/useMounted';
 import { Nullable } from 'lib/typescript';
-import { titleize } from 'lib/utils';
+import { isValidUrl, titleize } from 'lib/utils';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { getAppName } from 'lib/utils/global';
 import { getHumanReadableByteSize } from 'lib/utils/number';
@@ -34,6 +34,7 @@ import { refreshDataTableInMetastore } from 'redux/dataSources/action';
 import { SoftButton, TextButton } from 'ui/Button/Button';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
 import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
+import { KeyContentDisplayLink } from 'ui/KeyContentDisplay/KeyContentDisplayLink';
 import { Link } from 'ui/Link/Link';
 import { LoadingRow } from 'ui/Loading/Loading';
 import { Message } from 'ui/Message/Message';
@@ -55,6 +56,11 @@ const dataTableDetailsRows = [
     'location',
     'column_count',
 ];
+
+/**
+ * Any custom properties in this array will be shown on top following the order of the array
+ */
+const pinnedCustomProperties = ['channels'];
 
 function useRefreshMetastore(table: IDataTable) {
     const dispatch = useDispatch();
@@ -80,20 +86,6 @@ function useRefreshMetastore(table: IDataTable) {
     }, [dispatch, table.id]);
 
     return [handleRefreshTable, isRefreshing] as const;
-}
-
-function createChannelLinkDOM(customProperties) {
-    const channelsKey = 'channels';
-    const channelsValue = customProperties[channelsKey]?.toString() ?? '';
-
-    return channelsValue === '' ? null : (
-        <KeyContentDisplay
-            key={channelsKey}
-            keyString={titleize(channelsKey, '_', ' ')}
-        >
-            {channelsValue}
-        </KeyContentDisplay>
-    );
 }
 
 export interface IQuerybookTableViewOverviewProps {
@@ -166,28 +158,19 @@ export const DataTableViewOverview: React.FC<
         });
 
     const customProperties = table.custom_properties ?? {};
-    const channelsDOM = createChannelLinkDOM(customProperties);
 
-    const customPropertiesDOM = Object.entries(customProperties)
-        .filter(([key, value]) => {
-            return key !== 'channels';
-        })
+    // Get pinned custom properties and display based on order of pinnedCustomProperties
+    const pinnedPropertiesDOM = pinnedCustomProperties
+        .filter((p) => p in customProperties)
+        .map((key) => {
+            const value = customProperties[key];
+            return <KeyContentDisplayLink keyString={key} value={value} />;
+        });
+
+    const otherPropertiesDOM = Object.entries(customProperties)
+        .filter(([key]) => !pinnedCustomProperties.includes(key))
         .map(([key, value]) => {
-            const valueStr = value?.toString() ?? '';
-            return (
-                <KeyContentDisplay
-                    key={key}
-                    keyString={titleize(key, '_', ' ')}
-                >
-                    {valueStr && /https?:\/\/[^\s]+/.test(valueStr.trim()) ? (
-                        <Link to={valueStr} newTab>
-                            {valueStr}
-                        </Link>
-                    ) : (
-                        valueStr
-                    )}
-                </KeyContentDisplay>
-            );
+            return <KeyContentDisplayLink keyString={key} value={value} />;
         });
 
     const rawMetastoreInfoDOM = table.hive_metastore_description ? (
@@ -231,9 +214,9 @@ export const DataTableViewOverview: React.FC<
     );
     const detailsSection = (
         <DataTableViewOverviewSection title="Details">
-            {channelsDOM}
+            {pinnedPropertiesDOM}
             {detailsDOM}
-            {customPropertiesDOM}
+            {otherPropertiesDOM}
         </DataTableViewOverviewSection>
     );
 
