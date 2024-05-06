@@ -7,3 +7,4 @@ moto==2.2.4
 -r metastore/glue.txt
 -r exporter/gspread.txt
 -r ai/langchain.txt
+werkzeug>=3.0.3 # not directly required, pinned by Snyk to avoid a vulnerability
