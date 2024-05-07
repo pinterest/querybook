@@ -215,6 +215,7 @@ export const DataTableViewOverview: React.FC<
     const detailsSection = (
         <DataTableViewOverviewSection title="Details">
             {pinnedPropertiesDOM}
+            {pinnedPropertiesDOM}
             {detailsDOM}
             {otherPropertiesDOM}
         </DataTableViewOverviewSection>
