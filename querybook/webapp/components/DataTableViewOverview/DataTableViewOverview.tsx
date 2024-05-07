@@ -164,13 +164,25 @@ export const DataTableViewOverview: React.FC<
         .filter((p) => p in customProperties)
         .map((key) => {
             const value = customProperties[key];
-            return <KeyContentDisplayLink keyString={key} value={value} />;
+            return (
+                <KeyContentDisplayLink
+                    key={key}
+                    keyString={key}
+                    value={value}
+                />
+            );
         });
 
     const otherPropertiesDOM = Object.entries(customProperties)
         .filter(([key]) => !pinnedCustomProperties.includes(key))
         .map(([key, value]) => {
-            return <KeyContentDisplayLink keyString={key} value={value} />;
+            return (
+                <KeyContentDisplayLink
+                    key={key}
+                    keyString={key}
+                    value={value}
+                />
+            );
         });
 
     const rawMetastoreInfoDOM = table.hive_metastore_description ? (
