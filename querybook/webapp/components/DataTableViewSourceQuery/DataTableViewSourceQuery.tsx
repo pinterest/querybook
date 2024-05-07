@@ -5,6 +5,7 @@ import {
     IDataTable,
     ILineageCollection,
 } from 'const/metastore';
+import { isValidUrl } from 'lib/utils';
 import { getAppName } from 'lib/utils/global';
 import { getWithinEnvUrl } from 'lib/utils/query-string';
 import { Button } from 'ui/Button/Button';
@@ -34,6 +35,7 @@ export const DataTableViewSourceQuery: React.FunctionComponent<IProps> = ({
     dataJobMetadataById,
 }) => {
     const [showOldJobMetadata, setShowOldJobMetadata] = useState(false);
+
     const jobMetadataIds = useMemo(
         () =>
             Array.from(
@@ -80,6 +82,26 @@ export const DataTableViewSourceQuery: React.FunctionComponent<IProps> = ({
         );
     });
 
+    const customProperties = table.custom_properties ?? {};
+    const workflowValue = customProperties['workflow'];
+    const workflowDOM =
+        workflowValue && typeof workflowValue === 'string' ? (
+            <div className="DataTableViewSourceQuery-workflow">
+                <div className="data-table-workflow">
+                    <Title size="med" className="mb12">
+                        Workflow
+                    </Title>
+                </div>
+                {isValidUrl(workflowValue) ? (
+                    <Link to={workflowValue} newTab>
+                        {workflowValue}
+                    </Link>
+                ) : (
+                    workflowValue
+                )}
+            </div>
+        ) : null;
+
     const errorDOM =
         jobMetadataIds.length > 0 ? null : (
             <EmptyText className="m24">
@@ -99,6 +121,7 @@ export const DataTableViewSourceQuery: React.FunctionComponent<IProps> = ({
 
     return (
         <div className="DataTableViewSourceQuery">
+            {workflowDOM}
             {parentDOM}
             {errorDOM}
             {showMoreDOM}
