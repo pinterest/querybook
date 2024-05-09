@@ -123,7 +123,14 @@ export const DataTableViewOverview: React.FC<
             onEditRedirect={onEditTableDescriptionRedirect}
         />
     ) : null;
-
+    const customProperties = table.custom_properties ?? {};
+    const links = customProperties['links'] ?? [];
+    const linksDOM = links.map((link, index) => (
+        <Link key={index} to={link.url} newTab>
+            {link.label ?? link.url}
+        </Link>
+    ));
+  
     const detailsDOM = dataTableDetailsRows
         .filter((row) => table[row] != null)
         .map((row) => {
@@ -181,6 +188,7 @@ export const DataTableViewOverview: React.FC<
     const descriptionSection = (
         <DataTableViewOverviewSection title="Description">
             {description}
+            {linksDOM}
         </DataTableViewOverviewSection>
     );
 

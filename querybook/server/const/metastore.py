@@ -75,6 +75,9 @@ class DataTable(NamedTuple):
     # Custom properties
     custom_properties: dict[str, str] = None
 
+    # Links associated to table
+    table_links: list[dict[str, str]] = None
+
     golden: bool = False
     boost_score: float = 1
 

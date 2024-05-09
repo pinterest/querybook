@@ -388,6 +388,7 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
                 hive_metastore_description=table.raw_description,
                 partition_keys=table.partition_keys,
                 custom_properties=table.custom_properties,
+                table_links = table.table_links,
                 session=session,
             )
             if table.warnings is not None:

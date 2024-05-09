@@ -283,8 +283,9 @@ def create_table_information(
     hive_metastore_description=None,
     partition_keys=[],
     custom_properties=None,
+    table_links=None,
     commit=False,
-    session=None,
+    session=None, 
 ):
     table_information = get_table_information_by_table_id(
         data_table_id, session=session
@@ -301,6 +302,7 @@ def create_table_information(
         hive_metastore_description=hive_metastore_description,
         column_info=column_infomation,
         custom_properties=custom_properties,
+        table_links=table_links,
     )
 
     # The reason that we dont add description direclty in
