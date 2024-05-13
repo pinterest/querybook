@@ -130,13 +130,13 @@ export const DataTableViewOverview: React.FC<
         />
     ) : null;
 
-    const table_links = table.table_links ?? [];
-    const tableLinksDOM = table_links.map((link, index) => (
-        <div>
-        <Link key={index} to={link.url} newTab>
-            {link.label ?? link.url}
-        </Link>
-        <br/>
+    const tableLinks = table.table_links ?? [];
+    const tableLinksDOM = tableLinks.map((link, index) => (
+        <div key={index}>
+            <Link to={link.url} newTab>
+                {link.label ?? link.url}
+            </Link>
+            <br/>
         </div> 
     ));
       
