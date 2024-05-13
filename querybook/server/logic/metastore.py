@@ -285,7 +285,7 @@ def create_table_information(
     custom_properties=None,
     table_links=None,
     commit=False,
-    session=None, 
+    session=None,
 ):
     table_information = get_table_information_by_table_id(
         data_table_id, session=session
