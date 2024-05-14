@@ -135,10 +135,10 @@ export const DataTableViewOverview: React.FC<
             <Link to={link.url} newTab>
                 {link.label ?? link.url}
             </Link>
-            <br/>
-        </div> 
+            <br />
+        </div>
     ));
-      
+
     const detailsDOM = dataTableDetailsRows
         .filter((row) => table[row] != null)
         .map((row) => {

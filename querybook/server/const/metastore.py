@@ -7,9 +7,11 @@ from .data_element import DataElementAssociationTuple
 class DataSchema(NamedTuple):
     name: str
 
+
 class DataTableLink(TypedDict):
     url: str
     label: str
+
 
 class DataTag(NamedTuple):
     name: str
