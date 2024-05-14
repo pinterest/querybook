@@ -135,7 +135,7 @@ export const DataTableViewOverview: React.FC<
             <Link to={link.url} newTab>
                 {link.label ?? link.url}
             </Link>
-            <br/>
+            <br />
         </div> 
     ));
       
