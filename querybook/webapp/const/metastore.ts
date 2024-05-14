@@ -47,6 +47,11 @@ export interface IDataSchema {
     metastore_id: number;
 }
 
+export interface IDataTableLink {
+    url: string;
+    label?: string;
+}
+
 export interface IDataTable {
     id: number;
     created_at: number;
@@ -74,7 +79,7 @@ export interface IDataTable {
         partition_keys?: string[];
     };
     custom_properties?: Record<string, string | number>;
-    table_links?: Record<string, string>[];
+    table_links?: IDataTableLink[];
     schema: number;
     schema_id: number;
     warnings: number[];

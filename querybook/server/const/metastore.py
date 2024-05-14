@@ -1,11 +1,15 @@
 from enum import Enum
-from typing import NamedTuple
+from typing import NamedTuple, TypedDict
+
 from .data_element import DataElementAssociationTuple
 
 
 class DataSchema(NamedTuple):
     name: str
 
+class DataTableLink(TypedDict):
+    url: str
+    label: str
 
 class DataTag(NamedTuple):
     name: str
@@ -76,7 +80,7 @@ class DataTable(NamedTuple):
     custom_properties: dict[str, str] = None
 
     # Links associated to table
-    table_links: list[dict[str, str]] = None
+    table_links: list[DataTableLink] = None
 
     golden: bool = False
     boost_score: float = 1
