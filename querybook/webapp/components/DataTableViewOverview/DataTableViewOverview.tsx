@@ -130,6 +130,15 @@ export const DataTableViewOverview: React.FC<
         />
     ) : null;
 
+    const tableLinksDOM = (table.table_links ?? []).map((link, index) => (
+        <div key={index}>
+            <Link to={link.url} newTab>
+                {link.label ?? link.url}
+            </Link>
+            <br />
+        </div>
+    ));
+
     const detailsDOM = dataTableDetailsRows
         .filter((row) => table[row] != null)
         .map((row) => {
@@ -198,6 +207,7 @@ export const DataTableViewOverview: React.FC<
     const descriptionSection = (
         <DataTableViewOverviewSection title="Description">
             {description}
+            {tableLinksDOM}
         </DataTableViewOverviewSection>
     );
 
