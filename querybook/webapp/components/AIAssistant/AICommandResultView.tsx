@@ -7,6 +7,8 @@ import { IQueryCellCommand } from 'const/command';
 import useNonEmptyState from 'hooks/useNonEmptyState';
 import { trackClick } from 'lib/analytics';
 import { Button } from 'ui/Button/Button';
+import { SurveySurfaceType } from 'const/survey';
+import { useSurveyTrigger } from 'hooks/ui/useSurveyTrigger';
 
 interface IAICommandResultViewProps {
     command: IQueryCellCommand;
@@ -58,6 +60,19 @@ export const AICommandResultView = ({
             setFoundTables(false);
         }
     }, [commandResult]);
+
+    const triggerSurvey = useSurveyTrigger();
+    useEffect(() => {
+        if (!newQuery || isStreaming) {
+            return;
+        }
+        triggerSurvey(SurveySurfaceType.TEXT_TO_SQL, {
+            question: commandKwargs.question,
+            tables:tables,
+            query: newQuery,
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [newQuery, triggerSurvey, isStreaming]);
 
     const handleAccept = useCallback(() => {
         onAccept(newQuery);
