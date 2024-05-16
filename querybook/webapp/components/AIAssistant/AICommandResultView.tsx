@@ -68,7 +68,7 @@ export const AICommandResultView = ({
         }
         triggerSurvey(SurveySurfaceType.TEXT_TO_SQL, {
             question: commandKwargs.question,
-            tables:tables,
+            tables,
             query: newQuery,
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
