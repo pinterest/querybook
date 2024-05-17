@@ -41,6 +41,7 @@ import { Message } from 'ui/Message/Message';
 import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 
 import { DataTableViewOverviewSection } from './DataTableViewOverviewSection';
+import { Link2 } from 'lucide-react';
 
 import './DataTableViewOverview.scss';
 
@@ -133,6 +134,14 @@ export const DataTableViewOverview: React.FC<
     const tableLinksDOM = (table.table_links ?? []).map((link, index) => (
         <div key={index}>
             <Link to={link.url} newTab>
+                <Link2
+                    size={20}
+                    style={{
+                        position: 'relative',
+                        top: '5px',
+                        paddingRight: '5px',
+                    }}
+                />
                 {link.label ?? link.url}
             </Link>
             <br />
