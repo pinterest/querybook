@@ -25,7 +25,7 @@ import {
 } from 'const/metastore';
 import { useMounted } from 'hooks/useMounted';
 import { Nullable } from 'lib/typescript';
-import { isValidUrl, titleize } from 'lib/utils';
+import { titleize } from 'lib/utils';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { getAppName } from 'lib/utils/global';
 import { getHumanReadableByteSize } from 'lib/utils/number';
@@ -41,6 +41,7 @@ import { Message } from 'ui/Message/Message';
 import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 
 import { DataTableViewOverviewSection } from './DataTableViewOverviewSection';
+import { Icon } from 'ui/Icon/Icon';
 
 import './DataTableViewOverview.scss';
 
@@ -132,7 +133,8 @@ export const DataTableViewOverview: React.FC<
 
     const tableLinksDOM = (table.table_links ?? []).map((link, index) => (
         <div key={index}>
-            <Link to={link.url} newTab>
+            <Link to={link.url} newTab className="data-table-table-links">
+                <Icon name="Link" size={12} />
                 {link.label ?? link.url}
             </Link>
             <br />
@@ -184,15 +186,9 @@ export const DataTableViewOverview: React.FC<
 
     const otherPropertiesDOM = Object.entries(customProperties)
         .filter(([key]) => !pinnedCustomProperties.includes(key))
-        .map(([key, value]) => {
-            return (
-                <KeyContentDisplayLink
-                    key={key}
-                    keyString={key}
-                    value={value}
-                />
-            );
-        });
+        .map(([key, value]) => (
+            <KeyContentDisplayLink key={key} keyString={key} value={value} />
+        ));
 
     const rawMetastoreInfoDOM = table.hive_metastore_description ? (
         <pre className="raw-metastore-info">
