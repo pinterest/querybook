@@ -38,6 +38,10 @@ Otherwise you can also pass the environment variable directly when launching the
 
 `WS_CORS_ALLOWED_ORIGINS`: (**required for production**): This is the allowed list of origins for CORS. For dev environment, all origins will be allowed.
 
+### Iframe Embedding
+
+`IFRAME_ALLOWED_ORIGINS`: This is the allowed list for embedding Querybook in an iframe. By default it can only be embedded by itself.
+
 ### Database
 
 `DATABASE_CONN` (**required**): A sqlalchemy connection string to the database. Please check here https://docs.sqlalchemy.org/en/13/core/engines.html for formatting.

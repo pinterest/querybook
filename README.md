@@ -54,6 +54,7 @@ For general configuration, [click here](docs_website/docs/configurations/general
     -   Google Cloud OAuth
     -   Okta OAuth
     -   GitHub OAuth
+    -   Auth0 OAuth
 -   LDAP
 
 ### Metastore

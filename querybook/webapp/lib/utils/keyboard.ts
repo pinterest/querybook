@@ -9,15 +9,15 @@ const specialKeyChecker: Record<string, (e: AllKeyboardEvent) => boolean> = {
     ALT: (event: AllKeyboardEvent) => event.altKey,
     SHIFT: (event: AllKeyboardEvent) => event.shiftKey,
 
-    DELETE: (event: AllKeyboardEvent) => event.keyCode === 8,
-    TAB: (event: AllKeyboardEvent) => event.keyCode === 9,
-    ENTER: (event: AllKeyboardEvent) => event.keyCode === 13,
-    ESC: (event: AllKeyboardEvent) => event.keyCode === 27,
+    DELETE: (event: AllKeyboardEvent) => event.key === 'Backspace',
+    TAB: (event: AllKeyboardEvent) => event.key === 'Tab',
+    ENTER: (event: AllKeyboardEvent) => event.key === 'Enter',
+    ESC: (event: AllKeyboardEvent) => event.key === 'Escape',
 
-    LEFT: (event: AllKeyboardEvent) => event.keyCode === 37,
-    UP: (event: AllKeyboardEvent) => event.keyCode === 38,
-    RIGHT: (event: AllKeyboardEvent) => event.keyCode === 39,
-    DOWN: (event: AllKeyboardEvent) => event.keyCode === 40,
+    LEFT: (event: AllKeyboardEvent) => event.key === 'ArrowLeft',
+    UP: (event: AllKeyboardEvent) => event.key === 'ArrowUp',
+    RIGHT: (event: AllKeyboardEvent) => event.key === 'ArrowRight',
+    DOWN: (event: AllKeyboardEvent) => event.key === 'ArrowDown',
 };
 
 const SpecialKeyToSymbol = {
@@ -54,7 +54,7 @@ export function matchKeyPress(
             if (upperKey in specialKeyChecker) {
                 return specialKeyChecker[upperKey](event);
             } else if (upperKey.length === 1) {
-                return event.keyCode === upperKey.charCodeAt(0);
+                return event.key.toUpperCase() === upperKey;
             }
             return false;
         });

@@ -1,6 +1,6 @@
 {
     "name": "querybook",
-    "version": "3.33.0",
+    "version": "3.34.1",
     "description": "A Big Data Webapp",
     "private": true,
     "scripts": {
@@ -46,6 +46,7 @@
         "clean-webpack-plugin": "3.0.0",
         "clsx": "^1.2.1",
         "codemirror": "^5.64.0",
+        "cronstrue": "2.47.0",
         "core-decorators": "0.20.0",
         "core-js": "^3.19.1",
         "cron-parser": "^4.7.0",
@@ -83,6 +84,7 @@
         "react-hot-toast": "^2.4.0",
         "react-json-view": "^1.21.3",
         "react-lazyload": "^3.2.0",
+        "react-mentions": "^4.4.10",
         "react-redux": "7.2.4",
         "react-router-dom": "5.1.2",
         "react-select": "4.3.1",

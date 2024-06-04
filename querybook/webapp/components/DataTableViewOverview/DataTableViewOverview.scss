@@ -23,4 +23,9 @@
     .raw-metastore-info{
         word-break: break-all;
     }
+    .data-table-table-links {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
 }

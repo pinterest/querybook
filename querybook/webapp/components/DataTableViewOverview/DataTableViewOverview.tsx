@@ -34,12 +34,14 @@ import { refreshDataTableInMetastore } from 'redux/dataSources/action';
 import { SoftButton, TextButton } from 'ui/Button/Button';
 import { EditableTextField } from 'ui/EditableTextField/EditableTextField';
 import { KeyContentDisplay } from 'ui/KeyContentDisplay/KeyContentDisplay';
+import { KeyContentDisplayLink } from 'ui/KeyContentDisplay/KeyContentDisplayLink';
 import { Link } from 'ui/Link/Link';
 import { LoadingRow } from 'ui/Loading/Loading';
 import { Message } from 'ui/Message/Message';
 import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 
 import { DataTableViewOverviewSection } from './DataTableViewOverviewSection';
+import { Icon } from 'ui/Icon/Icon';
 
 import './DataTableViewOverview.scss';
 
@@ -55,6 +57,11 @@ const dataTableDetailsRows = [
     'location',
     'column_count',
 ];
+
+/**
+ * Any custom properties in this array will be shown on top following the order of the array
+ */
+const pinnedCustomProperties = ['channels'];
 
 function useRefreshMetastore(table: IDataTable) {
     const dispatch = useDispatch();
@@ -124,6 +131,16 @@ export const DataTableViewOverview: React.FC<
         />
     ) : null;
 
+    const tableLinksDOM = (table.table_links ?? []).map((link, index) => (
+        <div key={index}>
+            <Link to={link.url} newTab className="data-table-table-links">
+                <Icon name="Link" size={12} />
+                {link.label ?? link.url}
+            </Link>
+            <br />
+        </div>
+    ));
+
     const detailsDOM = dataTableDetailsRows
         .filter((row) => table[row] != null)
         .map((row) => {
@@ -151,22 +168,27 @@ export const DataTableViewOverview: React.FC<
             );
         });
 
-    const customPropertiesDOM = Object.entries(
-        table.custom_properties ?? {}
-    ).map(([key, value]) => {
-        const valueStr = value?.toString() ?? '';
-        return (
-            <KeyContentDisplay key={key} keyString={titleize(key, '_', ' ')}>
-                {valueStr && /https?:\/\/[^\s]+/.test(valueStr.trim()) ? (
-                    <Link to={valueStr} newTab>
-                        {valueStr}
-                    </Link>
-                ) : (
-                    valueStr
-                )}
-            </KeyContentDisplay>
-        );
-    });
+    const customProperties = table.custom_properties ?? {};
+
+    // Get pinned custom properties and display based on order of pinnedCustomProperties
+    const pinnedPropertiesDOM = pinnedCustomProperties
+        .filter((p) => p in customProperties)
+        .map((key) => {
+            const value = customProperties[key];
+            return (
+                <KeyContentDisplayLink
+                    key={key}
+                    keyString={key}
+                    value={value}
+                />
+            );
+        });
+
+    const otherPropertiesDOM = Object.entries(customProperties)
+        .filter(([key]) => !pinnedCustomProperties.includes(key))
+        .map(([key, value]) => (
+            <KeyContentDisplayLink key={key} keyString={key} value={value} />
+        ));
 
     const rawMetastoreInfoDOM = table.hive_metastore_description ? (
         <pre className="raw-metastore-info">
@@ -181,6 +203,7 @@ export const DataTableViewOverview: React.FC<
     const descriptionSection = (
         <DataTableViewOverviewSection title="Description">
             {description}
+            {tableLinksDOM}
         </DataTableViewOverviewSection>
     );
 
@@ -209,8 +232,9 @@ export const DataTableViewOverview: React.FC<
     );
     const detailsSection = (
         <DataTableViewOverviewSection title="Details">
+            {pinnedPropertiesDOM}
             {detailsDOM}
-            {customPropertiesDOM}
+            {otherPropertiesDOM}
         </DataTableViewOverviewSection>
     );
 

@@ -36,6 +36,13 @@ def make_flask_app():
     app.json_encoder = JSONEncoder
     app.secret_key = QuerybookSettings.FLASK_SECRET_KEY
 
+    if QuerybookSettings.PRODUCTION:
+        app.config.update(
+            SESSION_COOKIE_SECURE=True,
+            SESSION_COOKIE_HTTPONLY=True,
+            SESSION_COOKIE_SAMESITE="Lax",
+        )
+
     if QuerybookSettings.LOGS_OUT_AFTER > 0:
         app.permanent_session_lifetime = timedelta(
             seconds=QuerybookSettings.LOGS_OUT_AFTER
@@ -43,6 +50,16 @@ def make_flask_app():
 
     if QuerybookSettings.TABLE_MAX_UPLOAD_SIZE is not None:
         app.config["MAX_CONTENT_LENGTH"] = int(QuerybookSettings.TABLE_MAX_UPLOAD_SIZE)
+
+    # Add Content-Security-Policy header to restrict iframe embedding to the allowed origins
+    csp_header_value = "frame-ancestors 'self' " + " ".join(
+        QuerybookSettings.IFRAME_ALLOWED_ORIGINS or []
+    )
+
+    @app.after_request
+    def add_csp_header(response):
+        response.headers["Content-Security-Policy"] = csp_header_value
+        return response
 
     return app
 

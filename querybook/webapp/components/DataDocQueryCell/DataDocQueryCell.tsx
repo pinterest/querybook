@@ -124,6 +124,7 @@ interface IState {
     showRenderedTemplateModal: boolean;
     showUDFModal: boolean;
     hasLintError: boolean;
+    tableNamesInQuery: string[];
     samplingTables: ISamplingTables;
 
     transpilerConfig?: {
@@ -151,6 +152,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             showRenderedTemplateModal: false,
             showUDFModal: false,
             hasLintError: false,
+            tableNamesInQuery: [],
             samplingTables: {},
         };
     }
@@ -692,7 +694,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
-    public async handleTablesChange(tablesByName: Record<string, IDataTable>) {
+    public handleTablesChange(tablesByName: Record<string, IDataTable>) {
         const samplingTables = {};
         Object.keys(tablesByName).forEach((tableName) => {
             const table = tablesByName[tableName];
@@ -702,7 +704,10 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 };
             }
         });
-        this.setState({ samplingTables });
+        this.setState({
+            samplingTables,
+            tableNamesInQuery: Object.keys(tablesByName),
+        });
     }
 
     public componentDidMount() {
@@ -805,10 +810,8 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                     <AICommandBar
                         query={query}
                         queryEngine={queryEngineById[this.engineId]}
-                        engineId={this.engineId}
+                        tablesInQuery={this.state.tableNamesInQuery}
                         onUpdateQuery={this.handleChange}
-                        queryEngineById={queryEngineById}
-                        queryEngines={this.props.queryEngines}
                         onUpdateEngineId={this.handleMetaChange.bind(
                             this,
                             'engine'

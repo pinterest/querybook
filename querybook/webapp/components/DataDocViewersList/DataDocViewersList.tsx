@@ -54,12 +54,6 @@ export const DataDocViewersList: React.FunctionComponent<
         dispatch(addDataDocAccessRequest(dataDoc.id));
     }, [dataDoc.id]);
 
-    const viewerInfosToShow = dataDoc.public
-        ? viewerInfos.filter(
-              (viewer) => viewer.permission !== Permission.CAN_READ
-          )
-        : viewerInfos;
-
     const combinedClassname = clsx({
         [className]: className,
         DataDocViewersList: true,
@@ -127,7 +121,7 @@ export const DataDocViewersList: React.FunctionComponent<
             onPublicToggle={onTabSelect}
             onAccessRequest={handleDataDocAccessRequest}
             onUserSelect={onUserSelect}
-            infoToShow={viewerInfosToShow}
+            infoToShow={viewerInfos}
             onPermissionChange={onPermissionChange}
             accessRequestsByUid={accessRequestsByUid}
             onRemoveEditor={onRemoveEditor}

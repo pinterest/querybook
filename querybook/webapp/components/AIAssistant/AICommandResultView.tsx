@@ -7,6 +7,8 @@ import { IQueryCellCommand } from 'const/command';
 import useNonEmptyState from 'hooks/useNonEmptyState';
 import { trackClick } from 'lib/analytics';
 import { Button } from 'ui/Button/Button';
+import { SurveySurfaceType } from 'const/survey';
+import { useSurveyTrigger } from 'hooks/ui/useSurveyTrigger';
 
 interface IAICommandResultViewProps {
     command: IQueryCellCommand;
@@ -14,6 +16,7 @@ interface IAICommandResultViewProps {
     metastoreId: number;
     originalQuery: string;
     tables: string[];
+    hasMentionedTables: boolean;
     commandResult: Record<string, any>;
     isStreaming: boolean;
     onContinue: () => void;
@@ -28,7 +31,8 @@ export const AICommandResultView = ({
     metastoreId,
     originalQuery,
     tables,
-    commandResult,
+    hasMentionedTables,
+    commandResult = {},
     isStreaming,
     onContinue,
     onTablesChange,
@@ -40,7 +44,7 @@ export const AICommandResultView = ({
     const [foundTables, setFoundTables] = useState<boolean>(false);
 
     useEffect(() => {
-        const { type, data } = commandResult;
+        const { type, data = {} } = commandResult;
 
         if (type === 'tables') {
             onTablesChange(data);
@@ -56,6 +60,19 @@ export const AICommandResultView = ({
             setFoundTables(false);
         }
     }, [commandResult]);
+
+    const triggerSurvey = useSurveyTrigger();
+    useEffect(() => {
+        if (!newQuery || isStreaming) {
+            return;
+        }
+        triggerSurvey(SurveySurfaceType.TEXT_TO_SQL, {
+            question: commandKwargs.question,
+            tables,
+            query: newQuery,
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [newQuery, triggerSurvey, isStreaming]);
 
     const handleAccept = useCallback(() => {
         onAccept(newQuery);
@@ -133,7 +150,7 @@ export const AICommandResultView = ({
 
     return (
         <div>
-            {tablesDOM}
+            {!hasMentionedTables && tablesDOM}
             {explanation && <div className="mt12">{explanation}</div>}
             {queryDiffDOM}
             {actionButtonsDOM}
