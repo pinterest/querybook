@@ -57,6 +57,9 @@ from app.db import with_session
 from env import QuerybookSettings
 from lib.notify.utils import notify_user
 
+from pandas import DataFrame, ExcelWriter
+from io import BytesIO
+
 QUERY_RESULT_LIMIT_CONFIG = get_config_value("query_result_limit")
 
 
@@ -289,16 +292,64 @@ def download_statement_execution_result(statement_execution_id):
             # We read the raw file and download it for the user
             reader.start()
             raw = reader.read_raw()
+            response = Response(
+                raw,
+                mimetype="text/csv",
+                headers={
+                    "Content-disposition": f"attachment; filename={download_file_name}"
+                },
+            )
+        return response
 
-            # Add Byte-Order-Mark to the utf8 file to make Excel happy
-            raw_bytes = raw.encode()  # get bytes instead of string
-            BOM = b"\xEF\xBB\xBF"
-            raw_with_bom = BOM + raw_bytes
-            response = Response(raw_with_bom)
-            response.headers["Content-Type"] = "text/csv"
-            response.headers[
-                "Content-Disposition"
-            ] = f'attachment; filename="{download_file_name}"'
+
+@register(
+    "/statement_execution/<int:statement_execution_id>/result/download_xlsx/",
+    methods=["GET"],
+    require_auth=True,
+    custom_response=True,
+)
+def download_statement_execution_result_xlsx(statement_execution_id):
+    with DBSession() as session:
+        statement_execution = logic.get_statement_execution_by_id(
+            statement_execution_id, session=session
+        )
+        api_assert(
+            statement_execution is not None, message="Invalid statement execution"
+        )
+        verify_query_execution_permission(
+            statement_execution.query_execution_id, session=session
+        )
+
+        download_file_name = f"result_{statement_execution.query_execution_id}_{statement_execution_id}.xlsx"
+
+        reader = GenericReader(statement_execution.result_path)
+        reader.start()
+        
+        # Read all rows and create a DataFrame
+        data = reader.read_csv(number_of_lines=None)
+        column_names = data[0]
+        data_rows = data[1:]
+
+        df = DataFrame(data_rows, columns=column_names)
+
+        # Write the DataFrame to an Excel spreadsheet
+        xlsx_output = BytesIO()
+        with ExcelWriter(xlsx_output) as writer:
+            df.to_excel(
+                writer,
+                sheet_name=f"Execution {statement_execution.query_execution_id}",
+                index=False,
+            )
+        data = xlsx_output.getvalue()
+
+        # Create a Flask response with the Excel file
+        response = Response(
+            data,
+            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={
+                "Content-disposition": f"attachment; filename={download_file_name}"
+            },
+        )
         return response
 
 

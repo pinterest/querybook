@@ -46,3 +46,6 @@ numpy>=1.22.2 # not directly required, pinned by Snyk to avoid a vulnerability
 
 # Query engine - PostgreSQL
 psycopg2==2.9.5
+
+# Excel export
+openpyxl==3.1.2
