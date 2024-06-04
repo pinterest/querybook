@@ -324,7 +324,7 @@ def download_statement_execution_result_xlsx(statement_execution_id):
 
         reader = GenericReader(statement_execution.result_path)
         reader.start()
-        
+
         # Read all rows and create a DataFrame
         data = reader.read_csv(number_of_lines=None)
         column_names = data[0]

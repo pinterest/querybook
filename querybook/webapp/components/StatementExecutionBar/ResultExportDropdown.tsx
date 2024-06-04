@@ -9,7 +9,10 @@ import {
     IStatementExecution,
     IStatementResult,
 } from 'const/queryExecution';
-import { getStatementExecutionResultDownloadUrl, getStatementExecutionResultDownloadUrlXlsx } from 'lib/query-execution';
+import {
+    getStatementExecutionResultDownloadUrl,
+    getStatementExecutionResultDownloadUrlXlsx,
+} from 'lib/query-execution';
 import {
     getExporterAuthentication,
     pollExporterTaskPromise,
@@ -108,7 +111,7 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
         } else {
             toast.error('No valid url!');
         }
-    }, [statementId])
+    }, [statementId]);
 
     const onExportTSVClick = React.useCallback(async () => {
         const rawResult = statementResult?.data || [];
@@ -191,7 +194,7 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
             {
                 name: 'Download Full Result (as XLSX)',
                 onClick: onDownloadXlsxClick,
-                icon: 'Sheet'
+                icon: 'Sheet',
             },
             {
                 name: (
