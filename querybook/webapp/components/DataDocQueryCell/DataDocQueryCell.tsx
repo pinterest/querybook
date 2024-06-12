@@ -229,7 +229,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     public get sampleRate() {
-        // -1 or tables don't support sampling, 0 for sample rate is none
+        // -1 for tables don't support sampling, 0 for default sample rate (which means disable sampling)
         return this.hasSamplingTables ? this.state.meta.sample_rate ?? 0 : -1;
     }
 
