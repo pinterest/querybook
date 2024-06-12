@@ -467,6 +467,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             element: ElementType.RUN_QUERY_BUTTON,
             aux: {
                 lintError: this.state.hasLintError,
+                sampleRate: this.sampleRate,
             },
         });
         return runQuery(
