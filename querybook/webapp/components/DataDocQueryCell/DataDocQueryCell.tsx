@@ -216,10 +216,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         return this.state.meta.limit ?? DEFAULT_ROW_LIMIT;
     }
 
-    public get sampleRate() {
-        return this.state.meta.sample_rate ?? -1;
-    }
-
     public get samplingTables() {
         const samplingTables = this.state.samplingTables;
         Object.keys(samplingTables).forEach((tableName) => {
@@ -230,6 +226,11 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
     public get hasSamplingTables() {
         return Object.keys(this.samplingTables).length > 0;
+    }
+
+    public get sampleRate() {
+        // -1 or tables don't support sampling, 0 for sample rate is none
+        return this.hasSamplingTables ? this.state.meta.sample_rate ?? 0 : -1;
     }
 
     @decorate(memoizeOne)
