@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 
 import { AICommandBar } from 'components/AIAssistant/AICommandBar';
 import { DataDocQueryExecutions } from 'components/DataDocQueryExecutions/DataDocQueryExecutions';
+import { DataDocTableSamplingInfo } from 'components/DataDocTableSamplingInfo/DataDocTableSamplingInfo';
 import { QueryCellTitle } from 'components/QueryCellTitle/QueryCellTitle';
 import { runQuery, transformQuery } from 'components/QueryComposer/RunQuery';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
@@ -126,6 +127,7 @@ interface IState {
     hasLintError: boolean;
     tableNamesInQuery: string[];
     samplingTables: ISamplingTables;
+    showTableSamplingInfo: boolean;
 
     transpilerConfig?: {
         toEngine: IQueryEngine;
@@ -154,6 +156,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             hasLintError: false,
             tableNamesInQuery: [],
             samplingTables: {},
+            showTableSamplingInfo: false,
         };
     }
 
@@ -685,6 +688,13 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
+    public toggleShowTableSamplingInfo() {
+        this.setState(({ showTableSamplingInfo }) => ({
+            showTableSamplingInfo: !showTableSamplingInfo,
+        }));
+    }
+
+    @bind
     public fetchDataTableByNameIfNeeded(schema: string, table: string) {
         return this.props.fetchDataTableByNameIfNeeded(
             schema,
@@ -801,6 +811,9 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                                 this.hasSamplingTables
                                     ? this.handleMetaSampleRateChange
                                     : null
+                            }
+                            onTableSamplingInfoClick={
+                                this.toggleShowTableSamplingInfo
                             }
                         />
                         {this.getAdditionalDropDownButtonDOM()}
@@ -946,6 +959,17 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         );
     }
 
+    public renderTableSamplingInfoDOM() {
+        return (
+            <DataDocTableSamplingInfo
+                query={this.state.query}
+                language={this.queryEngine.language}
+                samplingTables={this.samplingTables}
+                sampleRate={this.sampleRate}
+            />
+        );
+    }
+
     public renderExecutionsDOM() {
         const { cellId, docId, isEditable } = this.props;
 
@@ -998,6 +1022,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     public render() {
         const { queryEngines, queryEngineById, showCollapsed, isFullScreen } =
             this.props;
+        const { showTableSamplingInfo } = this.state;
 
         if (!queryEngines.length) {
             return this.renderNoEngineCell();
@@ -1041,6 +1066,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 {this.renderCellHeaderDOM()}
                 <div className="query-content">
                     {this.renderEditorDOM()}
+                    {showTableSamplingInfo && this.renderTableSamplingInfoDOM()}
                     {this.renderExecutionsDOM()}
                 </div>
             </div>
