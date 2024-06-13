@@ -802,7 +802,11 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                             }
                             hasSamplingTables={this.hasSamplingTables}
                             sampleRate={this.sampleRate}
-                            onSampleRateChange={this.handleMetaSampleRateChange}
+                            onSampleRateChange={
+                                this.hasSamplingTables
+                                    ? this.handleMetaSampleRateChange
+                                    : null
+                            }
                             onTableSamplingInfoClick={
                                 this.toggleShowTableSamplingInfo
                             }
