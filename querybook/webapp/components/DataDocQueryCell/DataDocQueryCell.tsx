@@ -46,12 +46,7 @@ import {
 import { DEFAULT_ROW_LIMIT } from 'lib/sql-helper/sql-limiter';
 import { getPossibleTranspilers } from 'lib/templated-query/transpile';
 import { enableResizable } from 'lib/utils';
-import {
-    getShortcutSymbols,
-    KeyMap,
-    matchKeyMap,
-    matchKeyPress,
-} from 'lib/utils/keyboard';
+import { getShortcutSymbols, KeyMap, matchKeyPress } from 'lib/utils/keyboard';
 import { doesLanguageSupportUDF } from 'lib/utils/udf';
 import * as dataDocActions from 'redux/dataDoc/action';
 import * as dataSourcesActions from 'redux/dataSources/action';
@@ -808,9 +803,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                             hasSamplingTables={this.hasSamplingTables}
                             sampleRate={this.sampleRate}
                             onSampleRateChange={this.handleMetaSampleRateChange}
-                            onTableSamplingInfoClick={
-                                this.toggleShowTableSamplingInfo
-                            }
                             onTableSamplingInfoClick={
                                 this.toggleShowTableSamplingInfo
                             }
