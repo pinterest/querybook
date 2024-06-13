@@ -136,6 +136,10 @@ export const PopoverContainer = React.forwardRef<
 
             if (mainLayout === 'top') {
                 newWrapperStyle.top = box.top - contentBox.height - arrowSize;
+                // keep the popover on screen
+                if (newWrapperStyle.top < 0) {
+                    newWrapperStyle.top = box.bottom;
+                }
 
                 arrowRotation = 180;
                 newArrowStyle.top = contentBox.height;
@@ -146,6 +150,11 @@ export const PopoverContainer = React.forwardRef<
                 } else if (subLayout === 'right') {
                     newWrapperStyle.left =
                         box.left + box.width - contentBox.width;
+                    // keep the popover on screen
+                    if (newWrapperStyle.left < 0) {
+                        newWrapperStyle.left = box.left;
+                    }
+
                     newArrowStyle.left = contentBox.width - 3 * ARROW_SIZE;
                 } else {
                     newWrapperStyle.left =
@@ -167,6 +176,10 @@ export const PopoverContainer = React.forwardRef<
                 } else if (subLayout === 'right') {
                     newWrapperStyle.left =
                         box.left + box.width - contentBox.width;
+                    // keep the popover on screen
+                    if (newWrapperStyle.left < 0) {
+                        newWrapperStyle.left = box.left;
+                    }
                     newArrowStyle.left = contentBox.width - 3 * ARROW_SIZE;
                 } else {
                     newWrapperStyle.left =
@@ -177,6 +190,10 @@ export const PopoverContainer = React.forwardRef<
                 }
             } else if (mainLayout === 'left') {
                 newWrapperStyle.left = box.left - contentBox.width - arrowSize;
+                // keep the popover on screen
+                if (newWrapperStyle.left < 0) {
+                    newWrapperStyle.left = box.right;
+                }
                 newArrowStyle.left = contentBox.width - 4;
                 arrowRotation = 90;
 
@@ -197,6 +214,13 @@ export const PopoverContainer = React.forwardRef<
                 }
             } else if (mainLayout === 'right') {
                 newWrapperStyle.left = box.left + box.width + arrowSize;
+                // keep the popover on screen
+                if (
+                    newWrapperStyle.left + contentBox.width >
+                    window.innerWidth
+                ) {
+                    newWrapperStyle.left = box.left - contentBox.width;
+                }
                 newArrowStyle.left = -25;
                 arrowRotation = 270;
 
