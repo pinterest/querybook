@@ -29,7 +29,10 @@ export const DataDocResource = {
         }),
     get: (docId: number) => ds.fetch<IRawDataDoc>(`/datadoc/${docId}/`),
 
-    clone: (docId: number) => ds.save<IRawDataDoc>(`/datadoc/${docId}/clone/`),
+    clone: (docId: number, environmentId: number) =>
+        ds.save<IRawDataDoc>(`/datadoc/${docId}/clone/`, {
+            environment_id: environmentId,
+        }),
     updateOwner: (docId: number, newOwnerId: number) =>
         ds.save<IDataDocEditor>(`/datadoc/${docId}/owner/`, {
             next_owner_id: newOwnerId,

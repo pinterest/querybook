@@ -14,6 +14,7 @@ import { fetchDAGExporters } from 'redux/dataDoc/action';
 import { IStoreState } from 'redux/store/types';
 import { IconButton } from 'ui/Button/IconButton';
 
+import { DataDocCloneButton } from './DataDocCloneButton';
 import { DataDocRunAllButton } from './DataDocRunAllButton';
 import { DataDocScheduleButton } from './DataDocScheduleButton';
 import { DeleteDataDocButton } from './DeleteDataDocButton';
@@ -27,14 +28,12 @@ interface IProps {
     isConnected: boolean;
 
     changeDataDocMeta: (docId: number, meta: IDataDocMeta) => Promise<void>;
-    onClone: () => any;
 
     onCollapse: () => any;
     defaultCollapse: boolean;
 }
 
 export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
-    onClone,
     changeDataDocMeta,
 
     isSaving,
@@ -82,6 +81,8 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
     const runAllButtonDOM = isEditable && (
         <DataDocRunAllButton docId={dataDoc.id} />
     );
+
+    const cloneButtonDOM = <DataDocCloneButton docId={dataDoc.id} />;
 
     const buttonSection = (
         <div className="DataDocRightSidebar-button-section vertical-space-between">
@@ -137,13 +138,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
                 {boardsButtonDOM}
                 {templateButtonDOM}
                 {scheduleButtonDOM}
-                <IconButton
-                    icon="Copy"
-                    onClick={onClone}
-                    tooltip={'Clone'}
-                    tooltipPos={'left'}
-                    title="Clone"
-                />
+                {cloneButtonDOM}
                 {deleteButtonDOM}
             </div>
         </div>

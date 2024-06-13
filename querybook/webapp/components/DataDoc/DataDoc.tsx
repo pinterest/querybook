@@ -457,40 +457,6 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
-    public onCloneButtonClick() {
-        const {
-            cloneDataDoc,
-            environment,
-            dataDoc: { id },
-        } = this.props;
-        sendConfirm({
-            header: 'Clone DataDoc?',
-            message:
-                'You will be redirected to the new Data Doc after cloning.',
-            onConfirm: () => {
-                trackClick({
-                    component: ComponentType.DATADOC_PAGE,
-                    element: ElementType.CLONE_DATADOC_BUTTON,
-                });
-                toast.promise(
-                    cloneDataDoc(id).then((dataDoc) =>
-                        history.push(
-                            `/${environment.name}/datadoc/${dataDoc.id}/`
-                        )
-                    ),
-                    {
-                        loading: 'Cloning DataDoc...',
-                        success: 'Clone Success!',
-                        error: 'Cloning failed.',
-                    }
-                );
-            },
-            cancelColor: 'default',
-            confirmIcon: 'Copy',
-        });
-    }
-
-    @bind
     public onQuerycellSelectExecution(cellId: number, executionId: number) {
         this.setState(
             ({ cellIdToExecutionId: oldCellIdToExecutionId }) => ({
@@ -772,7 +738,6 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
             <DataDocRightSidebar
                 dataDoc={dataDoc}
                 changeDataDocMeta={changeDataDocMeta}
-                onClone={this.onCloneButtonClick}
                 isSaving={isSavingDataDoc}
                 isEditable={isEditable}
                 isConnected={connected}
@@ -938,9 +903,6 @@ function mapDispatchToProps(dispatch: Dispatch) {
 
         changeDataDocMeta: (docId: number, meta: IDataDocMeta) =>
             dispatch(dataDocActions.updateDataDocField(docId, 'meta', meta)),
-
-        cloneDataDoc: (docId: number) =>
-            dispatch(dataDocActions.cloneDataDoc(docId)),
 
         insertDataDocCell: (
             docId: number,
