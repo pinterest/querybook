@@ -42,7 +42,7 @@ import { useTrackView } from 'hooks/useTrackView';
 import { trackClick } from 'lib/analytics';
 import { createSQLLinter } from 'lib/codemirror/codemirror-lint';
 import { replaceStringIndices, searchText } from 'lib/data-doc/search';
-import { getSelectedQuery, IRange, TableToken } from 'lib/sql-helper/sql-lexer';
+import { getSelectedQuery, IRange } from 'lib/sql-helper/sql-lexer';
 import { DEFAULT_ROW_LIMIT } from 'lib/sql-helper/sql-limiter';
 import { getPossibleTranspilers } from 'lib/templated-query/transpile';
 import { enableResizable, getQueryEngineId, sleep } from 'lib/utils';
@@ -524,7 +524,11 @@ const QueryComposer: React.FC = () => {
             engine.id,
             async (query, engineId) => {
                 const data = await dispatch(
-                    queryExecutionsAction.createQueryExecution(query, engineId)
+                    queryExecutionsAction.createQueryExecution(
+                        query,
+                        engineId,
+                        rowLimit
+                    )
                 );
                 return data.id;
             }

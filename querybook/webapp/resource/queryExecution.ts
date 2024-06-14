@@ -66,10 +66,16 @@ export const QueryExecutionResource = {
             environment_id: environmentId,
         }),
 
-    create: (query: string, engineId: number, cellId?: number) => {
+    create: (
+        query: string,
+        engineId: number,
+        rowLimit?: number,
+        cellId?: number
+    ) => {
         const params = {
             query,
             engine_id: engineId,
+            row_limit: rowLimit,
         };
 
         if (cellId != null) {

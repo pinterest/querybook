@@ -11,10 +11,12 @@ from const.schedule import TaskRunStatus
 
 from lib.logger import get_logger
 from lib.query_analysis.templating import render_templated_query
+from lib.query_analysis.transform import transform_to_limited_query
 from lib.scheduled_datadoc.export import export_datadoc
 from lib.scheduled_datadoc.legacy import convert_if_legacy_datadoc_schedule
 from lib.scheduled_datadoc.notification import notifiy_on_datadoc_complete
 
+from logic import admin as admin_logic
 from logic import datadoc as datadoc_logic
 from logic import query_execution as qe_logic
 from logic.schedule import (
@@ -73,6 +75,7 @@ def run_datadoc_with_config(
         # Prepping chain jobs each unit is a [make_qe_task, run_query_task] combo
         for index, query_cell in enumerate(query_cells):
             engine_id = query_cell.meta["engine"]
+            limit = query_cell.meta.get("limit", -1)
             raw_query = query_cell.context
 
             # Skip empty cells
@@ -86,6 +89,14 @@ def run_datadoc_with_config(
                     engine_id,
                     session=session,
                 )
+
+                # If meta["limit"] is set and > 0, apply limit to the query
+                row_limit_enabled = admin_logic.get_engine_feature_param(
+                    engine_id, "row_limit", False, session=session
+                )
+                if row_limit_enabled and limit >= 0:
+                    query = transform_to_limited_query(query, limit)
+
             except Exception as e:
                 on_datadoc_completion(
                     is_success=False,

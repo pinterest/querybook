@@ -5,10 +5,7 @@ import { ISamplingTables, TDataDocMetaVariables } from 'const/datadoc';
 import { IQueryEngine } from 'const/queryEngine';
 import { sendConfirm } from 'lib/querybookUI';
 import { getDroppedTables } from 'lib/sql-helper/sql-checker';
-import {
-    getLimitedQuery,
-    hasQueryContainUnlimitedSelect,
-} from 'lib/sql-helper/sql-limiter';
+import { hasQueryContainUnlimitedSelect } from 'lib/sql-helper/sql-limiter';
 import { renderTemplatedQuery } from 'lib/templated-query';
 import { Nullable } from 'lib/typescript';
 import { formatError } from 'lib/utils/error';
@@ -46,13 +43,9 @@ export async function transformQuery(
         sampleRate
     );
 
-    const limitedQuery = await transformLimitedQuery(
-        sampledQuery,
-        rowLimit,
-        engine
-    );
+    await checkUnlimitedQuery(sampledQuery, rowLimit, engine);
 
-    return limitedQuery;
+    return sampledQuery;
 }
 
 export async function runQuery(
@@ -87,17 +80,16 @@ async function transformTemplatedQuery(
     }
 }
 
-async function transformLimitedQuery(
+async function checkUnlimitedQuery(
     query: string,
     rowLimit: Nullable<number>,
     engine: IQueryEngine
 ) {
-    if (!engine.feature_params?.row_limit) {
-        return query;
-    }
-
-    if (rowLimit != null && rowLimit >= 0) {
-        return getLimitedQuery(query, rowLimit, engine.language);
+    if (
+        !engine.feature_params?.row_limit ||
+        (rowLimit != null && rowLimit >= 0)
+    ) {
+        return;
     }
 
     // query is unlimited but engine has row limit feature turned on
@@ -108,11 +100,11 @@ async function transformLimitedQuery(
     );
 
     if (!unlimitedSelectQuery) {
-        return query;
+        return;
     }
 
     // Show a warning modal to let user confirm what they are doing
-    return new Promise<string>((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
         sendConfirm({
             header: 'Your SELECT query is unbounded',
             message: (
@@ -135,7 +127,7 @@ async function transformLimitedQuery(
                     </pre>
                 </Content>
             ),
-            onConfirm: () => resolve(query),
+            onConfirm: () => resolve(),
             onDismiss: () => reject(),
             confirmText: 'Run without LIMIT',
         });
