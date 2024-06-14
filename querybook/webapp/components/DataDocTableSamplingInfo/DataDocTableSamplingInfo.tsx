@@ -83,5 +83,5 @@ export const DataDocTableSamplingInfo: React.FC<IProps> = ({
             </Modal>
         );
     }
-    return <Modal onHide={onHide}>{contentDOM}</Modal>;
+    return contentDOM;
 };

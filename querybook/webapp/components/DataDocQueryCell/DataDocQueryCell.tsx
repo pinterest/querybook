@@ -943,6 +943,16 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             />
         ) : null;
 
+        const renderTableSamplingInfoDOM = this.state
+            .showTableSamplingInfoModal && (
+            <DataDocTableSamplingInfo
+                query={this.state.query}
+                language={this.queryEngine.language}
+                samplingTables={this.samplingTables}
+                onHide={this.toggleShowTableSamplingInfoModal}
+            />
+        );
+
         return (
             <>
                 {editorDOM}
@@ -950,21 +960,8 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 {templatedQueryViewModalDOM}
                 {UDFModal}
                 {transpilerModal}
+                {renderTableSamplingInfoDOM}
             </>
-        );
-    }
-
-    public renderTableSamplingInfoDOM() {
-        const { showTableSamplingInfoModal } = this.state;
-        return (
-            showTableSamplingInfoModal && (
-                <DataDocTableSamplingInfo
-                    query={this.state.query}
-                    language={this.queryEngine.language}
-                    samplingTables={this.samplingTables}
-                    onHide={this.toggleShowTableSamplingInfoModal}
-                />
-            )
         );
     }
 
@@ -1063,7 +1060,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 {this.renderCellHeaderDOM()}
                 <div className="query-content">
                     {this.renderEditorDOM()}
-                    {this.renderTableSamplingInfoDOM()}
                     {this.renderExecutionsDOM()}
                 </div>
             </div>
