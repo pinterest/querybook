@@ -142,7 +142,7 @@ async function transformLimitedQuery(
     });
 }
 
-export async function transformTableSamplingQuery(
+async function transformTableSamplingQuery(
     query: string,
     language: string,
     tables: Record<string, { sampled_table?: string; sample_rate?: number }>,

@@ -122,7 +122,7 @@ interface IState {
     hasLintError: boolean;
     tableNamesInQuery: string[];
     samplingTables: ISamplingTables;
-    showTableSamplingInfo: boolean;
+    showTableSamplingInfoModal: boolean;
 
     transpilerConfig?: {
         toEngine: IQueryEngine;
@@ -151,7 +151,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             hasLintError: false,
             tableNamesInQuery: [],
             samplingTables: {},
-            showTableSamplingInfo: false,
+            showTableSamplingInfoModal: false,
         };
     }
 
@@ -683,9 +683,9 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
-    public toggleShowTableSamplingInfo() {
-        this.setState(({ showTableSamplingInfo }) => ({
-            showTableSamplingInfo: !showTableSamplingInfo,
+    public toggleShowTableSamplingInfoModal() {
+        this.setState(({ showTableSamplingInfoModal }) => ({
+            showTableSamplingInfoModal: !showTableSamplingInfoModal,
         }));
     }
 
@@ -808,7 +808,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                                     : null
                             }
                             onTableSamplingInfoClick={
-                                this.toggleShowTableSamplingInfo
+                                this.toggleShowTableSamplingInfoModal
                             }
                         />
                         {this.getAdditionalDropDownButtonDOM()}
@@ -955,13 +955,16 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     public renderTableSamplingInfoDOM() {
+        const { showTableSamplingInfoModal } = this.state;
         return (
-            <DataDocTableSamplingInfo
-                query={this.state.query}
-                language={this.queryEngine.language}
-                samplingTables={this.samplingTables}
-                sampleRate={this.sampleRate}
-            />
+            showTableSamplingInfoModal && (
+                <DataDocTableSamplingInfo
+                    query={this.state.query}
+                    language={this.queryEngine.language}
+                    samplingTables={this.samplingTables}
+                    onHide={this.toggleShowTableSamplingInfoModal}
+                />
+            )
         );
     }
 
@@ -1017,7 +1020,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     public render() {
         const { queryEngines, queryEngineById, showCollapsed, isFullScreen } =
             this.props;
-        const { showTableSamplingInfo } = this.state;
 
         if (!queryEngines.length) {
             return this.renderNoEngineCell();
@@ -1061,7 +1063,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 {this.renderCellHeaderDOM()}
                 <div className="query-content">
                     {this.renderEditorDOM()}
-                    {showTableSamplingInfo && this.renderTableSamplingInfoDOM()}
+                    {this.renderTableSamplingInfoDOM()}
                     {this.renderExecutionsDOM()}
                 </div>
             </div>

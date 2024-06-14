@@ -321,8 +321,7 @@ const TableSamplingSelector: React.FC<{
                     >
                         <IconButton
                             icon="Info"
-                            size={24}
-                            color="light"
+                            size={20}
                             onClick={onTableSamplingInfoClick}
                         />
                     </div>
