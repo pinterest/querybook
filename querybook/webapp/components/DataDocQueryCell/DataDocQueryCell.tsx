@@ -223,7 +223,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     public get hasSamplingTables() {
-        return Object.keys(this.samplingTables).length > 0;
+        return Object.keys(this.state.samplingTables).length > 0;
     }
 
     public get sampleRate() {
