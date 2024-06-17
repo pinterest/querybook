@@ -524,7 +524,12 @@ const QueryComposer: React.FC = () => {
             engine.id,
             async (query, engineId) => {
                 const data = await dispatch(
-                    queryExecutionsAction.createQueryExecution(query, engineId)
+                    queryExecutionsAction.createQueryExecution(
+                        query,
+                        engineId,
+                        null,
+                        sampleRate
+                    )
                 );
                 return data.id;
             }

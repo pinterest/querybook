@@ -5,6 +5,7 @@ import {
     IQueryError,
     IQueryExecution,
     IQueryExecutionExportStatusInfo,
+    IQueryExecutionMetadata,
     IQueryExecutionNotification,
     IQueryExecutionViewer,
     IQueryResultExporter,
@@ -66,10 +67,16 @@ export const QueryExecutionResource = {
             environment_id: environmentId,
         }),
 
-    create: (query: string, engineId: number, cellId?: number) => {
+    create: (
+        query: string,
+        engineId: number,
+        cellId?: number,
+        sampleRate?: number
+    ) => {
         const params = {
             query,
             engine_id: engineId,
+            sample_rate: sampleRate,
         };
 
         if (cellId != null) {
@@ -84,6 +91,13 @@ export const QueryExecutionResource = {
 
     getError: (executionId: number) =>
         ds.fetch<IQueryError>(`/query_execution/${executionId}/error/`),
+};
+
+export const QueryExecutionMetadataResource = {
+    get: (executionId: number) =>
+        ds.fetch<IQueryExecutionMetadata>(
+            `/query_execution/${executionId}/metadata/`
+        ),
 };
 
 export const StatementResource = {

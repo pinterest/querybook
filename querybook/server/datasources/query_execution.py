@@ -61,7 +61,9 @@ QUERY_RESULT_LIMIT_CONFIG = get_config_value("query_result_limit")
 
 
 @register("/query_execution/", methods=["POST"])
-def create_query_execution(query, engine_id, data_cell_id=None, originator=None):
+def create_query_execution(
+    query, engine_id, sample_rate=None, data_cell_id=None, originator=None
+):
     with DBSession() as session:
         verify_query_engine_permission(engine_id, session=session)
 
@@ -69,6 +71,11 @@ def create_query_execution(query, engine_id, data_cell_id=None, originator=None)
         query_execution = logic.create_query_execution(
             query=query, engine_id=engine_id, uid=uid, session=session
         )
+
+        if sample_rate > 0:
+            logic.create_query_execution_metadata(
+                query_execution.id, sample_rate, session=session
+            )
 
         data_doc = None
         if data_cell_id:
@@ -256,6 +263,15 @@ def get_query_execution_error(query_execution_id):
     with DBSession() as session:
         verify_query_execution_permission(query_execution_id, session=session)
         return logic.get_query_execution_error(query_execution_id, session=session)
+
+
+@register("/query_execution/<int:query_execution_id>/metadata/", methods=["GET"])
+def get_query_execution_metadata(query_execution_id):
+    verify_query_execution_permission(query_execution_id)
+    execution_metadata = logic.get_query_execution_metadata_by_execution_id(
+        query_execution_id
+    )
+    return execution_metadata.to_dict() if execution_metadata is not None else None
 
 
 @register(

@@ -147,6 +147,7 @@ export const QueryExecution: React.FC<IProps> = ({
                 showStatementMeta={showStatementMeta}
                 showStatementLogs={showStatementLogs}
                 toggleStatementMeta={toggleShowStatementMeta}
+                queryExecutionId={id}
             />
         ) : queryExecution.status <= QueryExecutionStatus.RUNNING ? (
             <Loading />
