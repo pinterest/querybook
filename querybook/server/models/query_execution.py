@@ -188,6 +188,29 @@ class QueryExecutionNotification(Base):
         }
 
 
+class QueryExecutionMetadata(CRUDMixin, Base):
+    __tablename__ = "query_execution_metadata"
+
+    id = sql.Column(sql.Integer, primary_key=True)
+    query_execution_id = sql.Column(
+        sql.Integer, sql.ForeignKey("query_execution.id", ondelete="CASCADE")
+    )
+    sample_rate = sql.Column(sql.Float)
+
+    query_execution = relationship(
+        "QueryExecution",
+        uselist=False,
+        backref=backref("metadata", cascade="all, delete", passive_deletes=True),
+    )
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "query_execution_id": self.query_execution_id,
+            "sample_rate": self.sample_rate,
+        }
+
+
 class QueryExecutionViewer(CRUDMixin, Base):
     __tablename__ = "query_execution_viewer"
     __table_args__ = (

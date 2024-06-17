@@ -477,7 +477,8 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                     await this.props.createQueryExecution(
                         query,
                         engineId,
-                        this.props.cellId
+                        this.props.cellId,
+                        this.sampleRate
                     )
                 ).id;
 
@@ -548,7 +549,8 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             return this.props.createQueryExecution(
                 renderedQuery,
                 this.engineId,
-                this.props.cellId
+                this.props.cellId,
+                this.sampleRate
             );
         }
     }
@@ -1092,8 +1094,10 @@ function mapDispatchToProps(dispatch: Dispatch) {
         createQueryExecution: (
             query: string,
             engineId: number,
-            cellId: number
-        ) => dispatch(createQueryExecution(query, engineId, cellId)),
+            cellId: number,
+            sampleRate: number
+        ) =>
+            dispatch(createQueryExecution(query, engineId, cellId, sampleRate)),
 
         setTableSidebarId: (id: number) => dispatch(setSidebarTableId(id)),
 
