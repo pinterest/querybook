@@ -504,6 +504,7 @@ const QueryComposer: React.FC = () => {
             element: ElementType.RUN_QUERY_BUTTON,
             aux: {
                 lintError: hasLintErrors,
+                sampleRate,
             },
         });
         // Throttle to prevent double run
