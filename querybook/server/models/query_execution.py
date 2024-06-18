@@ -207,7 +207,7 @@ class QueryExecutionMetadata(CRUDMixin, Base):
         return {
             "id": self.id,
             "query_execution_id": self.query_execution_id,
-            "metadata": self.metadata,
+            "metadata": self.execution_metadata,
         }
 
 

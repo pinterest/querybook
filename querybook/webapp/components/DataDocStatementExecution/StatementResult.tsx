@@ -326,7 +326,7 @@ const FetchInfo: React.FC<{
             return (
                 <span className="flex-row">
                     {formatNumber(actualRowMinusColCount, 'row')}
-                    {sampleRate > 0 ? sampleRateText : '(Full Result)'}
+                    {sampleRate > 0 ? sampleRateText : ' (Full Result)'}
                     {limitReachedText}
                 </span>
             );
