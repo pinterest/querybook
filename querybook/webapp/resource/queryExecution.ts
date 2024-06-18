@@ -71,13 +71,16 @@ export const QueryExecutionResource = {
         query: string,
         engineId: number,
         cellId?: number,
-        sampleRate?: number
+        metadata?: Record<string, string | number>
     ) => {
         const params = {
             query,
             engine_id: engineId,
-            sample_rate: sampleRate,
         };
+
+        if (metadata != null) {
+            params['metadata'] = metadata;
+        }
 
         if (cellId != null) {
             params['data_cell_id'] = cellId;

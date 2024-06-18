@@ -528,7 +528,7 @@ const QueryComposer: React.FC = () => {
                         query,
                         engineId,
                         null,
-                        sampleRate
+                        sampleRate > 0 ? { sample_rate: sampleRate } : null
                     )
                 );
                 return data.id;

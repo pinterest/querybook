@@ -379,7 +379,7 @@ export function createQueryExecution(
     query: string,
     engineId?: number,
     cellId?: number,
-    sampleRate?: number
+    metadata?: Record<string, string | number>
 ): ThunkResult<Promise<IQueryExecution>> {
     return async (dispatch, getState) => {
         const state = getState();
@@ -389,7 +389,7 @@ export function createQueryExecution(
             query,
             selectedEngineId,
             cellId,
-            sampleRate
+            metadata
         );
         dispatch(receiveQueryExecution(queryExecution, cellId));
 

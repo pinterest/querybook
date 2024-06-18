@@ -153,7 +153,7 @@ const StatementResultWithResult: React.FC<IProps> = ({
             resultLimit={resultLimit}
             setResultLimit={setResultLimit}
             isFetchingStatementResult={isFetchingStatementResult}
-            sampleRate={executionMetadata?.sample_rate ?? 0}
+            sampleRate={Number(executionMetadata?.metadata?.sample_rate) ?? 0}
         />
     );
     const visualizationDOM = data.length ? (

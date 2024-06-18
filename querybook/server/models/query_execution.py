@@ -195,7 +195,7 @@ class QueryExecutionMetadata(CRUDMixin, Base):
     query_execution_id = sql.Column(
         sql.Integer, sql.ForeignKey("query_execution.id", ondelete="CASCADE")
     )
-    sample_rate = sql.Column(sql.Float)
+    execution_metadata = sql.Column(sql.JSON)
 
     query_execution = relationship(
         "QueryExecution",
@@ -207,7 +207,7 @@ class QueryExecutionMetadata(CRUDMixin, Base):
         return {
             "id": self.id,
             "query_execution_id": self.query_execution_id,
-            "sample_rate": self.sample_rate,
+            "metadata": self.metadata,
         }
 
 

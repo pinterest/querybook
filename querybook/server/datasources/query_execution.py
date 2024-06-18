@@ -62,7 +62,7 @@ QUERY_RESULT_LIMIT_CONFIG = get_config_value("query_result_limit")
 
 @register("/query_execution/", methods=["POST"])
 def create_query_execution(
-    query, engine_id, sample_rate=None, data_cell_id=None, originator=None
+    query, engine_id, metadata=None, data_cell_id=None, originator=None
 ):
     with DBSession() as session:
         verify_query_engine_permission(engine_id, session=session)
@@ -72,9 +72,9 @@ def create_query_execution(
             query=query, engine_id=engine_id, uid=uid, session=session
         )
 
-        if sample_rate > 0:
+        if metadata:
             logic.create_query_execution_metadata(
-                query_execution.id, sample_rate, session=session
+                query_execution.id, metadata, session=session
             )
 
         data_doc = None

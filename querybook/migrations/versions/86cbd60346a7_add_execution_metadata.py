@@ -27,7 +27,7 @@ def upgrade():
             sa.Integer,
             sa.ForeignKey("query_execution.id", ondelete="CASCADE"),
         ),
-        sa.Column("sample_rate", sa.Float),
+        sa.Column("sample_rate", sa.JSON),
     )
 
 

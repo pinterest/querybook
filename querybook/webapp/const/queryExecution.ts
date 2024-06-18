@@ -48,7 +48,7 @@ export interface IQueryExecutionViewer {
 export interface IQueryExecutionMetadata {
     id: number;
     execution_id: number;
-    sample_rate: number;
+    metadata: Record<string, string | number>;
 }
 
 export interface IQueryExecution {

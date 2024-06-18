@@ -174,14 +174,14 @@ def get_environments_by_execution_id(execution_id, session=None):
 @with_session
 def create_query_execution_metadata(
     query_execution_id,
-    sample_rate,
+    metadata,
     commit=True,
     session=None,
 ):
     return QueryExecutionMetadata.create(
         {
             "query_execution_id": query_execution_id,
-            "sample_rate": sample_rate,
+            "execution_metadata": metadata,
         },
         commit=commit,
         session=session,
