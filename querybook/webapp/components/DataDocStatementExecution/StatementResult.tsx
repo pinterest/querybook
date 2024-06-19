@@ -298,7 +298,7 @@ const FetchInfo: React.FC<{
                     <IconButton
                         className="ml4"
                         onClick={() => {
-                            window.open(sampleUserGuideLink);
+                            window.open(sampleUserGuideLink, '_blank');
                         }}
                         icon="Info"
                         size={16}
