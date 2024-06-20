@@ -163,6 +163,9 @@ def transform_to_sampled_query(
     Returns:
         str: The sampled query
     """
+    if not sampling_tables:
+        return query
+
     try:
         dialect = _get_sqlglot_dialect(language)
         statements = parse(query, dialect=dialect)

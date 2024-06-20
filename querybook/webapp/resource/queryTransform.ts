@@ -33,4 +33,25 @@ export const QueryTransformResource = {
                 notifyOnError: false,
             }
         ),
+    getTransformedQuery: (
+        query: string,
+        language: string,
+        row_limit: number,
+        sampling_tables: Record<
+            string,
+            { sampled_table?: string; sample_rate?: number }
+        >
+    ) =>
+        ds.save<IQueryTransformLimited>(
+            '/query/transform/',
+            {
+                query,
+                language,
+                row_limit,
+                sampling_tables,
+            },
+            {
+                notifyOnError: false,
+            }
+        ),
 };
