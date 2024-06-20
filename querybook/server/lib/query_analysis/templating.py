@@ -7,9 +7,13 @@ from jinja2.exceptions import TemplateSyntaxError
 from jinja2.sandbox import SandboxedEnvironment
 from jinja2 import meta
 
+from slugify import slugify
+
 from app.db import with_session
 from lib import metastore
 from logic import admin as admin_logic
+from logic import user as user_logic
+from models.user import User
 
 _DAG = Dict[str, Set[str]]
 
@@ -164,12 +168,19 @@ def create_get_latest_partition(
     return get_latest_partition
 
 
-def get_templated_query_env(engine_id: int, session=None):
+def get_templated_query_env(engine_id: int, user: User, session=None):
     jinja_env = SandboxedEnvironment()
 
     # Inject helper functions
     jinja_env.globals.update(
-        latest_partition=create_get_latest_partition(engine_id, session=session)
+        latest_partition=create_get_latest_partition(engine_id, session=session),
+        current_user=user.username if user else None,
+        current_user_email=user.email if user else None,
+    )
+
+    # Inject filters
+    jinja_env.filters.update(
+        slugify=lambda x: slugify(x, separator="_"),
     )
 
     # Template rendering config
@@ -315,7 +326,7 @@ def get_templated_query_variables(variables_provided, jinja_env):
 
 
 def render_templated_query(
-    query: str, variables: Dict[str, str], engine_id: int, session=None
+    query: str, variables: Dict[str, str], engine_id: int, uid: int, session=None
 ) -> str:
     """Renders the templated query, with global variables such as today/yesterday
        and functions such as `latest_partition`.
@@ -326,6 +337,8 @@ def render_templated_query(
     Arguments:
         query {str} -- The query string that would get rendered
         raw_variables {Dict[str, str]} -- The variable name, variable value string pair
+        engine_id {int} -- The engine id that the query is running on
+        uid {int} -- The id of the user running the query
 
     Raises:
         UndefinedVariableException: If the variable refers to a variable that does not exist
@@ -334,7 +347,9 @@ def render_templated_query(
     Returns:
         str -- The rendered string
     """
-    jinja_env = get_templated_query_env(engine_id, session=session)
+    user = user_logic.get_user_by_id(uid, session=session) if uid else None
+
+    jinja_env = get_templated_query_env(engine_id, user, session=session)
     try:
         escaped_query = _escape_sql_comments(query)
         variables_in_query = get_templated_variables_in_string(escaped_query, jinja_env)
