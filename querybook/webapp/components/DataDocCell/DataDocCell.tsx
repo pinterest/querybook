@@ -24,6 +24,7 @@ import * as dataDocSelectors from 'redux/dataDoc/selector';
 import { IStoreState } from 'redux/store/types';
 
 import './DataDocCell.scss';
+import { useRunAllFromIndex } from 'hooks/dataDoc/useRunAllFromIndex';
 
 interface IDataDocCellProps {
     docId: number;
@@ -79,6 +80,12 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> =
                 highlightCellIndex,
                 fullScreenCellIndex,
             } = useContext(DataDocContext);
+
+            const onRunAllFromIndex = useRunAllFromIndex(
+                docId,
+                queryIndexInDoc
+            );
+            console.log(onRunAllFromIndex);
 
             const cellIdtoUid = useMakeSelector(
                 dataDocSelectors.makeDataDocCursorByCellIdSelector,
@@ -186,6 +193,7 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> =
                         templatedVariables,
                         isFullScreen,
                         toggleFullScreen,
+                        onRunAllFromIndex,
                     };
                     cellDOM = <DataDocQueryCell {...allProps} />;
                 } else if (cell.cell_type === 'chart') {

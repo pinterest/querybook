@@ -105,6 +105,7 @@ interface IOwnProps {
     onUpKeyPressed?: () => any;
     onDownKeyPressed?: () => any;
     toggleFullScreen: () => any;
+    onRunAllFromIndex: () => any;
 }
 type IProps = IOwnProps & StateProps & DispatchProps;
 
@@ -611,6 +612,17 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         });
 
         additionalButtons.push({
+            name: 'Run From Current Cell',
+            onClick: () => {
+                this.props.onRunAllFromIndex();
+            },
+            icon: 'FastForward',
+            tooltip:
+                'Run all cells in the current datadoc starting from this cell',
+            tooltipPos: 'left',
+        });
+
+        additionalButtons.push({
             name: queryCollapsed ? 'Show Query' : 'Hide Query',
             onClick: this.toggleQueryCollapsing.bind(this, !queryCollapsed),
             icon: queryCollapsed ? 'Eye' : 'EyeOff',
@@ -751,7 +763,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
     public renderCellHeaderDOM() {
         const {
-            docId,
             cellId,
             queryEngines,
             queryEngineById,
