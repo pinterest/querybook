@@ -5,7 +5,6 @@ import { ISamplingTables, TDataDocMetaVariables } from 'const/datadoc';
 import { IQueryEngine } from 'const/queryEngine';
 import { sendConfirm } from 'lib/querybookUI';
 import { getDroppedTables } from 'lib/sql-helper/sql-checker';
-import { hasQueryContainUnlimitedSelect } from 'lib/sql-helper/sql-limiter';
 import { renderTemplatedQuery } from 'lib/templated-query';
 import { Nullable } from 'lib/typescript';
 import { formatError } from 'lib/utils/error';
@@ -43,9 +42,13 @@ export async function transformQuery(
         sampleRate
     );
 
-    await checkUnlimitedQuery(sampledQuery, rowLimit, engine);
+    const limitedQuery = await transformLimitedQuery(
+        sampledQuery,
+        rowLimit,
+        engine
+    );
 
-    return sampledQuery;
+    return limitedQuery;
 }
 
 export async function runQuery(
@@ -80,31 +83,30 @@ async function transformTemplatedQuery(
     }
 }
 
-async function checkUnlimitedQuery(
+async function transformLimitedQuery(
     query: string,
     rowLimit: Nullable<number>,
     engine: IQueryEngine
 ) {
-    if (
-        !engine.feature_params?.row_limit ||
-        (rowLimit != null && rowLimit >= 0)
-    ) {
-        return;
+    if (!engine.feature_params?.row_limit) {
+        return query;
     }
 
-    // query is unlimited but engine has row limit feature turned on
-
-    const unlimitedSelectQuery = hasQueryContainUnlimitedSelect(
+    const { data } = await QueryTransformResource.getLimitedQuery(
         query,
-        engine.language
+        engine.language,
+        rowLimit ?? -1
     );
 
+    const { query: limitedQuery, unlimited_select: unlimitedSelectQuery } =
+        data;
+
     if (!unlimitedSelectQuery) {
-        return;
+        return limitedQuery;
     }
 
     // Show a warning modal to let user confirm what they are doing
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
         sendConfirm({
             header: 'Your SELECT query is unbounded',
             message: (
@@ -127,7 +129,7 @@ async function checkUnlimitedQuery(
                     </pre>
                 </Content>
             ),
-            onConfirm: () => resolve(),
+            onConfirm: () => resolve(limitedQuery),
             onDismiss: () => reject(),
             confirmText: 'Run without LIMIT',
         });

@@ -3,6 +3,7 @@ from unittest import TestCase
 from lib.query_analysis.transform import (
     format_query,
     get_select_statement_limit,
+    has_query_contains_unlimited_select,
     transform_to_limited_query,
     transform_to_sampled_query,
 )
@@ -44,6 +45,50 @@ class GetSelectStatementLimitTestCase(TestCase):
         for query, expected in tests:
             with self.subTest(query=query):
                 self.assertEqual(get_select_statement_limit(query), expected)
+
+
+class HasQueryContainsUnlimitedSelectTestCase(TestCase):
+    def test_select_limit(self):
+        tests = [
+            "SELECT 1 LIMIT 10",
+            "SELECT * FROM table_1 WHERE field = 1 LIMIT 10",
+            "TRUNCATE TABLE table_1; SELECT * FROM table_1 WHERE field = 1 LIMIT 1000",
+            "SELECT * FROM table_1 WHERE field = 1 LIMIT 10; SELECT * FROM table_2 WHERE field = 1 LIMIT 1000",
+        ]
+        for query in tests:
+            with self.subTest(query=query):
+                self.assertIsNone(has_query_contains_unlimited_select(query))
+
+    def test_select_no_limit(self):
+        tests = [
+            ("SELECT 1", "SELECT\n  1"),
+            (
+                "SELECT * FROM table_1 WHERE field = 1",
+                "SELECT\n  *\nFROM table_1\nWHERE\n  field = 1",
+            ),
+            ("SELECT 1; SELECT 2", "SELECT\n  1"),
+            (
+                "SELECT * FROM table_1 WHERE field = 1 LIMIT 10; SELECT * FROM table_1 WHERE field = 1",
+                "SELECT\n  *\nFROM table_1\nWHERE\n  field = 1",
+            ),
+        ]
+        for query, expected in tests:
+            with self.subTest(query=query):
+                self.assertEquals(has_query_contains_unlimited_select(query), expected)
+
+    def test_not_select_statements(self):
+        tests = [
+            "DELETE FROM table_1 WHERE field = 1",
+            "CREATE DATABASE IF NOT EXISTS db_1",
+            "CREATE TABLE table_1 (field1 INT)",
+            "TRUNCATE TABLE table_1",
+            "DROP TABLE IF EXISTS db.table1; CREATE TABLE db.table1",
+            "INSERT INTO table_1 (field1) VALUES (1)",
+            "UPDATE table_1 SET field1 = 1 WHERE field = 1",
+        ]
+        for query in tests:
+            with self.subTest(query=query):
+                self.assertIsNone(has_query_contains_unlimited_select(query))
 
 
 class GetLimitedQueryTestCase(TestCase):

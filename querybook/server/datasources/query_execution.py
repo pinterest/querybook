@@ -13,7 +13,6 @@ from app.auth.permission import (
 )
 from clients.common import FileDoesNotExist
 from lib.export.all_exporters import ALL_EXPORTERS, get_exporter
-from lib.query_analysis.transform import transform_to_limited_query
 from lib.result_store import GenericReader
 from lib.query_analysis.templating import (
     QueryTemplatingError,
@@ -62,17 +61,9 @@ QUERY_RESULT_LIMIT_CONFIG = get_config_value("query_result_limit")
 
 
 @register("/query_execution/", methods=["POST"])
-def create_query_execution(
-    query, engine_id, row_limit=-1, data_cell_id=None, originator=None
-):
+def create_query_execution(query, engine_id, data_cell_id=None, originator=None):
     with DBSession() as session:
         verify_query_engine_permission(engine_id, session=session)
-
-        row_limit_enabled = admin_logic.get_engine_feature_param(
-            engine_id, "row_limit", False, session=session
-        )
-        if row_limit_enabled and row_limit >= 0:
-            query = transform_to_limited_query(query, row_limit)
 
         uid = current_user.id
         query_execution = logic.create_query_execution(
