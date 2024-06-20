@@ -182,6 +182,11 @@ function queryExecutionByIdReducer(
                     statementExecutions.concat([statementExecution.id]);
                 return;
             }
+            case '@@queryExecutions/REMOVE_QUERY_EXECUTION': {
+                const { queryExecutionId } = action.payload;
+                delete draft[queryExecutionId];
+                return;
+            }
         }
     });
 }
