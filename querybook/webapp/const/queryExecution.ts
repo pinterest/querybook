@@ -45,6 +45,12 @@ export interface IQueryExecutionViewer {
     execution_id: number;
 }
 
+export interface IQueryExecutionMetadata {
+    id: number;
+    execution_id: number;
+    metadata: Record<string, string | number>;
+}
+
 export interface IQueryExecution {
     id: number;
     created_at: number;

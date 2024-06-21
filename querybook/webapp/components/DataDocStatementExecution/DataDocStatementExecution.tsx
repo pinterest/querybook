@@ -28,6 +28,8 @@ interface IProps {
     showStatementMeta: boolean;
 
     toggleStatementMeta: () => any;
+
+    queryExecutionId: number;
 }
 
 function useStatementResult(statementExecution: IStatementExecution) {
@@ -103,6 +105,8 @@ export const DataDocStatementExecution: React.FC<IProps> = ({
     showStatementLogs,
     showStatementMeta,
     toggleStatementMeta,
+
+    queryExecutionId,
 }) => {
     const [showInFullScreen, , toggleFullScreen] = useToggleState(false);
     const statementMeta = useStatementMeta(
@@ -188,6 +192,7 @@ export const DataDocStatementExecution: React.FC<IProps> = ({
                         resultLimit={resultLimit}
                         setResultLimit={setResultLimit}
                         isFetchingStatementResult={isFetchingStatementResult}
+                        queryExecutionId={queryExecutionId}
                     />
                 </>
             );
@@ -226,6 +231,7 @@ export const DataDocStatementExecution: React.FC<IProps> = ({
                     setResultLimit={setResultLimit}
                     resultLimit={resultLimit}
                     isFetchingStatementResult={isFetchingStatementResult}
+                    queryExecutionId={queryExecutionId}
                 />
             </Modal>
         ) : null;

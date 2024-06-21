@@ -6,16 +6,20 @@ import {
     IStatementResultTableHandles,
     StatementResultTable,
 } from 'components/StatementResultTable/StatementResultTable';
+import PublicConfig from 'config/querybook_public_config.yaml';
 import { IStatementExecution, IStatementResult } from 'const/queryExecution';
 import { StatementExecutionResultSizes } from 'const/queryResultLimit';
 import { MIN_COLUMN_TO_SHOW_FILTER } from 'const/uiConfig';
 import { useImmer } from 'hooks/useImmer';
+import { useResource } from 'hooks/useResource';
 import { useToggleState } from 'hooks/useToggleState';
 import { getSelectStatementLimit } from 'lib/sql-helper/sql-limiter';
 import { stopPropagation } from 'lib/utils/noop';
 import { formatNumber } from 'lib/utils/number';
 import { IStoreState } from 'redux/store/types';
+import { QueryExecutionMetadataResource } from 'resource/queryExecution';
 import { TextButton } from 'ui/Button/Button';
+import { IconButton } from 'ui/Button/IconButton';
 import { InfoButton } from 'ui/Button/InfoButton';
 import { Checkbox } from 'ui/Checkbox/Checkbox';
 import { Icon } from 'ui/Icon/Icon';
@@ -39,6 +43,8 @@ interface IProps {
     isFetchingStatementResult: boolean;
     resultLimit: number;
     setResultLimit: (limit: number) => void;
+
+    queryExecutionId: number;
 }
 
 export const StatementResult: React.FC<IProps> = (props) => {
@@ -73,6 +79,8 @@ const StatementResultWithResult: React.FC<IProps> = ({
     isFetchingStatementResult,
     resultLimit,
     setResultLimit,
+
+    queryExecutionId,
 }) => {
     const { result_row_count: resultRowCount } = statementExecution;
     const { data: rawData } = statementResult;
@@ -103,6 +111,13 @@ const StatementResultWithResult: React.FC<IProps> = ({
     const resultRowMinusColCount = Math.max(resultRowCount - 1, 0);
     const actualRowMinusColCount = Math.max(data.length - 1, 0);
     const fetchedAllRows = resultRowMinusColCount === actualRowMinusColCount;
+
+    const { data: executionMetadata } = useResource(
+        React.useCallback(
+            () => QueryExecutionMetadataResource.get(queryExecutionId),
+            [queryExecutionId]
+        )
+    );
 
     const explorationButtons = [
         <ColumnToggleMenuButton
@@ -138,6 +153,7 @@ const StatementResultWithResult: React.FC<IProps> = ({
             resultLimit={resultLimit}
             setResultLimit={setResultLimit}
             isFetchingStatementResult={isFetchingStatementResult}
+            sampleRate={Number(executionMetadata?.metadata?.sample_rate) ?? 0}
         />
     );
     const visualizationDOM = data.length ? (
@@ -246,6 +262,8 @@ const FetchInfo: React.FC<{
     resultLimit: number;
     setResultLimit: (newLimit: number) => void;
     isFetchingStatementResult: boolean;
+
+    sampleRate: number;
 }> = ({
     statementQueryLimit,
     resultRowMinusColCount,
@@ -255,6 +273,8 @@ const FetchInfo: React.FC<{
     resultLimit,
     setResultLimit,
     isFetchingStatementResult,
+
+    sampleRate,
 }) => {
     const getFetchInfo = () => {
         if (isFetchingStatementResult) {
@@ -265,6 +285,29 @@ const FetchInfo: React.FC<{
                 </div>
             );
         }
+
+        const sampleUserGuideLink =
+            PublicConfig.table_sampling?.sample_user_guide_link ?? '';
+        const sampleRateText = (
+            <div className="flex-row ml4">
+                (Full Result,
+                <span className="accent-warning-text ml4">
+                    Sampled {sampleRate}%
+                </span>
+                {sampleUserGuideLink ? (
+                    <IconButton
+                        className="ml4"
+                        onClick={() => {
+                            window.open(sampleUserGuideLink, '_blank');
+                        }}
+                        icon="Info"
+                        size={16}
+                        noPadding
+                    />
+                ) : null}
+                )
+            </div>
+        );
 
         const limitReachedText =
             statementQueryLimit === resultRowMinusColCount ? (
@@ -283,7 +326,7 @@ const FetchInfo: React.FC<{
             return (
                 <span className="flex-row">
                     {formatNumber(actualRowMinusColCount, 'row')}
-                    (Full Result)
+                    {sampleRate > 0 ? sampleRateText : ' (Full Result)'}
                     {limitReachedText}
                 </span>
             );
