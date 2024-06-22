@@ -38,7 +38,7 @@ export async function transformQuery(
     const rowLimitEnabled = engine.feature_params?.row_limit ?? false;
 
     const { data } = await QueryTransformResource.getTransformedQuery(
-        query,
+        templatizedQuery,
         language,
         rowLimitEnabled ? rowLimit ?? -1 : -1,
         sampleRate === 0 ? null : samplingTables
