@@ -5,6 +5,7 @@ import {
     IQueryError,
     IQueryExecution,
     IQueryExecutionExportStatusInfo,
+    IQueryExecutionMetadata,
     IQueryExecutionNotification,
     IQueryExecutionViewer,
     IQueryResultExporter,
@@ -66,11 +67,20 @@ export const QueryExecutionResource = {
             environment_id: environmentId,
         }),
 
-    create: (query: string, engineId: number, cellId?: number) => {
+    create: (
+        query: string,
+        engineId: number,
+        cellId?: number,
+        metadata?: Record<string, string | number>
+    ) => {
         const params = {
             query,
             engine_id: engineId,
         };
+
+        if (metadata != null) {
+            params['metadata'] = metadata;
+        }
 
         if (cellId != null) {
             params['data_cell_id'] = cellId;
@@ -84,6 +94,13 @@ export const QueryExecutionResource = {
 
     getError: (executionId: number) =>
         ds.fetch<IQueryError>(`/query_execution/${executionId}/error/`),
+};
+
+export const QueryExecutionMetadataResource = {
+    get: (executionId: number) =>
+        ds.fetch<IQueryExecutionMetadata>(
+            `/query_execution/${executionId}/metadata/`
+        ),
 };
 
 export const StatementResource = {

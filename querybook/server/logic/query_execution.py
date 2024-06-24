@@ -9,6 +9,7 @@ from const.query_execution import QueryExecutionStatus, StatementExecutionStatus
 from lib.logger import get_logger
 from models.query_execution import (
     QueryExecution,
+    QueryExecutionMetadata,
     StatementExecution,
     QueryExecutionNotification,
     QueryExecutionError,
@@ -167,6 +168,33 @@ def get_environments_by_execution_id(execution_id, session=None):
         .join(QueryExecution)
         .filter(QueryExecution.id == execution_id)
         .all()
+    )
+
+
+@with_session
+def create_query_execution_metadata(
+    query_execution_id,
+    metadata,
+    commit=True,
+    session=None,
+):
+    return QueryExecutionMetadata.create(
+        {
+            "query_execution_id": query_execution_id,
+            "execution_metadata": metadata,
+        },
+        commit=commit,
+        session=session,
+    )
+
+
+@with_session
+def get_query_execution_metadata_by_execution_id(
+    query_execution_id,
+    session=None,
+):
+    return QueryExecutionMetadata.get(
+        session=session, query_execution_id=query_execution_id
     )
 
 

@@ -378,7 +378,8 @@ export function pollQueryExecution(
 export function createQueryExecution(
     query: string,
     engineId?: number,
-    cellId?: number
+    cellId?: number,
+    metadata?: Record<string, string | number>
 ): ThunkResult<Promise<IQueryExecution>> {
     return async (dispatch, getState) => {
         const state = getState();
@@ -387,7 +388,8 @@ export function createQueryExecution(
         const { data: queryExecution } = await QueryExecutionResource.create(
             query,
             selectedEngineId,
-            cellId
+            cellId,
+            metadata
         );
         dispatch(receiveQueryExecution(queryExecution, cellId));
 
