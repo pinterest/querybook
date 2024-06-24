@@ -440,7 +440,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
-    public async getTransformedQuery() {
+    public async getTransformedQuery(sampleRate: number) {
         const { templatedVariables = [] } = this.props;
         const { query } = this.state;
         const selectedRange =
@@ -455,22 +455,25 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             this.queryEngine,
             this.rowLimit,
             this.samplingTables,
-            this.sampleRate
+            sampleRate
         );
     }
 
     @bind
-    public async onRunButtonClick() {
+    public async onRunButtonClick(sampleRate: number) {
         trackClick({
             component: ComponentType.DATADOC_QUERY_CELL,
             element: ElementType.RUN_QUERY_BUTTON,
             aux: {
                 lintError: this.state.hasLintError,
-                sampleRate: this.sampleRate,
+                sampleRate,
             },
         });
+        const executionMetadata =
+            sampleRate > 0 ? { sample_rate: sampleRate } : null;
+
         return runQuery(
-            await this.getTransformedQuery(),
+            await this.getTransformedQuery(sampleRate),
             this.engineId,
             async (query, engineId) => {
                 const queryId = (
@@ -478,9 +481,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                         query,
                         engineId,
                         this.props.cellId,
-                        this.sampleRate > 0
-                            ? { sample_rate: this.sampleRate }
-                            : null
+                        executionMetadata
                     )
                 ).id;
 
@@ -544,15 +545,18 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     @bind
     public async explainQuery() {
         const renderedQuery = getQueryAsExplain(
-            await this.getTransformedQuery()
+            await this.getTransformedQuery(this.sampleRate)
         );
 
         if (renderedQuery) {
+            const executionMetadata =
+                this.sampleRate > 0 ? { sample_rate: this.sampleRate } : null;
+
             return this.props.createQueryExecution(
                 renderedQuery,
                 this.engineId,
                 this.props.cellId,
-                this.sampleRate > 0 ? { sample_rate: this.sampleRate } : null
+                executionMetadata
             );
         }
     }
@@ -795,7 +799,9 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                             disabled={!isEditable}
                             hasSelection={selectedRange != null}
                             engineId={this.engineId}
-                            onRunClick={this.onRunButtonClick}
+                            onRunClick={() =>
+                                this.onRunButtonClick(this.sampleRate)
+                            }
                             onEngineIdSelect={this.handleMetaChange.bind(
                                 this,
                                 'engine'
@@ -980,6 +986,9 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 cellId={cellId}
                 isQueryCollapsed={this.queryCollapsed}
                 changeCellContext={isEditable ? this.handleChange : null}
+                onSamplingInfoClick={this.toggleShowTableSamplingInfoModal}
+                hasSamplingTables={this.hasSamplingTables}
+                onRunClick={this.onRunButtonClick}
             />
         );
     }

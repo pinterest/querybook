@@ -22,6 +22,7 @@ import { Loading } from 'ui/Loading/Loading';
 import { ExecutedQueryCell } from './ExecutedQueryCell';
 import { QueryErrorWrapper } from './QueryError';
 import { QuerySteps } from './QuerySteps';
+import { SamplingTooltip } from './SamplingToolTip';
 
 import './QueryExecution.scss';
 
@@ -29,6 +30,10 @@ interface IProps {
     id: number;
     docId?: number;
     changeCellContext?: (context: string, run: boolean) => void;
+
+    onSamplingInfoClick?: () => void;
+    hasSamplingTables?: boolean;
+    onRunClick: (sampleRate: number) => any;
 }
 
 function useQueryExecutionReduxState(queryId: number) {
@@ -55,14 +60,16 @@ function useQueryExecutionDispatch(queryExecutionId: number) {
     }, [queryExecutionId]);
 
     const pollQueryExecution = useCallback(
-        (docId?: number) =>
+        (docId: number) => {
+            // Simulate a delay of 10 seconds (10000 milliseconds)
             dispatch(
                 queryExecutionsActions.pollQueryExecution(
                     queryExecutionId,
                     docId
                 )
-            ),
-        [queryExecutionId]
+            );
+        },
+        [dispatch, queryExecutionId]
     );
 
     const cancelQueryExecution = useCallback(
@@ -85,6 +92,10 @@ export const QueryExecution: React.FC<IProps> = ({
     id,
     docId,
     changeCellContext,
+
+    onSamplingInfoClick,
+    hasSamplingTables,
+    onRunClick,
 }) => {
     const isEditable = useSelector((state: IStoreState) =>
         canCurrentUserEditSelector(state, docId)
@@ -131,11 +142,27 @@ export const QueryExecution: React.FC<IProps> = ({
     const getQueryExecutionDOM = () => {
         const { statement_executions: statementExecutionIds } = queryExecution;
         const queryStepsDOM = <QuerySteps queryExecution={queryExecution} />;
+
+        const samplingToolTipDOM = (
+            <SamplingTooltip
+                queryExecutionStatus={queryExecution?.status}
+                onSamplingInfoClick={onSamplingInfoClick}
+                hasSamplingTables={hasSamplingTables}
+                cancelQueryExecution={cancelQueryExecution}
+                onRunClick={onRunClick}
+            />
+        );
+
         if (
             statementExecutionIds == null ||
             queryExecution.status === QueryExecutionStatus.INITIALIZED
         ) {
-            return <div className="QueryExecution ">{queryStepsDOM}</div>;
+            return (
+                <div className="QueryExecution ">
+                    {queryStepsDOM}
+                    {samplingToolTipDOM}
+                </div>
+            );
         }
         const statementExecutionId = statementExecution
             ? statementExecution.id
@@ -170,6 +197,7 @@ export const QueryExecution: React.FC<IProps> = ({
             <div className="QueryExecution ">
                 <div className="execution-wrapper">
                     {queryStepsDOM}
+                    {samplingToolTipDOM}
                     {getQueryExecutionErrorDOM()}
                     {getStatementExecutionHeaderDOM()}
                     {executedQueryDOM}

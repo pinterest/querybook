@@ -15,10 +15,16 @@ import { AccentText } from 'ui/StyledText/StyledText';
 
 interface IProps {
     id: number;
+    onSamplingInfoClick?: () => void;
+    hasSamplingTables?: boolean;
+    onRunClick: (sampleRate: number) => any;
 }
 
 export const QueryComposerExecution: React.FunctionComponent<IProps> = ({
     id,
+    onSamplingInfoClick,
+    hasSamplingTables,
+    onRunClick,
 }) => {
     const execution = useSelector(
         (state: IStoreState) => state.queryExecutions.queryExecutionById[id]
@@ -53,7 +59,12 @@ export const QueryComposerExecution: React.FunctionComponent<IProps> = ({
                     <QueryExecutionBar queryExecution={execution} />
                 </div>
             </Level>
-            <QueryExecution id={id} />
+            <QueryExecution
+                id={id}
+                onSamplingInfoClick={onSamplingInfoClick}
+                hasSamplingTables={hasSamplingTables}
+                onRunClick={onRunClick}
+            />
         </div>
     );
 };

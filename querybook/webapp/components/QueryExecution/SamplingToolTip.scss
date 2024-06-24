@@ -1,0 +1,13 @@
+.SamplingToolTip {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: lightyellow;
+    padding: 4px 20px;
+    border: 1px solid lightyellow;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.15);
+
+    .SamplingToolTip-button {
+        margin-left: auto;
+    }
+}
