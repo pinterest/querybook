@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { SamplingInfoButton } from 'components/QueryRunButton/QueryRunButton';
 import PublicConfig from 'config/querybook_public_config.yaml';
-import { QueryExecutionStatus } from 'const/queryExecution';
+import { IQueryExecution, QueryExecutionStatus } from 'const/queryExecution';
 import { useInterval } from 'hooks/useInterval';
 import { SoftButton } from 'ui/Button/Button';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
@@ -12,7 +12,7 @@ import { AccentText } from 'ui/StyledText/StyledText';
 import './SamplingToolTip.scss';
 
 interface SamplingTooltipProps {
-    queryExecutionStatus: QueryExecutionStatus;
+    queryExecution: IQueryExecution;
     onSamplingInfoClick?: () => void;
     hasSamplingTables?: boolean;
     cancelQueryExecution: () => any;
@@ -20,7 +20,7 @@ interface SamplingTooltipProps {
 }
 
 export const SamplingTooltip: React.FC<SamplingTooltipProps> = ({
-    queryExecutionStatus,
+    queryExecution: { status, id },
     onSamplingInfoClick,
     hasSamplingTables,
     cancelQueryExecution,
@@ -29,8 +29,8 @@ export const SamplingTooltip: React.FC<SamplingTooltipProps> = ({
     const [queryExecutionTime, setQueryExecutionTime] = useState(0);
 
     const queryIsRunning =
-        QueryExecutionStatus.INITIALIZED <= queryExecutionStatus &&
-        queryExecutionStatus <= QueryExecutionStatus.RUNNING;
+        QueryExecutionStatus.INITIALIZED <= status &&
+        status <= QueryExecutionStatus.RUNNING;
 
     const TABLE_SAMPLING_CONFIG = PublicConfig.table_sampling ?? {
         enabled: false,
@@ -39,18 +39,33 @@ export const SamplingTooltip: React.FC<SamplingTooltipProps> = ({
     };
 
     const queryCanBeSampled =
-        PublicConfig.table_sampling.enabled &&
-        hasSamplingTables &&
-        TABLE_SAMPLING_CONFIG.sample_rates.length > 0;
+        PublicConfig.table_sampling.enabled && hasSamplingTables;
+
+    const prevId = useRef(id);
+
+    useInterval(
+        () => {
+            setQueryExecutionTime((prevTime) => prevTime + 1);
+        },
+        1000,
+        !(queryIsRunning && queryCanBeSampled)
+    );
+
+    useEffect(() => {
+        if (!queryIsRunning || id !== prevId.current) {
+            setQueryExecutionTime(0);
+        }
+        prevId.current = id;
+    }, [queryIsRunning, id]);
 
     const cancelAndRunQueryAsSampled = useCallback(
         (sampleRate) => {
-            if (queryExecutionStatus === QueryExecutionStatus.RUNNING) {
+            if (status <= QueryExecutionStatus.RUNNING) {
                 cancelQueryExecution();
             }
             onRunClick(sampleRate);
         },
-        [cancelQueryExecution, onRunClick, queryExecutionStatus]
+        [cancelQueryExecution, onRunClick, status]
     );
 
     const sampleRateOptions: IListMenuItem[] =
@@ -77,20 +92,6 @@ export const SamplingTooltip: React.FC<SamplingTooltipProps> = ({
             <ListMenu items={sampleRateOptions} soft />
         </Dropdown>
     );
-
-    useInterval(
-        () => {
-            setQueryExecutionTime((prevTime) => prevTime + 1);
-        },
-        1000,
-        !(queryIsRunning && queryCanBeSampled)
-    );
-
-    useEffect(() => {
-        if (!queryIsRunning) {
-            setQueryExecutionTime(0);
-        }
-    }, [queryIsRunning]);
 
     const samplingToolTipDOM = (
         <div className="SamplingToolTip">

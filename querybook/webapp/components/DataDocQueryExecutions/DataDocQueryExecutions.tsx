@@ -22,7 +22,9 @@ interface IProps {
     docId: number;
     cellId: number;
     isQueryCollapsed: boolean;
+
     changeCellContext?: (context: string, run?: boolean) => void;
+
     onSamplingInfoClick?: () => void;
     hasSamplingTables?: boolean;
     onRunClick: (sampleRate: number) => any;

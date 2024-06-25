@@ -497,7 +497,20 @@ const QueryComposer: React.FC = () => {
         return getSelectedQuery(query, selectedRange);
     }, [query, queryEditorRef]);
 
+    const getSamplingTables = useCallback(
+        (sampleRate: number) => {
+            const updatedSamplingTables = { ...samplingTables };
+            Object.keys(updatedSamplingTables).forEach((tableName) => {
+                updatedSamplingTables[tableName].sample_rate = sampleRate;
+            });
+            setSamplingTables(updatedSamplingTables);
+            return updatedSamplingTables;
+        },
+        [samplingTables, setSamplingTables]
+    );
+
     const triggerSurvey = useSurveyTrigger();
+
     const handleRunQuery = React.useCallback(
         async (sampleRate: number) => {
             trackClick({
@@ -516,7 +529,7 @@ const QueryComposer: React.FC = () => {
                 templatedVariables,
                 engine,
                 rowLimit,
-                samplingTables,
+                getSamplingTables(sampleRate),
                 sampleRate
             );
 
@@ -547,15 +560,15 @@ const QueryComposer: React.FC = () => {
             }
         },
         [
-            rowLimit,
-            samplingTables,
+            hasLintErrors,
+            getCurrentSelectedQuery,
             engine,
             templatedVariables,
-            dispatch,
-            getCurrentSelectedQuery,
-            setExecutionId,
-            hasLintErrors,
+            rowLimit,
+            getSamplingTables,
             triggerSurvey,
+            dispatch,
+            setExecutionId,
         ]
     );
 
@@ -658,7 +671,10 @@ const QueryComposer: React.FC = () => {
                         hasSamplingTables={
                             Object.keys(samplingTables).length > 0
                         }
-                        onRunClick={handleRunQuery}
+                        onRunClick={(sampleRate) => {
+                            setSampleRate(sampleRate);
+                            handleRunQuery(sampleRate);
+                        }}
                     />
                 </div>
             </Resizable>

@@ -409,7 +409,8 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     @bind
     public handleMetaChange<K extends keyof IDataQueryCellMeta>(
         field: K,
-        value: IDataQueryCellMeta[K]
+        value: IDataQueryCellMeta[K],
+        callback?: () => void
     ) {
         const { meta } = this.state;
         const newMeta = {
@@ -420,7 +421,12 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             {
                 meta: newMeta,
             },
-            () => this.onChangeDebounced({ meta: newMeta })
+            () => {
+                this.onChangeDebounced({ meta: newMeta });
+                if (callback) {
+                    callback();
+                }
+            }
         );
     }
 
@@ -435,12 +441,15 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
-    public handleMetaSampleRateChange(sampleRate: number) {
-        return this.handleMetaChange('sample_rate', sampleRate);
+    public handleMetaSampleRateChange(
+        sampleRate: number,
+        callback?: () => void
+    ) {
+        return this.handleMetaChange('sample_rate', sampleRate, callback);
     }
 
     @bind
-    public async getTransformedQuery(sampleRate: number) {
+    public async getTransformedQuery() {
         const { templatedVariables = [] } = this.props;
         const { query } = this.state;
         const selectedRange =
@@ -455,25 +464,24 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             this.queryEngine,
             this.rowLimit,
             this.samplingTables,
-            sampleRate
+            this.sampleRate
         );
     }
 
     @bind
-    public async onRunButtonClick(sampleRate: number) {
+    public async onRunButtonClick() {
         trackClick({
             component: ComponentType.DATADOC_QUERY_CELL,
             element: ElementType.RUN_QUERY_BUTTON,
             aux: {
                 lintError: this.state.hasLintError,
-                sampleRate,
+                sampleRate: this.sampleRate,
             },
         });
         const executionMetadata =
-            sampleRate > 0 ? { sample_rate: sampleRate } : null;
-
+            this.sampleRate > 0 ? { sample_rate: this.sampleRate } : null;
         return runQuery(
-            await this.getTransformedQuery(sampleRate),
+            await this.getTransformedQuery(),
             this.engineId,
             async (query, engineId) => {
                 const queryId = (
@@ -545,7 +553,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     @bind
     public async explainQuery() {
         const renderedQuery = getQueryAsExplain(
-            await this.getTransformedQuery(this.sampleRate)
+            await this.getTransformedQuery()
         );
 
         if (renderedQuery) {
@@ -799,9 +807,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                             disabled={!isEditable}
                             hasSelection={selectedRange != null}
                             engineId={this.engineId}
-                            onRunClick={() =>
-                                this.onRunButtonClick(this.sampleRate)
-                            }
+                            onRunClick={this.onRunButtonClick}
                             onEngineIdSelect={this.handleMetaChange.bind(
                                 this,
                                 'engine'
@@ -988,7 +994,12 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 changeCellContext={isEditable ? this.handleChange : null}
                 onSamplingInfoClick={this.toggleShowTableSamplingInfoModal}
                 hasSamplingTables={this.hasSamplingTables}
-                onRunClick={this.onRunButtonClick}
+                onRunClick={(sampleRate) => {
+                    this.handleMetaSampleRateChange(
+                        sampleRate,
+                        this.onRunButtonClick.bind(this)
+                    );
+                }}
             />
         );
     }

@@ -38,7 +38,7 @@ interface IQueryRunButtonProps extends IQueryEngineSelectorProps {
     runButtonTooltipPos?: TooltipDirection;
 
     rowLimit?: number;
-    onRunClick: (sampleRate: number) => any;
+    onRunClick: () => any;
     onRowLimitChange?: (rowLimit: number) => void;
 
     hasSamplingTables?: boolean;

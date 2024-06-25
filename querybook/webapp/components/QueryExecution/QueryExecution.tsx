@@ -61,7 +61,6 @@ function useQueryExecutionDispatch(queryExecutionId: number) {
 
     const pollQueryExecution = useCallback(
         (docId: number) => {
-            // Simulate a delay of 10 seconds (10000 milliseconds)
             dispatch(
                 queryExecutionsActions.pollQueryExecution(
                     queryExecutionId,
@@ -137,7 +136,7 @@ export const QueryExecution: React.FC<IProps> = ({
         if (queryExecution?.status <= QueryExecutionStatus.RUNNING) {
             pollQueryExecution(docId);
         }
-    }, [queryExecution?.status]);
+    }, [pollQueryExecution, queryExecution?.status]);
 
     const getQueryExecutionDOM = () => {
         const { statement_executions: statementExecutionIds } = queryExecution;
@@ -145,7 +144,7 @@ export const QueryExecution: React.FC<IProps> = ({
 
         const samplingToolTipDOM = (
             <SamplingTooltip
-                queryExecutionStatus={queryExecution?.status}
+                queryExecution={queryExecution}
                 onSamplingInfoClick={onSamplingInfoClick}
                 hasSamplingTables={hasSamplingTables}
                 cancelQueryExecution={cancelQueryExecution}
