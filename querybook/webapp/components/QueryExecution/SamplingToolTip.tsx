@@ -16,7 +16,7 @@ interface SamplingTooltipProps {
     onSamplingInfoClick?: () => void;
     hasSamplingTables?: boolean;
     cancelQueryExecution: () => any;
-    onRunClick: (sampleRate: number) => any;
+    onRunClick?: (sampleRate: number) => any;
 }
 
 export const SamplingTooltip: React.FC<SamplingTooltipProps> = ({

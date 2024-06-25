@@ -33,7 +33,7 @@ interface IProps {
 
     onSamplingInfoClick?: () => void;
     hasSamplingTables?: boolean;
-    onRunClick: (sampleRate: number) => any;
+    onRunClick?: (sampleRate: number) => any;
 }
 
 function useQueryExecutionReduxState(queryId: number) {
