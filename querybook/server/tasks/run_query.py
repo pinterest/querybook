@@ -41,9 +41,6 @@ def run_query_task(
         executor = create_executor_from_execution(
             query_execution_id, celery_task=self, execution_type=execution_type
         )
-        import time
-
-        time.sleep(5)  # Introduce a 10-second delay here
         run_executor_until_finish(self, executor)
     except SoftTimeLimitExceeded:
         # SoftTimeLimitExceeded
