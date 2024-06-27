@@ -59,15 +59,14 @@ function useQueryExecutionDispatch(queryExecutionId: number) {
     }, [queryExecutionId]);
 
     const pollQueryExecution = useCallback(
-        (docId: number) => {
+        (docId?: number) =>
             dispatch(
                 queryExecutionsActions.pollQueryExecution(
                     queryExecutionId,
                     docId
                 )
-            );
-        },
-        [dispatch, queryExecutionId]
+            ),
+        [queryExecutionId]
     );
 
     const cancelQueryExecution = useCallback(

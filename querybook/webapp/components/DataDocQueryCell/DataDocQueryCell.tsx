@@ -420,9 +420,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             {
                 meta: newMeta,
             },
-            () => {
-                this.onChangeDebounced({ meta: newMeta });
-            }
+            () => this.onChangeDebounced({ meta: newMeta })
         );
     }
 

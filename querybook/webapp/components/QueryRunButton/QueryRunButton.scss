@@ -9,12 +9,6 @@
     .run-selection {
         line-height: 24px;
     }
-    .TableSamplingSelector.highlight {
-        transition: background-color 1s ease;
-        &.highlight {
-            background-color: #fff9c4;
-        }
-    }
 }
 
 .QueryEngineSelector {

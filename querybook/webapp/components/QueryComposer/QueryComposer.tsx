@@ -497,18 +497,6 @@ const QueryComposer: React.FC = () => {
         return getSelectedQuery(query, selectedRange);
     }, [query, queryEditorRef]);
 
-    const getSamplingTables = useCallback(
-        (sampleRate: number) => {
-            const updatedSamplingTables = { ...samplingTables };
-            Object.keys(updatedSamplingTables).forEach((tableName) => {
-                updatedSamplingTables[tableName].sample_rate = sampleRate;
-            });
-            setSamplingTables(updatedSamplingTables);
-            return updatedSamplingTables;
-        },
-        [samplingTables, setSamplingTables]
-    );
-
     const triggerSurvey = useSurveyTrigger();
 
     const handleRunQuery = React.useCallback(async () => {
@@ -528,7 +516,7 @@ const QueryComposer: React.FC = () => {
             templatedVariables,
             engine,
             rowLimit,
-            getSamplingTables(sampleRate),
+            samplingTables,
             sampleRate
         );
 
@@ -564,7 +552,7 @@ const QueryComposer: React.FC = () => {
         engine,
         templatedVariables,
         rowLimit,
-        getSamplingTables,
+        samplingTables,
         triggerSurvey,
         dispatch,
         setExecutionId,
@@ -600,6 +588,7 @@ const QueryComposer: React.FC = () => {
                 if (table?.custom_properties?.sampling) {
                     samplingTables[tableName] = {
                         sampled_table: table.custom_properties?.sampled_table,
+                        sample_rate: sampleRate,
                     };
                 }
             });
