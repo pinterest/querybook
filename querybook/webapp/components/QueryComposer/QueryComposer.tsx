@@ -395,6 +395,14 @@ function useTranspileQuery(
     };
 }
 
+function getQueryExecutionMetadata(sampleRate: number) {
+    const metadata = {};
+    if (sampleRate > 0) {
+        metadata['sample_rate'] = sampleRate;
+    }
+    return Object.keys(metadata).length === 0 ? null : metadata;
+}
+
 const QueryComposer: React.FC = () => {
     useTrackView(ComponentType.ADHOC_QUERY);
     useBrowserTitle('Adhoc Query');
@@ -499,6 +507,8 @@ const QueryComposer: React.FC = () => {
 
     const triggerSurvey = useSurveyTrigger();
 
+    const queryExecutionMetadata = getQueryExecutionMetadata(sampleRate);
+
     const handleRunQuery = React.useCallback(async () => {
         trackClick({
             component: ComponentType.ADHOC_QUERY,
@@ -520,9 +530,6 @@ const QueryComposer: React.FC = () => {
             sampleRate
         );
 
-        const executionMetadata =
-            sampleRate > 0 ? { sample_rate: sampleRate } : null;
-
         const queryId = await runQuery(
             transformedQuery,
             engine.id,
@@ -532,7 +539,7 @@ const QueryComposer: React.FC = () => {
                         query,
                         engineId,
                         null,
-                        executionMetadata
+                        queryExecutionMetadata
                     )
                 );
                 return data.id;
@@ -555,6 +562,7 @@ const QueryComposer: React.FC = () => {
         samplingTables,
         triggerSurvey,
         dispatch,
+        queryExecutionMetadata,
         setExecutionId,
     ]);
 

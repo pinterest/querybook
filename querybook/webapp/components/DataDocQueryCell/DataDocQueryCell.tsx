@@ -460,6 +460,15 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
+    public getQueryExecutionMetadata() {
+        const metadata = {};
+        if (this.sampleRate > 0) {
+            metadata['sample_rate'] = this.sampleRate;
+        }
+        return Object.keys(metadata).length === 0 ? null : metadata;
+    }
+
+    @bind
     public async onRunButtonClick() {
         trackClick({
             component: ComponentType.DATADOC_QUERY_CELL,
@@ -469,8 +478,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 sampleRate: this.sampleRate,
             },
         });
-        const executionMetadata =
-            this.sampleRate > 0 ? { sample_rate: this.sampleRate } : null;
+
         return runQuery(
             await this.getTransformedQuery(),
             this.engineId,
@@ -480,7 +488,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                         query,
                         engineId,
                         this.props.cellId,
-                        executionMetadata
+                        this.getQueryExecutionMetadata()
                     )
                 ).id;
 

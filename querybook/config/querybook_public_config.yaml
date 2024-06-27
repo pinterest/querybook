@@ -36,3 +36,4 @@ table_sampling:
         - 0.1
     default_sample_rate: 0 # 0 means no sampling
     sample_user_guide_link: ''
+    sampling_tool_tip_delay: 10000 # delay duration (ms) of sampling tool tip

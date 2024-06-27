@@ -19,8 +19,10 @@ export const SamplingTooltip: React.FC<SamplingTooltipProps> = ({
     onSamplingInfoClick,
     hasSamplingTables,
 }) => {
-    const queryCanBeSampled =
-        PublicConfig.table_sampling.enabled && hasSamplingTables;
+    const { enabled, sampling_tool_tip_delay: delay } =
+        PublicConfig.table_sampling;
+
+    const queryCanBeSampled = enabled && hasSamplingTables;
 
     const [showSamplingTip, setShowSamplingTip] = useState(false);
 
@@ -29,32 +31,30 @@ export const SamplingTooltip: React.FC<SamplingTooltipProps> = ({
         if (queryCanBeSampled && status <= QueryExecutionStatus.RUNNING) {
             const timer = setTimeout(() => {
                 setShowSamplingTip(true);
-            }, 10000);
+            }, delay);
 
             return () => {
                 clearTimeout(timer);
                 setShowSamplingTip(false);
             };
         }
-    }, [status, id, queryCanBeSampled]);
+    }, [status, id, queryCanBeSampled, delay]);
 
     const samplingTipDOM = showSamplingTip && (
-        <div>
-            <Message size="small" type="warning" className="SamplingToolTip">
-                <div className="flex-row">
-                    <AccentText size="text" color="text">
-                        Hint: Query is running too slow? You can select table
-                        sampling next to the run button right now and get a
-                        faster result.
-                    </AccentText>
-                    <SamplingInfoButton
-                        tooltipPos={'up'}
-                        onSamplingInfoClick={onSamplingInfoClick}
-                        size={16}
-                    />
-                </div>
-            </Message>
-        </div>
+        <Message size="small" type="warning" className="SamplingToolTip">
+            <div className="flex-row">
+                <AccentText size="text" color="text">
+                    Hint: Query is running too slow? You can select table
+                    sampling next to the run button right now and get a faster
+                    result.
+                </AccentText>
+                <SamplingInfoButton
+                    tooltipPos={'up'}
+                    onSamplingInfoClick={onSamplingInfoClick}
+                    size={16}
+                />
+            </div>
+        </Message>
     );
     return samplingTipDOM;
 };
