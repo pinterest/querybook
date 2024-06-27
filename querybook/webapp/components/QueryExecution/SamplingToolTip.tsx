@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { SamplingInfoButton } from 'components/QueryRunButton/QueryRunButton';
 import PublicConfig from 'config/querybook_public_config.yaml';
 import { IQueryExecution, QueryExecutionStatus } from 'const/queryExecution';
+import { Message } from 'ui/Message/Message';
 import { AccentText } from 'ui/StyledText/StyledText';
 
 import './SamplingToolTip.scss';
@@ -38,16 +39,21 @@ export const SamplingTooltip: React.FC<SamplingTooltipProps> = ({
     }, [status, id, queryCanBeSampled]);
 
     const samplingTipDOM = showSamplingTip && (
-        <div className="SamplingToolTip">
-            <AccentText size="text" color="text">
-                Hint: Query is running too slow? You can select table sampling
-                next to the run button right now and get a faster result.
-            </AccentText>
-            <SamplingInfoButton
-                tooltipPos={'up'}
-                onSamplingInfoClick={onSamplingInfoClick}
-                size={16}
-            />
+        <div>
+            <Message size="small" type="warning" className="SamplingToolTip">
+                <div className="flex-row">
+                    <AccentText size="text" color="text">
+                        Hint: Query is running too slow? You can select table
+                        sampling next to the run button right now and get a
+                        faster result.
+                    </AccentText>
+                    <SamplingInfoButton
+                        tooltipPos={'up'}
+                        onSamplingInfoClick={onSamplingInfoClick}
+                        size={16}
+                    />
+                </div>
+            </Message>
         </div>
     );
     return samplingTipDOM;
