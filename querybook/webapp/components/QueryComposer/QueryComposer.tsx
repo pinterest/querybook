@@ -511,66 +511,64 @@ const QueryComposer: React.FC = () => {
 
     const triggerSurvey = useSurveyTrigger();
 
-    const handleRunQuery = React.useCallback(
-        async (sampleRate: number) => {
-            trackClick({
-                component: ComponentType.ADHOC_QUERY,
-                element: ElementType.RUN_QUERY_BUTTON,
-                aux: {
-                    lintError: hasLintErrors,
-                    sampleRate,
-                },
-            });
-            // Throttle to prevent double run
-            await sleep(250);
-            const transformedQuery = await transformQuery(
-                getCurrentSelectedQuery(),
-                engine.language,
-                templatedVariables,
-                engine,
-                rowLimit,
-                getSamplingTables(sampleRate),
-                sampleRate
-            );
-
-            const executionMetadata =
-                sampleRate > 0 ? { sample_rate: sampleRate } : null;
-
-            const queryId = await runQuery(
-                transformedQuery,
-                engine.id,
-                async (query, engineId) => {
-                    const data = await dispatch(
-                        queryExecutionsAction.createQueryExecution(
-                            query,
-                            engineId,
-                            null,
-                            executionMetadata
-                        )
-                    );
-                    return data.id;
-                }
-            );
-            triggerSurvey(SurveySurfaceType.QUERY_AUTHORING, {
-                query_execution_id: queryId,
-            });
-            if (queryId != null) {
-                setExecutionId(queryId);
-                setResultsCollapsed(false);
-            }
-        },
-        [
-            hasLintErrors,
-            getCurrentSelectedQuery,
-            engine,
+    const handleRunQuery = React.useCallback(async () => {
+        trackClick({
+            component: ComponentType.ADHOC_QUERY,
+            element: ElementType.RUN_QUERY_BUTTON,
+            aux: {
+                lintError: hasLintErrors,
+                sampleRate,
+            },
+        });
+        // Throttle to prevent double run
+        await sleep(250);
+        const transformedQuery = await transformQuery(
+            getCurrentSelectedQuery(),
+            engine.language,
             templatedVariables,
+            engine,
             rowLimit,
-            getSamplingTables,
-            triggerSurvey,
-            dispatch,
-            setExecutionId,
-        ]
-    );
+            getSamplingTables(sampleRate),
+            sampleRate
+        );
+
+        const executionMetadata =
+            sampleRate > 0 ? { sample_rate: sampleRate } : null;
+
+        const queryId = await runQuery(
+            transformedQuery,
+            engine.id,
+            async (query, engineId) => {
+                const data = await dispatch(
+                    queryExecutionsAction.createQueryExecution(
+                        query,
+                        engineId,
+                        null,
+                        executionMetadata
+                    )
+                );
+                return data.id;
+            }
+        );
+        triggerSurvey(SurveySurfaceType.QUERY_AUTHORING, {
+            query_execution_id: queryId,
+        });
+        if (queryId != null) {
+            setExecutionId(queryId);
+            setResultsCollapsed(false);
+        }
+    }, [
+        hasLintErrors,
+        sampleRate,
+        getCurrentSelectedQuery,
+        engine,
+        templatedVariables,
+        rowLimit,
+        getSamplingTables,
+        triggerSurvey,
+        dispatch,
+        setExecutionId,
+    ]);
 
     const keyMap = useKeyMap(clickOnRunButton, queryEngines, setEngineId);
 
@@ -671,10 +669,6 @@ const QueryComposer: React.FC = () => {
                         hasSamplingTables={
                             Object.keys(samplingTables).length > 0
                         }
-                        onRunClick={(sampleRate) => {
-                            setSampleRate(sampleRate);
-                            handleRunQuery(sampleRate);
-                        }}
                     />
                 </div>
             </Resizable>
@@ -735,7 +729,7 @@ const QueryComposer: React.FC = () => {
                 queryEngines={queryEngines}
                 engineId={engine?.id}
                 onEngineIdSelect={setEngineId}
-                onRunClick={() => handleRunQuery(sampleRate)}
+                onRunClick={handleRunQuery}
                 hasSelection={editorHasSelection}
                 runButtonTooltipPos={'down'}
                 rowLimit={rowLimit}
@@ -781,7 +775,7 @@ const QueryComposer: React.FC = () => {
                 engineId={engine.id}
                 onRunQueryClick={() => {
                     setShowRenderedTemplateModal(false);
-                    handleRunQuery(sampleRate);
+                    handleRunQuery();
                 }}
                 hasValidator={hasQueryValidators}
             />

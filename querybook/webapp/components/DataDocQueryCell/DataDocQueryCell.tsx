@@ -123,6 +123,7 @@ interface IState {
     tableNamesInQuery: string[];
     samplingTables: ISamplingTables;
     showTableSamplingInfoModal: boolean;
+    showSamplingSelectorHighlight: boolean;
 
     transpilerConfig?: {
         toEngine: IQueryEngine;
@@ -152,6 +153,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             tableNamesInQuery: [],
             samplingTables: {},
             showTableSamplingInfoModal: false,
+            showSamplingSelectorHighlight: false,
         };
     }
 
@@ -409,8 +411,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     @bind
     public handleMetaChange<K extends keyof IDataQueryCellMeta>(
         field: K,
-        value: IDataQueryCellMeta[K],
-        callback?: () => void
+        value: IDataQueryCellMeta[K]
     ) {
         const { meta } = this.state;
         const newMeta = {
@@ -423,9 +424,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             },
             () => {
                 this.onChangeDebounced({ meta: newMeta });
-                if (callback) {
-                    callback();
-                }
             }
         );
     }
@@ -441,11 +439,8 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
-    public handleMetaSampleRateChange(
-        sampleRate: number,
-        callback?: () => void
-    ) {
-        return this.handleMetaChange('sample_rate', sampleRate, callback);
+    public handleMetaSampleRateChange(sampleRate: number) {
+        return this.handleMetaChange('sample_rate', sampleRate);
     }
 
     @bind
@@ -694,6 +689,13 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
+    public toggleShowSamplingSelectorHighlight() {
+        this.setState(({ showSamplingSelectorHighlight }) => ({
+            showSamplingSelectorHighlight: !showSamplingSelectorHighlight,
+        }));
+    }
+
+    @bind
     public toggleShowRenderedTemplateModal() {
         this.setState(({ showRenderedTemplateModal }) => ({
             showRenderedTemplateModal: !showRenderedTemplateModal,
@@ -721,11 +723,11 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         const samplingTables = {};
         Object.keys(tablesByName).forEach((tableName) => {
             const table = tablesByName[tableName];
-            if (table?.custom_properties?.sampling) {
-                samplingTables[tableName] = {
-                    sampled_table: table.custom_properties?.sampled_table,
-                };
-            }
+            // if (table?.custom_properties?.sampling) {
+            samplingTables[tableName] = {
+                sampled_table: table.custom_properties?.sampled_table,
+                // };
+            };
         });
         this.setState({
             samplingTables,
@@ -821,12 +823,16 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                             hasSamplingTables={this.hasSamplingTables}
                             sampleRate={this.sampleRate}
                             onSampleRateChange={
-                                this.hasSamplingTables
-                                    ? this.handleMetaSampleRateChange
-                                    : null
+                                this.handleMetaSampleRateChange
+                                // this.hasSamplingTables
+                                // ? this.handleMetaSampleRateChange
+                                // : null
                             }
                             onTableSamplingInfoClick={
                                 this.toggleShowTableSamplingInfoModal
+                            }
+                            showSamplingSelectorHighlight={
+                                this.state.showSamplingSelectorHighlight
                             }
                         />
                         {this.getAdditionalDropDownButtonDOM()}
@@ -994,12 +1000,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 changeCellContext={isEditable ? this.handleChange : null}
                 onSamplingInfoClick={this.toggleShowTableSamplingInfoModal}
                 hasSamplingTables={this.hasSamplingTables}
-                onRunClick={(sampleRate) => {
-                    this.handleMetaSampleRateChange(
-                        sampleRate,
-                        this.onRunButtonClick.bind(this)
-                    );
-                }}
             />
         );
     }

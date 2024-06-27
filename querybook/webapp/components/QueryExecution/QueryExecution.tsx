@@ -33,7 +33,6 @@ interface IProps {
 
     onSamplingInfoClick?: () => void;
     hasSamplingTables?: boolean;
-    onRunClick?: (sampleRate: number) => any;
 }
 
 function useQueryExecutionReduxState(queryId: number) {
@@ -94,7 +93,6 @@ export const QueryExecution: React.FC<IProps> = ({
 
     onSamplingInfoClick,
     hasSamplingTables,
-    onRunClick,
 }) => {
     const isEditable = useSelector((state: IStoreState) =>
         canCurrentUserEditSelector(state, docId)
@@ -136,7 +134,7 @@ export const QueryExecution: React.FC<IProps> = ({
         if (queryExecution?.status <= QueryExecutionStatus.RUNNING) {
             pollQueryExecution(docId);
         }
-    }, [pollQueryExecution, queryExecution?.status]);
+    }, [queryExecution?.status]);
 
     const getQueryExecutionDOM = () => {
         const { statement_executions: statementExecutionIds } = queryExecution;
@@ -147,8 +145,6 @@ export const QueryExecution: React.FC<IProps> = ({
                 queryExecution={queryExecution}
                 onSamplingInfoClick={onSamplingInfoClick}
                 hasSamplingTables={hasSamplingTables}
-                cancelQueryExecution={cancelQueryExecution}
-                onRunClick={onRunClick}
             />
         );
 
