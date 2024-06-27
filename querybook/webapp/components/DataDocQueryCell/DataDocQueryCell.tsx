@@ -460,6 +460,15 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
+    public getQueryExecutionMetadata() {
+        const metadata = {};
+        if (this.sampleRate > 0) {
+            metadata['sample_rate'] = this.sampleRate;
+        }
+        return Object.keys(metadata).length === 0 ? null : metadata;
+    }
+
+    @bind
     public async onRunButtonClick() {
         trackClick({
             component: ComponentType.DATADOC_QUERY_CELL,
@@ -469,6 +478,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 sampleRate: this.sampleRate,
             },
         });
+
         return runQuery(
             await this.getTransformedQuery(),
             this.engineId,
@@ -478,9 +488,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                         query,
                         engineId,
                         this.props.cellId,
-                        this.sampleRate > 0
-                            ? { sample_rate: this.sampleRate }
-                            : null
+                        this.getQueryExecutionMetadata()
                     )
                 ).id;
 
@@ -548,11 +556,14 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         );
 
         if (renderedQuery) {
+            const executionMetadata =
+                this.sampleRate > 0 ? { sample_rate: this.sampleRate } : null;
+
             return this.props.createQueryExecution(
                 renderedQuery,
                 this.engineId,
                 this.props.cellId,
-                this.sampleRate > 0 ? { sample_rate: this.sampleRate } : null
+                executionMetadata
             );
         }
     }
@@ -980,6 +991,8 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 cellId={cellId}
                 isQueryCollapsed={this.queryCollapsed}
                 changeCellContext={isEditable ? this.handleChange : null}
+                onSamplingInfoClick={this.toggleShowTableSamplingInfoModal}
+                hasSamplingTables={this.hasSamplingTables}
             />
         );
     }

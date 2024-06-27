@@ -225,6 +225,20 @@ export const QueryEngineSelector: React.FC<IQueryEngineSelectorProps> = ({
     );
 };
 
+export const SamplingInfoButton: React.FC<{
+    tooltipPos: TooltipDirection;
+    onSamplingInfoClick: () => void;
+    size: number;
+}> = ({ tooltipPos, onSamplingInfoClick, size }) => (
+    <div
+        className="flex-center"
+        aria-label="Click to see how table sampling works"
+        data-balloon-pos={tooltipPos}
+    >
+        <IconButton icon="Info" size={size} onClick={onSamplingInfoClick} />
+    </div>
+);
+
 const rowLimitOptions = ROW_LIMIT_SCALE.map((value) => ({
     label: formatNumber(value),
     value,
@@ -314,17 +328,11 @@ const TableSamplingSelector: React.FC<{
         <Dropdown
             customButtonRenderer={() => (
                 <div className="flex-row">
-                    <div
-                        className="flex-center"
-                        aria-label="Click to see how table sampling works"
-                        data-balloon-pos={tooltipPos}
-                    >
-                        <IconButton
-                            icon="Info"
-                            size={20}
-                            onClick={onTableSamplingInfoClick}
-                        />
-                    </div>
+                    <SamplingInfoButton
+                        tooltipPos={tooltipPos}
+                        onSamplingInfoClick={onTableSamplingInfoClick}
+                        size={20}
+                    />
                     <div
                         className="flex-center"
                         aria-label="Only applies to tables support sampling"

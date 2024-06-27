@@ -42,7 +42,7 @@ import { useTrackView } from 'hooks/useTrackView';
 import { trackClick } from 'lib/analytics';
 import { createSQLLinter } from 'lib/codemirror/codemirror-lint';
 import { replaceStringIndices, searchText } from 'lib/data-doc/search';
-import { getSelectedQuery, IRange, TableToken } from 'lib/sql-helper/sql-lexer';
+import { getSelectedQuery, IRange } from 'lib/sql-helper/sql-lexer';
 import { DEFAULT_ROW_LIMIT } from 'lib/sql-helper/sql-limiter';
 import { getPossibleTranspilers } from 'lib/templated-query/transpile';
 import { enableResizable, getQueryEngineId, sleep } from 'lib/utils';
@@ -395,6 +395,14 @@ function useTranspileQuery(
     };
 }
 
+function getQueryExecutionMetadata(sampleRate: number) {
+    const metadata = {};
+    if (sampleRate > 0) {
+        metadata['sample_rate'] = sampleRate;
+    }
+    return Object.keys(metadata).length === 0 ? null : metadata;
+}
+
 const QueryComposer: React.FC = () => {
     useTrackView(ComponentType.ADHOC_QUERY);
     useBrowserTitle('Adhoc Query');
@@ -498,6 +506,9 @@ const QueryComposer: React.FC = () => {
     }, [query, queryEditorRef]);
 
     const triggerSurvey = useSurveyTrigger();
+
+    const queryExecutionMetadata = getQueryExecutionMetadata(sampleRate);
+
     const handleRunQuery = React.useCallback(async () => {
         trackClick({
             component: ComponentType.ADHOC_QUERY,
@@ -528,7 +539,7 @@ const QueryComposer: React.FC = () => {
                         query,
                         engineId,
                         null,
-                        sampleRate > 0 ? { sample_rate: sampleRate } : null
+                        queryExecutionMetadata
                     )
                 );
                 return data.id;
@@ -542,16 +553,17 @@ const QueryComposer: React.FC = () => {
             setResultsCollapsed(false);
         }
     }, [
-        rowLimit,
+        hasLintErrors,
         sampleRate,
-        samplingTables,
+        getCurrentSelectedQuery,
         engine,
         templatedVariables,
-        dispatch,
-        getCurrentSelectedQuery,
-        setExecutionId,
-        hasLintErrors,
+        rowLimit,
+        samplingTables,
         triggerSurvey,
+        dispatch,
+        queryExecutionMetadata,
+        setExecutionId,
     ]);
 
     const keyMap = useKeyMap(clickOnRunButton, queryEngines, setEngineId);
@@ -584,6 +596,7 @@ const QueryComposer: React.FC = () => {
                 if (table?.custom_properties?.sampling) {
                     samplingTables[tableName] = {
                         sampled_table: table.custom_properties?.sampled_table,
+                        sample_rate: sampleRate,
                     };
                 }
             });
@@ -645,7 +658,15 @@ const QueryComposer: React.FC = () => {
                     >
                         <IconButton icon="ChevronDown" noPadding />
                     </div>
-                    <QueryComposerExecution id={executionId} />
+                    <QueryComposerExecution
+                        id={executionId}
+                        onSamplingInfoClick={() =>
+                            setShowTableSamplingInfoModal(true)
+                        }
+                        hasSamplingTables={
+                            Object.keys(samplingTables).length > 0
+                        }
+                    />
                 </div>
             </Resizable>
         );
@@ -672,7 +693,7 @@ const QueryComposer: React.FC = () => {
             query={getCurrentSelectedQuery()}
             language={engine.language}
             samplingTables={samplingTables}
-            onHide={() => setShowRenderedTemplateModal(false)}
+            onHide={() => setShowTableSamplingInfoModal(false)}
         />
     );
 
