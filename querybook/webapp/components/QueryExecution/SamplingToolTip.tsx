@@ -24,13 +24,16 @@ export const SamplingTooltip: React.FC<SamplingTooltipProps> = ({
     const { enabled, sampling_tool_tip_delay: delay } =
         PublicConfig.table_sampling;
 
-    const queryCanBeSampled = enabled && hasSamplingTables && sampleRate <= 0;
-
     const [showSamplingTip, setShowSamplingTip] = useState(false);
 
     // If query run longer than 10 seconds, we show a suggestion to users they can sample their query
     useEffect(() => {
-        if (queryCanBeSampled && status <= QueryExecutionStatus.RUNNING) {
+        if (
+            enabled &&
+            hasSamplingTables &&
+            sampleRate <= 0 &&
+            status <= QueryExecutionStatus.RUNNING
+        ) {
             const timer = setTimeout(() => {
                 setShowSamplingTip(true);
             }, delay);
@@ -40,7 +43,7 @@ export const SamplingTooltip: React.FC<SamplingTooltipProps> = ({
                 setShowSamplingTip(false);
             };
         }
-    }, [status, id, queryCanBeSampled, delay]);
+    }, [id, delay, enabled, hasSamplingTables, sampleRate, status]);
 
     const samplingTipDOM = showSamplingTip && (
         <Message size="small" type="warning" className="SamplingToolTip">
