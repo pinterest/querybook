@@ -12,17 +12,19 @@ interface SamplingTooltipProps {
     queryExecution: IQueryExecution;
     onSamplingInfoClick?: () => void;
     hasSamplingTables?: boolean;
+    sampleRate: number;
 }
 
 export const SamplingTooltip: React.FC<SamplingTooltipProps> = ({
     queryExecution: { status, id },
     onSamplingInfoClick,
     hasSamplingTables,
+    sampleRate,
 }) => {
     const { enabled, sampling_tool_tip_delay: delay } =
         PublicConfig.table_sampling;
 
-    const queryCanBeSampled = enabled && hasSamplingTables;
+    const queryCanBeSampled = enabled && hasSamplingTables && sampleRate <= 0;
 
     const [showSamplingTip, setShowSamplingTip] = useState(false);
 

@@ -993,6 +993,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 changeCellContext={isEditable ? this.handleChange : null}
                 onSamplingInfoClick={this.toggleShowTableSamplingInfoModal}
                 hasSamplingTables={this.hasSamplingTables}
+                sampleRate={this.sampleRate}
             />
         );
     }

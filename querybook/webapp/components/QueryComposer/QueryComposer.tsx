@@ -666,6 +666,7 @@ const QueryComposer: React.FC = () => {
                         hasSamplingTables={
                             Object.keys(samplingTables).length > 0
                         }
+                        sampleRate={sampleRate}
                     />
                 </div>
             </Resizable>

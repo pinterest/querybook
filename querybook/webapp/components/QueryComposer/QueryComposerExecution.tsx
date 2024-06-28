@@ -17,12 +17,14 @@ interface IProps {
     id: number;
     onSamplingInfoClick?: () => void;
     hasSamplingTables?: boolean;
+    sampleRate: number;
 }
 
 export const QueryComposerExecution: React.FunctionComponent<IProps> = ({
     id,
     onSamplingInfoClick,
     hasSamplingTables,
+    sampleRate,
 }) => {
     const execution = useSelector(
         (state: IStoreState) => state.queryExecutions.queryExecutionById[id]
@@ -61,6 +63,7 @@ export const QueryComposerExecution: React.FunctionComponent<IProps> = ({
                 id={id}
                 onSamplingInfoClick={onSamplingInfoClick}
                 hasSamplingTables={hasSamplingTables}
+                sampleRate={sampleRate}
             />
         </div>
     );
