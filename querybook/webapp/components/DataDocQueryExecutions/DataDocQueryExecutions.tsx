@@ -27,6 +27,7 @@ interface IProps {
 
     onSamplingInfoClick?: () => void;
     hasSamplingTables?: boolean;
+    sampleRate: number;
 }
 
 export const DataDocQueryExecutions: React.FunctionComponent<IProps> =
@@ -38,6 +39,7 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> =
             isQueryCollapsed,
             onSamplingInfoClick,
             hasSamplingTables,
+            sampleRate,
         }) => {
             const { cellIdToExecutionId, onQueryCellSelectExecution } =
                 useContext(DataDocContext);
@@ -155,6 +157,7 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> =
                     changeCellContext={changeCellContext}
                     onSamplingInfoClick={onSamplingInfoClick}
                     hasSamplingTables={hasSamplingTables}
+                    sampleRate={sampleRate}
                 />
             );
 
