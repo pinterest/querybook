@@ -26,6 +26,7 @@ import {
 } from 'lib/data-doc/datadoc-permission';
 import dataDocSocket from 'lib/data-doc/datadoc-socketio';
 import { convertRawToContentState } from 'lib/richtext/serialize';
+import { DEFAULT_ROW_LIMIT } from 'lib/sql-helper/sql-limiter';
 import { getQueryEngineId } from 'lib/utils';
 import {
     DataDocAccessRequestResource,
@@ -308,9 +309,11 @@ export function insertDataDocCell(
                           queryEngineIds
                       );
             const engine = meta?.['engine'] ?? defaultQueryEngine;
+            const limit = meta?.['limit'] ?? DEFAULT_ROW_LIMIT;
             meta = {
                 ...meta,
                 engine,
+                limit,
             };
         }
 

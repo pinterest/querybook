@@ -5,10 +5,6 @@ import { ISamplingTables, TDataDocMetaVariables } from 'const/datadoc';
 import { IQueryEngine } from 'const/queryEngine';
 import { sendConfirm } from 'lib/querybookUI';
 import { getDroppedTables } from 'lib/sql-helper/sql-checker';
-import {
-    getLimitedQuery,
-    hasQueryContainUnlimitedSelect,
-} from 'lib/sql-helper/sql-limiter';
 import { renderTemplatedQuery } from 'lib/templated-query';
 import { Nullable } from 'lib/typescript';
 import { formatError } from 'lib/utils/error';
@@ -39,20 +35,51 @@ export async function transformQuery(
         return '';
     }
 
-    const sampledQuery = await transformTableSamplingQuery(
+    const rowLimitEnabled = engine.feature_params?.row_limit ?? false;
+
+    const { data } = await QueryTransformResource.getTransformedQuery(
         templatizedQuery,
         language,
-        samplingTables,
-        sampleRate
+        rowLimitEnabled ? rowLimit ?? -1 : -1,
+        sampleRate === 0 ? null : samplingTables
     );
 
-    const limitedQuery = await transformLimitedQuery(
-        sampledQuery,
-        rowLimit,
-        engine
-    );
+    const { query: transformedQuery, unlimited_select: unlimitedSelectQuery } =
+        data;
 
-    return limitedQuery;
+    if (!unlimitedSelectQuery || !rowLimitEnabled) {
+        return transformedQuery;
+    }
+
+    // Show a warning modal if the query is unbounded to let user confirm what they are doing
+    return new Promise<string>((resolve, reject) => {
+        sendConfirm({
+            header: 'Your SELECT query is unbounded',
+            message: (
+                <Content>
+                    <div>
+                        The following SELECT statement has no limit. Please make
+                        sure you intend to get all the rows returned.
+                    </div>
+                    <div>
+                        <i>
+                            Tip: to avoid seeing this message, add a LIMIT in
+                            the query or set a limit value on the left of the
+                            run button.
+                        </i>
+                    </div>
+                    <pre>
+                        <code>
+                            <ShowMoreText text={unlimitedSelectQuery} />
+                        </code>
+                    </pre>
+                </Content>
+            ),
+            onConfirm: () => resolve(transformedQuery),
+            onDismiss: () => reject(),
+            confirmText: 'Run without LIMIT',
+        });
+    });
 }
 
 export async function runQuery(
@@ -85,79 +112,6 @@ async function transformTemplatedQuery(
             }
         );
     }
-}
-
-async function transformLimitedQuery(
-    query: string,
-    rowLimit: Nullable<number>,
-    engine: IQueryEngine
-) {
-    if (!engine.feature_params?.row_limit) {
-        return query;
-    }
-
-    if (rowLimit != null && rowLimit >= 0) {
-        return getLimitedQuery(query, rowLimit, engine.language);
-    }
-
-    // query is unlimited but engine has row limit feature turned on
-
-    const unlimitedSelectQuery = hasQueryContainUnlimitedSelect(
-        query,
-        engine.language
-    );
-
-    if (!unlimitedSelectQuery) {
-        return query;
-    }
-
-    // Show a warning modal to let user confirm what they are doing
-    return new Promise<string>((resolve, reject) => {
-        sendConfirm({
-            header: 'Your SELECT query is unbounded',
-            message: (
-                <Content>
-                    <div>
-                        The following SELECT statement has no limit. Please make
-                        sure you intend to get all the rows returned.
-                    </div>
-                    <div>
-                        <i>
-                            Tip: to avoid seeing this message, add a LIMIT in
-                            the query or set a limit value on the left of the
-                            run button.
-                        </i>
-                    </div>
-                    <pre>
-                        <code>
-                            <ShowMoreText text={unlimitedSelectQuery} />
-                        </code>
-                    </pre>
-                </Content>
-            ),
-            onConfirm: () => resolve(query),
-            onDismiss: () => reject(),
-            confirmText: 'Run without LIMIT',
-        });
-    });
-}
-
-async function transformTableSamplingQuery(
-    query: string,
-    language: string,
-    tables: Record<string, { sampled_table?: string; sample_rate?: number }>,
-    sampleRate: Nullable<number>
-) {
-    if (sampleRate == null || sampleRate <= 0) {
-        return query;
-    }
-
-    const { data } = await QueryTransformResource.getSampledQuery(
-        query,
-        language,
-        tables
-    );
-    return data;
 }
 
 async function confirmIfDroppingTablesThenRunQuery(
