@@ -105,15 +105,16 @@ export const QueryRunButton = React.forwardRef<
             />
         );
 
-        const tableSamplingDOM =
-            !disabled && TABLE_SAMPLING_CONFIG.enabled && hasSamplingTables ? (
-                <TableSamplingSelector
-                    sampleRate={sampleRate}
-                    setSampleRate={onSampleRateChange}
-                    tooltipPos={runButtonTooltipPos}
-                    onTableSamplingInfoClick={onTableSamplingInfoClick}
-                />
-            ) : null;
+        const tableSamplingDOM = (
+            // !disabled && TABLE_SAMPLING_CONFIG.enabled && hasSamplingTables ? (
+            <TableSamplingSelector
+                sampleRate={sampleRate}
+                setSampleRate={onSampleRateChange}
+                tooltipPos={runButtonTooltipPos}
+                onTableSamplingInfoClick={onTableSamplingInfoClick}
+            />
+        );
+        // ) : null;
 
         const isRowLimitEnabled =
             queryEngineById[engineId]?.feature_params.row_limit;
