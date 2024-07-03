@@ -87,9 +87,10 @@ def create_query_execution(
 
         try:
             run_query_task.apply_async(
-                args=[
-                    query_execution.id,
-                ]
+                kwargs={
+                    "query_execution_id": query_execution.id,
+                    "api_access_token": current_user.api_access_token,
+                },
             )
             query_execution_dict = query_execution.to_dict()
 

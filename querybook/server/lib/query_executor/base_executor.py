@@ -502,10 +502,12 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
         statement_ranges,
         client_setting,
         execution_type,
+        api_access_token=False,
     ):
         self._query = query
         self._query_execution_id = query_execution_id
         self._execution_type = execution_type
+        self._api_access_token = api_access_token
 
         if self.SINGLE_QUERY_QUERY_ENGINE():
             self._statement_ranges = [[0, len(query)]]

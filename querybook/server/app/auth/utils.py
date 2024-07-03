@@ -19,8 +19,13 @@ class AuthenticationError(Exception):
 
 
 class AuthUser(UserMixin):
-    def __init__(self, user: User):
+    def __init__(self, user: User, api_access_token=False):
         self._user_dict = user.to_dict(with_roles=True)
+        self._api_access_token = api_access_token
+
+    @property
+    def api_access_token(self):
+        return self._api_access_token
 
     @property
     def id(self):
@@ -72,7 +77,7 @@ def load_user_with_api_access_token(request):
             if token_validation:
                 if token_validation.enabled:
                     user = get_user_by_id(token_validation.creator_uid, session=session)
-                    return AuthUser(user)
+                    return AuthUser(user, api_access_token=True)
                 else:
                     flask.abort(
                         UNAUTHORIZED_STATUS_CODE, description="Token is disabled."
