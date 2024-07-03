@@ -18,11 +18,7 @@ LOG = get_logger(__file__)
 
 @with_session
 def create_executor_from_execution(
-    query_execution_id,
-    celery_task,
-    execution_type,
-    api_access_token=False,
-    session=None,
+    query_execution_id, celery_task, execution_type, session=None
 ):
     executor_params, engine = _get_executor_params_and_engine(
         query_execution_id,
@@ -30,8 +26,6 @@ def create_executor_from_execution(
         execution_type=execution_type,
         session=session,
     )
-    executor_params["api_access_token"] = api_access_token
-
     executor = get_executor_class(engine.language, engine.executor)(**executor_params)
     return executor
 

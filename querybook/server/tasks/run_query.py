@@ -29,10 +29,7 @@ LOG = get_task_logger(__name__)
     acks_late=True,
 )
 def run_query_task(
-    self,
-    query_execution_id,
-    execution_type=QueryExecutionType.ADHOC.value,
-    api_access_token=False,
+    self, query_execution_id, execution_type=QueryExecutionType.ADHOC.value
 ):
     stats_logger.incr(QUERY_EXECUTIONS, tags={"execution_type": execution_type})
 
@@ -42,10 +39,7 @@ def run_query_task(
 
     try:
         executor = create_executor_from_execution(
-            query_execution_id,
-            celery_task=self,
-            execution_type=execution_type,
-            api_access_token=api_access_token,
+            query_execution_id, celery_task=self, execution_type=execution_type
         )
         run_executor_until_finish(self, executor)
     except SoftTimeLimitExceeded:

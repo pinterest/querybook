@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import abort, Response, redirect
+from flask import abort, Response, redirect, request
 from flask_login import current_user
 
 from app.flask_app import socketio
@@ -72,10 +72,14 @@ def create_query_execution(
             query=query, engine_id=engine_id, uid=uid, session=session
         )
 
-        if metadata:
-            logic.create_query_execution_metadata(
-                query_execution.id, metadata, session=session
-            )
+        api_access_token = (
+            True if request.headers.get("api-access-token", None) else False
+        )
+        metadata = metadata or {}
+        metadata["api_access_token"] = api_access_token
+        logic.create_query_execution_metadata(
+            query_execution.id, metadata, session=session
+        )
 
         data_doc = None
         if data_cell_id:
@@ -87,10 +91,9 @@ def create_query_execution(
 
         try:
             run_query_task.apply_async(
-                kwargs={
-                    "query_execution_id": query_execution.id,
-                    "api_access_token": current_user.api_access_token,
-                },
+                args=[
+                    query_execution.id,
+                ]
             )
             query_execution_dict = query_execution.to_dict()
 

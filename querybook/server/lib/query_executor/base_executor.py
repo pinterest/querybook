@@ -502,12 +502,10 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
         statement_ranges,
         client_setting,
         execution_type,
-        api_access_token=False,
     ):
         self._query = query
         self._query_execution_id = query_execution_id
         self._execution_type = execution_type
-        self._api_access_token = api_access_token
 
         if self.SINGLE_QUERY_QUERY_ENGINE():
             self._statement_ranges = [[0, len(query)]]
@@ -529,6 +527,16 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
         self._client_setting = client_setting
         self._client = None
         self._cursor = None
+
+        with DBSession() as session:
+            query_execution_metadata = (
+                qe_logic.get_query_execution_metadata_by_execution_id(
+                    self._query_execution_id, session=session
+                ).execution_metadata
+            )
+            self._api_access_token = query_execution_metadata.get(
+                "api_access_token", False
+            )
 
     def __del__(self):
         del self._logger
