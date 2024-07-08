@@ -163,7 +163,11 @@ const useRowLimit = (dispatch: Dispatch, environmentId: number) => {
     return { rowLimit, setRowLimit };
 };
 
-const useTableSampleRate = (dispatch: Dispatch, environmentId: number) => {
+const useTableSampleRate = (
+    dispatch: Dispatch,
+    environmentId: number,
+    samplingTables: Record<string, any>
+) => {
     const sampleRate = useSelector(
         (state: IStoreState) => state.adhocQuery[environmentId]?.sampleRate ?? 0
     );
@@ -178,7 +182,19 @@ const useTableSampleRate = (dispatch: Dispatch, environmentId: number) => {
         [dispatch, environmentId]
     );
 
-    return { sampleRate, setSampleRate };
+    const getSampleRate = useCallback(
+        () => (Object.keys(samplingTables).length > 0 ? sampleRate : -1),
+        [sampleRate, samplingTables]
+    );
+
+    const getSamplingTables = useCallback(() => {
+        Object.keys(samplingTables).forEach((tableName) => {
+            samplingTables[tableName].sample_rate = getSampleRate();
+        });
+        return samplingTables;
+    }, [getSampleRate, samplingTables]);
+
+    return { setSampleRate, getSampleRate, getSamplingTables };
 };
 
 const useTemplatedVariables = (dispatch: Dispatch, environmentId: number) => {
@@ -395,14 +411,6 @@ function useTranspileQuery(
     };
 }
 
-function getQueryExecutionMetadata(sampleRate: number) {
-    const metadata = {};
-    if (sampleRate > 0) {
-        metadata['sample_rate'] = sampleRate;
-    }
-    return Object.keys(metadata).length === 0 ? null : metadata;
-}
-
 const QueryComposer: React.FC = () => {
     useTrackView(ComponentType.ADHOC_QUERY);
     useBrowserTitle('Adhoc Query');
@@ -421,12 +429,9 @@ const QueryComposer: React.FC = () => {
         environmentId
     );
     const { rowLimit, setRowLimit } = useRowLimit(dispatch, environmentId);
-    const { sampleRate, setSampleRate } = useTableSampleRate(
-        dispatch,
-        environmentId
-    );
     const [samplingTables, setSamplingTables] = useState({});
-
+    const { setSampleRate, getSampleRate, getSamplingTables } =
+        useTableSampleRate(dispatch, environmentId, samplingTables);
     const [resultsCollapsed, setResultsCollapsed] = useState(false);
 
     const { searchAndReplaceProps, searchAndReplaceRef } =
@@ -507,9 +512,22 @@ const QueryComposer: React.FC = () => {
 
     const triggerSurvey = useSurveyTrigger();
 
-    const queryExecutionMetadata = getQueryExecutionMetadata(sampleRate);
+    const getQueryExecutionMetadata = useCallback(() => {
+        const metadata = {};
+
+        const sampleRate = getSampleRate();
+        if (sampleRate > 0) {
+            metadata['sample_rate'] = sampleRate;
+        }
+
+        return Object.keys(metadata).length === 0 ? null : metadata;
+    }, [getSampleRate]);
 
     const handleRunQuery = React.useCallback(async () => {
+        const sampleRate = getSampleRate();
+        const samplingTables = getSamplingTables();
+        const queryExecutionMetadata = getQueryExecutionMetadata();
+
         trackClick({
             component: ComponentType.ADHOC_QUERY,
             element: ElementType.RUN_QUERY_BUTTON,
@@ -520,6 +538,7 @@ const QueryComposer: React.FC = () => {
         });
         // Throttle to prevent double run
         await sleep(250);
+
         const transformedQuery = await transformQuery(
             getCurrentSelectedQuery(),
             engine.language,
@@ -553,16 +572,16 @@ const QueryComposer: React.FC = () => {
             setResultsCollapsed(false);
         }
     }, [
+        getSampleRate,
+        getSamplingTables,
+        getQueryExecutionMetadata,
         hasLintErrors,
-        sampleRate,
         getCurrentSelectedQuery,
         engine,
         templatedVariables,
         rowLimit,
-        samplingTables,
         triggerSurvey,
         dispatch,
-        queryExecutionMetadata,
         setExecutionId,
     ]);
 
@@ -596,7 +615,6 @@ const QueryComposer: React.FC = () => {
                 if (table?.custom_properties?.sampling) {
                     samplingTables[tableName] = {
                         sampled_table: table.custom_properties?.sampled_table,
-                        sample_rate: sampleRate,
                     };
                 }
             });
@@ -666,6 +684,7 @@ const QueryComposer: React.FC = () => {
                         hasSamplingTables={
                             Object.keys(samplingTables).length > 0
                         }
+                        sampleRate={getSampleRate()}
                     />
                 </div>
             </Resizable>
@@ -692,7 +711,7 @@ const QueryComposer: React.FC = () => {
         <DataDocTableSamplingInfo
             query={getCurrentSelectedQuery()}
             language={engine.language}
-            samplingTables={samplingTables}
+            samplingTables={getSamplingTables()}
             onHide={() => setShowTableSamplingInfoModal(false)}
         />
     );
@@ -732,7 +751,7 @@ const QueryComposer: React.FC = () => {
                 rowLimit={rowLimit}
                 onRowLimitChange={setRowLimit}
                 hasSamplingTables={Object.keys(samplingTables).length > 0}
-                sampleRate={sampleRate}
+                sampleRate={getSampleRate()}
                 onSampleRateChange={setSampleRate}
                 onTableSamplingInfoClick={() =>
                     setShowTableSamplingInfoModal(true)
