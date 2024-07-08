@@ -528,15 +528,17 @@ class QueryExecutorBaseClass(metaclass=ABCMeta):
         self._client = None
         self._cursor = None
 
-        with DBSession() as session:
-            query_execution_metadata = (
-                qe_logic.get_query_execution_metadata_by_execution_id(
-                    self._query_execution_id, session=session
-                ).execution_metadata
+        query_execution_metadata = (
+            qe_logic.get_query_execution_metadata_by_execution_id(
+                self._query_execution_id
             )
-            self._api_access_token = query_execution_metadata.get(
-                "api_access_token", False
+        )
+        if query_execution_metadata:
+            self._used_api_token = query_execution_metadata.execution_metadata.get(
+                "used_api_token", False
             )
+        else:
+            self._used_api_token = False
 
     def __del__(self):
         del self._logger

@@ -72,14 +72,14 @@ def create_query_execution(
             query=query, engine_id=engine_id, uid=uid, session=session
         )
 
-        api_access_token = (
-            True if request.headers.get("api-access-token", None) else False
-        )
         metadata = metadata or {}
-        metadata["api_access_token"] = api_access_token
-        logic.create_query_execution_metadata(
-            query_execution.id, metadata, session=session
-        )
+        used_api_token = request.headers.get("api-access-token") is not None
+        if used_api_token:
+            metadata["used_api_token"] = used_api_token
+        if metadata:
+            logic.create_query_execution_metadata(
+                query_execution.id, metadata, session=session
+            )
 
         data_doc = None
         if data_cell_id:
