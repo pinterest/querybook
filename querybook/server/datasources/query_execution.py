@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import abort, Response, redirect
+from flask import abort, Response, redirect, request
 from flask_login import current_user
 
 from app.flask_app import socketio
@@ -72,6 +72,10 @@ def create_query_execution(
             query=query, engine_id=engine_id, uid=uid, session=session
         )
 
+        metadata = metadata or {}
+        used_api_token = request.headers.get("api-access-token") is not None
+        if used_api_token:
+            metadata["used_api_token"] = used_api_token
         if metadata:
             logic.create_query_execution_metadata(
                 query_execution.id, metadata, session=session
