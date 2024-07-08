@@ -194,7 +194,7 @@ const useTableSampleRate = (
         return samplingTables;
     }, [getSampleRate, samplingTables]);
 
-    return { sampleRate, setSampleRate, getSampleRate, getSamplingTables };
+    return { setSampleRate, getSampleRate, getSamplingTables };
 };
 
 const useTemplatedVariables = (dispatch: Dispatch, environmentId: number) => {
@@ -430,7 +430,7 @@ const QueryComposer: React.FC = () => {
     );
     const { rowLimit, setRowLimit } = useRowLimit(dispatch, environmentId);
     const [samplingTables, setSamplingTables] = useState({});
-    const { sampleRate, setSampleRate, getSampleRate, getSamplingTables } =
+    const { setSampleRate, getSampleRate, getSamplingTables } =
         useTableSampleRate(dispatch, environmentId, samplingTables);
     const [resultsCollapsed, setResultsCollapsed] = useState(false);
 
@@ -684,7 +684,7 @@ const QueryComposer: React.FC = () => {
                         hasSamplingTables={
                             Object.keys(samplingTables).length > 0
                         }
-                        sampleRate={sampleRate}
+                        sampleRate={getSampleRate()}
                     />
                 </div>
             </Resizable>
