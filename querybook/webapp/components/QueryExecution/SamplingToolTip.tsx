@@ -32,7 +32,7 @@ export const SamplingTooltip: React.FC<SamplingTooltipProps> = ({
             enabled &&
             hasSamplingTables &&
             sampleRate <= 0 &&
-            status <= QueryExecutionStatus.RUNNING
+            status === QueryExecutionStatus.RUNNING
         ) {
             const timer = setTimeout(() => {
                 setShowSamplingTip(true);

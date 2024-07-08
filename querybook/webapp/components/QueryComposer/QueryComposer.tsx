@@ -163,7 +163,11 @@ const useRowLimit = (dispatch: Dispatch, environmentId: number) => {
     return { rowLimit, setRowLimit };
 };
 
-const useTableSampleRate = (dispatch: Dispatch, environmentId: number) => {
+const useTableSampleRate = (
+    dispatch: Dispatch,
+    environmentId: number,
+    samplingTables: Record<string, any>
+) => {
     const sampleRate = useSelector(
         (state: IStoreState) => state.adhocQuery[environmentId]?.sampleRate ?? 0
     );
@@ -178,7 +182,19 @@ const useTableSampleRate = (dispatch: Dispatch, environmentId: number) => {
         [dispatch, environmentId]
     );
 
-    return { sampleRate, setSampleRate };
+    const getSampleRate = useCallback(
+        () => (Object.keys(samplingTables).length > 0 ? sampleRate : -1),
+        [sampleRate, samplingTables]
+    );
+
+    const getSamplingTables = useCallback(() => {
+        Object.keys(samplingTables).forEach((tableName) => {
+            samplingTables[tableName].sample_rate = getSampleRate();
+        });
+        return samplingTables;
+    }, [getSampleRate, samplingTables]);
+
+    return { sampleRate, setSampleRate, getSampleRate, getSamplingTables };
 };
 
 const useTemplatedVariables = (dispatch: Dispatch, environmentId: number) => {
@@ -413,12 +429,9 @@ const QueryComposer: React.FC = () => {
         environmentId
     );
     const { rowLimit, setRowLimit } = useRowLimit(dispatch, environmentId);
-    const { sampleRate, setSampleRate } = useTableSampleRate(
-        dispatch,
-        environmentId
-    );
     const [samplingTables, setSamplingTables] = useState({});
-
+    const { sampleRate, setSampleRate, getSampleRate, getSamplingTables } =
+        useTableSampleRate(dispatch, environmentId, samplingTables);
     const [resultsCollapsed, setResultsCollapsed] = useState(false);
 
     const { searchAndReplaceProps, searchAndReplaceRef } =
@@ -498,18 +511,6 @@ const QueryComposer: React.FC = () => {
     }, [query, queryEditorRef]);
 
     const triggerSurvey = useSurveyTrigger();
-
-    const getSampleRate = useCallback(
-        () => (Object.keys(samplingTables).length > 0 ? sampleRate : -1),
-        [sampleRate, samplingTables]
-    );
-
-    const getSamplingTables = useCallback(() => {
-        Object.keys(samplingTables).forEach((tableName) => {
-            samplingTables[tableName].sample_rate = getSampleRate();
-        });
-        return samplingTables;
-    }, [getSampleRate, samplingTables]);
 
     const getQueryExecutionMetadata = useCallback(() => {
         const metadata = {};
