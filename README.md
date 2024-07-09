@@ -24,7 +24,7 @@ Please install Docker before trying out Querybook.
 
 ## Quick setup
 
-Pull this repo and run `make`. Visit https://localhost:10001 when the build completes.
+Pull this repo and run `make`. Visit http://localhost:10001 when the build completes.
 
 For more details on installation, [click here](docs_website/docs/setup_guide/overview.mdx)
 
