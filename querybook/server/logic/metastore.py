@@ -351,7 +351,9 @@ def create_table_warnings(
                 "message": message,
                 "severity": severity,
                 "table_id": table_id,
-            }
+            },
+            commit=False,
+            session=session,
         )
     if commit:
         session.commit()

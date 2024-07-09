@@ -400,7 +400,10 @@ class BaseMetastoreLoader(metaclass=ABCMeta):
                 )
 
             delete_column_not_in_metastore(
-                table_id, set(map(lambda c: c.name, columns)), session=session
+                table_id,
+                set(map(lambda c: c.name, columns)),
+                commit=False,
+                session=session,
             )
 
             for column in columns:
@@ -630,11 +633,14 @@ def delete_table_not_in_metastore(schema_id, table_names, session=None):
 
 
 @with_session
-def delete_column_not_in_metastore(table_id, column_names, session=None):
+def delete_column_not_in_metastore(table_id, column_names, commit=True, session=None):
     db_columns = get_column_by_table_id(table_id, session=session)
 
     for column in db_columns:
         if column.name not in column_names:
             delete_column(id=column.id, commit=False, session=session)
             LOG.info("deleted column %d" % column.id)
-    session.commit()
+    if commit:
+        session.commit()
+    else:
+        session.flush()
