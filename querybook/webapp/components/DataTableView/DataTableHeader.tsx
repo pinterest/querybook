@@ -29,6 +29,8 @@ import { Tag } from 'ui/Tag/Tag';
 import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
 
 import './DataTableHeader.scss';
+import { Icon } from 'ui/Icon/Icon';
+import { TopTierCrown } from 'components/TopTierCrown/TopTierCrown';
 
 export interface IDataTableHeader {
     table: IDataTable;
@@ -89,10 +91,15 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
                 onClick={updateDataTableGolden}
                 title={table.golden ? 'Top Tier' : 'Make Top Tier'}
                 size="small"
+                icon="Crown"
             />
         );
     } else if (table.golden) {
-        featuredBadge = <Tag>Top Tier</Tag>;
+        featuredBadge = (
+            <Tag>
+                Top Tier <TopTierCrown />
+            </Tag>
+        );
     }
 
     const iconDOM = (
