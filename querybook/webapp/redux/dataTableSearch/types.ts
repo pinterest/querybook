@@ -14,6 +14,7 @@ export interface ITableSearchResult {
     id: number;
     schema: string;
     name: string;
+    golden?: boolean;
 }
 
 export interface ITableSearchFilters {

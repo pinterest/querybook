@@ -116,7 +116,7 @@ def construct_tables_query(
     }
 
     if concise:
-        query["_source"] = ["id", "schema", "name"]
+        query["_source"] = ["id", "schema", "name", "golden"]
 
     query.update(order_by_fields(sort_key, sort_order))
     query.update(

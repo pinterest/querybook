@@ -29,6 +29,7 @@ import { Tag } from 'ui/Tag/Tag';
 import { SearchResultItemBoardItemAddButton } from './SearchResultItemBoardItemAddButton';
 
 import './SearchResultItem.scss';
+import { TopTierCrown } from 'components/TopTierCrown/TopTierCrown';
 
 const HighlightTitle: React.FunctionComponent<{
     title: string;
@@ -379,9 +380,7 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
     );
 
     const goldenIcon = golden ? (
-        <div className="result-item-golden ml4">
-            <Icon className="crown" name="Crown" />
-        </div>
+        <TopTierCrown showTooltip={true} tooltipPos="right" />
     ) : null;
 
     const highlightedDescription = (preview.highlight || {}).description;

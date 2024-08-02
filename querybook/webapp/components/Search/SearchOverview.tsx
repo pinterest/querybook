@@ -67,6 +67,7 @@ import { SearchSchemaSelect } from './SearchSchemaSelect';
 import { TableSelect } from './TableSelect';
 
 import './SearchOverview.scss';
+import { TopTierCrown } from 'components/TopTierCrown/TopTierCrown';
 
 const AIAssistantConfig = PublicConfig.ai_assistant;
 
@@ -752,7 +753,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                     <div className="result-item-golden horizontal-space-between">
                         <span>
                             <span>top tier only</span>
-                            <Icon className="crown ml4" name="Crown" />
+                            <TopTierCrown />
                         </span>
                         <Checkbox
                             value={!!searchFilters.golden}
