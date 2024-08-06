@@ -156,3 +156,10 @@ class QuerybookSettings(object):
     VECTOR_STORE_CONFIG = get_env_config("VECTOR_STORE_CONFIG") or {}
     EMBEDDINGS_PROVIDER = get_env_config("EMBEDDINGS_PROVIDER")
     EMBEDDINGS_CONFIG = get_env_config("EMBEDDINGS_CONFIG") or {}
+
+    # Datadog
+    DD_AGENT_HOST = get_env_config("DD_AGENT_HOST", optional=True)
+    DD_DOGSTATSD_PORT = int(get_env_config("DD_DOGSTATSD_PORT", optional=True) or 8125)
+    DD_PREFIX = get_env_config("DD_PREFIX", optional=True)
+    DD_SERVICE = get_env_config("DD_SERVICE", optional=True) or "querybook"
+    DD_TAGS = get_env_config("DD_TAGS", optional=True) or []
