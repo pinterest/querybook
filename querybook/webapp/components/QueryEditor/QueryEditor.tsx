@@ -23,8 +23,6 @@ import {
 import { useAutoComplete } from 'hooks/queryEditor/useAutoComplete';
 import { useCodeAnalysis } from 'hooks/queryEditor/useCodeAnalysis';
 import { useLint } from 'hooks/queryEditor/useLint';
-import { useUserQueryEditorConfig } from 'hooks/redux/useUserQueryEditorConfig';
-import { useUserQueryEditorConfig } from 'hooks/redux/useUserQueryEditorConfig';
 import { useDebouncedFn } from 'hooks/useDebouncedFn';
 import CodeMirror, { CodeMirrorKeyMap } from 'lib/codemirror';
 import { SQL_JINJA_MODE } from 'lib/codemirror/codemirror-mode';
@@ -59,7 +57,6 @@ export interface IQueryEditorProps extends IStyledQueryEditorProps {
     keyMap?: CodeMirrorKeyMap;
     className?: string;
     autoCompleteType?: AutoCompleteType;
-    querySuggestionsEnabled?: boolean;
     querySuggestionsEnabled?: boolean;
 
     /**
@@ -119,7 +116,6 @@ export const QueryEditor: React.FC<
             keyMap = {},
             className,
             autoCompleteType = 'all',
-            querySuggestionsEnabled,
             querySuggestionsEnabled,
             onFullScreen,
 
@@ -541,16 +537,6 @@ export const QueryEditor: React.FC<
                 onTablesChange?.(tablesMap);
             });
         }, [codeAnalysis]);
-
-        useEffect(() => {
-            if (querySuggestionsEnabled) {
-                // Enable copilot suggestion feature
-                enableCopilotSuggestions();
-            } else {
-                // Disable copilot suggestion feature
-                disableCopilotSuggestions();
-            }
-        }, [querySuggestionsEnabled]);
 
         useImperativeHandle(
             ref,

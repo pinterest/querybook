@@ -48,10 +48,6 @@ declare module 'codemirror' {
     function normalizeKeyMap(
         keyMap: Record<string, string | (() => any)>
     ): Record<string, string | (() => any)>;
-
-    interface Editor {
-        querySuggestions(): void;
-    }
 }
 
 attachCustomCommand(CodeMirror.commands);
