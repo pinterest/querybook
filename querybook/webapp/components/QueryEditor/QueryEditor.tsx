@@ -23,6 +23,8 @@ import {
 import { useAutoComplete } from 'hooks/queryEditor/useAutoComplete';
 import { useCodeAnalysis } from 'hooks/queryEditor/useCodeAnalysis';
 import { useLint } from 'hooks/queryEditor/useLint';
+import { useUserQueryEditorConfig } from 'hooks/redux/useUserQueryEditorConfig';
+import { useUserQueryEditorConfig } from 'hooks/redux/useUserQueryEditorConfig';
 import { useDebouncedFn } from 'hooks/useDebouncedFn';
 import CodeMirror, { CodeMirrorKeyMap } from 'lib/codemirror';
 import { SQL_JINJA_MODE } from 'lib/codemirror/codemirror-mode';
@@ -57,6 +59,8 @@ export interface IQueryEditorProps extends IStyledQueryEditorProps {
     keyMap?: CodeMirrorKeyMap;
     className?: string;
     autoCompleteType?: AutoCompleteType;
+    querySuggestionsEnabled?: boolean;
+    querySuggestionsEnabled?: boolean;
 
     /**
      * If provided, then the container component will handle the fullscreen logic
@@ -115,6 +119,8 @@ export const QueryEditor: React.FC<
             keyMap = {},
             className,
             autoCompleteType = 'all',
+            querySuggestionsEnabled,
+            querySuggestionsEnabled,
             onFullScreen,
 
             onChange,
@@ -536,6 +542,16 @@ export const QueryEditor: React.FC<
             });
         }, [codeAnalysis]);
 
+        useEffect(() => {
+            if (querySuggestionsEnabled) {
+                // Enable copilot suggestion feature
+                enableCopilotSuggestions();
+            } else {
+                // Disable copilot suggestion feature
+                disableCopilotSuggestions();
+            }
+        }, [querySuggestionsEnabled]);
+
         useImperativeHandle(
             ref,
             () => ({
@@ -617,16 +633,24 @@ export const QueryEditor: React.FC<
             onTextHover,
         ]);
 
-        const editorDidMount = useCallback((editor: CodeMirror.Editor) => {
-            editorRef.current = editor;
+        const editorDidMount = useCallback(
+            (editor: CodeMirror.Editor) => {
+                editorRef.current = editor;
 
-            // There is a strange bug where codemirror would start with the wrong height (on Execs tab)
-            // which can only be solved by clicking on it
-            // The current work around is to add refresh on mount
-            setTimeout(() => {
-                editor.refresh();
-            }, 50);
-        }, []);
+                if (querySuggestionsEnabled) {
+                    // Enable copilot suggestion feature
+                    editor.querySuggestions();
+                }
+
+                // There is a strange bug where codemirror would start with the wrong height (on Execs tab)
+                // which can only be solved by clicking on it
+                // The current work around is to add refresh on mount
+                setTimeout(() => {
+                    editor.refresh();
+                }, 50);
+            },
+            [querySuggestionsEnabled]
+        );
 
         const onBeforeChange = useCallback(
             (editor: CodeMirror.Editor, data, value: string) => {
