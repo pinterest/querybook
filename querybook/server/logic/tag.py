@@ -133,12 +133,13 @@ def create_table_tags(
 
         # update or create a new tag if not exist
         create_or_update_tag(
-            tag_name=tag.name, meta=meta, commit=commit, session=session
+            tag_name=tag.name, meta=meta, commit=False, session=session
         )
 
         # add a new tag_item to associate with the table
         TagItem.create(
             {"tag_name": tag.name, "table_id": table_id, "uid": None},
+            commit=False,
             session=session,
         )
 
@@ -176,12 +177,13 @@ def create_column_tags(
 
         # update or create a new tag if not exist
         create_or_update_tag(
-            tag_name=tag.name, meta=meta, commit=commit, session=session
+            tag_name=tag.name, meta=meta, commit=False, session=session
         )
 
         # add a new tag_item to associate with the table
         TagItem.create(
             {"tag_name": tag.name, "column_id": column_id, "uid": None},
+            commit=False,
             session=session,
         )
 
