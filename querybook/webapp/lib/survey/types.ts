@@ -2,6 +2,7 @@ export interface ISurveyConfig {
     surface: string;
     responseCooldown: number;
     triggerCooldown: number;
+    triggerDuration: number;
     maxPerWeek: number;
     maxPerDay: number;
 }

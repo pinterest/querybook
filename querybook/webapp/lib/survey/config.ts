@@ -15,6 +15,10 @@ surveyConfig?.surfaces?.forEach((surface) => {
             surface.trigger_cooldown ??
             surveyConfig.global_trigger_cooldown ??
             600, // 10 minutes
+        triggerDuration:
+            surface.trigger_duration ??
+            surveyConfig.global_trigger_duration ??
+            60, // 1 minute
         maxPerWeek:
             surface.max_per_week ?? surveyConfig.global_max_per_week ?? 3,
         maxPerDay: surface.max_per_day ?? surveyConfig.global_max_per_day ?? 1,

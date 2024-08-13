@@ -20,6 +20,7 @@ Below is an example of a setting that enables all surveys:
 survey:
     global_response_cooldown: 2592000 # 30 days
     global_trigger_cooldown: 600 # 10 minutes
+    global_trigger_duration: 60 # 1 minute
     global_max_per_week: 6
     global_max_per_day: 3
 
@@ -40,5 +41,6 @@ There are 4 variables that you can configure either for eaceh individual surface
 
 -   **response_cooldown**: Time (in seconds) the system waits before showing the same survey to a user who has already responded.
 -   **trigger_cooldown**: Waiting period before the same survey is shown to the same user.
+-   **trigger_duration**: The duration (in seconds) for which the survey is displayed before being dismissed.
 -   **max_per_week**: Maximum number of surveys shown to a user per week (per surface type).
 -   **max_per_day**: Daily limit for the number of surveys shown to a user (per surface type).
