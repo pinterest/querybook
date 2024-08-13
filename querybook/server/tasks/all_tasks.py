@@ -61,4 +61,4 @@ def configure_workers(sender=None, conf=None, **kwargs):
 @task_failure.connect
 def handle_task_failure(sender, signal, *args, **kwargs):
     task_type = get_schedule_task_type(sender.name)
-    stats_logger.incr(TASK_FAILURES, tags={"task_type": task_type})
+    stats_logger.incr(TASK_FAILURES, tags={"task_type": task_type.value})

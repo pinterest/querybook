@@ -65,7 +65,7 @@ def get_scheduled_datadoc_tasks(session=None):
         .filter(
             TaskSchedule.enabled.is_(True),
             TaskSchedule.name.like(DATADOC_SCHEDULE_PREFIX + "%"),
-            TaskSchedule.task_type == ScheduleTaskType.USER,
+            TaskSchedule.task_type == ScheduleTaskType.USER.value,
         )
         .all()
     )
