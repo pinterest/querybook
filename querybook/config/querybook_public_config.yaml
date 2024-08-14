@@ -18,6 +18,7 @@ ai_assistant:
 survey:
     global_response_cooldown: 2592000 # 30 days
     global_trigger_cooldown: 600 # 10 minutes
+    global_trigger_duration: 60 # 1 minute
     global_max_per_week: 6
     global_max_per_day: 3
 
