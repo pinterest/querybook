@@ -117,12 +117,12 @@ def check_task_no_impression_for_n_days(
 ):
     doc_id = task_dict["kwargs"]["doc_id"]
 
-    if not disable_config.skip_if_no_impression_with_export:
+    if disable_config.skip_if_no_impression_with_export:
         task_have_export = len(task_dict["kwargs"].get("exports", [])) > 0
         if task_have_export:
             return False
 
-    if not disable_config.skip_if_no_impression_but_non_select:
+    if disable_config.skip_if_no_impression_but_non_select:
         # Check if every DML/DDL of queries are select
         doc = get_data_doc_by_id(doc_id, session=session)
         queries_in_doc = [
@@ -220,8 +220,8 @@ def disable_deactivated_scheduled_docs(
         disable_if_inactive_owner=True,
         disable_if_failed_for_n_runs=5,
         disable_if_no_impression_for_n_days=30,
-        skip_if_no_impression_but_non_select=False,
-        skip_if_no_impression_with_export=False,
+        skip_if_no_impression_but_non_select=True,
+        skip_if_no_impression_with_export=True,
     ),
     session=None,
 ):
@@ -271,8 +271,27 @@ def disable_deactivated_scheduled_docs(
 
 @celery.task(bind=True)
 @with_task_logging()
-def disable_scheduled_docs(self):
-    tasks_to_disable = disable_deactivated_scheduled_docs()
+def disable_scheduled_docs(
+    self,
+    dry_run=False,
+    notifier=None,
+    disable_if_inactive_owner=True,
+    disable_if_failed_for_n_runs=5,
+    disable_if_no_impression_for_n_days=30,
+    skip_if_no_impression_but_non_select=True,
+    skip_if_no_impression_with_export=True,
+):
+    tasks_to_disable = disable_deactivated_scheduled_docs(
+        dry_run=dry_run,
+        notifier=notifier,
+        disable_config=DisableConfig(
+            disable_if_inactive_owner=disable_if_inactive_owner,
+            disable_if_failed_for_n_runs=disable_if_failed_for_n_runs,
+            disable_if_no_impression_for_n_days=disable_if_no_impression_for_n_days,
+            skip_if_no_impression_but_non_select=skip_if_no_impression_but_non_select,
+            skip_if_no_impression_with_export=skip_if_no_impression_with_export,
+        ),
+    )
     if len(tasks_to_disable) == 0:
         logger.info("No scheduled docs disabled.")
     else:
