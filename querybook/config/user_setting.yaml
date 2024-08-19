@@ -50,13 +50,13 @@ show_full_view:
         - disabled
     helper: Instead of modal, show full view when opening table/execution/snippet
 
-query_suggestions:
+copilot_suggestions:
     default: disabled
     tab: editor
     options:
         - enabled
         - disabled
-    helper: Enable to receive inline LLM generated query suggestions as you type from within the editor.
+    helper: (Experimental) Enable to receive inline AI generated query suggestions as you type from within the editor.
 
 editor_font_size:
     default: medium

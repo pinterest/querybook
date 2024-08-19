@@ -57,7 +57,7 @@ export interface IQueryEditorProps extends IStyledQueryEditorProps {
     keyMap?: CodeMirrorKeyMap;
     className?: string;
     autoCompleteType?: AutoCompleteType;
-    querySuggestionsEnabled?: boolean;
+    copilotSuggestionsEnabled?: boolean;
 
     /**
      * If provided, then the container component will handle the fullscreen logic
@@ -116,7 +116,7 @@ export const QueryEditor: React.FC<
             keyMap = {},
             className,
             autoCompleteType = 'all',
-            querySuggestionsEnabled,
+            copilotSuggestionsEnabled,
             onFullScreen,
 
             onChange,
@@ -623,9 +623,9 @@ export const QueryEditor: React.FC<
             (editor: CodeMirror.Editor) => {
                 editorRef.current = editor;
 
-                if (querySuggestionsEnabled) {
+                if (copilotSuggestionsEnabled) {
                     // Enable copilot suggestion feature
-                    editor.querySuggestions();
+                    editor.copilotSuggestions();
                 }
 
                 // There is a strange bug where codemirror would start with the wrong height (on Execs tab)

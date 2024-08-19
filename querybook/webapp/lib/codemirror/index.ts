@@ -25,7 +25,7 @@ import 'codemirror/theme/duotone-light.css';
 import 'codemirror/theme/material-palenight.css';
 import 'codemirror/theme/monokai.css';
 import 'codemirror/theme/solarized.css';
-// Query Suggestions
+// AI Query Suggestions
 import 'lib/codemirror/codemirror-copilot';
 // This should apply the hover option to codemirror
 import 'lib/codemirror/codemirror-hover';
@@ -35,7 +35,7 @@ import './editor_styles.scss';
 
 declare module 'codemirror' {
     interface Editor {
-        querySuggestions(): void;
+        copilotSuggestions(): void;
     }
     // This is copied from runmode.d.ts. Not sure how to import it :(
     function runMode(
