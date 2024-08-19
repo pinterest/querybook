@@ -17,6 +17,7 @@ export function useUserQueryEditorConfig(
     keyMap: CodeMirrorKeyMap;
     options: CodeMirror.EditorConfiguration;
     autoCompleteType: AutoCompleteType;
+    queryAISuggestionsEnabled: boolean;
 } {
     const editorSettings = useShallowSelector((state: IStoreState) => ({
         theme: getCodeEditorTheme(state.user.computedSettings['theme']),
@@ -26,6 +27,8 @@ export function useUserQueryEditorConfig(
             ],
         autoComplete: state.user.computedSettings['auto_complete'],
         tab: state.user.computedSettings['tab'],
+        queryAISuggestionsEnabled:
+            state.user.computedSettings['query_suggestions'] === 'enabled',
     }));
     const indentWithTabs = editorSettings.tab === 'tab';
     const tabSize =
@@ -106,5 +109,6 @@ export function useUserQueryEditorConfig(
         // From: https://github.com/codemirror/CodeMirror/issues/988
         keyMap,
         options,
+        queryAISuggestionsEnabled: editorSettings.queryAISuggestionsEnabled,
     };
 }

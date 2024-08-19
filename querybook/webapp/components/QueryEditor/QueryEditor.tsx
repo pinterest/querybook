@@ -57,6 +57,7 @@ export interface IQueryEditorProps extends IStyledQueryEditorProps {
     keyMap?: CodeMirrorKeyMap;
     className?: string;
     autoCompleteType?: AutoCompleteType;
+    queryAISuggestionsEnabled?: boolean;
 
     /**
      * If provided, then the container component will handle the fullscreen logic
@@ -115,6 +116,7 @@ export const QueryEditor: React.FC<
             keyMap = {},
             className,
             autoCompleteType = 'all',
+            queryAISuggestionsEnabled,
             onFullScreen,
 
             onChange,
@@ -617,16 +619,24 @@ export const QueryEditor: React.FC<
             onTextHover,
         ]);
 
-        const editorDidMount = useCallback((editor: CodeMirror.Editor) => {
-            editorRef.current = editor;
+        const editorDidMount = useCallback(
+            (editor: CodeMirror.Editor) => {
+                editorRef.current = editor;
 
-            // There is a strange bug where codemirror would start with the wrong height (on Execs tab)
-            // which can only be solved by clicking on it
-            // The current work around is to add refresh on mount
-            setTimeout(() => {
-                editor.refresh();
-            }, 50);
-        }, []);
+                if (queryAISuggestionsEnabled) {
+                    // Enable query ai suggestion feature
+                    editor.queryAISuggestions();
+                }
+
+                // There is a strange bug where codemirror would start with the wrong height (on Execs tab)
+                // which can only be solved by clicking on it
+                // The current work around is to add refresh on mount
+                setTimeout(() => {
+                    editor.refresh();
+                }, 50);
+            },
+            [queryAISuggestionsEnabled]
+        );
 
         const onBeforeChange = useCallback(
             (editor: CodeMirror.Editor, data, value: string) => {

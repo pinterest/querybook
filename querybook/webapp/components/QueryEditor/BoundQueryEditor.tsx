@@ -49,8 +49,14 @@ export const BoundQueryEditor = React.forwardRef<
         const editorRef = useForwardedRef<IQueryEditorHandles>(ref);
 
         // Code Editor related Props
-        const { codeEditorTheme, keyMap, options, fontSize, autoCompleteType } =
-            useUserQueryEditorConfig(searchContext);
+        const {
+            codeEditorTheme,
+            keyMap,
+            options,
+            fontSize,
+            autoCompleteType,
+            queryAISuggestionsEnabled,
+        } = useUserQueryEditorConfig(searchContext);
         const combinedOptions = useMemo(
             () => ({
                 ...options,
@@ -103,6 +109,7 @@ export const BoundQueryEditor = React.forwardRef<
                 theme={codeEditorTheme}
                 autoCompleteType={autoCompleteType}
                 fontSize={fontSize}
+                queryAISuggestionsEnabled={queryAISuggestionsEnabled}
                 getTableByName={fetchDataTable}
                 functionDocumentationByNameByLanguage={
                     functionDocumentationByNameByLanguage

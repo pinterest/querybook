@@ -18,14 +18,15 @@ import 'codemirror/addon/runmode/runmode';
 // Search highlighting
 import 'codemirror/addon/search/match-highlighter.js';
 import 'codemirror/lib/codemirror.css';
+import 'codemirror/mode/jinja2/jinja2';
 // From codemirror non-react package:
 import 'codemirror/mode/sql/sql';
-import 'codemirror/mode/jinja2/jinja2';
-
 import 'codemirror/theme/duotone-light.css';
 import 'codemirror/theme/material-palenight.css';
 import 'codemirror/theme/monokai.css';
 import 'codemirror/theme/solarized.css';
+// Query AI Suggestions
+import 'lib/codemirror/codemirror-copilot';
 // This should apply the hover option to codemirror
 import 'lib/codemirror/codemirror-hover';
 
@@ -33,6 +34,9 @@ import 'lib/codemirror/codemirror-hover';
 import './editor_styles.scss';
 
 declare module 'codemirror' {
+    interface Editor {
+        queryAISuggestions(): void;
+    }
     // This is copied from runmode.d.ts. Not sure how to import it :(
     function runMode(
         text: string,
