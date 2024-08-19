@@ -624,7 +624,7 @@ export const QueryEditor: React.FC<
                 editorRef.current = editor;
 
                 if (queryAISuggestionsEnabled) {
-                    // Enable copilot suggestion feature
+                    // Enable query ai suggestion feature
                     editor.queryAISuggestions();
                 }
 
