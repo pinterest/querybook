@@ -50,7 +50,7 @@ show_full_view:
         - disabled
     helper: Instead of modal, show full view when opening table/execution/snippet
 
-copilot_suggestions:
+query_suggestions:
     default: disabled
     tab: editor
     options:

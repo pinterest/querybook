@@ -35,7 +35,7 @@ import './editor_styles.scss';
 
 declare module 'codemirror' {
     interface Editor {
-        copilotSuggestions(): void;
+        queryAISuggestions(): void;
     }
     // This is copied from runmode.d.ts. Not sure how to import it :(
     function runMode(

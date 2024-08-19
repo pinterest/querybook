@@ -55,7 +55,7 @@ export const BoundQueryEditor = React.forwardRef<
             options,
             fontSize,
             autoCompleteType,
-            copilotSuggestionsEnabled,
+            queryAISuggestionsEnabled,
         } = useUserQueryEditorConfig(searchContext);
         const combinedOptions = useMemo(
             () => ({
@@ -109,7 +109,7 @@ export const BoundQueryEditor = React.forwardRef<
                 theme={codeEditorTheme}
                 autoCompleteType={autoCompleteType}
                 fontSize={fontSize}
-                querySuggestionsEnabled={copilotSuggestionsEnabled}
+                queryAISuggestionsEnabled={queryAISuggestionsEnabled}
                 getTableByName={fetchDataTable}
                 functionDocumentationByNameByLanguage={
                     functionDocumentationByNameByLanguage
