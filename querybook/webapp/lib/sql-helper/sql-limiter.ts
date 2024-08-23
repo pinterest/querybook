@@ -25,7 +25,7 @@ export function getSelectStatementLimit(
     language?: string
 ): Nullable<number> {
     const tokens = tokenize(statement, { language });
-    const parsedStatement = simpleParse(tokens)[0];
+    const parsedStatement = simpleParse(tokens)?.[0] ?? [];
 
     // Strip nested statements out of the query
     const outerStatement: IToken[] = [];
