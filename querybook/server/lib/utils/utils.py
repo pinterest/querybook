@@ -162,5 +162,5 @@ def get_default_args(func):
     }
 
 
-def str_to_bool(value: str | bool):
+def str_to_bool(value: Union[str, bool]):
     return value.lower() in (True, "yes", "true", "t", "1")

@@ -16,9 +16,13 @@ from lib.scheduled_datadoc.legacy import convert_if_legacy_datadoc_schedule
 from lib.utils.utils import str_to_bool
 from logic.datadoc import get_data_doc_by_id
 from logic.impression import get_viewers_count_by_item_after_date
-from logic.schedule import (DATADOC_SCHEDULE_PREFIX, delete_task_schedule,
-                            get_task_run_records, update_task_schedule,
-                            with_task_logging)
+from logic.schedule import (
+    DATADOC_SCHEDULE_PREFIX,
+    delete_task_schedule,
+    get_task_run_records,
+    update_task_schedule,
+    with_task_logging,
+)
 from logic.user import get_user_by_id
 from models.schedule import TaskSchedule
 
