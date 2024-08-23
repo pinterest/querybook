@@ -2,31 +2,25 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
 from typing import Optional
-from app.flask_app import celery
 
-from models.schedule import (
-    TaskSchedule,
-)
 from app.db import with_session
-from env import QuerybookSettings
+from app.flask_app import celery
 from const.data_doc import DataCellType
 from const.impression import ImpressionItemType
-from const.schedule import TaskRunStatus, ScheduleTaskType
-from lib.notify.utils import notify_user
-from lib.scheduled_datadoc.legacy import convert_if_legacy_datadoc_schedule
-from logic.schedule import (
-    DATADOC_SCHEDULE_PREFIX,
-    update_task_schedule,
-    with_task_logging,
-    get_task_run_records,
-    delete_task_schedule,
-)
-from lib.query_analysis.lineage import get_table_statement_type
-from logic.datadoc import get_data_doc_by_id
-from logic.user import get_user_by_id
-from logic.impression import get_viewers_count_by_item_after_date
+from const.schedule import ScheduleTaskType, TaskRunStatus
+from env import QuerybookSettings
 from lib.logger import get_logger
-
+from lib.notify.utils import notify_user
+from lib.query_analysis.lineage import get_table_statement_type
+from lib.scheduled_datadoc.legacy import convert_if_legacy_datadoc_schedule
+from lib.utils.utils import str_to_bool
+from logic.datadoc import get_data_doc_by_id
+from logic.impression import get_viewers_count_by_item_after_date
+from logic.schedule import (DATADOC_SCHEDULE_PREFIX, delete_task_schedule,
+                            get_task_run_records, update_task_schedule,
+                            with_task_logging)
+from logic.user import get_user_by_id
+from models.schedule import TaskSchedule
 
 logger = get_logger(__name__)
 
@@ -271,8 +265,29 @@ def disable_deactivated_scheduled_docs(
 
 @celery.task(bind=True)
 @with_task_logging()
-def disable_scheduled_docs(self):
-    tasks_to_disable = disable_deactivated_scheduled_docs()
+def disable_scheduled_docs(
+    self,
+    notifier: str = None,
+    disable_if_inactive_owner=True,
+    disable_if_failed_for_n_runs=5,
+    disable_if_no_impression_for_n_days=30,
+    skip_if_no_impression_but_non_select=False,
+    skip_if_no_impression_with_export=False,
+):
+    disable_config = DisableConfig(
+        disable_if_inactive_owner=disable_if_inactive_owner,
+        disable_if_failed_for_n_runs=disable_if_failed_for_n_runs,
+        disable_if_no_impression_for_n_days=disable_if_no_impression_for_n_days,
+        skip_if_no_impression_but_non_select=str_to_bool(
+            skip_if_no_impression_but_non_select
+        ),
+        skip_if_no_impression_with_export=str_to_bool(
+            skip_if_no_impression_with_export
+        ),
+    )
+    tasks_to_disable = disable_deactivated_scheduled_docs(
+        notifier=notifier, disable_config=disable_config
+    )
     if len(tasks_to_disable) == 0:
         logger.info("No scheduled docs disabled.")
     else:

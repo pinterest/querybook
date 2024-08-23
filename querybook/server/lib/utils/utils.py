@@ -160,3 +160,7 @@ def get_default_args(func):
         for k, v in signature.parameters.items()
         if v.default is not inspect.Parameter.empty
     }
+
+
+def str_to_bool(value: str | bool):
+    return value.lower() in (True, "yes", "true", "t", "1")
