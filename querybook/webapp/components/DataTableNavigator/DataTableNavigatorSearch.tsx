@@ -21,10 +21,9 @@ import { Popover } from 'ui/Popover/Popover';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { Title } from 'ui/Title/Title';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
+import { TopTierCrown } from 'ui/TopTierCrown/TopTierCrown';
 
 import './DataTableNavigatorSearch.scss';
-import { Icon } from 'ui/Icon/Icon';
-import { TopTierCrown } from 'components/TopTierCrown/TopTierCrown';
 
 export const DataTableNavigatorSearch: React.FC<{
     queryMetastore: IQueryMetastore;
@@ -107,7 +106,7 @@ export const DataTableNavigatorSearch: React.FC<{
                                     )
                                 }
                             />
-                            <TopTierCrown />
+                            <TopTierCrown className="ml4" />
                         </div>
                     </SearchFilterRow>
                     <SearchFilterRow title="Schema">

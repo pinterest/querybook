@@ -11,11 +11,10 @@ import { getHumanReadableByteSize } from 'lib/utils/number';
 import { IconButton } from 'ui/Button/IconButton';
 import { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 import { Loader } from 'ui/Loader/Loader';
+import { TopTierCrown } from 'ui/TopTierCrown/TopTierCrown';
 
 import { ColumnIcon } from './ColumnIcon';
 import { PanelSection, SubPanelSection } from './PanelSection';
-import { Icon } from 'ui/Icon/Icon';
-import { TopTierCrown } from 'components/TopTierCrown/TopTierCrown';
 
 interface ITablePanelViewProps {
     tableId: number;
@@ -43,7 +42,9 @@ export const TablePanelView: React.FunctionComponent<ITablePanelViewProps> = ({
                 <SubPanelSection title="name">
                     <span className="flex-row">
                         {table.name}
-                        {table.golden && <TopTierCrown showTooltip={true} />}
+                        {table.golden && (
+                            <TopTierCrown showTooltip={true} className="ml4" />
+                        )}
                     </span>
                 </SubPanelSection>
                 <SubPanelSection title="description" hideIfNoContent>

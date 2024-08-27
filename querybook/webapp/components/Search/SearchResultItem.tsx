@@ -20,16 +20,15 @@ import { Button } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
-import { Icon } from 'ui/Icon/Icon';
 import { Level } from 'ui/Level/Level';
 import { LoadingRow } from 'ui/Loading/Loading';
 import { AccentText, StyledText, UntitledText } from 'ui/StyledText/StyledText';
 import { Tag } from 'ui/Tag/Tag';
+import { TopTierCrown } from 'ui/TopTierCrown/TopTierCrown';
 
 import { SearchResultItemBoardItemAddButton } from './SearchResultItemBoardItemAddButton';
 
 import './SearchResultItem.scss';
-import { TopTierCrown } from 'components/TopTierCrown/TopTierCrown';
 
 const HighlightTitle: React.FunctionComponent<{
     title: string;

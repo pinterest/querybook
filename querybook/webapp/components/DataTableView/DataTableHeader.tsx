@@ -27,10 +27,9 @@ import { CommentButton } from 'ui/Comment/CommentButton';
 import { AccentText } from 'ui/StyledText/StyledText';
 import { Tag } from 'ui/Tag/Tag';
 import { ToggleButton } from 'ui/ToggleButton/ToggleButton';
+import { TopTierCrown } from 'ui/TopTierCrown/TopTierCrown';
 
 import './DataTableHeader.scss';
-import { Icon } from 'ui/Icon/Icon';
-import { TopTierCrown } from 'components/TopTierCrown/TopTierCrown';
 
 export interface IDataTableHeader {
     table: IDataTable;
@@ -97,7 +96,7 @@ export const DataTableHeader: React.FunctionComponent<IDataTableHeader> = ({
     } else if (table.golden) {
         featuredBadge = (
             <Tag>
-                Top Tier <TopTierCrown />
+                Top Tier <TopTierCrown className="ml4" />
             </Tag>
         );
     }
