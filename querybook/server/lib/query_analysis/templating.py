@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import json
 import re
-from typing import Callable, Dict, Set
+from typing import Callable, Dict, Optional, Set
 
 from jinja2.exceptions import TemplateSyntaxError
 from jinja2.sandbox import SandboxedEnvironment
@@ -168,7 +168,7 @@ def create_get_latest_partition(
     return get_latest_partition
 
 
-def get_templated_query_env(engine_id: int, user: User, session=None):
+def get_templated_query_env(engine_id: int, user: Optional[User], session=None):
     jinja_env = SandboxedEnvironment()
 
     # Inject helper functions
@@ -326,7 +326,11 @@ def get_templated_query_variables(variables_provided, jinja_env):
 
 
 def render_templated_query(
-    query: str, variables: Dict[str, str], engine_id: int, uid: int, session=None
+    query: str,
+    variables: Dict[str, str],
+    engine_id: int,
+    uid: Optional[int],
+    session=None,
 ) -> str:
     """Renders the templated query, with global variables such as today/yesterday
        and functions such as `latest_partition`.
