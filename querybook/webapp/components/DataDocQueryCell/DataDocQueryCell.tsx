@@ -683,6 +683,11 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     public handleInsertSnippet(query: string) {
         this.handleChange(query);
         this.toggleInsertQuerySnippetModal();
+
+        trackClick({
+            component: ComponentType.DATADOC_QUERY_CELL,
+            element: ElementType.INSERT_SNIPPET_BUTTON,
+        });
     }
 
     @bind

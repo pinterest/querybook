@@ -4,11 +4,13 @@ import { useSelector } from 'react-redux';
 
 import { TableUploaderForm } from 'components/TableUploader/TableUploaderForm';
 import { useMetastoresForUpload } from 'components/TableUploader/useQueryEnginesForUpload';
+import { ComponentType, ElementType } from 'const/analytics';
 import {
     IQueryResultExporter,
     IStatementExecution,
     IStatementResult,
 } from 'const/queryExecution';
+import { trackClick } from 'lib/analytics';
 import { getStatementExecutionResultDownloadUrl } from 'lib/query-execution';
 import {
     getExporterAuthentication,
@@ -92,7 +94,22 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
             state.queryExecutions.statementResultById[statementId]
     );
 
+    const trackExportButtonClick = React.useCallback(
+        (exporterName: string) => {
+            trackClick({
+                component: ComponentType.DATADOC_QUERY_CELL,
+                element: ElementType.RESULT_EXPORT_BUTTON,
+                aux: {
+                    name: exporterName,
+                },
+            });
+        },
+        [trackClick]
+    );
+
     const onDownloadClick = React.useCallback(() => {
+        trackExportButtonClick('Download CSV');
+
         const url = getStatementExecutionResultDownloadUrl(statementId);
         if (url) {
             Utils.download(url, `${statementId}.csv`);
@@ -102,6 +119,8 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
     }, [statementId]);
 
     const onExportTSVClick = React.useCallback(async () => {
+        trackExportButtonClick('Copy to Clipboard');
+
         const rawResult = statementResult?.data || [];
         const parsedResult = tableToTSV(rawResult);
         Utils.copy(parsedResult);
@@ -144,6 +163,8 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
 
     const onGenericExportClick = React.useCallback(
         (exporter: IQueryResultExporter, showExportForm: boolean) => {
+            trackExportButtonClick(exporter.name);
+
             if (
                 showExportForm ||
                 // In this case, check if the form is required to be filled before export
@@ -203,7 +224,10 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
                 ? [
                       {
                           name: 'Create Table from Result',
-                          onClick: () => setShowTableUploadForm(true),
+                          onClick: () => {
+                              trackExportButtonClick('Create Table');
+                              setShowTableUploadForm(true);
+                          },
                           icon: 'Upload',
                       },
                   ]
