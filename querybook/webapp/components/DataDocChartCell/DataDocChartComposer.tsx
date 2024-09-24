@@ -8,6 +8,7 @@ import Select from 'react-select';
 import { QueryExecutionPicker } from 'components/ExecutionPicker/QueryExecutionPicker';
 import { StatementExecutionPicker } from 'components/ExecutionPicker/StatementExecutionPicker';
 import { StatementResultTable } from 'components/StatementResultTable/StatementResultTable';
+import { ComponentType, ElementType } from 'const/analytics';
 import { ColorPalette } from 'const/chartColors';
 import { IDataChartCellMeta } from 'const/datadoc';
 import {
@@ -29,6 +30,7 @@ import {
 } from 'const/dataDocChart';
 import { StatementExecutionResultSizes } from 'const/queryResultLimit';
 import { useChartSource } from 'hooks/chart/useChartSource';
+import { trackClick } from 'lib/analytics';
 import { transformData } from 'lib/chart/chart-data-transformation';
 import { mapMetaToFormVals } from 'lib/chart/chart-meta-processing';
 import {
@@ -1046,7 +1048,13 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                 {isEditable ? (
                     <div className="DataDocChartComposer-button">
                         <SoftButton
-                            onClick={() => handleSubmit()}
+                            onClick={() => {
+                                trackClick({
+                                    component: ComponentType.DATADOC_CHART_CELL,
+                                    element: ElementType.CHART_SAVE_BUTTON,
+                                });
+                                handleSubmit();
+                            }}
                             title="Save"
                             fullWidth
                             pushable={false}
