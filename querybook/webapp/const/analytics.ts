@@ -22,6 +22,7 @@ export enum ComponentType {
     TABLE_NAVIGATOR_SEARCH = 'TABLE_NAVIGATOR_SEARCH',
     AI_ASSISTANT = 'AI_ASSISTANT',
     SURVEY = 'SURVEY',
+    LIST_PAGE = 'LIST_PAGE',
 }
 
 export enum ElementType {
