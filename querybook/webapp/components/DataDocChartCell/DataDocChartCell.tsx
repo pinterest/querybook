@@ -3,8 +3,10 @@ import React from 'react';
 
 import { QueryExecutionPicker } from 'components/ExecutionPicker/QueryExecutionPicker';
 import { StatementExecutionPicker } from 'components/ExecutionPicker/StatementExecutionPicker';
+import { ComponentType, ElementType } from 'const/analytics';
 import { IDataChartCellMeta } from 'const/datadoc';
 import { useChartSource } from 'hooks/chart/useChartSource';
+import { trackClick } from 'lib/analytics';
 import { transformData } from 'lib/chart/chart-data-transformation';
 import { getDataTransformationOptions } from 'lib/chart/chart-meta-processing';
 import { QueryExecutionResource } from 'resource/queryExecution';
@@ -228,7 +230,13 @@ export const DataDocChartCell = React.memo<IProps>(
                     <div className="flex-row">
                         <TextButton
                             title="Config Chart"
-                            onClick={() => setShowChartComposer(true)}
+                            onClick={() => {
+                                trackClick({
+                                    component: ComponentType.DATADOC_CHART_CELL,
+                                    element: ElementType.CHART_CONFIG_BUTTON,
+                                });
+                                setShowChartComposer(true);
+                            }}
                             size="small"
                             className="mr8"
                         />
