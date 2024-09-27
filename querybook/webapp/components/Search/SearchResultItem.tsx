@@ -20,11 +20,11 @@ import { Button } from 'ui/Button/Button';
 import { IconButton } from 'ui/Button/IconButton';
 import { ThemedCodeHighlight } from 'ui/CodeHighlight/ThemedCodeHighlight';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
-import { Icon } from 'ui/Icon/Icon';
 import { Level } from 'ui/Level/Level';
 import { LoadingRow } from 'ui/Loading/Loading';
 import { AccentText, StyledText, UntitledText } from 'ui/StyledText/StyledText';
 import { Tag } from 'ui/Tag/Tag';
+import { TopTierCrown } from 'ui/TopTierCrown/TopTierCrown';
 
 import { SearchResultItemBoardItemAddButton } from './SearchResultItemBoardItemAddButton';
 
@@ -379,9 +379,7 @@ export const DataTableItem: React.FunctionComponent<IDataTableItemProps> = ({
     );
 
     const goldenIcon = golden ? (
-        <div className="result-item-golden ml4">
-            <Icon className="crown" name="Crown" />
-        </div>
+        <TopTierCrown showTooltip={true} tooltipPos="right" />
     ) : null;
 
     const highlightedDescription = (preview.highlight || {}).description;

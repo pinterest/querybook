@@ -54,6 +54,7 @@ import { SimpleReactSelect } from 'ui/SimpleReactSelect/SimpleReactSelect';
 import { AccentText, EmptyText } from 'ui/StyledText/StyledText';
 import { Tabs } from 'ui/Tabs/Tabs';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
+import { TopTierCrown } from 'ui/TopTierCrown/TopTierCrown';
 
 import { EntitySelect } from './EntitySelect';
 import { SearchDatePicker } from './SearchDatePicker';
@@ -752,7 +753,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                     <div className="result-item-golden horizontal-space-between">
                         <span>
                             <span>top tier only</span>
-                            <Icon className="crown ml4" name="Crown" />
+                            <TopTierCrown />
                         </span>
                         <Checkbox
                             value={!!searchFilters.golden}

@@ -21,6 +21,7 @@ import { Popover } from 'ui/Popover/Popover';
 import { SearchBar } from 'ui/SearchBar/SearchBar';
 import { Title } from 'ui/Title/Title';
 import { ToggleSwitch } from 'ui/ToggleSwitch/ToggleSwitch';
+import { TopTierCrown } from 'ui/TopTierCrown/TopTierCrown';
 
 import './DataTableNavigatorSearch.scss';
 
@@ -95,15 +96,18 @@ export const DataTableNavigatorSearch: React.FC<{
                         title="Top Tier"
                         className="toggle-padding"
                     >
-                        <ToggleSwitch
-                            checked={searchFilters.golden}
-                            onChange={(checked) =>
-                                updateSearchFilter(
-                                    'golden',
-                                    checked ? true : null
-                                )
-                            }
-                        />
+                        <div className="flex-row">
+                            <ToggleSwitch
+                                checked={searchFilters.golden}
+                                onChange={(checked) =>
+                                    updateSearchFilter(
+                                        'golden',
+                                        checked ? true : null
+                                    )
+                                }
+                            />
+                            <TopTierCrown className="ml4" />
+                        </div>
                     </SearchFilterRow>
                     <SearchFilterRow title="Schema">
                         <SearchBar
