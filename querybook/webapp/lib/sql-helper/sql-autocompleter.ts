@@ -240,9 +240,12 @@ export class SqlAutoCompleter {
             return [];
         }
 
+        let omit_schema = this.codeAnalysis.lineage.activeSchema || 'default';
+
         const { data: names } = await SearchTableResource.suggest(
             metastoreId,
-            prefix
+            prefix,
+            omit_schema
         );
         return names;
     }

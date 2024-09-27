@@ -11,12 +11,12 @@ const context: Worker = self as any;
 context.addEventListener(
     'message',
     (e) => {
-        const { id, mode, code, language } = e.data;
+        const { id, mode, code, language, defaultSchema } = e.data;
         const tokens = tokenize(code, { language });
         const statements = simpleParse(tokens);
 
         const codeAnalysis: ICodeAnalysis = {
-            lineage: findTableReferenceAndAlias(statements),
+            lineage: findTableReferenceAndAlias(statements, defaultSchema),
         };
 
         if (mode === 'autocomplete') {

@@ -65,6 +65,7 @@ const contextSensitiveKeyWord = {
     table: 'table',
     update: 'table',
     join: 'table',
+    on: 'column',
     set: 'column',
 
     desc: 'table',
@@ -183,6 +184,7 @@ export interface ILinterWarning extends IRange {
 export interface ILineage {
     references: Record<number, TableToken[]>;
     aliases: Record<number, Record<string, TableToken>>;
+    activeSchema: string;
 }
 
 export interface ICodeAnalysis {
@@ -646,10 +648,13 @@ export function findWithStatementPlaceholder(statement: IToken[]) {
     return placeholders;
 }
 
-export function findTableReferenceAndAlias(statements: IToken[][]) {
-    let defaultSchema = 'default';
+export function findTableReferenceAndAlias(
+    statements: IToken[][],
+    defaultSchema: string = 'default'
+) {
     const references: Record<number, TableToken[]> = {};
     const aliases: Record<number, Record<string, TableToken>> = {};
+    let activeSchema = defaultSchema;
 
     statements.forEach((statement, statementNum) => {
         if (statement.length === 0) {
@@ -679,6 +684,7 @@ export function findTableReferenceAndAlias(statements: IToken[][]) {
             const secondToken = statement[tokenCounter++];
             if (secondToken && secondToken.type === 'VARIABLE') {
                 defaultSchema = secondToken.text;
+                activeSchema = defaultSchema;
             }
         } else {
             const placeholders: Set<string> = new Set(
@@ -807,6 +813,7 @@ export function findTableReferenceAndAlias(statements: IToken[][]) {
     return {
         references,
         aliases,
+        activeSchema,
     };
 }
 

@@ -29,6 +29,7 @@ export const BoundQueryEditor = React.forwardRef<
         | 'functionDocumentationByNameByLanguage'
         | 'metastoreId'
         | 'language'
+        | 'defaultSchema'
     > & {
         engine?: IQueryEngine;
         cellId?: number;
@@ -109,6 +110,7 @@ export const BoundQueryEditor = React.forwardRef<
                 }
                 metastoreId={engine?.metastore_id}
                 language={engine?.language}
+                defaultSchema={engine?.default_schema}
             />
         );
 

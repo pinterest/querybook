@@ -11,7 +11,8 @@ let sqlEditorWorker = null;
 export function analyzeCode(
     code: string,
     mode = 'autocomplete',
-    language = 'hive'
+    language = 'hive',
+    defaultSchema = 'default'
 ): Promise<ICodeAnalysis> {
     if (!sqlEditorWorker) {
         sqlEditorWorker = new Worker(
@@ -40,6 +41,7 @@ export function analyzeCode(
             mode,
             id,
             language,
+            defaultSchema
         });
     });
 }

@@ -51,6 +51,7 @@ export interface IQueryEditorProps extends IStyledQueryEditorProps {
     lineWrapping?: boolean;
     readOnly?: boolean;
     language?: string;
+    defaultSchema?: string;
     theme?: string;
     functionDocumentationByNameByLanguage?: FunctionDocumentationCollection;
     metastoreId?: number;
@@ -109,6 +110,7 @@ export const QueryEditor: React.FC<
             lineWrapping = false,
             readOnly,
             language = 'hive',
+            defaultSchema = 'default',
             theme = 'default',
             functionDocumentationByNameByLanguage = {},
             metastoreId,
@@ -139,6 +141,7 @@ export const QueryEditor: React.FC<
         const { codeAnalysis, codeAnalysisRef } = useCodeAnalysis({
             language,
             query: value,
+            defaultSchema
         });
         const autoCompleterRef = useAutoComplete(
             metastoreId,
