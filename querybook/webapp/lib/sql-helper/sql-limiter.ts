@@ -1,5 +1,4 @@
 import {
-    getStatementsFromQuery,
     getStatementType,
     IToken,
     simpleParse,
@@ -65,61 +64,6 @@ export function getSelectStatementLimit(
     }
 
     return -1;
-}
-
-/**
- * Check if the query has any statements that is SELECT and does not have LIMIT
- * If so, return the unlimited select statement, else, return null
- *
- * @param query
- * @param language
- */
-export function hasQueryContainUnlimitedSelect(
-    query: string,
-    language?: string
-): string {
-    const statements = getStatementsFromQuery(query, language);
-
-    return statements.find(
-        (statement) => getSelectStatementLimit(statement, language) === -1
-    );
-}
-
-/**
- * Automatically apply a limit to a query that does not already have a limit.
- *
- * @param {string} query - Query to be executed.
- * @param {number} rowLimit - Number of rows to limit the query to.
- * @param {string} language - Language of the query.
- * @return {string} - Query with limit applied (if necessary).
- */
-export function getLimitedQuery(
-    query: string,
-    rowLimit?: number,
-    language?: string
-): string {
-    if (rowLimit == null) {
-        return query;
-    }
-
-    const statements = getStatementsFromQuery(query, language);
-
-    let addedLimit = false;
-    const updatedQuery = statements
-        .map((statement) => {
-            const existingLimit = getSelectStatementLimit(statement, language);
-            if (existingLimit == null || existingLimit >= 0) {
-                return statement + ';';
-            }
-
-            addedLimit = true;
-            return `${statement} limit ${rowLimit};`;
-        })
-        .join('\n');
-
-    // If no limit was added, return the original query
-    // to avoid changing whitespace, etc.
-    return addedLimit ? updatedQuery : query;
 }
 
 // 10^1 to 10^5
