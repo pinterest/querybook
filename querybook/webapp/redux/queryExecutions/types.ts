@@ -164,6 +164,13 @@ export interface IReceiveQueryExecutionAccessRequestsAction extends Action {
     };
 }
 
+export interface ICancelQueryExecutionAction extends Action {
+    type: '@@queryExecutions/REMOVE_QUERY_EXECUTION';
+    payload: {
+        queryExecutionId: number;
+    };
+}
+
 export type QueryExecutionAction =
     | IReceiveQueryExecutionsAction
     | IReceiveQueryExecutionAction
@@ -181,7 +188,8 @@ export type QueryExecutionAction =
     | IReceiveQueryExecutionViewerAction
     | IReceiveQueryExecutionViewersAction
     | IRemoveQueryExectionViewerAction
-    | IReceiveQueryExecutionAccessRequestsAction;
+    | IReceiveQueryExecutionAccessRequestsAction
+    | ICancelQueryExecutionAction;
 
 export interface IQueryExecutionState {
     queryExecutionById: Record<number, IQueryExecution>;
