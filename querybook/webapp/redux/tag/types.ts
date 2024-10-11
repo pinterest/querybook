@@ -12,6 +12,14 @@ export interface IRecieveTagsByTable extends Action {
     };
 }
 
+export interface IReceiveTagsByDataDoc extends Action {
+    type: '@@tag/RECEIVE_TAGS_BY_DATADOC';
+    payload: {
+        datadocId: number;
+        tags: ITag[];
+    };
+}
+
 export interface IRecieveTagByTable extends Action {
     type: '@@tag/RECEIVE_TAG_BY_TABLE';
     payload: {
@@ -20,8 +28,23 @@ export interface IRecieveTagByTable extends Action {
     };
 }
 
+export interface IReceiveTagByDataDoc extends Action {
+    type: '@@tag/RECEIVE_TAG_BY_DATADOC';
+    payload: {
+        datadocId: number;
+        tag: ITag;
+    };
+}
+
 export interface IRecieveTag extends Action {
     type: '@@tag/RECEIVE_TAG';
+    payload: {
+        tag: ITag;
+    };
+}
+
+export interface IReceiveDataDocTag extends Action {
+    type: '@@tag/RECEIVE_DATADOC_TAG';
     payload: {
         tag: ITag;
     };
@@ -35,15 +58,29 @@ export interface IRemoveTagFromTable extends Action {
     };
 }
 
+export interface IRemoveTagFromDataDoc extends Action {
+    type: '@@tag/REMOVE_TAG_FROM_DATADOC';
+    payload: {
+        datadocId: number;
+        tagName: string;
+    };
+}
+
 export type TagAction =
     | IRecieveTagsByTable
+    | IReceiveTagsByDataDoc
     | IRecieveTagByTable
+    | IReceiveTagByDataDoc
     | IRemoveTagFromTable
-    | IRecieveTag;
+    | IRemoveTagFromDataDoc
+    | IRecieveTag
+    | IReceiveDataDocTag;
 
 export type ThunkResult<R> = ThunkAction<R, IStoreState, undefined, TagAction>;
 
 export interface ITagState {
     tableIdToTagName: Record<number, string[]>;
+    datadocIdToTagName: Record<number, string[]>;
     tagByName: Record<string, ITag>;
+    datadocTagByName: Record<string, ITag>;
 }
