@@ -61,6 +61,12 @@ const columnDetectors: IColumnDetector[] = [
             return false;
         },
     },
+    {
+        type: 'multiline',
+        priority: 0.05,
+        checker: (colName: string, values: any[]) =>
+            detectTypeForValues(values, (value) => value.includes('\n')),
+    },
 ]
     .concat(window.CUSTOM_COLUMN_DETECTORS ?? [])
     .sort((a, b) => b.priority - a.priority) as IColumnDetector[];
