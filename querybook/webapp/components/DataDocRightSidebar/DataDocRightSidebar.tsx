@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { DataDocBoardsButton } from 'components/DataDocBoardsButton/DataDocBoardsButton';
 import { DataDocDAGExporterButton } from 'components/DataDocDAGExporter/DataDocDAGExporterButton';
+import { DataDocGitHubButton } from 'components/DataDocGitHub/DataDocGitHubButton';
 import { DataDocTemplateButton } from 'components/DataDocTemplateButton/DataDocTemplateButton';
 import { DataDocUIGuide } from 'components/UIGuide/DataDocUIGuide';
 import { ComponentType, ElementType } from 'const/analytics';
@@ -83,6 +84,8 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
         <DataDocRunAllButton docId={dataDoc.id} />
     );
 
+    const githubButtonDOM = <DataDocGitHubButton docId={dataDoc.id} />;
+
     const buttonSection = (
         <div className="DataDocRightSidebar-button-section vertical-space-between">
             <div className="DataDocRightSidebar-button-section-top flex-column">
@@ -131,6 +134,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
             </div>
             <div className="DataDocRightSidebar-button-section-bottom flex-column mb8">
                 {runAllButtonDOM}
+                {githubButtonDOM}
                 {isEditable && exporterExists && (
                     <DataDocDAGExporterButton docId={dataDoc.id} />
                 )}
