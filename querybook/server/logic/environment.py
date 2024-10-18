@@ -55,7 +55,7 @@ def get_all_visible_environments_by_uid(uid, session=None):
             or_(
                 Environment.hidden != True,  # noqa: E712
                 UserEnvironment.user_id == uid,
-                Environment.public == True,
+                Environment.public == True,  # noqa: E712
             )
         )
         .all()
