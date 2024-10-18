@@ -162,7 +162,7 @@ def get_default_args(func):
     }
 
 
-def str_to_bool(value: Optional[str | bool]) -> bool:
+def str_to_bool(value: Optional[Union[str, bool]]) -> bool:
     if value is None:
         return False
     if isinstance(value, bool):
