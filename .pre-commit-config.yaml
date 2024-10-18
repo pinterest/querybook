@@ -24,7 +24,7 @@ repos:
                 # - '@trivago/prettier-plugin-sort-imports@3.2.0' # removing it since pre-commit install fails
 
     - repo: https://github.com/PyCQA/flake8
-      rev: 3.9.2
+      rev: 7.1.1
       hooks:
           - id: flake8
             files: "^querybook/(server|tests)/.*\\.py$"

@@ -85,7 +85,7 @@ class OktaLoginManager(OAuthLoginManager):
         LOG.debug("Handling Oauth callback...")
 
         if request.args.get("error"):
-            return f"<h1>Error: { Markup.escape(request.args.get('error')) }</h1>"
+            return f"<h1>Error: {Markup.escape(request.args.get('error'))}</h1>"
 
         code = request.args.get("code")
         try:
