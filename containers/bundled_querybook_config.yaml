@@ -13,20 +13,20 @@ ELASTICSEARCH_HOST: http://elasticsearch:9200
 # AI_ASSISTANT_CONFIG:
 #     default:
 #         model_args:
-#             model_name: gpt-3.5-turbo
+#             model_name: gpt-4o-mini
 #             temperature: 0
 #         reserved_tokens: 1024
 #     table_summary:
 #         model_args:
-#             model_name: gpt-3.5-turbo
+#             model_name: gpt-4o-mini
 #             temperature: 0
 #     sql_summary:
 #         model_args:
-#             model_name: gpt-3.5-turbo
+#             model_name: gpt-4o-mini
 #             temperature: 0
 #     table_select:
 #         model_args:
-#             model_name: gpt-3.5-turbo
+#             model_name: gpt-4o-mini
 #             temperature: 0
 
 # Uncomment below to enable vector store to support embedding based table search.

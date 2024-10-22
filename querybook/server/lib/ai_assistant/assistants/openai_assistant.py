@@ -9,13 +9,16 @@ LOG = get_logger(__file__)
 
 
 OPENAI_MODEL_CONTEXT_WINDOW_SIZE = {
+    # Legacy models
     "gpt-3.5-turbo": 16385,
     "gpt-4": 8192,
     "gpt-4-32k": 32768,
     "gpt-4-turbo": 128000,
+    # Current models
     "gpt-4o": 128000,
+    "gpt-4o-mini": 128000,
 }
-DEFAULT_MODEL_NAME = "gpt-3.5-turbo"
+DEFAULT_MODEL_NAME = "gpt-4o-mini"
 
 
 class OpenAIAssistant(BaseAIAssistant):
