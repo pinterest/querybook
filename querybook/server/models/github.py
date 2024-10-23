@@ -14,7 +14,7 @@ class GitHubLink(Base, CRUDMixin):
         sql.Integer, sql.ForeignKey("data_doc.id"), nullable=False, unique=True
     )
     user_id = sql.Column(sql.Integer, sql.ForeignKey("user.id"), nullable=False)
-    directory = sql.Column(sql.String(255), nullable=False)
+    directory = sql.Column(sql.String(255), nullable=False, default="datadocs")
     created_at = sql.Column(sql.DateTime, server_default=func.now(), nullable=False)
     updated_at = sql.Column(
         sql.DateTime, server_default=func.now(), onupdate=func.now(), nullable=False
