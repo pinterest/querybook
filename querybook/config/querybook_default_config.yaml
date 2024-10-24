@@ -110,3 +110,6 @@ VECTOR_STORE_PROVIDER: ~
 VECTOR_STORE_CONFIG:
     embeddings_arg_name: 'embedding_function'
     index_name: 'vector_index_v1'
+
+# --------------- GitHub Integration ---------------
+GITHUB_REPO_URL: ~
