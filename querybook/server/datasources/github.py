@@ -35,14 +35,14 @@ def connect_github() -> Dict[str, str]:
     return github_manager.initiate_github_integration()
 
 
-@register("/github/is_authenticated/", methods=["GET"])
-def is_github_authenticated() -> Dict[str, bool]:
+@register("/github/is_authorized/", methods=["GET"])
+def is_github_authorized() -> Dict[str, bool]:
     try:
         github_manager.get_github_token()
-        is_authenticated = True
+        is_authorized = True
     except Exception:
-        is_authenticated = False
-    return {"is_authenticated": is_authenticated}
+        is_authorized = False
+    return {"is_authorized": is_authorized}
 
 
 @register("/github/datadocs/<int:datadoc_id>/link/", methods=["POST"])
@@ -66,24 +66,8 @@ def link_datadoc_to_github(
         return github_link.to_dict()
 
 
-@register("/github/datadocs/<int:datadoc_id>/unlink/", methods=["DELETE"])
-def unlink_datadoc_from_github(datadoc_id: int) -> Dict:
-    with DBSession() as session:
-        datadoc = datadoc_logic.get_data_doc_by_id(datadoc_id, session=session)
-        api_assert(
-            datadoc is not None,
-            "DataDoc not found",
-            status_code=RESOURCE_NOT_FOUND_STATUS_CODE,
-        )
-        assert_can_write(datadoc_id, session=session)
-        verify_data_doc_permission(datadoc_id, session=session)
-
-        logic.delete_repo_link(datadoc_id)
-        return {"message": "Repository unlinked successfully"}
-
-
 @register("/github/datadocs/<int:datadoc_id>/is_linked/", methods=["GET"])
-def is_datadoc_linked(datadoc_id: int) -> Dict[str, bool]:
+def is_datadoc_linked(datadoc_id: int) -> Dict[str, Optional[str]]:
     with DBSession() as session:
         datadoc = datadoc_logic.get_data_doc_by_id(datadoc_id, session=session)
         api_assert(
@@ -91,11 +75,11 @@ def is_datadoc_linked(datadoc_id: int) -> Dict[str, bool]:
             "DataDoc not found",
             status_code=RESOURCE_NOT_FOUND_STATUS_CODE,
         )
-        assert_can_read(datadoc_id, session=session)
+        assert_can_read(datadoc_id)
         verify_data_doc_permission(datadoc_id, session=session)
 
-        is_linked = logic.is_repo_linked(datadoc_id)
-        return {"is_linked": is_linked}
+        github_link = logic.get_repo_link(datadoc_id)
+        return {"linked_directory": github_link.directory if github_link else None}
 
 
 @register("/github/datadocs/<int:datadoc_id>/directories/", methods=["GET"])

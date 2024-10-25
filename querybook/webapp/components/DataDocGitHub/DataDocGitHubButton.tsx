@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
-import { GitHubResource } from 'resource/github';
 import { IconButton } from 'ui/Button/IconButton';
 
-import { GitHubModal } from './GitHubModal';
+import { GitHubIntegration } from './GitHubIntegration';
 
 interface IProps {
     docId: number;
@@ -12,48 +11,29 @@ interface IProps {
 export const DataDocGitHubButton: React.FunctionComponent<IProps> = ({
     docId,
 }) => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isGitHubModalOpen, setIsGitHubModalOpen] = useState(false);
 
-    useEffect(() => {
-        const checkAuthentication = async () => {
-            try {
-                const { data } = await GitHubResource.isAuthenticated();
-                setIsAuthenticated(data.is_authenticated);
-            } catch (error) {
-                console.error(
-                    'Failed to check GitHub authentication status:',
-                    error
-                );
-            }
-        };
-
-        checkAuthentication();
+    const handleOpenGitHubModal = useCallback(() => {
+        setIsGitHubModalOpen(true);
     }, []);
 
-    const handleOpenModal = useCallback(() => {
-        setIsModalOpen(true);
-    }, []);
-
-    const handleCloseModal = useCallback(() => {
-        setIsModalOpen(false);
+    const handleCloseGitHubModal = useCallback(() => {
+        setIsGitHubModalOpen(false);
     }, []);
 
     return (
         <>
             <IconButton
                 icon="Github"
-                onClick={handleOpenModal}
+                onClick={handleOpenGitHubModal}
                 tooltip="Connect to GitHub"
                 tooltipPos="left"
                 title="GitHub"
             />
-            {isModalOpen && (
-                <GitHubModal
+            {isGitHubModalOpen && (
+                <GitHubIntegration
                     docId={docId}
-                    isAuthenticated={isAuthenticated}
-                    setIsAuthenticated={setIsAuthenticated}
-                    onClose={handleCloseModal}
+                    onClose={handleCloseGitHubModal}
                 />
             )}
         </>
