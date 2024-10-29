@@ -45,6 +45,10 @@ OAUTH_AUTHORIZATION_URL: ~
 OAUTH_TOKEN_URL: ~
 OAUTH_USER_PROFILE: ~
 
+# --------------- GitHub Integration ---------------
+GITHUB_CLIENT_ID: ~
+GITHUB_CLIENT_SECRET: ~
+
 # LDAP
 LDAP_CONN: ~
 LDAP_USER_DN: uid={},dc=example,dc=com

@@ -8,13 +8,20 @@ from typing import Optional, Dict, Any
 
 LOG = get_logger(__file__)
 
-
 GITHUB_OAUTH_CALLBACK = "/github/oauth2callback"
+GITHUB_ACCESS_TOKEN = "github_access_token"
 
 
-class GitHubIntegrationManager(GitHubLoginManager):
-    def __init__(self, additional_scopes: Optional[list] = None):
+class GitHubManager(GitHubLoginManager):
+    def __init__(
+        self,
+        additional_scopes: Optional[list] = None,
+        client_id: Optional[str] = None,
+        client_secret: Optional[str] = None,
+    ):
         self.additional_scopes = additional_scopes or []
+        self._client_id = client_id
+        self._client_secret = client_secret
         super().__init__()
 
     @property
@@ -24,14 +31,18 @@ class GitHubIntegrationManager(GitHubLoginManager):
         config[
             "callback_url"
         ] = f"{QuerybookSettings.PUBLIC_URL}{GITHUB_OAUTH_CALLBACK}"
+        if self._client_id:
+            config["client_id"] = self._client_id
+        if self._client_secret:
+            config["client_secret"] = self._client_secret
         return config
 
     def save_github_token(self, token: str) -> None:
-        flask_session["github_access_token"] = token
+        flask_session[GITHUB_ACCESS_TOKEN] = token
         LOG.debug("Saved GitHub token to session")
 
     def get_github_token(self) -> Optional[str]:
-        return flask_session.get("github_access_token")
+        return flask_session.get(GITHUB_ACCESS_TOKEN)
 
     def initiate_github_integration(self) -> Dict[str, str]:
         github = self.oauth_session
@@ -70,41 +81,13 @@ class GitHubIntegrationManager(GitHubLoginManager):
         """
 
 
-def get_github_manager() -> GitHubIntegrationManager:
-    return GitHubIntegrationManager(additional_scopes=["repo"])
+github_manager = GitHubManager(
+    additional_scopes=["repo"],
+    client_id=QuerybookSettings.GITHUB_CLIENT_ID,
+    client_secret=QuerybookSettings.GITHUB_CLIENT_SECRET,
+)
 
 
 @flask_app.route(GITHUB_OAUTH_CALLBACK)
 def github_callback() -> str:
-    github_manager = get_github_manager()
     return github_manager.github_integration_callback()
-
-
-# Test GitHub OAuth Flow
-def main():
-    github_manager = GitHubIntegrationManager()
-    oauth_config = github_manager.oauth_config
-    client_id = oauth_config["client_id"]
-    client_secret = oauth_config["client_secret"]
-
-    from requests_oauthlib import OAuth2Session
-
-    github = OAuth2Session(client_id)
-    authorization_url, state = github.authorization_url(
-        oauth_config["authorization_url"]
-    )
-    print("Please go here and authorize,", authorization_url)
-
-    redirect_response = input("Paste the full redirect URL here:")
-    github.fetch_token(
-        oauth_config["token_url"],
-        client_secret=client_secret,
-        authorization_response=redirect_response,
-    )
-
-    user_profile = github.get(oauth_config["profile_url"]).json()
-    print(user_profile)
-
-
-if __name__ == "__main__":
-    main()

@@ -89,6 +89,10 @@ class QuerybookSettings(object):
     OAUTH_USER_PROFILE = get_env_config("OAUTH_USER_PROFILE")
     AZURE_TENANT_ID = get_env_config("AZURE_TENANT_ID")
 
+    # GitHub App settings for feature integration
+    GITHUB_CLIENT_ID = os.getenv("GITHUB_CLIENT_ID")
+    GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET")
+
     LDAP_CONN = get_env_config("LDAP_CONN")
     LDAP_USE_TLS = str(get_env_config("LDAP_USE_TLS")).lower() == "true"
     LDAP_USE_BIND_USER = str(get_env_config("LDAP_USE_BIND_USER")).lower() == "true"
