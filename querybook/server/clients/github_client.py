@@ -1,8 +1,7 @@
-from flask import session as flask_session
 from github import Github, GithubException, Auth
 from typing import List, Dict, Optional
 
-from lib.github_integration.serializers import (
+from lib.github.serializers import (
     deserialize_datadoc_from_markdown,
     serialize_datadoc_to_markdown,
 )
@@ -15,51 +14,34 @@ LOG = get_logger(__name__)
 
 
 class GitHubClient:
-    def __init__(self, github_link: GitHubLink):
+    def __init__(self, access_token: str, github_link: Optional[GitHubLink] = None):
         """
-        Initialize the GitHub client with an access token from the session.
-        Raises an exception if the token is not found.
+        Initialize the GitHub client with an access token.
+        Args:
+            access_token (str): The GitHub access token.
+            github_link (Optional[GitHubLink]): The GitHub link object.
         """
         self.github_link = github_link
-        self.datadoc = github_link.datadoc
-        access_token = self._get_access_token()
         auth = Auth.Token(access_token)
         self.client = Github(auth=auth, per_page=5)
         self.user = self.client.get_user()
         self.repo = self._get_repository()
-        self.branch = "main"
-        self.file_path = self._build_file_path()
-
-    def _get_access_token(self) -> str:
-        access_token = flask_session.get("github_access_token")
-        if not access_token:
-            LOG.error("GitHub OAuth token not found in session")
-            raise Exception("GitHub OAuth token not found in session")
-        return access_token
+        self.branch = QuerybookSettings.GITHUB_BRANCH
+        self.file_path = self._build_file_path() if github_link else None
 
     def _get_repository(self):
-        repo_url = QuerybookSettings.GITHUB_REPO_URL
-        if not repo_url:
-            LOG.error("GITHUB_REPO_URL is not configured")
-            raise Exception("GITHUB_REPO_URL is not configured")
-        repo_full_name = self._extract_repo_full_name(repo_url)
-        return self.client.get_repo(repo_full_name)
-
-    @staticmethod
-    def _extract_repo_full_name(repo_url: str) -> str:
-        # Assumes repo_url is in the format 'https://github.com/owner/repo'
-        parts = repo_url.rstrip("/").split("/")
-        if len(parts) >= 2:
-            return f"{parts[-2]}/{parts[-1]}"
-        else:
-            raise ValueError("Invalid GITHUB_REPO_URL configuration")
+        repo_name = QuerybookSettings.GITHUB_REPO_NAME
+        if not repo_name:
+            LOG.error("GITHUB_REPO_NAME is not configured")
+            raise Exception("GITHUB_REPO_NAME is not configured")
+        return self.client.get_repo(repo_name)
 
     def _build_file_path(self) -> str:
         directory = self.github_link.directory
-        file_name = f"datadoc_{self.datadoc.id}.md"
+        file_name = f"datadoc_{self.github_link.datadoc.id}.md"
         return f"{directory}/{file_name}"
 
-    def commit_datadoc(self, commit_message: Optional[str] = None):
+    def commit_datadoc(self, commit_message: Optional[str] = None) -> None:
         """
         Commit a DataDoc to the repository.
         Args:
@@ -67,10 +49,14 @@ class GitHubClient:
         Raises:
             Exception: If committing the DataDoc fails.
         """
-        content = serialize_datadoc_to_markdown(self.datadoc)
+        if not self.github_link:
+            raise Exception("GitHub link is required for this operation")
+
+        datadoc = self.github_link.datadoc
+        content = serialize_datadoc_to_markdown(datadoc)
         if not commit_message:
             commit_message = (
-                f"Update DataDoc {self.datadoc.id}: {self.datadoc.title or 'Untitled'}"
+                f"Update DataDoc {datadoc.id}: {datadoc.title or 'Untitled'}"
             )
 
         try:
@@ -106,6 +92,9 @@ class GitHubClient:
         Returns:
             List[Dict]: A list of commit dictionaries.
         """
+        if not self.github_link:
+            raise Exception("GitHub link is required for this operation")
+
         try:
             commits = self.repo.get_commits(
                 path=self.file_path,
@@ -126,6 +115,9 @@ class GitHubClient:
         Raises:
             Exception: If getting the DataDoc at the commit fails.
         """
+        if not self.github_link:
+            raise Exception("GitHub link is required for this operation")
+
         try:
             file_contents = self.repo.get_contents(path=self.file_path, ref=commit_sha)
             content = file_contents.decoded_content.decode("utf-8")

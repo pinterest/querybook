@@ -42,7 +42,11 @@ class GitHubManager(GitHubLoginManager):
         LOG.debug("Saved GitHub token to session")
 
     def get_github_token(self) -> Optional[str]:
-        return flask_session.get(GITHUB_ACCESS_TOKEN)
+        access_token = flask_session.get(GITHUB_ACCESS_TOKEN)
+        if not access_token:
+            LOG.error("GitHub OAuth token not found in session")
+            raise Exception("GitHub OAuth token not found in session")
+        return access_token
 
     def initiate_github_integration(self) -> Dict[str, str]:
         github = self.oauth_session
@@ -57,7 +61,7 @@ class GitHubManager(GitHubLoginManager):
             github = self.oauth_session
             access_token = github.fetch_token(
                 self.oauth_config["token_url"],
-                client_secret=self.oauth_config["client_secret"],
+                client_secret=self._client_secret,
                 authorization_response=request.url,
                 cert=certifi.where(),
             )

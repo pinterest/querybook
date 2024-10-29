@@ -17,7 +17,8 @@ def with_github_client(f):
     def decorated_function(*args, **kwargs):
         datadoc_id = kwargs.get("datadoc_id")
         github_link = logic.get_repo_link(datadoc_id)
-        github_client = GitHubClient(github_link)
+        access_token = github_manager.get_github_token()
+        github_client = GitHubClient(github_link, access_token)
         return f(github_client, *args, **kwargs)
 
     return decorated_function
@@ -30,7 +31,11 @@ def connect_github() -> Dict[str, str]:
 
 @register("/github/is_authenticated/", methods=["GET"])
 def is_github_authenticated() -> Dict[str, bool]:
-    is_authenticated = github_manager.get_github_token() is not None
+    try:
+        github_manager.get_github_token()
+        is_authenticated = True
+    except Exception:
+        is_authenticated = False
     return {"is_authenticated": is_authenticated}
 
 
