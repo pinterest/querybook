@@ -1,17 +1,16 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 
+import { QueryComparison } from 'components/TranspileQueryModal/QueryComparison';
 import { usePaginatedResource } from 'hooks/usePaginatedResource';
 import { GitHubResource, ICommit } from 'resource/github';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
-import { Button } from 'ui/Button/Button';
-import { Card } from 'ui/Card/Card';
+import { IconButton } from 'ui/Button/IconButton';
 import { FeatureDisabledMessage } from 'ui/DisabledSection/FeatureDisabledMessage';
 import { ErrorPage } from 'ui/ErrorPage/ErrorPage';
-import { Icon } from 'ui/Icon/Icon';
-import { Link } from 'ui/Link/Link';
 import { Loading } from 'ui/Loading/Loading';
 import { Message } from 'ui/Message/Message';
-import { AccentText, StyledText } from 'ui/StyledText/StyledText';
+
+import { CommitCard } from './CommitCard';
 
 import './GitHub.scss';
 
@@ -24,6 +23,10 @@ export const GitHubVersions: React.FunctionComponent<IProps> = ({
     docId,
     linkedDirectory,
 }) => {
+    const [isCompareOpen, setIsCompareOpen] = useState(false);
+    const [selectedCommit, setSelectedCommit] = useState<ICommit | null>(null);
+    const [isFullScreen, setIsFullScreen] = useState(false);
+
     const {
         data: commitVersions,
         isLoading,
@@ -39,9 +42,36 @@ export const GitHubVersions: React.FunctionComponent<IProps> = ({
         { batchSize: 5 }
     );
 
-    const handleRestore = async (commitSha: string, commitMessage: string) => {
-        alert('Restore feature not implemented yet');
-    };
+    const handleRestore = useCallback(
+        async (commitSha: string, commitMessage: string) => {
+            alert('Restore feature not implemented yet');
+        },
+        []
+    );
+
+    const toggleCompare = useCallback(
+        (version?: ICommit) => {
+            if (version) {
+                if (isCompareOpen && selectedCommit?.sha === version.sha) {
+                    setIsCompareOpen(false);
+                    setSelectedCommit(null);
+                    setIsFullScreen(false);
+                } else {
+                    setSelectedCommit(version);
+                    setIsCompareOpen(true);
+                }
+            } else {
+                // Handle closing without a version (e.g. clicking close button)
+                setIsCompareOpen(false);
+                setIsFullScreen(false);
+            }
+        },
+        [isCompareOpen, selectedCommit]
+    );
+
+    const toggleFullScreen = useCallback(() => {
+        setIsFullScreen((prev) => !prev);
+    }, []);
 
     if (!linkedDirectory) {
         return (
@@ -78,64 +108,71 @@ export const GitHubVersions: React.FunctionComponent<IProps> = ({
         );
     }
 
+    const commitListDOM = (
+        <div className="commit-list  mt16 pr12">
+            {commitVersions.map((version) => (
+                <CommitCard
+                    key={version.sha}
+                    version={version}
+                    onRestore={handleRestore}
+                    onCompare={toggleCompare.bind(null, version)}
+                />
+            ))}
+        </div>
+    );
+
+    const loadMoreButtonDOM = hasMore ? (
+        <AsyncButton onClick={fetchMore} className="mt12 mb16">
+            Load More
+        </AsyncButton>
+    ) : null;
+
+    const comparePanelDOM = (
+        <div
+            className={`compare-slide-out-panel ${
+                isCompareOpen ? 'open' : ''
+            } ${isFullScreen ? 'full-screen' : ''}`}
+        >
+            {selectedCommit && (
+                <div className="GitHubVersionsComparePanel">
+                    <div className="panel-header">
+                        <IconButton
+                            icon={isFullScreen ? 'Minimize2' : 'Maximize2'}
+                            onClick={toggleFullScreen}
+                            size={16}
+                            tooltip={
+                                isFullScreen
+                                    ? 'Exit Full Screen'
+                                    : 'Enter Full Screen'
+                            }
+                            tooltipPos="left"
+                        />
+                        <IconButton
+                            icon="X"
+                            onClick={() => toggleCompare()}
+                            size={16}
+                            tooltip="Close Compare Panel"
+                            tooltipPos="left"
+                        />
+                    </div>
+                    <QueryComparison
+                        fromQuery={'Current DataDoc Old Text'}
+                        toQuery={'Incoming DataDoc New Text'}
+                        fromQueryTitle="Current DataDoc"
+                        toQueryTitle="Incoming DataDoc"
+                    />
+                </div>
+            )}
+        </div>
+    );
+
     return (
         <div className="GitHubVersions">
-            <div className="commit-list  mt16 pr12">
-                {commitVersions.map((version) => (
-                    <Card key={version.sha} alignLeft className="mb12">
-                        <AccentText weight="extra" size="large">
-                            {version.commit.message}
-                        </AccentText>
-                        <div className="mt8">
-                            <StyledText color="light">
-                                <AccentText weight="bold">Author:</AccentText>{' '}
-                                {version.commit.author.name}
-                            </StyledText>
-                            <StyledText color="light" className="mt4">
-                                <AccentText weight="bold">Date:</AccentText>{' '}
-                                {new Date(
-                                    version.commit.author.date
-                                ).toLocaleString()}
-                            </StyledText>
-                        </div>
-                        <div className="commit-actions mt8">
-                            <Button>
-                                <Link
-                                    to={version.html_url}
-                                    newTab
-                                    className="Button Button--primary"
-                                >
-                                    View on GitHub
-                                </Link>
-                            </Button>
-                            <AsyncButton
-                                onClick={() =>
-                                    handleRestore(
-                                        version.sha,
-                                        version.commit.message
-                                    )
-                                }
-                                className="ml8"
-                            >
-                                Restore Version
-                            </AsyncButton>
-                            <Button
-                                onClick={() =>
-                                    alert('Compare feature not implemented yet')
-                                }
-                                className="ml8"
-                            >
-                                Compare
-                            </Button>
-                        </div>
-                    </Card>
-                ))}
+            <div className="commit-list-wrapper">
+                {commitListDOM}
+                {loadMoreButtonDOM}
+                {comparePanelDOM}
             </div>
-            {hasMore && (
-                <AsyncButton onClick={fetchMore} className="mt12 mb16">
-                    Load More
-                </AsyncButton>
-            )}
         </div>
     );
 };

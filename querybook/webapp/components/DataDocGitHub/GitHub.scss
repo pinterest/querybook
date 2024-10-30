@@ -21,6 +21,10 @@
 }
 
 .GitHubVersions {
+    .commit-list-wrapper {
+        position: relative;
+    }
+
     .commit-list {
         max-height: 600px;
         overflow-y: auto;
@@ -29,6 +33,54 @@
     .commit-actions {
         display: flex;
         align-items: center;
+    }
+
+    .load-more-button {
+        margin-top: 12px;
+        margin-bottom: 16px;
+    }
+
+    .compare-slide-out-panel {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        width: 60%;
+        background-color: var(--bg);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+        overflow: hidden;
+        transform: translateX(100%);
+
+        &.open {
+            transform: translateX(0%);
+        }
+
+        &.full-screen {
+            position: fixed;
+            width: 100% !important;
+            height: 100% !important;
+            top: 0;
+            left: 0;
+            transform: translateX(0%);
+        }
+
+        .panel-header {
+            position: absolute;
+            top: 0;
+            z-index: 9;
+            right: 0;
+        }
+
+        .GitHubVersionsComparePanel {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background-color: var(--bg);
+            padding: 16px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
     }
 }
 
