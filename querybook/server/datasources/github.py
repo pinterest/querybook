@@ -2,6 +2,7 @@ from functools import wraps
 from app.datasource import api_assert, register
 from app.db import DBSession
 from clients.github_client import GitHubClient
+from env import QuerybookSettings
 from lib.github.github import github_manager
 from typing import Dict, List, Optional
 from logic import github as logic
@@ -18,7 +19,12 @@ def with_github_client(f):
         datadoc_id = kwargs.get("datadoc_id")
         github_link = logic.get_repo_link(datadoc_id)
         access_token = github_manager.get_github_token()
-        github_client = GitHubClient(github_link, access_token)
+        github_client = GitHubClient(
+            github_link=github_link,
+            access_token=access_token,
+            repo_name=QuerybookSettings.GITHUB_REPO_NAME,
+            branch=QuerybookSettings.GITHUB_BRANCH,
+        )
         return f(github_client, *args, **kwargs)
 
     return decorated_function

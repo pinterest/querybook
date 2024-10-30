@@ -158,7 +158,7 @@ class QuerybookSettings(object):
     EMBEDDINGS_CONFIG = get_env_config("EMBEDDINGS_CONFIG") or {}
 
     # GitHub Integration
-    GITHUB_CLIENT_ID = os.getenv("GITHUB_CLIENT_ID")
-    GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET")
+    GITHUB_CLIENT_ID = get_env_config("GITHUB_CLIENT_ID")
+    GITHUB_CLIENT_SECRET = get_env_config("GITHUB_CLIENT_SECRET")
     GITHUB_REPO_NAME = get_env_config("GITHUB_REPO_NAME")
     GITHUB_BRANCH = get_env_config("GITHUB_BRANCH")

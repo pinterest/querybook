@@ -8,32 +8,38 @@ from lib.github.serializers import (
 from lib.logger import get_logger
 from models.datadoc import DataDoc
 from models.github import GitHubLink
-from env import QuerybookSettings
 
 LOG = get_logger(__name__)
 
 
 class GitHubClient:
-    def __init__(self, access_token: str, github_link: Optional[GitHubLink] = None):
+    def __init__(
+        self,
+        access_token: str,
+        repo_name: str,
+        branch: str,
+        github_link: Optional[GitHubLink] = None,
+    ):
         """
         Initialize the GitHub client with an access token.
         Args:
             access_token (str): The GitHub access token.
+            repo_name (str): The GitHub repository name.
+            branch (str): The branch name.
             github_link (Optional[GitHubLink]): The GitHub link object.
         """
         self.github_link = github_link
+        self.branch = branch
         auth = Auth.Token(access_token)
         self.client = Github(auth=auth, per_page=5)
         self.user = self.client.get_user()
-        self.repo = self._get_repository()
-        self.branch = QuerybookSettings.GITHUB_BRANCH
+        self.repo = self._get_repository(repo_name)
         self.file_path = self._build_file_path() if github_link else None
 
-    def _get_repository(self):
-        repo_name = QuerybookSettings.GITHUB_REPO_NAME
+    def _get_repository(self, repo_name: str):
         if not repo_name:
-            LOG.error("GITHUB_REPO_NAME is not configured")
-            raise Exception("GITHUB_REPO_NAME is not configured")
+            LOG.error("Repository name is required")
+            raise Exception("Repository name is required")
         return self.client.get_repo(repo_name)
 
     def _build_file_path(self) -> str:
@@ -61,7 +67,27 @@ class GitHubClient:
 
         try:
             contents = self.repo.get_contents(self.file_path, ref=self.branch)
-            # Update file
+            self._update_file(contents, content, commit_message)
+            LOG.info(f"Updated file {self.file_path} in repository.")
+        except GithubException as e:
+            if e.status == 404:
+                self._create_file(content, commit_message)
+                LOG.info(f"Created file {self.file_path} in repository.")
+            else:
+                LOG.error(f"GitHubException during commit: {e}")
+                raise Exception(f"Failed to commit DataDoc: {e}")
+
+    def _update_file(self, contents, content: str, commit_message: str) -> None:
+        """
+        Update an existing file in the repository.
+        Args:
+            contents: The current contents of the file.
+            content (str): New content for the file.
+            commit_message (str): Commit message.
+        Raises:
+            Exception: If updating the file fails.
+        """
+        try:
             self.repo.update_file(
                 path=contents.path,
                 message=commit_message,
@@ -69,20 +95,29 @@ class GitHubClient:
                 sha=contents.sha,
                 branch=self.branch,
             )
-            LOG.info(f"Updated file {self.file_path} in repository.")
         except GithubException as e:
-            if e.status == 404:
-                # Create new file
-                self.repo.create_file(
-                    path=self.file_path,
-                    message=commit_message,
-                    content=content,
-                    branch=self.branch,
-                )
-                LOG.info(f"Created file {self.file_path} in repository.")
-            else:
-                LOG.error(f"GitHubException during commit: {e}")
-                raise Exception(f"Failed to commit DataDoc: {e}")
+            LOG.error(f"Error updating file {self.file_path}: {e}")
+            raise Exception(f"Failed to update DataDoc: {e}")
+
+    def _create_file(self, content: str, commit_message: str) -> None:
+        """
+        Create a new file in the repository.
+        Args:
+            content (str): Content for the new file.
+            commit_message (str): Commit message.
+        Raises:
+            Exception: If creating the file fails.
+        """
+        try:
+            self.repo.create_file(
+                path=self.file_path,
+                message=commit_message,
+                content=content,
+                branch=self.branch,
+            )
+        except GithubException as e:
+            LOG.error(f"Error creating file {self.file_path}: {e}")
+            raise Exception(f"Failed to create DataDoc: {e}")
 
     def get_datadoc_versions(self, page: int = 1) -> List[Dict]:
         """
