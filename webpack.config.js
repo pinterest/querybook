@@ -48,6 +48,10 @@ function getDevServerSettings(env) {
                 target: QUERYBOOK_UPSTREAM,
                 changeOrigin: true,
             },
+            '/github/oauth2callback': {
+                target: QUERYBOOK_UPSTREAM,
+                changeOrigin: true,
+            },
         },
         publicPath: '/build/',
         onListening: (server) => {
