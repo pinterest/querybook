@@ -1,10 +1,5 @@
 .GitHubAuth {
     text-align: center;
-    padding: 20px;
-}
-
-.GitHubAuth-icon {
-    margin-bottom: 20px;
 }
 
 .github-tab-item .flex-center {
@@ -13,7 +8,7 @@
 }
 
 .github-tab-item .flex-center .Icon {
-    margin-right: 8px;
+    margin-right: 4px;
 }
 
 .feature-disabled {
@@ -25,37 +20,23 @@
     color: var(--color-light);
 }
 
-.feature-disabled-icon {
-    margin-bottom: 12px;
-}
-
 .GitHubVersions {
     .commit-list {
         max-height: 600px;
         overflow-y: auto;
-        padding-right: 10px;
-        margin-top: 16px;
     }
 
     .commit-actions {
         display: flex;
         align-items: center;
     }
-
-    .load-more-button {
-        margin-top: 12px;
-        margin-bottom: 16px;
-    }
 }
 
 .GitHubSettings {
-    padding: 20px;
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .GitHubSettings-section-content {
-    padding: 12px;
     border-radius: 4px;
-    margin-bottom: 12px;
 }

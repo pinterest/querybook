@@ -119,9 +119,8 @@ export const GitHubFeatures: React.FC<IProps> = ({ docId }) => {
                 wide
                 size="large"
                 selectColor
-                className="github-tab-item"
+                className="github-tab-item mb12"
             />
-            <div style={{ height: '28px' }} />
             {activeTab === 'push' && (
                 <div>
                     {directoryMessage}

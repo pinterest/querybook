@@ -1,5 +1,6 @@
 import { Form, Formik } from 'formik';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import toast from 'react-hot-toast';
 import * as Yup from 'yup';
 
 import { GitHubResource } from 'resource/github';
@@ -19,6 +20,8 @@ interface IProps {
 const validationSchema = Yup.object().shape({
     directory: Yup.string().notRequired(),
 });
+
+const DEFAULT_DIRECTORY = 'datadocs';
 
 export const GitHubDirectory: React.FC<IProps> = ({
     docId,
@@ -56,10 +59,10 @@ export const GitHubDirectory: React.FC<IProps> = ({
     );
 
     const handleSubmit = async (values: { directory: string }) => {
-        const directory = values.directory || 'datadocs';
+        const directory = values.directory || DEFAULT_DIRECTORY;
         try {
             await onLinkDirectory(directory);
-            alert('Directory linked successfully!');
+            toast.success('Directory linked successfully!');
         } catch (error) {
             console.error('Error linking directory:', error);
             setErrorMessage('Failed to link directory. Please try again.');
@@ -70,7 +73,7 @@ export const GitHubDirectory: React.FC<IProps> = ({
     const formContent = (
         <Formik
             initialValues={{
-                directory: linkedDirectory || 'datadocs',
+                directory: linkedDirectory || DEFAULT_DIRECTORY,
             }}
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
@@ -96,9 +99,9 @@ export const GitHubDirectory: React.FC<IProps> = ({
                             onChange={(option) => {
                                 setFieldValue('directory', option);
                             }}
-                            help="Select or create a directory for DataDoc commits. Defaults to 'datadocs' if left empty."
+                            help={`Select or create a directory for DataDoc commits. Defaults to ${DEFAULT_DIRECTORY} if left empty.`}
                         />
-                        <div className="mt16">
+                        <div className="mt12">
                             <AsyncButton
                                 icon="Save"
                                 onClick={submitForm}
@@ -121,7 +124,6 @@ export const GitHubDirectory: React.FC<IProps> = ({
             type="warning"
             icon="AlertTriangle"
             iconSize={20}
-            className="mt12"
             size="large"
             center
         />
@@ -129,9 +131,7 @@ export const GitHubDirectory: React.FC<IProps> = ({
     const unlinkedDirectoryMessage = (
         <Message
             title="Directory Linking"
-            message={
-                'Select an existing directory or create a new one. The default directory is datadocs. Directory will be used for DataDoc commits and version history.'
-            }
+            message={`Select an existing directory or create a new one. The default directory is ${DEFAULT_DIRECTORY}. Directory will be used for DataDoc commits and version history.`}
             type="info"
             size="large"
             center

@@ -40,7 +40,7 @@ export const GitHubIntegration: React.FC<IProps> = ({ docId, onClose }) => {
 
     const handleAuthenticateGitHub = useCallback(async () => {
         trackClick({
-            component: ComponentType.DATADOC_PAGE,
+            component: ComponentType.GITHUB,
             element: ElementType.GITHUB_CONNECT_BUTTON,
         });
 

@@ -5,6 +5,7 @@ import { GitHubResource, ICommit } from 'resource/github';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Button } from 'ui/Button/Button';
 import { Card } from 'ui/Card/Card';
+import { FeatureDisabledMessage } from 'ui/DisabledSection/FeatureDisabledMessage';
 import { ErrorPage } from 'ui/ErrorPage/ErrorPage';
 import { Icon } from 'ui/Icon/Icon';
 import { Link } from 'ui/Link/Link';
@@ -44,18 +45,7 @@ export const GitHubVersions: React.FunctionComponent<IProps> = ({
 
     if (!linkedDirectory) {
         return (
-            <div className="feature-disabled">
-                <Icon
-                    name="AlertCircle"
-                    size={128}
-                    color="light"
-                    className="feature-disabled-icon"
-                />
-                <Message
-                    message="This feature is currently disabled. Please link your DataDoc in Settings to enable."
-                    type="info"
-                />
-            </div>
+            <FeatureDisabledMessage message="This feature is currently disabled. Please link your DataDoc in Settings to enable." />
         );
     }
 
@@ -90,7 +80,7 @@ export const GitHubVersions: React.FunctionComponent<IProps> = ({
 
     return (
         <div className="GitHubVersions">
-            <div className="commit-list">
+            <div className="commit-list  mt16 pr12">
                 {commitVersions.map((version) => (
                     <Card key={version.sha} alignLeft className="mb12">
                         <AccentText weight="extra" size="large">
@@ -142,7 +132,7 @@ export const GitHubVersions: React.FunctionComponent<IProps> = ({
                 ))}
             </div>
             {hasMore && (
-                <AsyncButton onClick={fetchMore} className="load-more-button">
+                <AsyncButton onClick={fetchMore} className="mt12 mb16">
                     Load More
                 </AsyncButton>
             )}

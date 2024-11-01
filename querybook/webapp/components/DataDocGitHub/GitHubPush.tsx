@@ -1,11 +1,12 @@
 import { Form, Formik } from 'formik';
 import React, { useCallback, useState } from 'react';
+import { toast } from 'react-hot-toast';
 
 import { GitHubResource } from 'resource/github';
 import { Button } from 'ui/Button/Button';
+import { FeatureDisabledMessage } from 'ui/DisabledSection/FeatureDisabledMessage';
 import { FormWrapper } from 'ui/Form/FormWrapper';
 import { SimpleField } from 'ui/FormikField/SimpleField';
-import { Icon } from 'ui/Icon/Icon';
 import { Message } from 'ui/Message/Message';
 
 import './GitHub.scss';
@@ -28,13 +29,13 @@ export const GitHubPush: React.FunctionComponent<IProps> = ({
             setErrorMessage(null);
             try {
                 await GitHubResource.commitDataDoc(docId, values.commitMessage);
-                alert('Commit pushed successfully!');
+                toast.success('Commit pushed successfully!');
             } catch (error) {
                 console.error('Failed to push commit:', error);
                 setErrorMessage(
                     'Failed to push commit. Please ensure the file path exists.'
                 );
-                alert('Failed to push commit');
+                toast.error('Failed to push commit');
             } finally {
                 setIsSubmitting(false);
             }
@@ -44,18 +45,7 @@ export const GitHubPush: React.FunctionComponent<IProps> = ({
 
     if (!linkedDirectory) {
         return (
-            <div className="feature-disabled">
-                <Icon
-                    name="AlertCircle"
-                    size={128}
-                    color="light"
-                    className="feature-disabled-icon"
-                />
-                <Message
-                    message="This feature is currently disabled. Please link your DataDoc in Settings to enable."
-                    type="info"
-                />
-            </div>
+            <FeatureDisabledMessage message="This feature is currently disabled. Please link your DataDoc in Settings to enable." />
         );
     }
 

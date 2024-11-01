@@ -1,6 +1,5 @@
 from functools import wraps
 from app.datasource import api_assert, register
-from app.db import DBSession
 from clients.github_client import GitHubClient
 from env import QuerybookSettings
 from lib.github.github import github_manager
@@ -50,36 +49,34 @@ def link_datadoc_to_github(
     datadoc_id: int,
     directory: str,
 ) -> Dict:
-    with DBSession() as session:
-        datadoc = datadoc_logic.get_data_doc_by_id(datadoc_id, session=session)
-        api_assert(
-            datadoc is not None,
-            "DataDoc not found",
-            status_code=RESOURCE_NOT_FOUND_STATUS_CODE,
-        )
-        assert_can_write(datadoc_id, session=session)
-        verify_data_doc_permission(datadoc_id, session=session)
+    datadoc = datadoc_logic.get_data_doc_by_id(datadoc_id)
+    api_assert(
+        datadoc is not None,
+        "DataDoc not found",
+        status_code=RESOURCE_NOT_FOUND_STATUS_CODE,
+    )
+    assert_can_write(datadoc_id)
+    verify_data_doc_permission(datadoc_id)
 
-        github_link = logic.create_repo_link(
-            datadoc_id=datadoc_id, user_id=current_user.id, directory=directory
-        )
-        return github_link.to_dict()
+    github_link = logic.create_repo_link(
+        datadoc_id=datadoc_id, user_id=current_user.id, directory=directory
+    )
+    return github_link.to_dict()
 
 
 @register("/github/datadocs/<int:datadoc_id>/is_linked/", methods=["GET"])
 def is_datadoc_linked(datadoc_id: int) -> Dict[str, Optional[str]]:
-    with DBSession() as session:
-        datadoc = datadoc_logic.get_data_doc_by_id(datadoc_id, session=session)
-        api_assert(
-            datadoc is not None,
-            "DataDoc not found",
-            status_code=RESOURCE_NOT_FOUND_STATUS_CODE,
-        )
-        assert_can_read(datadoc_id)
-        verify_data_doc_permission(datadoc_id, session=session)
+    datadoc = datadoc_logic.get_data_doc_by_id(datadoc_id)
+    api_assert(
+        datadoc is not None,
+        "DataDoc not found",
+        status_code=RESOURCE_NOT_FOUND_STATUS_CODE,
+    )
+    assert_can_read(datadoc_id)
+    verify_data_doc_permission(datadoc_id)
 
-        github_link = logic.get_repo_link(datadoc_id)
-        return {"linked_directory": github_link.directory if github_link else None}
+    github_link = logic.get_repo_link(datadoc_id)
+    return {"linked_directory": github_link.directory if github_link else None}
 
 
 @register("/github/datadocs/<int:datadoc_id>/directories/", methods=["GET"])
@@ -100,11 +97,10 @@ def commit_datadoc(
     datadoc_id: int,
     commit_message: Optional[str] = None,
 ) -> Dict:
-    with DBSession() as session:
-        assert_can_write(datadoc_id, session=session)
-        verify_data_doc_permission(datadoc_id, session=session)
-        github_client.commit_datadoc(commit_message=commit_message)
-        return {"message": "DataDoc committed successfully"}
+    assert_can_write(datadoc_id)
+    verify_data_doc_permission(datadoc_id)
+    github_client.commit_datadoc(commit_message=commit_message)
+    return {"message": "DataDoc committed successfully"}
 
 
 @register("/github/datadocs/<int:datadoc_id>/versions/", methods=["GET"])

@@ -20,7 +20,7 @@ export const GitHubSettings: React.FC<IProps> = ({
     onLinkDirectory,
 }) => {
     const authorizationCardDom = (
-        <div className="GitHubSettings-section-content">
+        <div className="GitHubSettings-section-content p8 mb12">
             <Message
                 title="GitHub Authorization"
                 type="success"
@@ -29,7 +29,7 @@ export const GitHubSettings: React.FC<IProps> = ({
                 size="large"
                 center
             >
-                <StyledText center>
+                <StyledText center className="p8">
                     Your GitHub account is successfully authorized. Manage your
                     GitHub authorized OAuth apps{' '}
                     <Link to="https://github.com/settings/applications" newTab>
@@ -43,7 +43,7 @@ export const GitHubSettings: React.FC<IProps> = ({
     );
 
     const directoryCardDom = (
-        <div className="GitHubSettings-section-content">
+        <div className="GitHubSettings-section-content p8 mb12">
             <GitHubDirectory
                 docId={docId}
                 linkedDirectory={linkedDirectory}
@@ -53,7 +53,7 @@ export const GitHubSettings: React.FC<IProps> = ({
     );
 
     return (
-        <Card className="GitHubSettings">
+        <Card className="GitHubSettings p20">
             {authorizationCardDom}
             {directoryCardDom}
         </Card>

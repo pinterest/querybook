@@ -13,8 +13,8 @@ interface IProps {
 export const GitHubAuth: React.FunctionComponent<IProps> = ({
     onAuthorize,
 }) => (
-    <div className="GitHubAuth">
-        <Icon name="Github" size={64} className="GitHubAuth-icon" />
+    <div className="GitHubAuth p20">
+        <Icon name="Github" size={64} className="GitHubAuth-icon mb20" />
         <Message
             title="Connect to GitHub"
             message="We need your permission to access your GitHub repositories. Please authorize to enable GitHub features on Querybook."
