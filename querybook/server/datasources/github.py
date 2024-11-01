@@ -4,6 +4,7 @@ from clients.github_client import GitHubClient
 from env import QuerybookSettings
 from lib.github.github import github_manager
 from typing import Dict, List, Optional
+from lib.github.serializers import serialize_datadoc_to_markdown
 from logic import github as logic
 from logic import datadoc as datadoc_logic
 from const.datasources import RESOURCE_NOT_FOUND_STATUS_CODE
@@ -113,3 +114,35 @@ def get_datadoc_versions(
     page = offset // limit + 1
     versions = github_client.get_datadoc_versions(page=page)
     return versions
+
+
+@register("/github/datadocs/<int:datadoc_id>/compare/", methods=["GET"])
+@with_github_client
+def compare_datadoc_versions(
+    github_client: GitHubClient, datadoc_id: int, commit_sha: str
+) -> Dict:
+    """
+    Compare the current DataDoc with a specific commit.
+    """
+    assert_can_read(datadoc_id)
+    verify_data_doc_permission(datadoc_id)
+    current_datadoc = datadoc_logic.get_data_doc_by_id(datadoc_id)
+    api_assert(
+        current_datadoc is not None,
+        "Current DataDoc not found",
+        status_code=RESOURCE_NOT_FOUND_STATUS_CODE,
+    )
+    current_markdown = serialize_datadoc_to_markdown(
+        current_datadoc, exclude_metadata=True
+    )
+
+    # Get the DataDoc content at the specified commit and re-serialize with metadata excluded
+    commit_datadoc = github_client.get_datadoc_at_commit(commit_sha)
+    commit_markdown = serialize_datadoc_to_markdown(
+        commit_datadoc, exclude_metadata=True
+    )
+
+    return {
+        "current_content": current_markdown,
+        "commit_content": commit_markdown,
+    }

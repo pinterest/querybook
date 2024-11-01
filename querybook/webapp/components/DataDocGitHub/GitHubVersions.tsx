@@ -2,11 +2,13 @@ import React, { useCallback, useState } from 'react';
 
 import { QueryComparison } from 'components/TranspileQueryModal/QueryComparison';
 import { usePaginatedResource } from 'hooks/usePaginatedResource';
+import { useResource } from 'hooks/useResource';
 import { GitHubResource, ICommit } from 'resource/github';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { IconButton } from 'ui/Button/IconButton';
 import { FeatureDisabledMessage } from 'ui/DisabledSection/FeatureDisabledMessage';
 import { ErrorPage } from 'ui/ErrorPage/ErrorPage';
+import { Link } from 'ui/Link/Link';
 import { Loading } from 'ui/Loading/Loading';
 import { Message } from 'ui/Message/Message';
 
@@ -42,6 +44,24 @@ export const GitHubVersions: React.FunctionComponent<IProps> = ({
         { batchSize: 5 }
     );
 
+    const {
+        data: comparisonData,
+        isLoading: isComparisonLoading,
+        isError: isComparisonError,
+    } = useResource(
+        React.useCallback(() => {
+            if (selectedCommit) {
+                return GitHubResource.compareDataDocVersions(
+                    docId,
+                    selectedCommit.sha
+                );
+            }
+        }, [docId, selectedCommit]),
+        {
+            fetchOnMount: !!selectedCommit,
+        }
+    );
+
     const handleRestore = useCallback(
         async (commitSha: string, commitMessage: string) => {
             alert('Restore feature not implemented yet');
@@ -61,8 +81,8 @@ export const GitHubVersions: React.FunctionComponent<IProps> = ({
                     setIsCompareOpen(true);
                 }
             } else {
-                // Handle closing without a version (e.g. clicking close button)
                 setIsCompareOpen(false);
+                setSelectedCommit(null);
                 setIsFullScreen(false);
             }
         },
@@ -136,15 +156,17 @@ export const GitHubVersions: React.FunctionComponent<IProps> = ({
             {selectedCommit && (
                 <div className="GitHubVersionsComparePanel">
                     <div className="panel-header">
-                        <IconButton
-                            icon={'Info'}
-                            size={16}
-                            tooltip={
-                                'Compare the current DataDoc with the selected commit. For a more detailed view of changes, please view it on GitHub.'
-                            }
-                            tooltipPos="left"
-                            className="tooltip"
-                        />
+                        <Link to={selectedCommit.html_url} newTab>
+                            <IconButton
+                                icon={'Info'}
+                                size={16}
+                                tooltip={
+                                    'Compare the current DataDoc with the selected commit. For a more detailed view of changes, please view it on GitHub.'
+                                }
+                                tooltipPos="left"
+                                className="tooltip"
+                            />
+                        </Link>
                         <IconButton
                             icon={isFullScreen ? 'Minimize2' : 'Maximize2'}
                             onClick={toggleFullScreen}
@@ -164,12 +186,23 @@ export const GitHubVersions: React.FunctionComponent<IProps> = ({
                             tooltipPos="left"
                         />
                     </div>
-                    <QueryComparison
-                        fromQuery={'Selected Commit DataDoc Text'}
-                        toQuery={'Current DataDoc Text'}
-                        fromQueryTitle={`Commit: ${selectedCommit.commit.message}`}
-                        toQueryTitle="Current DataDoc"
-                    />
+                    {isComparisonLoading ? (
+                        <Loading />
+                    ) : isComparisonError || !comparisonData ? (
+                        <Message
+                            message="Failed to load comparison. Please try again."
+                            type="error"
+                            icon="AlertTriangle"
+                            iconSize={16}
+                        />
+                    ) : (
+                        <QueryComparison
+                            fromQuery={comparisonData?.current_content}
+                            toQuery={comparisonData?.commit_content}
+                            fromQueryTitle={`Commit: ${selectedCommit.commit.message}`}
+                            toQueryTitle="Current DataDoc"
+                        />
+                    )}
                 </div>
             )}
         </div>

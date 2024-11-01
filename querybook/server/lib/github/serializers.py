@@ -17,74 +17,108 @@ def parse_datetime_as_utc(date_str: Optional[str]) -> datetime:
     return datetime.now(timezone.utc).replace(tzinfo=timezone.utc)
 
 
-def serialize_datadoc_to_markdown(datadoc: DataDoc) -> str:
+def serialize_datadoc_to_markdown(
+    datadoc: DataDoc, exclude_metadata: bool = False
+) -> str:
     """
     Serialize a DataDoc instance to a Markdown string with YAML front matter.
     """
-    datadoc_metadata = {
-        "id": datadoc.id,
-        "environment_id": datadoc.environment_id,
-        "public": datadoc.public,
-        "archived": datadoc.archived,
-        "owner_uid": datadoc.owner_uid,
-        "created_at": datadoc.created_at.isoformat() if datadoc.created_at else None,
-        "updated_at": datadoc.updated_at.isoformat() if datadoc.updated_at else None,
-        "meta": datadoc.meta,
-        "title": datadoc.title,
-    }
-    try:
-        front_matter = (
-            f"---\n{yaml.dump(datadoc_metadata, default_flow_style=False)}---\n\n"
-        )
-    except yaml.YAMLError as e:
-        raise ValueError(f"Error serializing DataDoc metadata to YAML: {e}")
+    markdown_parts = []
+
+    if not exclude_metadata:
+        datadoc_metadata = {
+            "id": datadoc.id,
+            "environment_id": datadoc.environment_id,
+            "public": datadoc.public,
+            "archived": datadoc.archived,
+            "owner_uid": datadoc.owner_uid,
+            "created_at": (
+                datadoc.created_at.isoformat() if datadoc.created_at else None
+            ),
+            "updated_at": (
+                datadoc.updated_at.isoformat() if datadoc.updated_at else None
+            ),
+            "meta": datadoc.meta,
+            "title": datadoc.title,
+        }
+        try:
+            front_matter = (
+                f"---\n{yaml.dump(datadoc_metadata, default_flow_style=False)}---\n\n"
+            )
+            markdown_parts.append(front_matter)
+
+        except yaml.YAMLError as e:
+            raise ValueError(f"Error serializing DataDoc metadata to YAML: {e}")
 
     title = f"# {datadoc.title}\n\n"
-    content = serialize_datacells(datadoc.cells)
-    markdown_content = front_matter + title + content
-    return markdown_content
+    markdown_parts.append(title)
+
+    content = serialize_datacells(
+        cells=datadoc.cells, exclude_metadata=exclude_metadata
+    )
+    markdown_parts.append(content)
+
+    return "".join(markdown_parts)
 
 
-def serialize_datacells(cells: List[DataCell]) -> str:
+def serialize_datacells(cells: List[DataCell], exclude_metadata: bool = False) -> str:
     """
     Serialize a list of DataCell instances to a Markdown string.
     """
-    lines = []
+    cell_strings = []
     for cell in cells:
-        # Since GitHub's Markdown renderer does not recognize multiple --- blocks as separate YAML sections,
-        # we serialize cell metadata in HTML comment to hide it from rendered view
-        cell_metadata = {
-            "id": cell.id,
-            "cell_type": cell.cell_type.name.lower(),
-            "created_at": cell.created_at.isoformat() if cell.created_at else None,
-            "updated_at": cell.updated_at.isoformat() if cell.updated_at else None,
-            "meta": cell.meta,
-        }
-        try:
-            cell_metadata_yaml = yaml.dump(cell_metadata, default_flow_style=False)
-        except yaml.YAMLError as e:
-            raise ValueError(f"Error serializing cell metadata to YAML: {e}")
+        cell_content = serialize_cell_content(
+            cell=cell, exclude_metadata=exclude_metadata
+        )
 
-        cell_metadata_comment = f"<!--\n{cell_metadata_yaml.strip()}\n-->\n"
+        if not exclude_metadata:
+            # Since GitHub's Markdown renderer does not recognize multiple --- blocks as separate YAML sections,
+            # we serialize cell metadata in HTML comment to hide it from rendered view
+            cell_metadata = {
+                "id": cell.id,
+                "cell_type": cell.cell_type.name.lower(),
+                "created_at": cell.created_at.isoformat() if cell.created_at else None,
+                "updated_at": cell.updated_at.isoformat() if cell.updated_at else None,
+                "meta": cell.meta,
+            }
+            try:
+                cell_metadata_yaml = yaml.dump(cell_metadata, default_flow_style=False)
+            except yaml.YAMLError as e:
+                raise ValueError(f"Error serializing cell metadata to YAML: {e}")
 
-        cell_content = serialize_cell_content(cell)
-        lines.append(cell_metadata_comment + cell_content)
+            cell_metadata_comment = f"<!--\n{cell_metadata_yaml.strip()}\n-->\n"
+            cell_strings.append(cell_metadata_comment + cell_content)
+        else:
+            cell_strings.append(cell_content)
 
-    return "\n\n".join(lines)
+    return "\n\n".join(cell_strings)
 
 
-def serialize_cell_content(cell: DataCell) -> str:
+def serialize_cell_content(cell: DataCell, exclude_metadata: bool = False) -> str:
     """
-    Serialize a single DataCell instance to a Markdown string based on its type.
+    Serialize a single DataCell instance to a Markdown string based on its type
     """
     cell_meta = cell.meta or {}
+
     if cell.cell_type == DataCellType.query:
         query_title = cell_meta.get("title", "Query")
-        return f"## Query: {query_title}\n\n```sql\n{cell.context.strip()}\n```\n"
+        header = f"## Query: {query_title}\n\n"
+        if exclude_metadata:  # Exclude code fences
+            content = f"{cell.context.strip()}\n"
+        else:
+            content = f"```sql\n{cell.context.strip()}\n```\n"
+        return header + content
+
     elif cell.cell_type == DataCellType.text:
-        return f"## Text\n\n{cell.context.strip()}\n"
+        header = "## Text\n\n"
+        content = f"{cell.context.strip()}\n"
+        return header + content
+
     elif cell.cell_type == DataCellType.chart:
-        return "## Chart\n\n*Chart generated from the metadata.*\n"
+        header = "## Chart\n\n"
+        content = "*Chart generated from the metadata.*\n"
+        return header + content
+
     else:
         raise ValueError(f"Unknown cell type: {cell.cell_type}")
 

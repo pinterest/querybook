@@ -46,4 +46,11 @@ export const GitHubResource = {
             limit,
             offset,
         }),
+    compareDataDocVersions: (docId: number, commitSha: string) =>
+        ds.fetch<{
+            current_content: string;
+            commit_content: string;
+        }>(`/github/datadocs/${docId}/compare/`, {
+            commit_sha: commitSha,
+        }),
 };
