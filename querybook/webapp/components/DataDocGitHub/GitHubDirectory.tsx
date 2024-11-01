@@ -101,7 +101,7 @@ export const GitHubDirectory: React.FC<IProps> = ({
                             }}
                             help={`Select or create a directory for DataDoc commits. Defaults to ${DEFAULT_DIRECTORY} if left empty.`}
                         />
-                        <div className="mt12">
+                        <div className="mt8">
                             <AsyncButton
                                 icon="Save"
                                 onClick={submitForm}

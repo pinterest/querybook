@@ -115,7 +115,7 @@ export const GitHubVersions: React.FunctionComponent<IProps> = ({
                     key={version.sha}
                     version={version}
                     onRestore={handleRestore}
-                    onCompare={toggleCompare.bind(null, version)}
+                    onCompare={() => toggleCompare(version)}
                 />
             ))}
         </div>
@@ -136,6 +136,15 @@ export const GitHubVersions: React.FunctionComponent<IProps> = ({
             {selectedCommit && (
                 <div className="GitHubVersionsComparePanel">
                     <div className="panel-header">
+                        <IconButton
+                            icon={'Info'}
+                            size={16}
+                            tooltip={
+                                'Compare the current DataDoc with the selected commit. For a more detailed view of changes, please view it on GitHub.'
+                            }
+                            tooltipPos="left"
+                            className="tooltip"
+                        />
                         <IconButton
                             icon={isFullScreen ? 'Minimize2' : 'Maximize2'}
                             onClick={toggleFullScreen}

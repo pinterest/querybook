@@ -7,6 +7,8 @@ import { Card } from 'ui/Card/Card';
 import { Link } from 'ui/Link/Link';
 import { AccentText, StyledText } from 'ui/StyledText/StyledText';
 
+import './GitHub.scss';
+
 interface IProps {
     version: ICommit;
     onRestore: (sha: string, message: string) => void;

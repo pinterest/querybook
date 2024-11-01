@@ -23,6 +23,7 @@
 .GitHubVersions {
     .commit-list-wrapper {
         position: relative;
+        overflow: visible;
     }
 
     .commit-list {
@@ -42,6 +43,7 @@
 
     .compare-slide-out-panel {
         position: absolute;
+        overflow: visible;
         top: 0;
         right: 0;
         height: 100%;
@@ -49,7 +51,6 @@
         background-color: var(--bg);
         transition: transform 0.3s ease;
         z-index: 1000;
-        overflow: hidden;
         transform: translateX(100%);
 
         &.open {
@@ -70,6 +71,10 @@
             top: 0;
             z-index: 9;
             right: 0;
+
+            .tooltip {
+                z-index: 1000;
+            }
         }
 
         .GitHubVersionsComparePanel {
