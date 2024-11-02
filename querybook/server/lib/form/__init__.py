@@ -1,7 +1,6 @@
-from multiprocessing.dummy import Array
 import re
 from abc import ABCMeta, abstractmethod
-from typing import Dict, Union
+from typing import Dict, Union, List
 from enum import Enum
 
 
@@ -41,7 +40,8 @@ class FormField(AbstractFormField):
         # These two only applies to string field
         regex: str = None,
         hidden: bool = False,
-        options: Array = None,
+        # Only applies to Select field type
+        options: List[str] = None,
     ):
         """Initialize the form field
         Keyword Arguments:
