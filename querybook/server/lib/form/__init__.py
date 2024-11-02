@@ -166,4 +166,8 @@ def validate_form(form: AllFormField, form_value) -> tuple[bool, str]:
             if not isinstance(form_value, bool):
                 return False, "Field value is not a boolean"
             return True, ""
+        elif form.field_type == FormFieldType.Select:
+            if form_value not in form.options:
+                return False, "Field value is not in options"
+            return True, ""
     return False, "Unexpected form type"
