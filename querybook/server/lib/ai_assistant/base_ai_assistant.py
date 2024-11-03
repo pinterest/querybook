@@ -7,7 +7,7 @@ from pydantic import ValidationError
 
 from app.db import with_session
 from const.ai_assistant import (
-    DEFAUTL_TABLE_SELECT_LIMIT,
+    DEFAULT_TABLE_SELECT_LIMIT,
     MAX_SAMPLE_QUERY_COUNT_FOR_TABLE_SUMMARY,
     AICommandType,
 )
@@ -403,7 +403,7 @@ class BaseAIAssistant(ABC):
     def find_tables(self, metastore_id, question, session=None):
         """Search similar tables from vector store first, and then ask LLM to select most suitable tables for the question.
 
-        It will return at most `DEFAUTL_TABLE_SELECT_LIMIT` tables by default.
+        It will return at most `DEFAULT_TABLE_SELECT_LIMIT` tables by default.
         """
         try:
             tables = get_vector_store().search_tables(
@@ -443,7 +443,7 @@ class BaseAIAssistant(ABC):
                 table_docs[full_table_name] = summary
 
             prompt = self._get_table_select_prompt(
-                top_n=DEFAUTL_TABLE_SELECT_LIMIT,
+                top_n=DEFAULT_TABLE_SELECT_LIMIT,
                 table_schemas=table_docs,
                 question=question,
             )

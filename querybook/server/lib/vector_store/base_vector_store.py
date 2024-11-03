@@ -3,7 +3,7 @@ from abc import abstractmethod
 from typing import Literal, Optional
 
 from const.ai_assistant import (
-    DEFAUTL_TABLE_SEARCH_LIMIT,
+    DEFAULT_TABLE_SEARCH_LIMIT,
     DEFAULT_VECTOR_STORE_FETCH_LIMIT,
     DEFAULT_SIMILARITY_SCORE_THRESHOLD,
     DEFAULT_SIMILARITY_SCORE_THRESHOLD_GREAT_MATCH,
@@ -60,7 +60,7 @@ class VectorStoreBase(VectorStore):
         text: str,
         search_type: Optional[Literal["table", "query"]] = None,
         threshold=DEFAULT_SIMILARITY_SCORE_THRESHOLD,
-        k=DEFAUTL_TABLE_SEARCH_LIMIT,
+        k=DEFAULT_TABLE_SEARCH_LIMIT,
         fetch_k=DEFAULT_VECTOR_STORE_FETCH_LIMIT,
     ) -> list[tuple[str, int]]:
         """Find tables using embedding based table search.
