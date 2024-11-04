@@ -165,10 +165,10 @@ export const GitHubVersions: React.FunctionComponent<IProps> = ({
                         />
                     </div>
                     <QueryComparison
-                        fromQuery={'Current DataDoc Old Text'}
-                        toQuery={'Incoming DataDoc New Text'}
-                        fromQueryTitle="Current DataDoc"
-                        toQueryTitle="Incoming DataDoc"
+                        fromQuery={'Selected Commit DataDoc Text'}
+                        toQuery={'Current DataDoc Text'}
+                        fromQueryTitle={`Commit: ${selectedCommit.commit.message}`}
+                        toQueryTitle="Current DataDoc"
                     />
                 </div>
             )}
