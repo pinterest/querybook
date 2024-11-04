@@ -60,21 +60,6 @@ export const GitHubIntegration: React.FC<IProps> = ({ docId, onClose }) => {
                 setIsAuthorized(true);
             };
             window.receiveChildMessage = receiveMessage;
-
-            const timer = setInterval(() => {
-                if (authWindow.closed) {
-                    clearInterval(timer);
-                    window.removeEventListener(
-                        'message',
-                        receiveMessage,
-                        false
-                    );
-                    setErrorMessage(
-                        'Authorization process failed. Please try again.'
-                    );
-                    setIsAuthorized(false);
-                }
-            }, 1000);
         } catch (error) {
             console.error('GitHub authorization failed:', error);
             setErrorMessage('GitHub authorization failed. Please try again.');

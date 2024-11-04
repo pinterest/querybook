@@ -1,1 +1,2 @@
 pygithub==2.4.0
+cryptography==3.4.8
