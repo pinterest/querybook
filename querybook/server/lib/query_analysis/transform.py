@@ -67,15 +67,23 @@ def get_limited_select_statement(statement_ast: exp.Expression, limit: int):
     return statement_ast.limit(limit)
 
 
-def has_query_contains_unlimited_select(query: str, language: str) -> bool:
+def has_query_contains_unlimited_select(query: str, language: str = None):
     """Check if a query contains a select statement without a limit.
     Args:
         query: The query to check
     Returns:
-        bool: True if the query contains a select statement without a limit, False otherwise
+        str: The first select statement without a limit. None if all select statements have a limit.
     """
-    statements = parse(query, dialect=_get_sqlglot_dialect[language])
-    return any(get_select_statement_limit(s) == -1 for s in statements)
+    dialect = _get_sqlglot_dialect(language)
+    statements = parse(query, dialect)
+    return next(
+        (
+            s.sql(dialect=dialect, pretty=True)
+            for s in statements
+            if get_select_statement_limit(s) == -1
+        ),
+        None,
+    )
 
 
 def transform_to_limited_query(
@@ -83,8 +91,10 @@ def transform_to_limited_query(
 ) -> str:
     """Apply a limit to all select statements in a query if they don't already have a limit.
     It returns a new query with the limit applied and the original query is not modified.
+
+    If limit is None or negative, the query is returned as-is.
     """
-    if not limit:
+    if not limit or limit < 0:
         return query
 
     try:
@@ -153,6 +163,9 @@ def transform_to_sampled_query(
     Returns:
         str: The sampled query
     """
+    if not sampling_tables:
+        return query
+
     try:
         dialect = _get_sqlglot_dialect(language)
         statements = parse(query, dialect=dialect)

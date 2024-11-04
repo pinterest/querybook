@@ -187,6 +187,18 @@ def get_admin_announcements(session=None):
     )
 
 
+@with_session
+def get_engine_feature_param(
+    engine_id, feature_param_name, default_value=None, session=None
+):
+    query_engine = get_query_engine_by_id(engine_id, session=session)
+    return (
+        query_engine.get_feature_params().get(feature_param_name, default_value)
+        if query_engine
+        else default_value
+    )
+
+
 """
     ---------------------------------------------------------------------------------------------------------
     QUERY METASTORE ?
