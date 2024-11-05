@@ -130,16 +130,24 @@ def vector_search_tables(
 
 
 @register("/suggest/<int:metastore_id>/tables/", methods=["GET"])
-def suggest_tables(metastore_id, prefix, limit=10):
+def suggest_tables(metastore_id, prefix, limit=10, active_schema='default'):
     api_assert(limit is None or limit <= 100, "Requesting too many tables")
     verify_metastore_permission(metastore_id)
+
+    possible_schema = prefix.split(".")[0]
+    omit_schema = not active_schema.startswith(possible_schema)
 
     query = construct_suggest_table_query(prefix, limit, metastore_id)
     options = get_matching_suggestions(query, ES_CONFIG["tables"]["index_name"])
     texts = [
-        "{}.{}".format(
-            option.get("_source", {}).get("schema", ""),
-            option.get("_source", {}).get("name", ""),
+        (
+            option.get("_source", {}).get("name", "")
+            if omit_schema and active_schema == option.get("_source", {}).get("schema", "")
+            else
+            "{}.{}".format(
+                option.get("_source", {}).get("schema", ""),
+                option.get("_source", {}).get("name", ""),
+            )
         )
         for option in options
     ]

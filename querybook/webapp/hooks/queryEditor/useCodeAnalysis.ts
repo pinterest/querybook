@@ -7,9 +7,10 @@ import { analyzeCode } from 'lib/web-worker';
 interface IUseCodeAnalysisParams {
     language: string;
     query: string;
+    defaultSchema: string;
 }
 
-export function useCodeAnalysis({ language, query }: IUseCodeAnalysisParams) {
+export function useCodeAnalysis({ language, query, defaultSchema }: IUseCodeAnalysisParams) {
     /**
      * the ref version is used to pass into functions in codemirror
      * this is to prevent unnecessary codemirror refreshes
@@ -19,13 +20,13 @@ export function useCodeAnalysis({ language, query }: IUseCodeAnalysisParams) {
     const debouncedQuery = useDebounce(query, 500);
 
     useEffect(() => {
-        analyzeCode(debouncedQuery, 'autocomplete', language).then(
+        analyzeCode(debouncedQuery, 'autocomplete', language, defaultSchema).then(
             (codeAnalysis) => {
                 codeAnalysisRef.current = codeAnalysis;
                 setCodeAnalysis(codeAnalysis);
             }
         );
-    }, [debouncedQuery, language]);
+    }, [debouncedQuery, language, defaultSchema]);
 
-    return { codeAnalysisRef, codeAnalysis };
+    return { codeAnalysis, codeAnalysisRef };
 }
