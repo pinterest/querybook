@@ -223,7 +223,7 @@ def deserialize_datadoc_content(content_str: str) -> List[DataCell]:
         cell = DataCell(
             id=metadata.get("id"),
             cell_type=cell_type_enum,
-            context=context if cell_type_enum != DataCellType.chart else None,
+            context=context if cell_type_enum != DataCellType.chart else "",
             created_at=parse_datetime_as_utc(metadata.get("created_at")),
             updated_at=parse_datetime_as_utc(metadata.get("updated_at")),
             meta=metadata.get("meta", {}),

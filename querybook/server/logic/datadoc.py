@@ -248,6 +248,59 @@ def clone_data_doc(id, owner_uid, commit=True, session=None):
     return new_data_doc
 
 
+@with_session
+def restore_data_doc_from_commit(
+    datadoc_id: int, commit_datadoc: DataDoc, commit=True, session=None
+) -> DataDoc:
+    data_doc = get_data_doc_by_id(datadoc_id, session=session)
+    assert data_doc is not None, "DataDoc not found"
+
+    # Update the DataDoc's title and meta
+    data_doc = update_data_doc(
+        datadoc_id,
+        title=commit_datadoc.title,
+        meta=commit_datadoc.meta,
+        commit=False,
+        session=session,
+    )
+
+    # Delete existing DataDocCells and DataCells
+    for existing_cell in data_doc.cells:
+        delete_data_doc_cell(
+            data_doc_id=data_doc.id,
+            data_cell_id=existing_cell.id,
+            commit=False,
+            session=session,
+        )
+
+    # Create new DataCells from commit and add them to the DataDoc
+    for index, cell in enumerate(commit_datadoc.cells):
+        data_cell = create_data_cell(
+            cell_type=cell.cell_type.name,
+            context=cell.context,
+            meta=cell.meta,
+            commit=False,
+            session=session,
+        )
+        insert_data_doc_cell(
+            data_doc_id=data_doc.id,
+            cell_id=data_cell.id,
+            index=index,
+            commit=False,
+            session=session,
+        )
+
+    if commit:
+        session.commit()
+        update_es_data_doc_by_id(data_doc.id)
+        update_es_queries_by_datadoc_id(data_doc.id)
+    else:
+        session.flush()
+
+    session.refresh(data_doc)
+    return data_doc
+
+
 """
     ----------------------------------------------------------------------------------------------------------
     DATA CELL

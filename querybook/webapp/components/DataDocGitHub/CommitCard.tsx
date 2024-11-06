@@ -11,8 +11,8 @@ import './GitHub.scss';
 
 interface IProps {
     version: ICommit;
-    onRestore: (sha: string, message: string) => void;
-    onCompare: (version: ICommit) => void;
+    onRestore: (version: ICommit) => Promise<void>;
+    onCompare: (version?: ICommit) => void;
 }
 
 export const CommitCard: React.FC<IProps> = ({
@@ -41,9 +41,7 @@ export const CommitCard: React.FC<IProps> = ({
                 </Link>
             </Button>
             <AsyncButton
-                onClick={async () =>
-                    onRestore(version.sha, version.commit.message)
-                }
+                onClick={() => onRestore(version)}
                 className="ml8"
                 title="Restore Version"
                 hoverColor="var(--color-accent-dark)"

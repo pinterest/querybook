@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 
 import { QueryComparison } from 'components/TranspileQueryModal/QueryComparison';
+import { useRestoreDataDoc } from 'hooks/dataDoc/useRestoreDataDoc';
 import { usePaginatedResource } from 'hooks/usePaginatedResource';
 import { useResource } from 'hooks/useResource';
 import { GitHubResource, ICommit } from 'resource/github';
@@ -62,11 +63,15 @@ export const GitHubVersions: React.FunctionComponent<IProps> = ({
         }
     );
 
+    const restoreDataDoc = useRestoreDataDoc();
+
     const handleRestore = useCallback(
-        async (commitSha: string, commitMessage: string) => {
-            alert('Restore feature not implemented yet');
+        async (commit: ICommit) => {
+            const commitId = commit.sha;
+            const commitMessage = commit.commit.message;
+            await restoreDataDoc(docId, commitId, commitMessage);
         },
-        []
+        [docId, restoreDataDoc]
     );
 
     const toggleCompare = useCallback(
@@ -135,7 +140,7 @@ export const GitHubVersions: React.FunctionComponent<IProps> = ({
                     key={version.sha}
                     version={version}
                     onRestore={handleRestore}
-                    onCompare={() => toggleCompare(version)}
+                    onCompare={toggleCompare}
                 />
             ))}
         </div>
@@ -197,8 +202,8 @@ export const GitHubVersions: React.FunctionComponent<IProps> = ({
                         />
                     ) : (
                         <QueryComparison
-                            fromQuery={comparisonData?.current_content}
-                            toQuery={comparisonData?.commit_content}
+                            fromQuery={comparisonData?.commit_content}
+                            toQuery={comparisonData?.current_content}
                             fromQueryTitle={`Commit: ${selectedCommit.commit.message}`}
                             toQueryTitle="Current DataDoc"
                         />

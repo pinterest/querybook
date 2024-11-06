@@ -273,6 +273,17 @@ export function deleteDataDoc(docId: number): ThunkResult<Promise<void>> {
     };
 }
 
+export function restoreDataDoc(
+    docId: number,
+    commitId: string,
+    commitMessage: string
+): ThunkResult<Promise<void>> {
+    return async (dispatch) => {
+        await dataDocSocket.restoreDataDoc(docId, commitId, commitMessage);
+        await dispatch(fetchDataDoc(docId));
+    };
+}
+
 export function insertDataDocCell(
     docId: number,
     index: number,

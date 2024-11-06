@@ -120,6 +120,7 @@ export enum ElementType {
     // Github Integration
     GITHUB_CONNECT_BUTTON = 'GITHUB_CONNECT_BUTTON',
     GITHUB_LINK_BUTTON = 'GITHUB_LINK_BUTTON',
+    GITHUB_RESTORE_DATADOC_BUTTON = 'GITHUB_RESTORE_DATADOC_BUTTON',
 }
 
 export interface EventData {

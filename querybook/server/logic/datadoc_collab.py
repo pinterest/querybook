@@ -4,9 +4,13 @@ from app.auth.permission import (
 )
 from app.flask_app import socketio
 from app.db import with_session
+from clients.github_client import GitHubClient
 from const.data_doc import DATA_DOC_NAMESPACE
+from datasources.github import with_github_client
 from logic import datadoc as logic
+from logic import user as user_logic
 from logic.datadoc_permission import assert_can_read, assert_can_write
+from flask_login import current_user
 
 
 @with_session
@@ -41,6 +45,41 @@ def update_datadoc(doc_id, fields, sid="", session=None):
     )
 
     return doc_dict
+
+
+@with_session
+@with_github_client
+def restore_data_doc(
+    github_client: GitHubClient,
+    datadoc_id: int,
+    commit_sha: str,
+    commit_message: str,
+    sid="",
+    session=None,
+):
+    assert_can_write(datadoc_id, session=session)
+    verify_data_doc_permission(datadoc_id, session=session)
+
+    commit_datadoc = github_client.get_datadoc_at_commit(commit_sha)
+    restored_datadoc = logic.restore_data_doc_from_commit(
+        datadoc_id, commit_datadoc, commit=True, session=session
+    )
+
+    user = user_logic.get_user_by_id(current_user.id, session=session)
+    assert user is not None, "User does not exist"
+
+    # Emit the restored DataDoc to clients
+    socketio.emit(
+        "data_doc_restored",
+        (
+            sid,
+            restored_datadoc.to_dict(with_cells=True),
+            commit_message,
+            user.get_name(),
+        ),
+        namespace=DATA_DOC_NAMESPACE,
+        room=datadoc_id,
+    )
 
 
 @with_session
