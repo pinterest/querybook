@@ -7,9 +7,8 @@ from env import QuerybookSettings
 from lib.logger import get_logger
 from app.flask_app import flask_app
 from typing import Optional, Dict, Any
-from .crypto_utils import DecryptionError, encrypt_token, decrypt_token
 from flask_login import current_user
-from logic.user import get_user_by_id, update_user_properties
+from ..utils.token_utils import TokenManager
 
 LOG = get_logger(__file__)
 
@@ -30,6 +29,11 @@ class GitHubManager(GitHubLoginManager):
         self._client_secret = client_secret
         super().__init__()
 
+        self.token_manager = TokenManager(
+            token_type=GITHUB_ACCESS_TOKEN,
+            encryption_key=QuerybookSettings.GITHUB_CRYPTO_SECRET,
+        )
+
     @property
     def oauth_config(self) -> Dict[str, Any]:
         config = super().oauth_config
@@ -44,37 +48,11 @@ class GitHubManager(GitHubLoginManager):
         return config
 
     def save_github_token(self, token: str) -> None:
-        encrypted_token = encrypt_token(token)
-        user = get_user_by_id(current_user.id)
-        if user:
-            try:
-                update_user_properties(user.id, github_access_token=encrypted_token)
-                LOG.debug("Saved encrypted GitHub token to user properties")
-            except Exception as e:
-                LOG.error(f"Failed to update user properties: {e}")
-                raise AuthenticationError("Failed to save GitHub token")
-        else:
-            LOG.error("User not found when saving GitHub token")
-            raise AuthenticationError("User not found")
+        self.token_manager.save_token(current_user.id, token)
 
     def get_github_token(self) -> str:
-        user = get_user_by_id(current_user.id)
-        if not user:
-            LOG.error("User not found when retrieving GitHub token")
-            raise AuthenticationError("User not found")
-
-        encrypted_token = user.properties.get(GITHUB_ACCESS_TOKEN)
-        if not encrypted_token:
-            LOG.error("GitHub OAuth token not found in user properties")
-            raise AuthenticationError("GitHub OAuth token not found")
-
-        try:
-            token = decrypt_token(encrypted_token)
-            return self.validate_token(token)
-        except DecryptionError as e:
-            LOG.error(f"Failed to decrypt and validate GitHub token: {e}")
-            self.invalidate_token(user)
-            raise AuthenticationError("Invalid GitHub token failure.")
+        token = self.token_manager.get_token(current_user.id)
+        return self.validate_token(token)
 
     def validate_token(self, token: str) -> str:
         try:
@@ -86,21 +64,11 @@ class GitHubManager(GitHubLoginManager):
                 return token
             else:
                 LOG.error("GitHub token validation failed: User login not found")
+                self.token_manager.invalidate_token(current_user.id)
                 raise AuthenticationError("GitHub token validation failed.")
         except Exception as e:
             LOG.error(f"GitHub API error during token validation: {e}")
             raise AuthenticationError("GitHub API error during token validation.")
-
-    def invalidate_token(self, user):
-        try:
-            update_user_properties(user.id, github_access_token=None)
-            LOG.debug(
-                f"Removed GitHub token for user '{user.get_name()}' (ID: {user.id})."
-            )
-        except Exception as db_error:
-            LOG.error(
-                f"Failed to remove GitHub token for user '{user.get_name()}' (ID: {user.id}): {db_error}"
-            )
 
     def initiate_github_integration(self) -> Dict[str, str]:
         github = self.oauth_session
