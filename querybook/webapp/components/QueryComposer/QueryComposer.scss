@@ -31,7 +31,7 @@
             overflow-y: auto;
             overflow-x: hidden;
             position: relative;
-            border-radius: var(--border-radius);
+            border-radius: var(--border-radius-sm);
 
             .SearchAndReplaceBar {
                 position: absolute;
@@ -45,7 +45,7 @@
             flex: 1;
             overflow-y: scroll;
             background-color: var(--bg-lightest);
-            border-radius: var(--border-radius);
+            border-radius: var(--border-radius-sm);
 
             .hide-execution {
                 cursor: pointer;

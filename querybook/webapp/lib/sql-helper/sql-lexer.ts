@@ -168,9 +168,14 @@ function getTokenTypeMatcher(
     ];
 }
 
+export interface IPosition {
+    line: number;
+    ch: number;
+}
+
 export interface IRange {
-    from: CodeMirror.Position;
-    to: CodeMirror.Position;
+    from: IPosition;
+    to: IPosition;
 }
 
 export interface ILinterWarning extends IRange {

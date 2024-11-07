@@ -40,9 +40,7 @@ import { useSurveyTrigger } from 'hooks/ui/useSurveyTrigger';
 import { useBrowserTitle } from 'hooks/useBrowserTitle';
 import { useTrackView } from 'hooks/useTrackView';
 import { trackClick } from 'lib/analytics';
-import { createSQLLinter } from 'lib/codemirror/codemirror-lint';
 import { replaceStringIndices, searchText } from 'lib/data-doc/search';
-import { getSelectedQuery, IRange } from 'lib/sql-helper/sql-lexer';
 import { DEFAULT_ROW_LIMIT } from 'lib/sql-helper/sql-limiter';
 import { getPossibleTranspilers } from 'lib/templated-query/transpile';
 import { enableResizable, getQueryEngineId, sleep } from 'lib/utils';
@@ -295,9 +293,7 @@ function useQueryEditorHelpers() {
     }, []);
 
     const handleFocusEditor = useCallback(() => {
-        if (queryEditorRef.current) {
-            queryEditorRef.current.getEditor()?.focus();
-        }
+        queryEditorRef.current?.focus();
     }, []);
 
     useEffect(() => {
@@ -332,27 +328,6 @@ function useKeyMap(
 
         return keyMap;
     }, [clickOnRunButton, queryEngines, setEngineId]);
-}
-
-function useQueryLint(
-    queryEngine: IQueryEngine,
-    templatedVariables: IDataDocMetaVariable[]
-) {
-    const hasQueryValidators = Boolean(queryEngine?.feature_params?.validator);
-
-    const getLintAnnotations = useMemo(() => {
-        if (!hasQueryValidators) {
-            return null;
-        }
-
-        return (query: string, cm: CodeMirror.Editor) =>
-            createSQLLinter(queryEngine.id, templatedVariables)(query, cm);
-    }, [hasQueryValidators, queryEngine?.id, templatedVariables]);
-
-    return {
-        hasQueryValidators,
-        getLintAnnotations,
-    };
 }
 
 function useTranspileQuery(
@@ -464,10 +439,7 @@ const QueryComposer: React.FC = () => {
     }, []);
 
     const { queryEditorRef, handleFormatQuery } = useQueryEditorHelpers();
-    const { getLintAnnotations, hasQueryValidators } = useQueryLint(
-        engine,
-        templatedVariables
-    );
+    const hasQueryValidators = Boolean(engine?.feature_params?.validator);
     const {
         transpilerConfig,
         startQueryTranspile,
@@ -506,9 +478,8 @@ const QueryComposer: React.FC = () => {
     }, [executionId, query, engine.id, templatedVariables]);
 
     const getCurrentSelectedQuery = useCallback(() => {
-        const selectedRange = queryEditorRef.current?.getEditorSelection();
-        return getSelectedQuery(query, selectedRange);
-    }, [query, queryEditorRef]);
+        return queryEditorRef.current?.getSelection?.() ?? query;
+    }, [queryEditorRef, query]);
 
     const triggerSurvey = useSurveyTrigger();
 
@@ -588,12 +559,9 @@ const QueryComposer: React.FC = () => {
     const keyMap = useKeyMap(clickOnRunButton, queryEngines, setEngineId);
 
     const [editorHasSelection, setEditorHasSelection] = useState(false);
-    const handleEditorSelection = React.useCallback(
-        (_: string, range: IRange) => {
-            setEditorHasSelection(!!range);
-        },
-        []
-    );
+    const handleEditorSelection = React.useCallback((hasSelection: boolean) => {
+        setEditorHasSelection(hasSelection);
+    }, []);
 
     const scrollToCollapseExecution = React.useCallback(
         (event, direction, elementRef) => {
@@ -633,10 +601,11 @@ const QueryComposer: React.FC = () => {
                 keyMap={keyMap}
                 height="full"
                 engine={engine}
+                hasQueryLint={hasQueryValidators}
                 onSelection={handleEditorSelection}
-                getLintErrors={getLintAnnotations}
                 onLintCompletion={setHasLintErrors}
                 onTablesChange={handleTablesChange}
+                templatedVariables={templatedVariables}
             />
         </>
     );
