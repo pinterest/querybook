@@ -66,6 +66,82 @@ export class SqlAutoCompleter {
         return this.keywords;
     }
 
+    public getCompletions(
+        cursor: { line: number; ch: number },
+        token: CodeMirrorToken | null,
+        options: {
+            passive?: boolean;
+        } = {}
+    ): Promise<CompletionResult | null> {
+        if (this.type === 'none') {
+            return Promise.resolve(null);
+        }
+
+        const passive = !!options['passive'];
+
+        const lineAnalysis: ILineAnalysis = {
+            context: 'none',
+            alias: {},
+            reference: [],
+            statementNum: 0,
+        };
+        if (this.codeAnalysis && this.codeAnalysis.editorLines) {
+            const editorLines = this.codeAnalysis.editorLines;
+            const line = editorLines[cursor.line];
+            if (line != null) {
+                lineAnalysis.statementNum = findLast(
+                    line.statements,
+                    cursor.ch
+                )[1];
+                lineAnalysis.context = findLast(line.contexts, cursor.ch)[1];
+                lineAnalysis.reference =
+                    this.codeAnalysis.lineage.references[
+                        lineAnalysis.statementNum
+                    ];
+                lineAnalysis.alias =
+                    this.codeAnalysis.lineage.aliases[
+                        lineAnalysis.statementNum
+                    ];
+            }
+        }
+
+        let result: Completion[] = [];
+        const searchStr = token.text.toLowerCase();
+
+        return new Promise(async (resolve) => {
+            if (searchStr.length > 0 || !passive) {
+                if (searchStr.includes('.')) {
+                    const matches = await this.addHierarchicalContextMatches(
+                        token,
+                        lineAnalysis
+                    );
+                    result = matches;
+                } else {
+                    const flatMatches = await this.addFlatContextMatches(
+                        searchStr,
+                        lineAnalysis
+                    );
+                    const keywatchMatches = this.addKeyWordMatches(
+                        searchStr,
+                        this.getKeywords()
+                    );
+
+                    result = flatMatches.concat(keywatchMatches);
+                }
+            }
+
+            let from = token.from;
+            if (lineAnalysis.context === 'column') {
+                from += token.text.lastIndexOf('.') + 1;
+            }
+
+            resolve({
+                from,
+                options: result ?? [],
+            });
+        });
+    }
+
     private prefixMatch(prefix: string, word: string) {
         const len = prefix.length;
         return word.substring(0, len).toUpperCase() === prefix.toUpperCase();
@@ -216,81 +292,5 @@ export class SqlAutoCompleter {
                 })
             );
         }
-    }
-
-    public getCompletions(
-        cursor: { line: number; ch: number },
-        token: CodeMirrorToken | null,
-        options: {
-            passive?: boolean;
-        } = {}
-    ): Promise<CompletionResult | null> {
-        if (this.type === 'none') {
-            return Promise.resolve(null);
-        }
-
-        const passive = !!options['passive'];
-
-        const lineAnalysis: ILineAnalysis = {
-            context: 'none',
-            alias: {},
-            reference: [],
-            statementNum: 0,
-        };
-        if (this.codeAnalysis && this.codeAnalysis.editorLines) {
-            const editorLines = this.codeAnalysis.editorLines;
-            const line = editorLines[cursor.line];
-            if (line != null) {
-                lineAnalysis.statementNum = findLast(
-                    line.statements,
-                    cursor.ch
-                )[1];
-                lineAnalysis.context = findLast(line.contexts, cursor.ch)[1];
-                lineAnalysis.reference =
-                    this.codeAnalysis.lineage.references[
-                        lineAnalysis.statementNum
-                    ];
-                lineAnalysis.alias =
-                    this.codeAnalysis.lineage.aliases[
-                        lineAnalysis.statementNum
-                    ];
-            }
-        }
-
-        let result: Completion[] = [];
-        const searchStr = token.text.toLowerCase();
-
-        return new Promise(async (resolve) => {
-            if (searchStr.length > 0 || !passive) {
-                if (searchStr.includes('.')) {
-                    const matches = await this.addHierarchicalContextMatches(
-                        token,
-                        lineAnalysis
-                    );
-                    result = matches;
-                } else {
-                    const flatMatches = await this.addFlatContextMatches(
-                        searchStr,
-                        lineAnalysis
-                    );
-                    const keywatchMatches = this.addKeyWordMatches(
-                        searchStr,
-                        this.getKeywords()
-                    );
-
-                    result = flatMatches.concat(keywatchMatches);
-                }
-            }
-
-            let from = token.from;
-            if (lineAnalysis.context === 'column') {
-                from += token.text.lastIndexOf('.') + 1;
-            }
-
-            resolve({
-                from,
-                options: result ?? [],
-            });
-        });
     }
 }

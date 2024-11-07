@@ -96,7 +96,7 @@ export const useHoverTooltipExtension = ({
                 pos: token.from,
                 end: token.to,
                 above: true,
-                create(view) {
+                create: (view: EditorView) => {
                     const container = document.createElement('div');
                     ReactDOM.render(
                         <Provider store={reduxStore}>
