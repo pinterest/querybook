@@ -7,3 +7,4 @@ moto==2.2.4
 -r metastore/glue.txt
 -r exporter/gspread.txt
 -r ai/langchain.txt
+-r github_integration/github.txt
