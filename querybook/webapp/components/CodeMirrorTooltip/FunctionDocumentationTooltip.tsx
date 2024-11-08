@@ -61,23 +61,9 @@ export const FunctionDocumentationTooltipByName: React.FunctionComponent<{
         }
     }, [language]);
 
-    const matchFunctionWithDefinition = useCallback(
-        (functionName: string) => {
-            if (language && language in functionDocumentationByNameByLanguage) {
-                const functionDefs =
-                    functionDocumentationByNameByLanguage[language];
-                const functionNameLower = (functionName || '').toLowerCase();
-
-                if (functionNameLower in functionDefs) {
-                    return functionDefs[functionNameLower];
-                }
-            }
-
-            return null;
-        },
-        [language, functionDocumentationByNameByLanguage]
-    );
-    const functionDef = matchFunctionWithDefinition(functionName);
+    const functionDefs = functionDocumentationByNameByLanguage?.[language];
+    const functionNameLower = (functionName || '').toLowerCase();
+    const functionDef = functionDefs?.[functionNameLower];
 
     if (!functionDef) {
         return null;

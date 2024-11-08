@@ -22,7 +22,7 @@ export const StatusBar = ({
 
     if (lintSummary.numErrors + lintSummary.numWarnings > 0) {
         return (
-            <div
+            <span
                 className="flex-row mr4"
                 title={`${formatNumber(
                     lintSummary.numErrors,
@@ -41,7 +41,7 @@ export const StatusBar = ({
                         {lintSummary.numWarnings}
                     </span>
                 )}
-            </div>
+            </span>
         );
     } else if (lintSummary.failedToLint) {
         return (

@@ -33,7 +33,7 @@ function findLast(arr: Array<[number, any]>, num: number) {
 }
 
 export class SqlAutoCompleter {
-    private codeAnalysis?: ICodeAnalysis;
+    private _codeAnalysis?: ICodeAnalysis;
     private metastoreId?: number;
     private language: string;
     private languageSetting: ILanguageSetting;
@@ -48,15 +48,19 @@ export class SqlAutoCompleter {
         this.metastoreId = metastoreId;
         this.type = type;
 
-        this.codeAnalysis = null;
+        this._codeAnalysis = null;
 
         this.language = language;
         this.languageSetting = getLanguageSetting(this.language);
     }
 
+    public get codeAnalysis() {
+        return this._codeAnalysis;
+    }
+
     @bind
-    public updateCodeAnalysis(codeAnalysis: ICodeAnalysis) {
-        this.codeAnalysis = codeAnalysis;
+    public set codeAnalysis(newCodeAnalysis: ICodeAnalysis) {
+        this._codeAnalysis = newCodeAnalysis;
     }
 
     public getKeywords() {

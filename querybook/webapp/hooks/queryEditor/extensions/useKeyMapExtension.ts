@@ -16,7 +16,7 @@ export const useKeyMapExtension = ({
         const lastPart = parts[parts.length - 1];
 
         // Check if the last part is a single alphabetical character
-        if (lastPart.length === 1 && /[a-zA-Z]/.test(lastPart)) {
+        if (/^[a-zA-Z]$/.test(lastPart)) {
             parts[parts.length - 1] = lastPart.toLowerCase();
         }
 

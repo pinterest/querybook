@@ -30,23 +30,19 @@ export const useHoverTooltipExtension = ({
                 );
 
                 return tableReferences.find((tableInfo) => {
-                    if (tableInfo.line === line) {
-                        const isSchemaExplicit =
-                            tableInfo.end - tableInfo.start >
-                            tableInfo.name.length;
-                        const tablePos = {
-                            from:
-                                tableInfo.start +
-                                (isSchemaExplicit
-                                    ? tableInfo.schema.length
-                                    : 0),
-                            to: tableInfo.end,
-                        };
-
-                        if (tablePos.from <= ch && tablePos.to >= ch) {
-                            return true;
-                        }
+                    if (tableInfo.line !== line) {
+                        return false;
                     }
+                    const isSchemaExplicit =
+                        tableInfo.end - tableInfo.start > tableInfo.name.length;
+                    const tablePos = {
+                        from:
+                            tableInfo.start +
+                            (isSchemaExplicit ? tableInfo.schema.length : 0),
+                        to: tableInfo.end,
+                    };
+
+                    return tablePos.from <= ch && tablePos.to >= ch;
                 });
             }
 
@@ -88,7 +84,9 @@ export const useHoverTooltipExtension = ({
                         functionName={token.text}
                     />
                 );
-            } else {
+            }
+
+            if (!tooltipComponent) {
                 return null;
             }
 

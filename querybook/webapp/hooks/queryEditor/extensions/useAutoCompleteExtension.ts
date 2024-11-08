@@ -1,14 +1,27 @@
-import { autocompletion, startCompletion } from '@codemirror/autocomplete';
+import {
+    autocompletion,
+    CompletionContext,
+    startCompletion,
+} from '@codemirror/autocomplete';
 import { EditorView } from '@uiw/react-codemirror';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { SqlAutoCompleter } from 'lib/sql-helper/sql-autocompleter';
 
 // STATIC
 const RESULT_MAX_LENGTH = 10;
 
-export const useAutoCompleteExtension = ({ view, autoCompleterRef }) => {
+export const useAutoCompleteExtension = ({
+    view,
+    autoCompleterRef,
+}: {
+    view: EditorView;
+    autoCompleterRef: React.MutableRefObject<SqlAutoCompleter>;
+}) => {
     const [typing, setTyping] = useState(false);
 
-    const getCompletions = useCallback(async (context) => {
+    const getCompletions = useCallback(async (context: CompletionContext) => {
+        // Get the token before the cursor, token could be schema.table.column
         const token = context.matchBefore(/(\w+\.){0,2}(\w+)?/);
         // is no word before the cursor, don't open completions.
         if (!token || !token.text) return null;

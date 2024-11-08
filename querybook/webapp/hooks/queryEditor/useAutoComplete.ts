@@ -24,7 +24,7 @@ export function useAutoComplete(
     }, [language, metastoreId, autoCompleteType]);
 
     useEffect(() => {
-        autoCompleter.updateCodeAnalysis(codeAnalysis);
+        autoCompleter.codeAnalysis = codeAnalysis;
     }, [codeAnalysis, autoCompleter]);
 
     return autoCompleterRef;

@@ -1,11 +1,14 @@
 import { isEqual } from 'lodash';
-import { useEffect, useRef } from 'react';
+import { DependencyList, EffectCallback, useEffect, useRef } from 'react';
 
-export default function useDeepCompareEffect(callback, dependencies) {
-    const currentDependenciesRef = useRef();
+export default function useDeepCompareEffect(
+    callback: EffectCallback,
+    deps?: DependencyList
+) {
+    const currentDependenciesRef = useRef<DependencyList>();
 
-    if (!isEqual(currentDependenciesRef.current, dependencies)) {
-        currentDependenciesRef.current = dependencies;
+    if (!isEqual(currentDependenciesRef.current, deps)) {
+        currentDependenciesRef.current = deps;
     }
 
     useEffect(callback, [currentDependenciesRef.current]);
