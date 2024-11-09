@@ -5,6 +5,7 @@ import { Button } from 'ui/Button/Button';
 interface IProps {
     message: string;
     suggestion?: string;
+    readonly?: boolean;
     onAcceptSuggestion?: (suggestion: string) => void;
 }
 
@@ -13,6 +14,7 @@ const SUGGESTION_MAX_LENGTH = 40;
 export const LintTooltip: React.FunctionComponent<IProps> = ({
     message,
     suggestion,
+    readonly = false,
     onAcceptSuggestion,
 }) => {
     const truncatedSuggestion = useMemo(
@@ -35,15 +37,17 @@ export const LintTooltip: React.FunctionComponent<IProps> = ({
                     <div>
                         Replace with <code>{truncatedSuggestion}</code>
                     </div>
-                    <div className="mt8 right-align">
-                        <Button
-                            title="Accept"
-                            onClick={onClick}
-                            theme="fill"
-                            color="confirm"
-                            icon="Check"
-                        />
-                    </div>
+                    {!readonly && onAcceptSuggestion && (
+                        <div className="mt8 right-align">
+                            <Button
+                                title="Accept"
+                                onClick={onClick}
+                                theme="fill"
+                                color="confirm"
+                                icon="Check"
+                            />
+                        </div>
+                    )}
                 </div>
             )}
         </div>

@@ -37,6 +37,7 @@ const getDiagnosticRenderer =
                         changes: { from, to, insert: suggestion },
                     });
                 }}
+                readonly={!view.state.facet(EditorView.editable)}
             />,
             container
         );
@@ -151,7 +152,7 @@ const useQueryLintDiagnostics = ({
     // use deep compare effect to avoid linting on every render when the templatedVariables are the same
     useDeepCompareEffect(() => {
         if (!editorView || !hasQueryLint || !debouncedQuery) {
-            return [];
+            return;
         }
         setIsLinting(true);
         getQueryValidationErrors(query, engineId, templatedVariables)
