@@ -1,6 +1,6 @@
 from app.db import with_session
 from const.ai_assistant import (
-    DEFAUTL_TABLE_SEARCH_LIMIT,
+    DEFAULT_TABLE_SEARCH_LIMIT,
     MAX_SAMPLE_QUERY_COUNT_FOR_TABLE_SUMMARY,
 )
 from langchain.docstore.document import Document
@@ -154,7 +154,7 @@ def delete_table_doc(table_id: int):
 
 
 def search_tables(
-    metastore_id, keywords, filters=None, limit=DEFAUTL_TABLE_SEARCH_LIMIT
+    metastore_id, keywords, filters=None, limit=DEFAULT_TABLE_SEARCH_LIMIT
 ):
     """search tables from vector store and get the table details from elastic search."""
 

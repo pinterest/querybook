@@ -63,6 +63,22 @@ class ValidateFormTestCase(TestCase):
             validate_form(FormField(field_type=FormFieldType.Boolean), True), (True, "")
         )
 
+    def test_select_field(self):
+        self.assertEqual(
+            validate_form(
+                FormField(field_type=FormFieldType.Select, options=["foo", "bar"]),
+                "baz",
+            ),
+            (False, "Field value is not in options"),
+        )
+        self.assertEqual(
+            validate_form(
+                FormField(field_type=FormFieldType.Select, options=["foo", "bar"]),
+                "bar",
+            ),
+            (True, ""),
+        )
+
     def test_array_field(self):
         form = ExpandableFormField(of=FormField(), min=2, max=4)
         self.assertEqual(

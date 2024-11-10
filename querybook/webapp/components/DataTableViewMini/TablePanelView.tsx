@@ -11,6 +11,7 @@ import { getHumanReadableByteSize } from 'lib/utils/number';
 import { IconButton } from 'ui/Button/IconButton';
 import { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 import { Loader } from 'ui/Loader/Loader';
+import { TopTierCrown } from 'ui/TopTierCrown/TopTierCrown';
 
 import { ColumnIcon } from './ColumnIcon';
 import { PanelSection, SubPanelSection } from './PanelSection';
@@ -38,7 +39,14 @@ export const TablePanelView: React.FunctionComponent<ITablePanelViewProps> = ({
         const overviewSection = (
             <PanelSection title="table">
                 <SubPanelSection title="schema">{schema.name}</SubPanelSection>
-                <SubPanelSection title="name">{table.name}</SubPanelSection>
+                <SubPanelSection title="name">
+                    <span className="flex-row">
+                        {table.name}
+                        {table.golden && (
+                            <TopTierCrown showTooltip={true} className="ml4" />
+                        )}
+                    </span>
+                </SubPanelSection>
                 <SubPanelSection title="description" hideIfNoContent>
                     {table.description
                         ? (table.description as ContentState).getPlainText()

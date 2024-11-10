@@ -1,7 +1,6 @@
-from multiprocessing.dummy import Array
 import re
 from abc import ABCMeta, abstractmethod
-from typing import Dict, Union
+from typing import Dict, Union, List
 from enum import Enum
 
 
@@ -41,7 +40,8 @@ class FormField(AbstractFormField):
         # These two only applies to string field
         regex: str = None,
         hidden: bool = False,
-        options: Array = None,
+        # Only applies to Select field type
+        options: List[str] = None,
     ):
         """Initialize the form field
         Keyword Arguments:
@@ -165,5 +165,9 @@ def validate_form(form: AllFormField, form_value) -> tuple[bool, str]:
         elif form.field_type == FormFieldType.Boolean:
             if not isinstance(form_value, bool):
                 return False, "Field value is not a boolean"
+            return True, ""
+        elif form.field_type == FormFieldType.Select:
+            if form_value not in form.options:
+                return False, "Field value is not in options"
             return True, ""
     return False, "Unexpected form type"
