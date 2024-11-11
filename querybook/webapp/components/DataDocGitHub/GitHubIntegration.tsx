@@ -67,17 +67,15 @@ export const GitHubIntegration: React.FC<IProps> = ({ docId, onClose }) => {
         }
     }, []);
 
-    if (isLoading) {
-        return <Loading fullHeight text="Loading, please wait..." />;
-    }
-
     return (
         <Modal
             onHide={onClose}
             title="GitHub Integration"
             className="GitHubIntegration"
         >
-            {!isAuthorized ? (
+            {isLoading ? (
+                <Loading fullHeight text="Loading, please wait..." />
+            ) : !isAuthorized ? (
                 <GitHubAuth onAuthorize={handleAuthenticateGitHub} />
             ) : (
                 <GitHubFeatures docId={docId} />
