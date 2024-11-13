@@ -6,6 +6,7 @@ import { DataDocDAGExporterButton } from 'components/DataDocDAGExporter/DataDocD
 import { DataDocGitHubButton } from 'components/DataDocGitHub/DataDocGitHubButton';
 import { DataDocTemplateButton } from 'components/DataDocTemplateButton/DataDocTemplateButton';
 import { DataDocUIGuide } from 'components/UIGuide/DataDocUIGuide';
+import PublicConfig from 'config/querybook_public_config.yaml';
 import { ComponentType, ElementType } from 'const/analytics';
 import { IDataDoc, IDataDocMeta } from 'const/datadoc';
 import { useAnnouncements } from 'hooks/redux/useAnnouncements';
@@ -49,6 +50,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
 }) => {
     const numAnnouncements = useAnnouncements().length;
     const exporterExists = useExporterExists();
+    const githubIntegrationEnabled = PublicConfig.github_integration.enabled;
 
     const selfRef = React.useRef<HTMLDivElement>();
     const { showScrollToTop, scrollToTop } = useScrollToTop({
@@ -84,7 +86,9 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
         <DataDocRunAllButton docId={dataDoc.id} />
     );
 
-    const githubButtonDOM = <DataDocGitHubButton docId={dataDoc.id} />;
+    const githubButtonDOM = githubIntegrationEnabled && (
+        <DataDocGitHubButton docId={dataDoc.id} />
+    );
 
     const buttonSection = (
         <div className="DataDocRightSidebar-button-section vertical-space-between">

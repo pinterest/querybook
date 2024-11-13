@@ -193,8 +193,9 @@ def deserialize_datadoc_content(content_str: str) -> List[DataCell]:
             raise ValueError(f"Error parsing cell metadata YAML: {e}")
 
         cell_type = metadata.get("cell_type", "").lower()
-        cell_type_enum = DataCellType[cell_type]
-        if not cell_type_enum:
+        try:
+            cell_type_enum = DataCellType[cell_type]
+        except KeyError:
             raise ValueError(f"Unknown cell_type: {cell_type}")
 
         # Determine the cell content based on cell type
@@ -223,7 +224,7 @@ def deserialize_datadoc_content(content_str: str) -> List[DataCell]:
         cell = DataCell(
             id=metadata.get("id"),
             cell_type=cell_type_enum,
-            context=context if cell_type_enum != DataCellType.chart else "",
+            context=context if cell_type_enum != DataCellType.chart else None,
             created_at=parse_datetime_as_utc(metadata.get("created_at")),
             updated_at=parse_datetime_as_utc(metadata.get("updated_at")),
             meta=metadata.get("meta", {}),

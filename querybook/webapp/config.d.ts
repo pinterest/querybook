@@ -126,6 +126,9 @@ declare module 'config/querybook_public_config.yaml' {
             sample_user_guide_link: string;
             sampling_tool_tip_delay: number;
         };
+        github_integration: {
+            enabled: boolean;
+        };
     };
     export default data;
 }

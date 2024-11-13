@@ -38,7 +38,7 @@ export const GitHubIntegration: React.FC<IProps> = ({ docId, onClose }) => {
         checkStatus();
     }, [docId]);
 
-    const handleAuthenticateGitHub = useCallback(async () => {
+    const handleAuthorizeGitHub = useCallback(async () => {
         trackClick({
             component: ComponentType.GITHUB,
             element: ElementType.GITHUB_CONNECT_BUTTON,
@@ -67,18 +67,16 @@ export const GitHubIntegration: React.FC<IProps> = ({ docId, onClose }) => {
         }
     }, []);
 
-    if (isLoading) {
-        return <Loading fullHeight text="Loading, please wait..." />;
-    }
-
     return (
         <Modal
             onHide={onClose}
             title="GitHub Integration"
             className="GitHubIntegration"
         >
-            {!isAuthorized ? (
-                <GitHubAuth onAuthorize={handleAuthenticateGitHub} />
+            {isLoading ? (
+                <Loading fullHeight text="Loading, please wait..." />
+            ) : !isAuthorized ? (
+                <GitHubAuth onAuthorize={handleAuthorizeGitHub} />
             ) : (
                 <GitHubFeatures docId={docId} />
             )}

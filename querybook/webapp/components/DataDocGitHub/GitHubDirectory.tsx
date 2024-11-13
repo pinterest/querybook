@@ -18,7 +18,24 @@ interface IProps {
 }
 
 const validationSchema = Yup.object().shape({
-    directory: Yup.string().notRequired(),
+    /**
+     * Regex Examples:
+     * Valid:
+     * - parent
+     * - parent/child
+     * - parent/child_grandchild
+     *
+     * Invalid:
+     * - parent/               (Trailing slash)
+     * - parent//child         (Consecutive slashes)
+     * - parent/child#         (Invalid character '#')
+     */
+    directory: Yup.string()
+        .notRequired()
+        .matches(
+            /^(?!.*\/$)(?!.*\/\/)[A-Za-z0-9_-]+(?:\/[A-Za-z0-9_-]+)*$/,
+            'Invalid directory path. Use letters, numbers, "_", or "-". No trailing or consecutive "/". Example: parent/child'
+        ),
 });
 
 const DEFAULT_DIRECTORY = 'datadocs';
@@ -49,15 +66,6 @@ export const GitHubDirectory: React.FC<IProps> = ({
         fetchDirectories();
     }, [fetchDirectories]);
 
-    const directoryOptions = useMemo(
-        () =>
-            directories.map((dir) => ({
-                label: dir,
-                value: dir,
-            })),
-        [directories]
-    );
-
     const handleSubmit = async (values: { directory: string }) => {
         const directory = values.directory || DEFAULT_DIRECTORY;
         try {
@@ -85,7 +93,7 @@ export const GitHubDirectory: React.FC<IProps> = ({
                             name="directory"
                             label="Search Directory:"
                             type="react-select"
-                            options={directoryOptions}
+                            options={directories}
                             creatable
                             formatCreateLabel={(inputValue) => (
                                 <div className="flex-row">
@@ -93,13 +101,14 @@ export const GitHubDirectory: React.FC<IProps> = ({
                                     <span>Create '{inputValue}' directory</span>
                                 </div>
                             )}
-                            onCreateOption={(inputValue) =>
-                                setFieldValue('directory', inputValue)
-                            }
-                            onChange={(option) => {
-                                setFieldValue('directory', option);
+                            onCreateOption={(inputValue) => {
+                                setDirectories((prev) => [...prev, inputValue]);
+                                setFieldValue('directory', inputValue);
                             }}
-                            help={`Select or create a directory for DataDoc commits. Defaults to ${DEFAULT_DIRECTORY} if left empty.`}
+                            onChange={(option) =>
+                                setFieldValue('directory', option)
+                            }
+                            help={`Select or create a directory for DataDoc commits. You can input nested directory paths like 'parent/child'. Defaults to ${DEFAULT_DIRECTORY} if left empty.`}
                         />
                         <div className="mt8">
                             <AsyncButton
