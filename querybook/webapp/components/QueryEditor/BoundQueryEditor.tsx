@@ -1,7 +1,11 @@
 import React, { useContext, useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
-import { CodeMirrorSearchHighlighter } from 'components/SearchAndReplace/CodeMirrorSearchHighlighter';
+import {
+    IQueryEditorHandles,
+    IQueryEditorProps,
+    QueryEditor,
+} from 'components/QueryEditor/QueryEditor';
 import { IQueryEngine } from 'const/queryEngine';
 import { SearchAndReplaceContext } from 'context/searchAndReplace';
 import { useUserQueryEditorConfig } from 'hooks/redux/useUserQueryEditorConfig';
@@ -10,13 +14,6 @@ import {
     fetchDataTableByNameIfNeeded,
     fetchFunctionDocumentationIfNeeded,
 } from 'redux/dataSources/action';
-import { IStoreState } from 'redux/store/types';
-
-import {
-    IQueryEditorHandles,
-    IQueryEditorProps,
-    QueryEditor,
-} from './QueryEditor';
 
 export const BoundQueryEditor = React.forwardRef<
     IQueryEditorHandles,
@@ -29,100 +26,59 @@ export const BoundQueryEditor = React.forwardRef<
         | 'functionDocumentationByNameByLanguage'
         | 'metastoreId'
         | 'language'
+        | 'engineId'
+        | 'searchContext'
     > & {
         engine?: IQueryEngine;
         cellId?: number;
     }
->(
-    (
-        {
-            options: propOptions,
-            keyMap: propKeyMap,
-            engine,
-            cellId,
-            ...otherProps
-        },
-        ref
-    ) => {
-        const dispatch = useDispatch();
-        const searchContext = useContext(SearchAndReplaceContext);
-        const editorRef = useForwardedRef<IQueryEditorHandles>(ref);
+>(({ options: propOptions, keyMap, engine, cellId, ...otherProps }, ref) => {
+    const dispatch = useDispatch();
+    const searchContext = useContext(SearchAndReplaceContext);
+    const editorRef = useForwardedRef<IQueryEditorHandles>(ref);
 
-        // Code Editor related Props
-        const { codeEditorTheme, keyMap, options, fontSize, autoCompleteType } =
-            useUserQueryEditorConfig(searchContext);
-        const combinedOptions = useMemo(
-            () => ({
-                ...options,
-                ...propOptions,
-            }),
-            [propOptions, options]
-        );
+    // Code Editor related Props
+    const { codeEditorTheme, options, fontSize, autoCompleteType } =
+        useUserQueryEditorConfig();
+    const combinedOptions = useMemo(
+        () => ({
+            ...options,
+            ...propOptions,
+        }),
+        [propOptions, options]
+    );
 
-        const combinedKeyMap = useMemo(
-            () => ({
-                ...keyMap,
-                ...propKeyMap,
-            }),
-            [keyMap, propKeyMap]
-        );
-
-        // Function Documentation related props
-        const functionDocumentationByNameByLanguage = useSelector(
-            (state: IStoreState) =>
-                state.dataSources.functionDocumentation.byNameByLanguage
-        );
-        useEffect(() => {
-            if (engine?.language) {
-                dispatch(fetchFunctionDocumentationIfNeeded(engine?.language));
+    // Metastore related props
+    const fetchDataTable = React.useCallback(
+        (schemaName: string, tableName: string) => {
+            if (engine != null) {
+                return dispatch(
+                    fetchDataTableByNameIfNeeded(
+                        schemaName,
+                        tableName,
+                        engine.metastore_id
+                    )
+                );
             }
-        }, [engine?.language]);
+        },
+        [engine]
+    );
 
-        // Metastore related props
-        const fetchDataTable = React.useCallback(
-            (schemaName: string, tableName: string) => {
-                if (engine != null) {
-                    return dispatch(
-                        fetchDataTableByNameIfNeeded(
-                            schemaName,
-                            tableName,
-                            engine.metastore_id
-                        )
-                    );
-                }
-            },
-            [engine]
-        );
-
-        const queryEditor = (
-            <QueryEditor
-                {...otherProps}
-                ref={editorRef}
-                options={combinedOptions}
-                keyMap={combinedKeyMap}
-                theme={codeEditorTheme}
-                autoCompleteType={autoCompleteType}
-                fontSize={fontSize}
-                getTableByName={fetchDataTable}
-                functionDocumentationByNameByLanguage={
-                    functionDocumentationByNameByLanguage
-                }
-                metastoreId={engine?.metastore_id}
-                language={engine?.language}
-            />
-        );
-
-        return searchContext ? (
-            <>
-                {queryEditor}
-                <CodeMirrorSearchHighlighter
-                    searchContext={searchContext}
-                    cellId={cellId}
-                    editor={editorRef.current?.getEditor()}
-                />
-            </>
-        ) : (
-            queryEditor
-        );
-    }
-);
+    return (
+        <QueryEditor
+            {...otherProps}
+            ref={editorRef}
+            options={combinedOptions}
+            keyMap={keyMap}
+            theme={codeEditorTheme}
+            autoCompleteType={autoCompleteType}
+            fontSize={fontSize}
+            getTableByName={fetchDataTable}
+            metastoreId={engine?.metastore_id}
+            language={engine?.language}
+            searchContext={searchContext}
+            cellId={cellId}
+            engineId={engine?.id}
+        />
+    );
+});

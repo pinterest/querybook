@@ -202,6 +202,7 @@ export function useSearchAndReplace({
 
             showSearchAndReplace,
             hideSearchAndReplace,
+            showing,
         },
         searchAndReplaceProps: {
             onSearchStringChange,

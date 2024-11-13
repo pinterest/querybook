@@ -2,19 +2,10 @@
 
 .QueryEditor {
     position: relative;
+    height: 100%;
 
-    .CodeMirror {
-        // New style
-        line-height: 17px;
-
-        .CodeMirror-cursor {
-            // HACK: chrome bug where border width < 1px will not get drawn
-            border-left-width: 1.4px;
-        }
-    }
-
-    .CodeMirror-hover {
-        background-color: var(--bg-text-select);
+    &.fullScreen {
+        @include full-screen(39);
     }
 
     .query-editor-float-buttons-wrapper {
@@ -40,120 +31,141 @@
         }
     }
 
-    &.fullScreen {
-        .react-codemirror2,
-        .CodeMirror {
-            height: 100%;
-        }
-        @include full-screen(39);
-    }
-}
+    .ReactCodeMirror {
+        height: 100%;
+        border-radius: var(--border-radius-sm);
+        overflow: hidden;
 
-.CodeMirror-hints {
-    padding: 5px;
+        &.cm-theme-light {
+            .cm-editor {
+                .cm-scroller {
+                    background-color: var(--bg-query-editor-gutter);
 
-    margin-left: -8px;
-    border: none;
-    margin-left: -94px;
-    overflow: auto;
-    z-index: 400;
+                    .cm-gutters {
+                        background-color: var(--bg-query-editor-gutter);
+                    }
 
-    // New style
-    background: var(--bg);
-    box-shadow: var(--box-shadow);
-    border-radius: 8px;
-
-    .CodeMirror-hint {
-        font-size: var(--small-text-size);
-        line-height: 1.5;
-        color: var(--text-dark);
-        white-space: nowrap;
-
-        b {
-            color: var(--text);
-        }
-
-        &.CodeMirror-hint-active {
-            color: var(--color-accent-dark);
-            background: none;
-
-            b {
-                color: var(--color-accent-dark);
+                    .cm-content {
+                        background-color: var(--bg-query-editor);
+                    }
+                }
             }
         }
 
-        .code-editor-autocomplete-wrapper {
-            display: flex;
-            align-items: center;
+        .cm-editor {
+            .cm-scroller {
+                .cm-gutters {
+                    padding-bottom: 4px;
+                }
 
-            .code-editor-autocomplete-span {
-                flex: 1;
-                text-align: left;
-                margin-right: 15px;
-
-                &:last-of-type {
-                    margin-right: 0px;
+                .cm-content {
+                    min-height: 50px !important;
+                    height: 100%;
                 }
             }
 
-            .code-editor-golden-span {
-                width: 13px;
-                flex: 0 0 13px;
+            .cm-tooltip {
+                background-color: var(--bg);
+                border: var(--border);
+                border-radius: var(--border-radius-sm);
+                box-shadow: var(--box-shadow);
+                max-width: 600px;
 
-                .golden-item-icon {
-                    vertical-align: baseline;
+                .rich-text-content {
+                    max-height: 400px;
+                    overflow-y: auto;
+                    overflow-x: hidden;
+                    padding: 8px;
+                    white-space: pre-wrap;
+                    word-break: break-word;
+                    font-size: var(--text-size);
 
-                    &.golden {
+                    .table-tooltip-header {
+                        font-size: var(--text-size);
+                        color: var(--text-dark);
+                        font-weight: var(--bold-font);
+                        justify-content: space-between;
+                        align-items: start;
+                    }
+                    .tooltip-title {
+                        font-weight: var(--bold-font);
+                        margin-bottom: 0;
+                    }
+
+                    .tooltip-content {
+                        margin-left: 4px;
+                    }
+                }
+            }
+
+            .cm-tooltip-autocomplete {
+                padding: 5px;
+                border: none;
+                overflow: auto;
+
+                font-size: var(--small-text-size);
+                line-height: 1.5;
+                color: var(--text-dark);
+                white-space: nowrap;
+
+                & > ul {
+                    & > li {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        background: none;
+                    }
+
+                    & > li[aria-selected] {
+                        color: var(--color-accent-dark);
+                    }
+                }
+
+                .cm-completionLabel {
+                    overflow-x: hidden;
+                    text-overflow: ellipsis;
+
+                    .cm-completionMatchedText {
+                        text-decoration: none;
+                        font-weight: bold;
+                    }
+                }
+            }
+
+            .cm-tooltip-lint {
+                .cm-diagnostic:not(:first-child) {
+                    margin-top: 4px;
+                }
+            }
+
+            .cm-panels {
+                z-index: inherit;
+
+                &.cm-panels-bottom {
+                    border-top-width: 1px;
+                }
+
+                .cm-panel {
+                    padding: 2px 4px;
+                    display: flex;
+                    justify-content: flex-end;
+
+                    .lint-num-errors {
+                        color: var(--color-false);
+                    }
+
+                    .lint-num-warnings {
+                        color: var(--color-warn);
+                    }
+
+                    .lint-passed {
                         color: var(--color-true);
                     }
-
-                    &.not-golden {
-                        color: var(--text-dark);
-                    }
                 }
-            }
 
-            .code-editor-warning-span {
-                width: 13px;
-                flex: 0 0 13px;
-
-                .warning-item-icon {
-                    vertical-align: baseline;
-
-                    &.warning {
-                        color: var(--color-yellow);
-                    }
-
-                    &.not-warning {
-                        color: var(--text-dark);
-                    }
-                }
-            }
-
-            .code-editor-trustworthiness-span {
-                // width: 28px; // If supporting 100
-                // flex: 0 0 28px;
-                width: 15px;
-                flex: 0 0 15px;
-                font-weight: bold;
-                display: flex;
-                align-items: center;
-
-                .trustworthiness-icon {
-                    flex: 0 1;
+                .cm-search.cm-panel {
                     display: none;
                 }
-
-                .trustworthiness-value {
-                    text-align: right;
-                    // width: 14px;
-                    display: inline-block;
-                    flex: 1;
-                }
-            }
-
-            .code-editor-tooltip-span {
-                text-align: right;
             }
         }
     }
