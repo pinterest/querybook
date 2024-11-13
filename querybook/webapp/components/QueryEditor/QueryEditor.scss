@@ -43,6 +43,7 @@
 
                     .cm-gutters {
                         background-color: var(--bg-query-editor-gutter);
+                        border-right: none;
                     }
 
                     .cm-content {
@@ -142,7 +143,8 @@
                 z-index: inherit;
 
                 &.cm-panels-bottom {
-                    border-top-width: 1px;
+                    border-top: none;
+                    box-shadow: var(--box-shadow);
                 }
 
                 .cm-panel {

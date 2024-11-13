@@ -354,8 +354,8 @@ export const QueryEditor: React.FC<
             [onSelection]
         );
 
-        const extensions = useMemo(() => {
-            return [
+        const extensions = useMemo(
+            () => [
                 sql({
                     upperCaseKeywords: true,
                 }),
@@ -369,18 +369,19 @@ export const QueryEditor: React.FC<
                 optionsExtension,
                 searchExtension,
                 selectionExtension,
-            ];
-        }, [
-            keyMapExtention,
-            statusBarExtension,
-            eventsExtension,
-            lintExtension,
-            autoCompleteExtension,
-            hoverTooltipExtension,
-            optionsExtension,
-            searchExtension,
-            selectionExtension,
-        ]);
+            ],
+            [
+                keyMapExtention,
+                statusBarExtension,
+                eventsExtension,
+                lintExtension,
+                autoCompleteExtension,
+                hoverTooltipExtension,
+                optionsExtension,
+                searchExtension,
+                selectionExtension,
+            ]
+        );
 
         const basicSetup = useMemo(
             () => ({
