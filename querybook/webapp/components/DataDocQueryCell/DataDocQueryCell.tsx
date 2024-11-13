@@ -37,12 +37,7 @@ import { SurveySurfaceType } from 'const/survey';
 import { triggerSurvey } from 'hooks/ui/useSurveyTrigger';
 import { trackClick } from 'lib/analytics';
 import CodeMirror from 'lib/codemirror';
-import { createSQLLinter } from 'lib/codemirror/codemirror-lint';
-import {
-    getQueryAsExplain,
-    getSelectedQuery,
-    IRange,
-} from 'lib/sql-helper/sql-lexer';
+import { getQueryAsExplain } from 'lib/sql-helper/sql-lexer';
 import { DEFAULT_ROW_LIMIT } from 'lib/sql-helper/sql-limiter';
 import { getPossibleTranspilers } from 'lib/templated-query/transpile';
 import { enableResizable } from 'lib/utils';
@@ -66,7 +61,6 @@ import { Modal } from 'ui/Modal/Modal';
 import { IResizableTextareaHandles } from 'ui/ResizableTextArea/ResizableTextArea';
 import { AccentText } from 'ui/StyledText/StyledText';
 
-import { ISelectedRange } from './common';
 import { ErrorQueryCell } from './ErrorQueryCell';
 
 import './DataDocQueryCell.scss';
@@ -114,7 +108,7 @@ interface IState {
 
     modifiedAt: number;
     focused: boolean;
-    selectedRange: ISelectedRange;
+    hasSelection: boolean;
     queryCollapsedOverride: boolean;
     showQuerySnippetModal: boolean;
     showRenderedTemplateModal: boolean;
@@ -143,7 +137,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             meta: props.meta,
             modifiedAt: 0,
             focused: false,
-            selectedRange: null,
+            hasSelection: false,
             queryCollapsedOverride: null,
             showQuerySnippetModal: false,
             showRenderedTemplateModal: false,
@@ -281,9 +275,9 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
-    public onSelection(query: string, selectedRange: IRange) {
+    public onSelection(hasSelection: boolean) {
         this.setState({
-            selectedRange,
+            hasSelection,
         });
     }
 
@@ -312,27 +306,9 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         });
     }
 
-    @decorate(memoizeOne)
-    public createGetLintAnnotations(
-        engineId: number,
-        templatedVariables: TDataDocMetaVariables
-    ) {
-        return createSQLLinter(engineId, templatedVariables);
-    }
-
     @bind
     public focus() {
-        if (
-            !(
-                this.queryEditorRef.current &&
-                this.queryEditorRef.current.getEditor
-            )
-        ) {
-            return;
-        }
-
-        const editor = this.queryEditorRef.current.getEditor();
-        editor.focus();
+        this.queryEditorRef.current?.focus();
     }
 
     @bind
@@ -443,10 +419,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     public async getTransformedQuery() {
         const { templatedVariables = [] } = this.props;
         const { query } = this.state;
-        const selectedRange =
-            this.queryEditorRef.current &&
-            this.queryEditorRef.current.getEditorSelection();
-        const rawQuery = getSelectedQuery(query, selectedRange);
+        const rawQuery = this.queryEditorRef.current?.getSelection?.() ?? query;
 
         return transformQuery(
             rawQuery,
@@ -778,7 +751,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
             isEditable,
         } = this.props;
-        const { meta, query, selectedRange } = this.state;
+        const { meta, query, hasSelection } = this.state;
 
         const queryTitleDOM = isEditable ? (
             <QueryCellTitle
@@ -809,7 +782,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                             queryEngineById={queryEngineById}
                             queryEngines={queryEngines}
                             disabled={!isEditable}
-                            hasSelection={selectedRange != null}
+                            hasSelection={hasSelection}
                             engineId={this.engineId}
                             onRunClick={this.onRunButtonClick}
                             onEngineIdSelect={this.handleMetaChange.bind(
@@ -901,15 +874,9 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                     engine={queryEngine}
                     cellId={cellId}
                     height={isFullScreen ? 'full' : 'auto'}
+                    templatedVariables={this.props.templatedVariables}
                     onFullScreen={this.props.toggleFullScreen}
-                    getLintErrors={
-                        this.hasQueryValidators
-                            ? this.createGetLintAnnotations(
-                                  this.engineId,
-                                  this.props.templatedVariables
-                              )
-                            : null
-                    }
+                    hasQueryLint={this.hasQueryValidators}
                     onLintCompletion={this.onLintCompletion}
                 />
                 {openSnippetDOM}

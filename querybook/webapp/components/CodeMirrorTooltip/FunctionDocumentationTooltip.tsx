@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { IFunctionDescription } from 'const/metastore';
+import { fetchFunctionDocumentationIfNeeded } from 'redux/dataSources/action';
+import { IStoreState } from 'redux/store/types';
 import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 
 interface IProps {
@@ -40,4 +43,33 @@ export const FunctionDocumentationTooltip: React.FunctionComponent<IProps> = ({
     );
 
     return <div>{functionsDOM}</div>;
+};
+
+export const FunctionDocumentationTooltipByName: React.FunctionComponent<{
+    language: string;
+    functionName: string;
+}> = ({ language, functionName }) => {
+    const dispatch = useDispatch();
+    const functionDocumentationByNameByLanguage = useSelector(
+        (state: IStoreState) =>
+            state.dataSources.functionDocumentation.byNameByLanguage
+    );
+
+    useEffect(() => {
+        if (language) {
+            dispatch(fetchFunctionDocumentationIfNeeded(language));
+        }
+    }, [language]);
+
+    const functionDefs = functionDocumentationByNameByLanguage?.[language];
+    const functionNameLower = (functionName || '').toLowerCase();
+    const functionDef = functionDefs?.[functionNameLower];
+
+    if (!functionDef) {
+        return null;
+    }
+
+    return (
+        <FunctionDocumentationTooltip functionDocumentations={functionDef} />
+    );
 };

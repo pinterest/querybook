@@ -7,8 +7,7 @@
         "target": "es6",
         "sourceMap": true,
         "jsx": "react",
-        "lib": ["dom", "es2017", "esnext", "es2018.promise"],
-        "suppressImplicitAnyIndexErrors": true,
+        "lib": ["dom", "es2017", "esnext", "es2018.promise", "es6"],
         "baseUrl": "./querybook/webapp/",
         "paths": {
             "config/*": ["../config/*"]
