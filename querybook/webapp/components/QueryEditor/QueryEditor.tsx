@@ -1,6 +1,6 @@
 import { acceptCompletion, startCompletion } from '@codemirror/autocomplete';
-import { sql } from '@codemirror/lang-sql';
 import { EditorView } from '@codemirror/view';
+import { monokai } from '@uiw/codemirror-theme-monokai';
 import CodeMirror, { ReactCodeMirrorRef } from '@uiw/react-codemirror';
 import clsx from 'clsx';
 import React, {
@@ -28,6 +28,7 @@ import { useCodeAnalysis } from 'hooks/queryEditor/useCodeAnalysis';
 import { useLint } from 'hooks/queryEditor/useLint';
 import useDeepCompareEffect from 'hooks/useDeepCompareEffect';
 import { CodeMirrorKeyMap } from 'lib/codemirror';
+import { mixedSQL } from 'lib/codemirror/codemirror-mixed';
 import { AutoCompleteType } from 'lib/sql-helper/sql-autocompleter';
 import { format, ISQLFormatOptions } from 'lib/sql-helper/sql-formatter';
 import { TableToken } from 'lib/sql-helper/sql-lexer';
@@ -354,11 +355,9 @@ export const QueryEditor: React.FC<
             [onSelection]
         );
 
-        const extensions = useMemo(() => {
-            return [
-                sql({
-                    upperCaseKeywords: true,
-                }),
+        const extensions = useMemo(
+            () => [
+                mixedSQL(),
 
                 keyMapExtention,
                 statusBarExtension,
@@ -369,18 +368,19 @@ export const QueryEditor: React.FC<
                 optionsExtension,
                 searchExtension,
                 selectionExtension,
-            ];
-        }, [
-            keyMapExtention,
-            statusBarExtension,
-            eventsExtension,
-            lintExtension,
-            autoCompleteExtension,
-            hoverTooltipExtension,
-            optionsExtension,
-            searchExtension,
-            selectionExtension,
-        ]);
+            ],
+            [
+                keyMapExtention,
+                statusBarExtension,
+                eventsExtension,
+                lintExtension,
+                autoCompleteExtension,
+                hoverTooltipExtension,
+                optionsExtension,
+                searchExtension,
+                selectionExtension,
+            ]
+        );
 
         const basicSetup = useMemo(
             () => ({
@@ -428,7 +428,7 @@ export const QueryEditor: React.FC<
                 {floatButtons}
                 <CodeMirror
                     ref={editorRef}
-                    theme={theme === 'dark' ? 'dark' : 'light'}
+                    theme={theme === 'dark' ? monokai : 'light'}
                     className="ReactCodeMirror"
                     value={value}
                     height="100%"

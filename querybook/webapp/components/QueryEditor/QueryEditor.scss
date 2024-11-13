@@ -51,10 +51,19 @@
                 }
             }
         }
+        // dark theme
+        &.cm-theme {
+            .cm-editor {
+                .cm-panels {
+                    background-color: var(--bg-query-editor);
+                }
+            }
+        }
 
         .cm-editor {
             .cm-scroller {
                 .cm-gutters {
+                    border-right: none;
                     padding-bottom: 4px;
                 }
 
@@ -142,7 +151,8 @@
                 z-index: inherit;
 
                 &.cm-panels-bottom {
-                    border-top-width: 1px;
+                    border-top: none;
+                    box-shadow: var(--box-shadow);
                 }
 
                 .cm-panel {
