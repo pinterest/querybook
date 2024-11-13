@@ -1,9 +1,11 @@
 import React, { useCallback, useState } from 'react';
 
 import { QueryComparison } from 'components/TranspileQueryModal/QueryComparison';
+import { ComponentType, ElementType } from 'const/analytics';
 import { useRestoreDataDoc } from 'hooks/dataDoc/useRestoreDataDoc';
 import { usePaginatedResource } from 'hooks/usePaginatedResource';
 import { useResource } from 'hooks/useResource';
+import { trackClick } from 'lib/analytics';
 import { GitHubResource, ICommit } from 'resource/github';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { IconButton } from 'ui/Button/IconButton';
@@ -95,8 +97,14 @@ export const GitHubVersions: React.FunctionComponent<IProps> = ({
     );
 
     const toggleFullScreen = useCallback(() => {
+        if (!isFullScreen) {
+            trackClick({
+                component: ComponentType.GITHUB,
+                element: ElementType.GITHUB_COMPARE_FULLSCREEN_BUTTON,
+            });
+        }
         setIsFullScreen((prev) => !prev);
-    }, []);
+    }, [isFullScreen]);
 
     if (!linkedDirectory) {
         return (

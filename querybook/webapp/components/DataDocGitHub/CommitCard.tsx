@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { ComponentType, ElementType } from 'const/analytics';
+import { trackClick } from 'lib/analytics';
 import { ICommit } from 'resource/github';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Button } from 'ui/Button/Button';
@@ -48,7 +50,13 @@ export const CommitCard: React.FC<IProps> = ({
                 pushable
             />
             <Button
-                onClick={() => onCompare(version)}
+                onClick={() => {
+                    trackClick({
+                        component: ComponentType.GITHUB,
+                        element: ElementType.GITHUB_COMPARE_BUTTON,
+                    });
+                    onCompare(version);
+                }}
                 className="ml8"
                 title="Compare"
                 hoverColor="var(--color-accent-dark)"

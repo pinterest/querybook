@@ -18,21 +18,23 @@ interface IProps {
 }
 
 const validationSchema = Yup.object().shape({
+    /**
+     * Regex Examples:
+     * Valid:
+     * - parent
+     * - parent/child
+     * - parent/child_grandchild
+     *
+     * Invalid:
+     * - parent/               (Trailing slash)
+     * - parent//child         (Consecutive slashes)
+     * - parent/child#         (Invalid character '#')
+     */
     directory: Yup.string()
         .notRequired()
-        .test(
-            'is-valid-path',
-            'Invalid directory path. Use letters, numbers, "_", or "-". No trailing or consecutive "/". Example: parent/child',
-            (value) => {
-                if (!value) {
-                    return true;
-                }
-
-                // Regular expression to match valid paths without trailing slash, spaces, or consecutive slashes
-                const regex =
-                    /^(?!.*\/$)(?!.*\/\/)[A-Za-z0-9_-]+(?:\/[A-Za-z0-9_-]+)*$/;
-                return regex.test(value);
-            }
+        .matches(
+            /^(?!.*\/$)(?!.*\/\/)[A-Za-z0-9_-]+(?:\/[A-Za-z0-9_-]+)*$/,
+            'Invalid directory path. Use letters, numbers, "_", or "-". No trailing or consecutive "/". Example: parent/child'
         ),
 });
 
