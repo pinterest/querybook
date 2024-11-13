@@ -1,5 +1,4 @@
 import { acceptCompletion, startCompletion } from '@codemirror/autocomplete';
-import { sql } from '@codemirror/lang-sql';
 import { EditorView } from '@codemirror/view';
 import CodeMirror, { ReactCodeMirrorRef } from '@uiw/react-codemirror';
 import clsx from 'clsx';
@@ -28,6 +27,7 @@ import { useCodeAnalysis } from 'hooks/queryEditor/useCodeAnalysis';
 import { useLint } from 'hooks/queryEditor/useLint';
 import useDeepCompareEffect from 'hooks/useDeepCompareEffect';
 import { CodeMirrorKeyMap } from 'lib/codemirror';
+import { mixedSQL } from 'lib/codemirror/codemirror-mixed';
 import { AutoCompleteType } from 'lib/sql-helper/sql-autocompleter';
 import { format, ISQLFormatOptions } from 'lib/sql-helper/sql-formatter';
 import { TableToken } from 'lib/sql-helper/sql-lexer';
@@ -356,9 +356,7 @@ export const QueryEditor: React.FC<
 
         const extensions = useMemo(
             () => [
-                sql({
-                    upperCaseKeywords: true,
-                }),
+                mixedSQL(),
 
                 keyMapExtention,
                 statusBarExtension,
