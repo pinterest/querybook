@@ -43,7 +43,6 @@
 
                     .cm-gutters {
                         background-color: var(--bg-query-editor-gutter);
-                        border-right: none;
                     }
 
                     .cm-content {
@@ -52,10 +51,19 @@
                 }
             }
         }
+        // dark theme
+        &.cm-theme {
+            .cm-editor {
+                .cm-panels {
+                    background-color: var(--bg-query-editor);
+                }
+            }
+        }
 
         .cm-editor {
             .cm-scroller {
                 .cm-gutters {
+                    border-right: none;
                     padding-bottom: 4px;
                 }
 

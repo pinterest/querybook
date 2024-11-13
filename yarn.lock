@@ -6250,6 +6250,22 @@
   resolved "https://registry.yarnpkg.com/@uiw/codemirror-extensions-events/-/codemirror-extensions-events-4.23.6.tgz#38239041828674041a475cbac32c8b9edd22c4b1"
   integrity sha512-4/01T65JsDk5MORj+gotwTuujv//6LsY2DZLT8Geapd7pnoOSDnf2okPEVUOh8Pe7zcUtEUgeE+D0OlKNZ8ZUQ==
 
+"@uiw/codemirror-theme-monokai@^4.23.6":
+  version "4.23.6"
+  resolved "https://artifacts-prod-use1.pinadmin.com/artifactory/api/npm/node-npm-yarn-prod-virtual/@uiw/codemirror-theme-monokai/-/codemirror-theme-monokai-4.23.6.tgz#78216682e8b1a26426b068e4b17751fa39e94e30"
+  integrity sha512-Uppctg7VkZR9UlVrWLqCtS7IQVC6s+tHrwyXvptgxJ3xl2+d/ZE1B6GpY0bDb0bfZgXTEHnTif5FRPoRPxSmgg==
+  dependencies:
+    "@uiw/codemirror-themes" "4.23.6"
+
+"@uiw/codemirror-themes@4.23.6":
+  version "4.23.6"
+  resolved "https://artifacts-prod-use1.pinadmin.com/artifactory/api/npm/node-npm-yarn-prod-virtual/@uiw/codemirror-themes/-/codemirror-themes-4.23.6.tgz#47a101733a9c4aa382696178bc4b7bc0ecf0e5fa"
+  integrity sha512-0dpuLQW+V6zrKvfvor/eo71V3tpr2L2Hsu8QZAdtSzksjWABxTOzH3ShaBRxCEsrz6sU9sa9o7ShwBMMDz59bQ==
+  dependencies:
+    "@codemirror/language" "^6.0.0"
+    "@codemirror/state" "^6.0.0"
+    "@codemirror/view" "^6.0.0"
+
 "@uiw/codemirror-themes@^4.23.5":
   version "4.23.5"
   resolved "https://registry.yarnpkg.com/@uiw/codemirror-themes/-/codemirror-themes-4.23.5.tgz#742cb8f2a74a857cb44c5f588265865ee2327e91"

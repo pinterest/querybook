@@ -1,5 +1,6 @@
 import { acceptCompletion, startCompletion } from '@codemirror/autocomplete';
 import { EditorView } from '@codemirror/view';
+import { monokai } from '@uiw/codemirror-theme-monokai';
 import CodeMirror, { ReactCodeMirrorRef } from '@uiw/react-codemirror';
 import clsx from 'clsx';
 import React, {
@@ -427,7 +428,7 @@ export const QueryEditor: React.FC<
                 {floatButtons}
                 <CodeMirror
                     ref={editorRef}
-                    theme={theme === 'dark' ? 'dark' : 'light'}
+                    theme={theme === 'dark' ? monokai : 'light'}
                     className="ReactCodeMirror"
                     value={value}
                     height="100%"
