@@ -22,6 +22,7 @@ import { useKeyMapExtension } from 'hooks/queryEditor/extensions/useKeyMapExtens
 import { useLintExtension } from 'hooks/queryEditor/extensions/useLintExtension';
 import { useOptionsExtension } from 'hooks/queryEditor/extensions/useOptionsExtension';
 import { useSearchExtension } from 'hooks/queryEditor/extensions/useSearchExtension';
+import { useSqlCompleteExtension } from 'hooks/queryEditor/extensions/useSqlCompleteExtension';
 import { useStatusBarExtension } from 'hooks/queryEditor/extensions/useStatusBarExtension';
 import { useAutoComplete } from 'hooks/queryEditor/useAutoComplete';
 import { useCodeAnalysis } from 'hooks/queryEditor/useCodeAnalysis';
@@ -49,6 +50,7 @@ export interface IQueryEditorProps {
     keyMap?: CodeMirrorKeyMap;
     className?: string;
     autoCompleteType?: AutoCompleteType;
+    sqlCompleteEnabled?: boolean;
 
     engineId: number;
     templatedVariables?: TDataDocMetaVariables;
@@ -103,6 +105,7 @@ export const QueryEditor: React.FC<
             keyMap = {},
             className,
             autoCompleteType = 'all',
+            sqlCompleteEnabled = false,
             engineId,
             cellId,
             templatedVariables = [],
@@ -355,6 +358,12 @@ export const QueryEditor: React.FC<
             [onSelection]
         );
 
+        const sqlCompleteExtension = useSqlCompleteExtension({
+            enabled: sqlCompleteEnabled,
+            engineId,
+            tables: tableNamesSet,
+        });
+
         const extensions = useMemo(
             () => [
                 mixedSQL(),
@@ -368,6 +377,7 @@ export const QueryEditor: React.FC<
                 optionsExtension,
                 searchExtension,
                 selectionExtension,
+                sqlCompleteExtension,
             ],
             [
                 keyMapExtention,
@@ -379,6 +389,7 @@ export const QueryEditor: React.FC<
                 optionsExtension,
                 searchExtension,
                 selectionExtension,
+                sqlCompleteExtension,
             ]
         );
 

@@ -38,8 +38,13 @@ export const BoundQueryEditor = React.forwardRef<
     const editorRef = useForwardedRef<IQueryEditorHandles>(ref);
 
     // Code Editor related Props
-    const { codeEditorTheme, options, fontSize, autoCompleteType } =
-        useUserQueryEditorConfig();
+    const {
+        codeEditorTheme,
+        options,
+        fontSize,
+        autoCompleteType,
+        sqlCompleteEnabled,
+    } = useUserQueryEditorConfig();
     const combinedOptions = useMemo(
         () => ({
             ...options,
@@ -79,6 +84,7 @@ export const BoundQueryEditor = React.forwardRef<
             searchContext={searchContext}
             cellId={cellId}
             engineId={engine?.id}
+            sqlCompleteEnabled={sqlCompleteEnabled}
         />
     );
 });

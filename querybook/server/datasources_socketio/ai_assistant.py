@@ -30,3 +30,14 @@ def sql_fix(payload={}):
     ai_assistant.query_auto_fix(
         query_execution_id=query_execution_id,
     )
+
+
+@register_socket(AICommandType.SQL_COMPLETE.value, namespace=AI_ASSISTANT_NAMESPACE)
+def sql_complete(payload={}):
+    prefix = payload["prefix"]
+    suffix = payload["suffix"]
+    query_engine_id = payload["query_engine_id"]
+    tables = payload.get("tables", [])
+    ai_assistant.get_sql_completion(
+        query_engine_id=query_engine_id, tables=tables, prefix=prefix, suffix=suffix
+    )

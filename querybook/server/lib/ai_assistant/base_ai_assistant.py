@@ -29,6 +29,7 @@ from .prompts.sql_title_prompt import SQL_TITLE_PROMPT
 from .prompts.table_select_prompt import TABLE_SELECT_PROMPT
 from .prompts.table_summary_prompt import TABLE_SUMMARY_PROMPT
 from .prompts.text_to_sql_prompt import TEXT_TO_SQL_PROMPT
+from .prompts.sql_complete_prompt import SQL_AUTOCOMPLETE_PROMPT
 from .tools.table_schema import (
     get_slimmed_table_schemas,
     get_table_schema_by_name,
@@ -158,6 +159,14 @@ class BaseAIAssistant(ABC):
             top_n=top_n,
             question=question,
             table_schemas=table_schemas,
+        )
+
+    def _get_sql_complete_prompt(self, dialect, table_schemas, prefix, suffix):
+        return SQL_AUTOCOMPLETE_PROMPT.format(
+            dialect=dialect,
+            table_schemas=table_schemas,
+            prefix=prefix,
+            suffix=suffix,
         )
 
     def _get_error_msg(self, error) -> str:
@@ -458,3 +467,45 @@ class BaseAIAssistant(ABC):
         except Exception as e:
             LOG.error(e, exc_info=True)
             return []
+
+    @catch_error
+    @with_session
+    @with_ai_socket(command_type=AICommandType.SQL_COMPLETE)
+    def get_sql_completion(
+        self,
+        query_engine_id: int,
+        tables: list[str],
+        prefix: str,
+        suffix: str,
+        socket=None,
+        session=None,
+    ):
+        """
+        Generate SQL completions based on the given context.
+        """
+        query_engine = admin_logic.get_query_engine_by_id(
+            query_engine_id, session=session
+        )
+        table_schemas = get_table_schemas_by_names(
+            metastore_id=query_engine.metastore_id,
+            full_table_names=tables,
+            should_skip_column=self._should_skip_column,
+            session=session,
+        )
+        prompt = self._get_sql_complete_prompt(
+            dialect=query_engine.language,
+            table_schemas=table_schemas,
+            prefix=prefix,
+            suffix=suffix,
+        )
+        llm = self._get_llm(
+            ai_command=AICommandType.SQL_COMPLETE.value,
+            prompt_length=self._get_token_count(
+                AICommandType.SQL_COMPLETE.value, prompt
+            ),
+        )
+
+        chain = llm | JsonOutputParser()
+        response = chain.invoke(prompt)
+        socket.send_data(response)
+        socket.close()

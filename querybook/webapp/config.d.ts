@@ -102,6 +102,10 @@ declare module 'config/querybook_public_config.yaml' {
             table_vector_search: {
                 enabled: boolean;
             };
+
+            sql_complete: {
+                enabled: boolean;
+            };
         };
         survey?: {
             global_response_cooldown?: number;
