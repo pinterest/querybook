@@ -26,6 +26,15 @@ export interface IDataDocSocketEvent {
         (rawDataDoc, isSameOrigin: boolean) => any
     >;
 
+    dataDocRestored?: IDataDocSocketEventPromise<
+        (
+            rawDataDoc: any,
+            commitMessage: string,
+            username: string,
+            isSameOrigin: boolean
+        ) => any
+    >;
+
     updateDataCell?: IDataDocSocketEventPromise<
         (rawDataCell, isSameOrigin: boolean) => any
     >;
@@ -158,6 +167,17 @@ export class DataDocSocket {
         this.socket.emit('update_data_doc', docId, fields);
         return this.makePromise<IDataDocSocketPromise<[rawDataDoc: any]>>(
             'updateDataDoc'
+        );
+    };
+
+    public restoreDataDoc = (
+        docId: number,
+        commitId: string,
+        commitMessage: string
+    ) => {
+        this.socket.emit('restore_data_doc', docId, commitId, commitMessage);
+        return this.makePromise<IDataDocSocketPromise<[rawDataDoc: any]>>(
+            'dataDocRestored'
         );
     };
 
@@ -319,6 +339,19 @@ export class DataDocSocket {
                     rawDataDoc
                 );
             });
+
+            this.socket.on(
+                'data_doc_restored',
+                (originator, rawDataDoc, commitMessage, username) => {
+                    this.resolvePromiseAndEvent(
+                        'dataDocRestored',
+                        originator,
+                        rawDataDoc,
+                        commitMessage,
+                        username
+                    );
+                }
+            );
 
             this.socket.on('data_cell_updated', (originator, rawDataCell) => {
                 this.resolvePromiseAndEvent(

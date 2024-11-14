@@ -1,0 +1,81 @@
+---
+id: github_integration
+title: GitHub User Guide
+sidebar_label: GitHub Integration
+---
+
+## Overview
+
+The **GitHub** feature allows you to seamlessly link your DataDocs with GitHub repositories. This integration enables you to commit DataDoc versions directly to GitHub, track changes over time, and collaborate more effectively using GitHub's version control capabilities.
+
+> **Note:** GitHub Integration is an **experimental** feature. It may undergo significant changes in future releases.
+
+## Getting Started
+
+### Linking Your DataDoc to a GitHub Repository
+
+1. **Access GitHub Integration:**
+
+    - Open the DataDoc you wish to integrate.
+    - Click on the **GitHub** icon in the DataDoc right side bar.
+
+![GitHub DataDoc Sidebar](/img/user_guide/github/github_datadoc_sidebar.png)
+
+2. **Authorize GitHub:**
+
+    - Click on the **Connect Now** button.
+    - You will be redirected to GitHub to authorize Querybook.
+    - After authorization, you'll be redirected back to Querybook.
+
+![Connect GitHub](/img/user_guide/github/connect_github.png)
+
+3. **Link Directory:**
+
+    - Enter the **Directory Path** within the repository where DataDoc versions will be stored. You can either specify a custom directory path or use the default directory named `datadocs`.
+    - Click **Link Directory** button to finalize the process.
+
+![GitHub Directory Linking](/img/user_guide/github/github_directory_linking.png)
+
+### Committing Changes to GitHub
+
+1. **Commit Your DataDoc:**
+
+    - In your DataDoc, click on the **Push to GitHub** tab located at the top of the modal.
+    - Enter a descriptive **Commit Message** summarizing your changes.
+    - Click the **Push** button to push the new changes to the linked GitHub repository.
+
+![GitHub Push](/img/user_guide/github/github_push.png)
+
+2. **View Commit History:**
+
+    - Navigate to the **GitHub Versions** section within your DataDoc.
+    - Here, you can view the commit history, and compare and restore previous versions.
+
+![Commit History](/img/user_guide/github/github_versions.png)
+
+## Best Practices
+
+-   **Frequent Commits:** Commit your changes regularly to maintain a clear history of your DataDoc's evolution.
+-   **Descriptive Messages:** Use clear and descriptive commit messages to make it easier to understand the purpose of each commit.
+
+## Version History and Branching
+
+### Branching
+
+Querybook does not support traditional branching as all edits are shared in real time. Commits are directly pushed to GitHub, eliminating the concept of local and remote changes.
+
+### Workarounds
+
+-   **Clone the DataDoc:** Create a separate copy to experiment with changes without affecting the main version.
+-   **Link to a Different Repository:** Connect the DataDoc to an alternative GitHub repository for testing purposes.
+
+By following these approaches, users can safely manage and experiment with their DataDocs while maintaining a streamlined version history.
+
+## Troubleshooting
+
+If you encounter issues while using GitHub Integration, consider the following steps:
+
+-   **Ensure Proper Linking:** Verify that your DataDoc is correctly linked to the intended GitHub repository.
+-   **Check Permissions:** Make sure the OAuth application has the necessary permissions to access and modify the repository.
+
+For further assistance, refer to the [GitHub Integration Guide](../integrations/add_github_integration.mdx).

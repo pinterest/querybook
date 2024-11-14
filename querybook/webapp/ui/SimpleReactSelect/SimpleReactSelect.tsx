@@ -18,6 +18,8 @@ export interface ISimpleReactSelectProps<T> {
     withDeselect?: boolean;
     isDisabled?: boolean;
     creatable?: boolean;
+    formatCreateLabel?: (inputValue: string) => React.ReactNode;
+    onCreateOption?: (inputValue: string) => void;
     selectProps?: Partial<ReactSelectProps<T>>;
     closeMenuOnSelect?: boolean;
     hideSelectedOptions?: boolean;
@@ -37,6 +39,8 @@ export function SimpleReactSelect<T>({
     onChange,
     isDisabled,
     creatable,
+    formatCreateLabel,
+    onCreateOption,
 
     selectProps = {},
     withDeselect = false,
@@ -93,7 +97,11 @@ export function SimpleReactSelect<T>({
     return (
         <AccentText>
             {creatable ? (
-                <Creatable {...componentProps} />
+                <Creatable
+                    {...componentProps}
+                    formatCreateLabel={formatCreateLabel}
+                    onCreateOption={onCreateOption}
+                />
             ) : (
                 <Select {...componentProps} {...otherParams} />
             )}

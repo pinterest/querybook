@@ -216,6 +216,17 @@ def update_data_doc(id, fields):
     datadoc_collab.update_datadoc(id, fields, sid=request.sid)
 
 
+@register_socket("restore_data_doc", namespace=DATA_DOC_NAMESPACE)
+@data_doc_socket
+def restore_data_doc(datadoc_id: int, commit_sha: str, commit_message: str):
+    datadoc_collab.restore_data_doc(
+        datadoc_id=datadoc_id,
+        commit_sha=commit_sha,
+        commit_message=commit_message,
+        sid=request.sid,
+    )
+
+
 @register_socket("update_data_cell", namespace=DATA_DOC_NAMESPACE)
 @data_doc_socket
 def update_data_cell(doc_id, cell_id, fields):

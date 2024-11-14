@@ -1,3 +1,5 @@
+import toast from 'react-hot-toast';
+
 import { IAccessRequest } from 'const/accessRequest';
 import { IDataDocEditor } from 'const/datadoc';
 import dataDocSocket, {
@@ -61,6 +63,25 @@ export function openDataDoc(docId: number): ThunkResult<Promise<any>> {
                     }
                 },
             },
+
+            dataDocRestored: {
+                resolve: (
+                    rawDataDoc,
+                    commitMessage,
+                    username,
+                    isSameOrigin
+                ) => {
+                    dispatch(fetchDataDoc(docId));
+
+                    // Show a notification to other users
+                    if (!isSameOrigin) {
+                        toast.success(
+                            `DataDoc restored by ${username}: "${commitMessage}"`
+                        );
+                    }
+                },
+            },
+
             updateDataCell: {
                 resolve: (rawDataCell, isSameOrigin) => {
                     if (!isSameOrigin) {

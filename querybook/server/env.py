@@ -156,3 +156,10 @@ class QuerybookSettings(object):
     VECTOR_STORE_CONFIG = get_env_config("VECTOR_STORE_CONFIG") or {}
     EMBEDDINGS_PROVIDER = get_env_config("EMBEDDINGS_PROVIDER")
     EMBEDDINGS_CONFIG = get_env_config("EMBEDDINGS_CONFIG") or {}
+
+    # GitHub Integration
+    GITHUB_CLIENT_ID = get_env_config("GITHUB_CLIENT_ID")
+    GITHUB_CLIENT_SECRET = get_env_config("GITHUB_CLIENT_SECRET")
+    GITHUB_REPO_NAME = get_env_config("GITHUB_REPO_NAME")
+    GITHUB_BRANCH = get_env_config("GITHUB_BRANCH")
+    GITHUB_CRYPTO_SECRET = get_env_config("GITHUB_CRYPTO_SECRET")

@@ -106,3 +106,10 @@ VECTOR_STORE_PROVIDER: ~
 VECTOR_STORE_CONFIG:
     embeddings_arg_name: 'embedding_function'
     index_name: 'vector_index_v1'
+
+# --------------- GitHub Integration ---------------
+GITHUB_CLIENT_ID: ~
+GITHUB_CLIENT_SECRET: ~
+GITHUB_REPO_NAME: ~
+GITHUB_BRANCH: 'main'
+GITHUB_CRYPTO_SECRET: ''

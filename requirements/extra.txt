@@ -28,3 +28,6 @@
 
 # AI Assistant
 -r ai/langchain.txt
+
+# Github
+-r github_integration/github.txt

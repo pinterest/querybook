@@ -40,6 +40,7 @@
             "integrations/add_stats_logger",
             "integrations/add_surveys",
             "integrations/add_ai_assistant",
+            "integrations/add_github_integration",
             "integrations/customize_html",
             "integrations/embedded_iframe"
         ],
@@ -54,6 +55,7 @@
 
         "User Guide": [
             "user_guide/ai_assistant",
+            "user_guide/github_integration",
             "user_guide/api_token",
             "user_guide/faq"
         ],

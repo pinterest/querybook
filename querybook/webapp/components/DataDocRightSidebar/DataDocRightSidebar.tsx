@@ -3,8 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { DataDocBoardsButton } from 'components/DataDocBoardsButton/DataDocBoardsButton';
 import { DataDocDAGExporterButton } from 'components/DataDocDAGExporter/DataDocDAGExporterButton';
+import { DataDocGitHubButton } from 'components/DataDocGitHub/DataDocGitHubButton';
 import { DataDocTemplateButton } from 'components/DataDocTemplateButton/DataDocTemplateButton';
 import { DataDocUIGuide } from 'components/UIGuide/DataDocUIGuide';
+import PublicConfig from 'config/querybook_public_config.yaml';
 import { ComponentType, ElementType } from 'const/analytics';
 import { IDataDoc, IDataDocMeta } from 'const/datadoc';
 import { useAnnouncements } from 'hooks/redux/useAnnouncements';
@@ -48,6 +50,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
 }) => {
     const numAnnouncements = useAnnouncements().length;
     const exporterExists = useExporterExists();
+    const githubIntegrationEnabled = PublicConfig.github_integration.enabled;
 
     const selfRef = React.useRef<HTMLDivElement>();
     const { showScrollToTop, scrollToTop } = useScrollToTop({
@@ -81,6 +84,10 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
 
     const runAllButtonDOM = isEditable && (
         <DataDocRunAllButton docId={dataDoc.id} />
+    );
+
+    const githubButtonDOM = githubIntegrationEnabled && (
+        <DataDocGitHubButton docId={dataDoc.id} />
     );
 
     const buttonSection = (
@@ -131,6 +138,7 @@ export const DataDocRightSidebar: React.FunctionComponent<IProps> = ({
             </div>
             <div className="DataDocRightSidebar-button-section-bottom flex-column mb8">
                 {runAllButtonDOM}
+                {githubButtonDOM}
                 {isEditable && exporterExists && (
                     <DataDocDAGExporterButton docId={dataDoc.id} />
                 )}

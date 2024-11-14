@@ -20,6 +20,7 @@ export type ButtonProps = React.HTMLAttributes<HTMLSpanElement> &
         className?: string;
 
         color?: ButtonColorType;
+        hoverColor?: string;
         theme?: ButtonThemeType;
 
         disabled?: boolean;

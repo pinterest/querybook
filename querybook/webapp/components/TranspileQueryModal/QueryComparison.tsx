@@ -68,7 +68,7 @@ export const QueryComparison: React.FC<{
                     {fromQueryTitle && (
                         <div className="mb12">
                             {typeof fromQueryTitle === 'string' ? (
-                                <Tag>{fromQueryTitle}</Tag>
+                                <Tag className="truncate">{fromQueryTitle}</Tag>
                             ) : (
                                 fromQueryTitle
                             )}
@@ -87,7 +87,7 @@ export const QueryComparison: React.FC<{
                     {toQueryTitle && (
                         <div className="mb12">
                             {typeof toQueryTitle === 'string' ? (
-                                <Tag>{toQueryTitle}</Tag>
+                                <Tag className="truncate">{toQueryTitle}</Tag>
                             ) : (
                                 toQueryTitle
                             )}
