@@ -5,7 +5,7 @@ import { AICommandType, AISocketEvent } from 'const/aiAssistant';
 import aiAssistantSocket from 'lib/ai-assistant/ai-assistant-socketio';
 
 /**
- * Remove overlapping part with prefix from completion.
+ * A hacky workaround to remove overlapping part with prefix from completion.
  *
  * e.g. removeOverlapPrefix('sel', 'elect *') => 'ect *'
  */
@@ -73,14 +73,16 @@ export const useSqlCompleteExtension = ({
             return [];
         }
 
-        return inlineCopilot(async (prefix, suffix) => {
-            return await getCodeCompletionFromWebSocket({
-                query_engine_id: engineId,
-                tables: Array.from(tables ?? []),
-                prefix,
-                suffix,
-            });
-        }, 1000);
+        return inlineCopilot(
+            (prefix, suffix) =>
+                getCodeCompletionFromWebSocket({
+                    query_engine_id: engineId,
+                    tables: Array.from(tables ?? []),
+                    prefix,
+                    suffix,
+                }),
+            1000
+        );
     }, [enabled, tables]);
 
     return extension;
