@@ -17,7 +17,7 @@ const removeOverlapPrefix = (completion: string, prefix: string) => {
             break;
         }
     }
-    if (commonPrefixLength > 0 || prefix === '') {
+    if (commonPrefixLength > 0) {
         completion = completion.slice(commonPrefixLength);
     }
     return completion;
