@@ -87,3 +87,11 @@ tab:
         - 'tab space 4'
         - tab
     helper: The spaces setting for code editor, this does not modify the existing code.
+
+sql_complete:
+    default: disabled
+    tab: editor
+    options:
+        - enabled
+        - disabled
+    helper: (Experimental) Enable it to receive inline AI-generated SQL completions as you type within the editor.

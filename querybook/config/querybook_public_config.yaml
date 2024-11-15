@@ -15,6 +15,9 @@ ai_assistant:
     table_vector_search:
         enabled: false
 
+    sql_complete:
+        enabled: false
+
 survey:
     global_response_cooldown: 2592000 # 30 days
     global_trigger_cooldown: 600 # 10 minutes
