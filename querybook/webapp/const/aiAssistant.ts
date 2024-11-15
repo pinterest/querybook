@@ -5,6 +5,7 @@ export enum AICommandType {
     TEXT_TO_SQL = 'text_to_sql',
     TABLE_SUMMARY = 'table_summary',
     TABLE_SELECT = 'table_select',
+    SQL_COMPLETE = 'sql_complete',
 }
 
 export enum AISocketEvent {

@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { UserSettingsTab } from 'components/EnvironmentAppRouter/modalRoute/UserSettingsMenuRoute';
+import PublicConfig from 'config/querybook_public_config.yaml';
 import userSettingConfig from 'config/user_setting.yaml';
 import { titleize } from 'lib/utils';
 import { availableEnvironmentsSelector } from 'redux/environment/selector';
@@ -12,6 +13,8 @@ import * as userActions from 'redux/user/action';
 import { makeSelectOptions, Select } from 'ui/Select/Select';
 
 import './UserSettingsMenu.scss';
+
+const AIAssistantConfig = PublicConfig.ai_assistant;
 
 export const UserSettingsMenu: React.FC<{ tab: UserSettingsTab }> = ({
     tab,
@@ -35,9 +38,16 @@ export const UserSettingsMenu: React.FC<{ tab: UserSettingsTab }> = ({
 
     const settingsToShow = useMemo(
         () =>
-            Object.entries(userSettingConfig).filter(
-                ([key, value]) => value.tab === tab
-            ),
+            Object.entries(userSettingConfig).filter(([key, value]) => {
+                if (key === 'sql_complete') {
+                    return (
+                        AIAssistantConfig.enabled &&
+                        AIAssistantConfig.sql_complete.enabled &&
+                        value.tab === tab
+                    );
+                }
+                return value.tab === tab;
+            }),
         [tab]
     );
 

@@ -28,6 +28,10 @@ ELASTICSEARCH_HOST: http://elasticsearch:9200
 #         model_args:
 #             model_name: gpt-4o-mini
 #             temperature: 0
+#     sql_complete:
+#         model_args:
+#             model_name: gpt-4o-mini
+#             temperature: 0
 
 # Uncomment below to enable vector store to support embedding based table search.
 # Please check langchain doc for the configs of each provider.

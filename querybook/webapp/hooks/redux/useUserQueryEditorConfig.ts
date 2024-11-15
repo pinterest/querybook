@@ -12,6 +12,7 @@ export function useUserQueryEditorConfig(): {
     fontSize: string;
     options: CodeMirror.EditorConfiguration;
     autoCompleteType: AutoCompleteType;
+    sqlCompleteEnabled: boolean;
 } {
     const editorSettings = useShallowSelector((state: IStoreState) => ({
         theme: state.user.computedSettings['theme'],
@@ -21,6 +22,8 @@ export function useUserQueryEditorConfig(): {
             ],
         autoComplete: state.user.computedSettings['auto_complete'],
         tab: state.user.computedSettings['tab'],
+        sqlCompleteEnabled:
+            state.user.computedSettings['sql_complete'] === 'enabled',
     }));
     const indentWithTabs = editorSettings.tab === 'tab';
     const tabSize =
@@ -39,7 +42,7 @@ export function useUserQueryEditorConfig(): {
         codeEditorTheme: editorSettings.theme,
         fontSize: editorSettings.fontSize,
         autoCompleteType: editorSettings.autoComplete as AutoCompleteType,
-        // From: https://github.com/codemirror/CodeMirror/issues/988
+        sqlCompleteEnabled: editorSettings.sqlCompleteEnabled,
         options,
     };
 }
