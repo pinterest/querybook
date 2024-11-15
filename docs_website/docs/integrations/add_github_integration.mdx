@@ -4,15 +4,17 @@ title: GitHub Integration Guide
 sidebar_label: GitHub Integration
 ---
 
-:::info
-Please check the [GitHub User Guide](../user_guide/github_integration.mdx) for detailed instructions on using GitHub features.
+:::warning
+**Experimental Feature:** The GitHub Integration is currently in an experimental phase and may undergo changes that could break existing implementations in future updates. Please use it with caution and stay updated with the latest releases.
 :::
 
 ## Overview
 
 The **GitHub Integration Guide** offers instructions to set up and configure GitHub within Querybook. Follow these steps to allow interaction between Querybook and your GitHub repositories.
 
-> **Note:** The GitHub Integration is an experimental feature. Ensure that all configurations are correctly set to avoid setup issues.
+:::info
+Please check the [GitHub User Guide](../user_guide/github_integration.mdx) for detailed instructions on using GitHub features.
+:::
 
 ## Implementation
 
@@ -108,6 +110,7 @@ public_config:
 
 ## Additional Tips for Developers
 
+-   **OAuth Permissions:** Ensure that users completing the GitHub OAuth process have **write permissions** to the configured GitHub repository (`GITHUB_REPO_NAME`). This is necessary for Querybook to perform actions such as committing changes or managing the repository effectively.
 -   **Security:** Keep your GitHub OAuth credentials secure. Avoid hardcoding sensitive information in configuration files. Store secrets safely and securely using environment variables.
 -   **Testing:** After setting up, perform test commits to verify that the integration works as expected before deploying to production environments.
 
