@@ -1,6 +1,7 @@
 import pytest
 from const.data_doc import DataCellType
 from lib.github.serializers import (
+    serialize_cell_content,
     serialize_datadoc_to_markdown,
     deserialize_datadoc_from_markdown,
 )
@@ -30,7 +31,7 @@ def mock_datadoc():
         DataCell(
             id=3,
             cell_type=DataCellType.chart,
-            context=None,  # Context is None for chart cells
+            context="",  # Context is None for chart cells
             created_at=datetime(2023, 1, 1, 0, 0, 0, tzinfo=timezone.utc),
             updated_at=datetime(2023, 1, 1, 0, 0, 0, tzinfo=timezone.utc),
             meta={"chart_type": "line"},
@@ -172,3 +173,17 @@ def test_deserialize_with_inner_code_blocks():
     assert deserialized.to_dict(with_cells=True) == expected_datadoc.to_dict(
         with_cells=True
     )
+
+
+def test_serialize_query_cell_with_empty_title():
+    cell = DataCell(
+        id=1,
+        cell_type=DataCellType.query,
+        context="SELECT * FROM table;",
+        created_at=datetime(2023, 1, 1, 0, 0, 0, tzinfo=timezone.utc),
+        updated_at=datetime(2023, 1, 1, 0, 0, 0, tzinfo=timezone.utc),
+        meta={"title": ""},  # Empty title
+    )
+    serialized = serialize_cell_content(cell)
+    expected_header = "## Query: Query\n\n```sql\nSELECT * FROM table;\n```\n"
+    assert serialized == expected_header

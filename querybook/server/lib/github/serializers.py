@@ -101,7 +101,7 @@ def serialize_cell_content(cell: DataCell, exclude_metadata: bool = False) -> st
     cell_meta = cell.meta or {}
 
     if cell.cell_type == DataCellType.query:
-        query_title = cell_meta.get("title", "Query")
+        query_title = cell_meta.get("title") or "Query"
         header = f"## Query: {query_title}\n\n"
         if exclude_metadata:  # Exclude code fences
             content = f"{cell.context.strip()}\n"
@@ -224,7 +224,7 @@ def deserialize_datadoc_content(content_str: str) -> List[DataCell]:
         cell = DataCell(
             id=metadata.get("id"),
             cell_type=cell_type_enum,
-            context=context if cell_type_enum != DataCellType.chart else None,
+            context=context if cell_type_enum != DataCellType.chart else "",
             created_at=parse_datetime_as_utc(metadata.get("created_at")),
             updated_at=parse_datetime_as_utc(metadata.get("updated_at")),
             meta=metadata.get("meta", {}),
