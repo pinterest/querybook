@@ -8,7 +8,7 @@ import { TDataDocMetaVariables } from 'const/datadoc';
 import { IQueryValidationResult } from 'const/queryExecution';
 import { useDebounce } from 'hooks/useDebounce';
 import useDeepCompareEffect from 'hooks/useDeepCompareEffect';
-import { posToOffset } from 'lib/codemirror/utils';
+import { getTokenAtOffset, posToOffset } from 'lib/codemirror/utils';
 import { getContextSensitiveWarnings } from 'lib/sql-helper/sql-context-sensitive-linter';
 import { ILinterWarning, TableToken } from 'lib/sql-helper/sql-lexer';
 import { TemplatedQueryResource } from 'resource/queryExecution';
@@ -75,10 +75,7 @@ const queryValidationErrorsToDiagnostics = (
             suggestion,
         } = validationError;
 
-        const startPos = posToOffset(editorView, {
-            line,
-            ch: ch + 1,
-        });
+        const startPos = posToOffset(editorView, { line, ch });
         const endPos =
             endLine !== null && endCh !== null
                 ? posToOffset(editorView, {
