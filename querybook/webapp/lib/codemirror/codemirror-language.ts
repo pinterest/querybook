@@ -6,21 +6,45 @@ import {
     SQLite,
     SQLDialect,
 } from '@codemirror/lang-sql';
-import { SettingsByLanguage } from 'lib/sql-helper/sql-setting';
+import { getLanguageSetting } from 'lib/sql-helper/sql-setting';
 
-function builtInTypeSplit(language: string, builtIn: string): [string, string] {
+// source: https://github.com/codemirror/lang-sql/blob/main/src/tokens.ts
+const SQLTypes =
+    'array binary bit boolean char character clob date decimal double float int integer interval large national nchar nclob numeric object precision real smallint time timestamp varchar varying ';
+const SQLKeywords =
+    'absolute action add after all allocate alter and any are as asc assertion at authorization before begin between both breadth by call cascade cascaded case cast catalog check close collate collation column commit condition connect connection constraint constraints constructor continue corresponding count create cross cube current current_date current_default_transform_group current_transform_group_for_type current_path current_role current_time current_timestamp current_user cursor cycle data day deallocate declare default deferrable deferred delete depth deref desc describe descriptor deterministic diagnostics disconnect distinct do domain drop dynamic each else elseif end end-exec equals escape except exception exec execute exists exit external fetch first for foreign found from free full function general get global go goto grant group grouping handle having hold hour identity if immediate in indicator initially inner inout input insert intersect into is isolation join key language last lateral leading leave left level like limit local localtime localtimestamp locator loop map match method minute modifies module month names natural nesting new next no none not of old on only open option or order ordinality out outer output overlaps pad parameter partial path prepare preserve primary prior privileges procedure public read reads recursive redo ref references referencing relative release repeat resignal restrict result return returns revoke right role rollback rollup routine row rows savepoint schema scroll search second section select session session_user set sets signal similar size some space specific specifictype sql sqlexception sqlstate sqlwarning start state static system_user table temporary then timezone_hour timezone_minute to trailing transaction translation treat trigger under undo union unique unnest until update usage user using value values view when whenever where while with without work write year zone';
+const SQLTypesSet = new Set(SQLTypes.split(' '));
+const SQLKeywordsSet = new Set(SQLKeywords.split(' '));
+
+function builtInTypeSplit(
+    language: string,
+    keywords: string,
+    builtIn: string
+): [string, string] {
     /**
-     * This is needed because codemirror 5 mixes type and builtin keywords together
+     * This is needed because codemirror 5 mixes type and builtin keywords together.
+     * In our case, we want:
+     *  - keywords: standard SQL keywords, from SQLKeywords
+     *  - builtin: functions, operators, etc
+     *  - type: data types
      *
-     * returns [builtIn, Type] deduped
+     * returns [builtIn, Type]
      */
 
-    const settings = SettingsByLanguage[language];
+    const settings = getLanguageSetting(language);
+    const keywordsSet = new Set(keywords.split(' '));
+    const typesSet = settings.type.union(SQLTypesSet);
     const builtInSet = new Set(builtIn.split(' '));
 
-    const builtInWithoutType = Array.from(builtInSet.difference(settings.type));
+    const nonStandardKeywordSet = keywordsSet.difference(SQLKeywordsSet);
+    const nonStandardKeywordAndBuiltInSet = nonStandardKeywordSet
+        .union(builtInSet)
+        .difference(typesSet);
 
-    return [builtInWithoutType.join(' '), Array.from(settings.type).join(' ')];
+    return [
+        Array.from(nonStandardKeywordAndBuiltInSet).join(' '),
+        Array.from(typesSet).join(' '),
+    ];
 }
 
 const trinoKeywords =
@@ -30,6 +54,7 @@ const trinoBuiltin =
 
 const [processedTrinoBuiltin, processedTrinoType] = builtInTypeSplit(
     'trino',
+    trinoKeywords,
     trinoBuiltin
 );
 
@@ -41,7 +66,7 @@ const TrinoSQL = SQLDialect.define({
     unquotedBitLiterals: true,
     hashComments: false,
     spaceAfterDashes: false,
-    keywords: trinoKeywords,
+    keywords: SQLKeywords,
     builtin: processedTrinoBuiltin,
     types: processedTrinoType,
 });
@@ -53,6 +78,7 @@ const sparkSQLBuiltin =
 
 const [processedSparkSQLBuiltin, processedSparkSQLType] = builtInTypeSplit(
     'sparksql',
+    sparkSQLKeywords,
     sparkSQLBuiltin
 );
 
@@ -62,7 +88,7 @@ const SparkSQL = SQLDialect.define({
     unquotedBitLiterals: true,
     hashComments: false,
     spaceAfterDashes: false,
-    keywords: sparkSQLKeywords,
+    keywords: SQLKeywords,
     types: processedSparkSQLType,
     builtin: processedSparkSQLBuiltin,
     operatorChars: '*/+-%<>!=~&|^',

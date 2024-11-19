@@ -1,4 +1,5 @@
 import { acceptCompletion, startCompletion } from '@codemirror/autocomplete';
+import { indentService } from '@codemirror/language';
 import { EditorView } from '@codemirror/view';
 import CodeMirror, { ReactCodeMirrorRef } from '@uiw/react-codemirror';
 import clsx from 'clsx';
@@ -371,6 +372,7 @@ export const QueryEditor: React.FC<
                 searchExtension,
                 selectionExtension,
                 sqlCompleteExtension,
+                indentService.of((context, pos) => context.lineIndent(pos - 1)),
             ],
             [
                 language,
