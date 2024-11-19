@@ -294,23 +294,28 @@ export const QueryEditor: React.FC<
         const { extension: hoverTooltipExtension, getTableAtCursor } =
             useHoverTooltipExtension({
                 codeAnalysisRef,
-                metastoreId: 1,
+                metastoreId,
                 language,
             });
 
-        const openTableModalCommand = useCallback((editorView: EditorView) => {
-            const table = getTableAtCursor(editorView);
-            if (table) {
-                getTableByName(table.schema, table.name).then((tableInfo) => {
-                    if (tableInfo) {
-                        navigateWithinEnv(`/table/${tableInfo.id}/`, {
-                            isModal: true,
-                        });
-                    }
-                });
-            }
-            return true;
-        }, []);
+        const openTableModalCommand = useCallback(
+            (editorView: EditorView) => {
+                const table = getTableAtCursor(editorView);
+                if (table) {
+                    getTableByName(table.schema, table.name).then(
+                        (tableInfo) => {
+                            if (tableInfo) {
+                                navigateWithinEnv(`/table/${tableInfo.id}/`, {
+                                    isModal: true,
+                                });
+                            }
+                        }
+                    );
+                }
+                return true;
+            },
+            [getTableAtCursor, getTableByName]
+        );
 
         const keyBindings = useMemo(
             () => [
