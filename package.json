@@ -41,6 +41,7 @@
         "@types/diff": "^5.0.2",
         "@uiw/codemirror-extensions-events": "^4.23.6",
         "@uiw/codemirror-theme-monokai": "^4.23.6",
+        "@uiw/codemirror-theme-xcode": "^4.23.6",
         "@uiw/codemirror-themes": "^4.23.5",
         "@uiw/react-codemirror": "^4.23.5",
         "@welldone-software/why-did-you-render": "^6.1.1",
