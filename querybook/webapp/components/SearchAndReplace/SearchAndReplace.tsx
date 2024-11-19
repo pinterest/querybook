@@ -2,6 +2,7 @@ import React, {
     useCallback,
     useEffect,
     useImperativeHandle,
+    useMemo,
     useRef,
     useState,
 } from 'react';
@@ -68,16 +69,16 @@ export function useSearchAndReplace({
 
     const reset = useCallback(() => setSearchState(initialSearchState), []);
     const performSearch = useCallback(
-        // Active search happens when user is using the search input
-        // Passive search is when the search content is changed
         (isActiveSearch: boolean = false) => {
+            if (!showing) {
+                return;
+            }
+
             setSearchState((oldSearchState) => {
-                const searchResults = showing
-                    ? getSearchResults(
-                          oldSearchState.searchString,
-                          oldSearchState.searchOptions
-                      )
-                    : [];
+                const searchResults = getSearchResults(
+                    oldSearchState.searchString,
+                    oldSearchState.searchOptions
+                );
 
                 if (isActiveSearch) {
                     jumpToResult(
@@ -195,15 +196,26 @@ export function useSearchAndReplace({
         setShowing(false);
     }, []);
 
-    return {
-        searchAndReplaceContext: {
+    const searchAndReplaceContext = useMemo(
+        () => ({
             searchState,
             focusSearchBar,
 
             showSearchAndReplace,
             hideSearchAndReplace,
             showing,
-        },
+        }),
+        [
+            searchState,
+            focusSearchBar,
+            showSearchAndReplace,
+            hideSearchAndReplace,
+            showing,
+        ]
+    );
+
+    return {
+        searchAndReplaceContext,
         searchAndReplaceProps: {
             onSearchStringChange,
             onReplaceStringChange,

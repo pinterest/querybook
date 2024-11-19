@@ -35,18 +35,13 @@
         height: 100%;
         border-radius: var(--border-radius-sm);
         overflow: hidden;
+        background-color: var(--bg-query-editor);
 
         &.cm-theme-light {
             .cm-editor {
                 .cm-scroller {
-                    background-color: var(--bg-query-editor-gutter);
-
                     .cm-gutters {
                         background-color: var(--bg-query-editor-gutter);
-                    }
-
-                    .cm-content {
-                        background-color: var(--bg-query-editor);
                     }
                 }
             }

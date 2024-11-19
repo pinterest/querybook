@@ -1,12 +1,18 @@
 import * as events from '@uiw/codemirror-extensions-events';
 import { useMemo } from 'react';
 
-export const useEventsExtension = ({ onFocus, onBlur }) => {
+export const useEventsExtension = ({
+    onFocus,
+    onBlur,
+}: {
+    onFocus?: () => void;
+    onBlur?: () => void;
+}) => {
     const extension = useMemo(
         () =>
             events.content({
-                focus: onFocus,
-                blur: onBlur,
+                focus: (evt) => onFocus?.(),
+                blur: (evt) => onBlur?.(),
             }),
         [onFocus, onBlur]
     );

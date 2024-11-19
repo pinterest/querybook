@@ -14,7 +14,6 @@ import toast from 'react-hot-toast';
 import { TDataDocMetaVariables } from 'const/datadoc';
 import KeyMap from 'const/keyMap';
 import { IDataTable } from 'const/metastore';
-import { ISearchAndReplaceContextType } from 'context/searchAndReplace';
 import { useAutoCompleteExtension } from 'hooks/queryEditor/extensions/useAutoCompleteExtension';
 import { useEventsExtension } from 'hooks/queryEditor/extensions/useEventsExtension';
 import { useHoverTooltipExtension } from 'hooks/queryEditor/extensions/useHoverTooltipExtension';
@@ -55,7 +54,6 @@ export interface IQueryEditorProps {
     engineId: number;
     templatedVariables?: TDataDocMetaVariables;
     cellId?: number;
-    searchContext?: ISearchAndReplaceContextType;
 
     fontSize?: string;
     height?: 'auto' | 'full' | 'fixed';
@@ -109,7 +107,6 @@ export const QueryEditor: React.FC<
             engineId,
             cellId,
             templatedVariables = [],
-            searchContext,
 
             hasQueryLint,
             height = 'auto',
@@ -270,13 +267,12 @@ export const QueryEditor: React.FC<
 
         const searchExtension = useSearchExtension({
             editorView: editorRef.current?.view,
-            searchContext,
             cellId,
         });
 
         const eventsExtension = useEventsExtension({
-            onFocus: (evt) => onFocus?.(),
-            onBlur: (evt) => onBlur?.(),
+            onFocus,
+            onBlur,
         });
 
         const statusBarExtension = useStatusBarExtension({
@@ -313,9 +309,8 @@ export const QueryEditor: React.FC<
             return true;
         }, []);
 
-        const keyMapExtention = useKeyMapExtension({
-            keyMap,
-            keyBindings: [
+        const keyBindings = useMemo(
+            () => [
                 { key: 'Tab', run: acceptCompletion },
                 {
                     key: KeyMap.queryEditor.autocomplete.key,
@@ -329,17 +324,15 @@ export const QueryEditor: React.FC<
                     },
                 },
                 {
-                    key: 'Cmd-F',
-                    run: () => {
-                        searchContext?.showSearchAndReplace();
-                        return true;
-                    },
-                },
-                {
                     key: KeyMap.queryEditor.openTable.key,
                     run: openTableModalCommand,
                 },
             ],
+            [formatQuery, openTableModalCommand]
+        );
+        const keyMapExtention = useKeyMapExtension({
+            keyMap,
+            keyBindings,
         });
 
         const optionsExtension = useOptionsExtension({
@@ -367,7 +360,6 @@ export const QueryEditor: React.FC<
         const extensions = useMemo(
             () => [
                 mixedSQL(),
-
                 keyMapExtention,
                 statusBarExtension,
                 eventsExtension,
@@ -395,10 +387,11 @@ export const QueryEditor: React.FC<
 
         const basicSetup = useMemo(
             () => ({
-                drawSelection: false,
+                drawSelection: true,
                 highlightSelectionMatches: true,
                 searchKeymap: false,
                 foldGutter: false,
+                allowMultipleSelections: true,
             }),
             []
         );

@@ -5,20 +5,24 @@ import {
     SearchQuery,
     setSearchQuery,
 } from '@codemirror/search';
-import { EditorSelection, EditorView } from '@uiw/react-codemirror';
-import { useEffect, useMemo } from 'react';
+import {
+    EditorSelection,
+    EditorView,
+    keymap,
+    Prec,
+} from '@uiw/react-codemirror';
+import { useContext, useEffect, useMemo } from 'react';
 
-import { ISearchAndReplaceContextType } from 'context/searchAndReplace';
+import { SearchAndReplaceContext } from 'context/searchAndReplace';
 
 export const useSearchExtension = ({
     editorView,
     cellId,
-    searchContext,
 }: {
     editorView: EditorView;
     cellId: number;
-    searchContext?: ISearchAndReplaceContextType;
 }) => {
+    const searchContext = useContext(SearchAndReplaceContext);
     useEffect(() => {
         if (editorView && searchContext) {
             if (searchContext.showing) {
@@ -30,7 +34,7 @@ export const useSearchExtension = ({
                 closeSearchPanel(editorView);
             }
         }
-    }, [editorView, searchContext]);
+    }, [editorView, searchContext?.showing]);
 
     const shouldHighlight = useMemo(
         () =>
@@ -80,7 +84,23 @@ export const useSearchExtension = ({
         }
     }, [shouldHighlight, searchContext]);
 
-    const extension = useMemo(() => search(), []);
+    const extension = useMemo(
+        () => [
+            search(),
+            Prec.highest(
+                keymap.of([
+                    {
+                        key: 'Cmd-f',
+                        run: () => {
+                            searchContext?.showSearchAndReplace();
+                            return true;
+                        },
+                    },
+                ])
+            ),
+        ],
+        []
+    );
 
     return extension;
 };

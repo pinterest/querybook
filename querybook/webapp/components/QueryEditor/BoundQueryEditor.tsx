@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo } from 'react';
+import React, { useContext, useEffect, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
 import {
@@ -7,13 +7,9 @@ import {
     QueryEditor,
 } from 'components/QueryEditor/QueryEditor';
 import { IQueryEngine } from 'const/queryEngine';
-import { SearchAndReplaceContext } from 'context/searchAndReplace';
 import { useUserQueryEditorConfig } from 'hooks/redux/useUserQueryEditorConfig';
 import { useForwardedRef } from 'hooks/useForwardedRef';
-import {
-    fetchDataTableByNameIfNeeded,
-    fetchFunctionDocumentationIfNeeded,
-} from 'redux/dataSources/action';
+import { fetchDataTableByNameIfNeeded } from 'redux/dataSources/action';
 
 export const BoundQueryEditor = React.forwardRef<
     IQueryEditorHandles,
@@ -34,7 +30,6 @@ export const BoundQueryEditor = React.forwardRef<
     }
 >(({ options: propOptions, keyMap, engine, cellId, ...otherProps }, ref) => {
     const dispatch = useDispatch();
-    const searchContext = useContext(SearchAndReplaceContext);
     const editorRef = useForwardedRef<IQueryEditorHandles>(ref);
 
     // Code Editor related Props
@@ -81,7 +76,6 @@ export const BoundQueryEditor = React.forwardRef<
             getTableByName={fetchDataTable}
             metastoreId={engine?.metastore_id}
             language={engine?.language}
-            searchContext={searchContext}
             cellId={cellId}
             engineId={engine?.id}
             sqlCompleteEnabled={sqlCompleteEnabled}
