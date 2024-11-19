@@ -1,6 +1,5 @@
 import { acceptCompletion, startCompletion } from '@codemirror/autocomplete';
 import { EditorView } from '@codemirror/view';
-import { monokai } from '@uiw/codemirror-theme-monokai';
 import CodeMirror, { ReactCodeMirrorRef } from '@uiw/react-codemirror';
 import clsx from 'clsx';
 import React, {
@@ -34,6 +33,8 @@ import { format, ISQLFormatOptions } from 'lib/sql-helper/sql-formatter';
 import { TableToken } from 'lib/sql-helper/sql-lexer';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { IconButton } from 'ui/Button/IconButton';
+
+import { CustomMonokaiDarkTheme } from './monokai';
 
 import './QueryEditor.scss';
 
@@ -359,7 +360,7 @@ export const QueryEditor: React.FC<
 
         const extensions = useMemo(
             () => [
-                mixedSQL(),
+                mixedSQL(language),
                 keyMapExtention,
                 statusBarExtension,
                 eventsExtension,
@@ -372,6 +373,7 @@ export const QueryEditor: React.FC<
                 sqlCompleteExtension,
             ],
             [
+                language,
                 keyMapExtention,
                 statusBarExtension,
                 eventsExtension,
@@ -432,7 +434,7 @@ export const QueryEditor: React.FC<
                 {floatButtons}
                 <CodeMirror
                     ref={editorRef}
-                    theme={theme === 'dark' ? monokai : 'light'}
+                    theme={theme === 'dark' ? CustomMonokaiDarkTheme : 'light'}
                     className="ReactCodeMirror"
                     value={value}
                     height="100%"
