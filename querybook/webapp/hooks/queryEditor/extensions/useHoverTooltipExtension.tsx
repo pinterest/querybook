@@ -16,9 +16,11 @@ import { reduxStore } from 'redux/store';
 export const useHoverTooltipExtension = ({
     codeAnalysisRef,
     metastoreId,
+    language,
 }: {
     codeAnalysisRef: MutableRefObject<ICodeAnalysis>;
     metastoreId: number;
+    language: string;
 }) => {
     const getTableAtV5Position = useCallback(
         (codeAnalysis, v5Pos: { line: number; ch: number }) => {
@@ -57,7 +59,7 @@ export const useHoverTooltipExtension = ({
             const v5Pos = offsetToPos(editorView, selection.from);
             return getTableAtV5Position(codeAnalysisRef.current, v5Pos);
         },
-        [getTableAtV5Position]
+        [codeAnalysisRef, getTableAtV5Position]
     );
 
     const getHoverTooltips: HoverTooltipSource = useCallback(
@@ -80,7 +82,7 @@ export const useHoverTooltipExtension = ({
             } else if (nextChar === '(') {
                 tooltipComponent = (
                     <FunctionDocumentationTooltipByName
-                        language="sqlite"
+                        language={language}
                         functionName={token.text}
                     />
                 );
@@ -107,7 +109,7 @@ export const useHoverTooltipExtension = ({
                 },
             };
         },
-        []
+        [codeAnalysisRef, getTableAtV5Position, language, metastoreId]
     );
 
     const extension = useMemo(

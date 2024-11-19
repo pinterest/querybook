@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IFunctionDescription } from 'const/metastore';
@@ -59,7 +59,7 @@ export const FunctionDocumentationTooltipByName: React.FunctionComponent<{
         if (language) {
             dispatch(fetchFunctionDocumentationIfNeeded(language));
         }
-    }, [language]);
+    }, [dispatch, language]);
 
     const functionDefs = functionDocumentationByNameByLanguage?.[language];
     const functionNameLower = (functionName || '').toLowerCase();

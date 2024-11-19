@@ -295,6 +295,7 @@ export const QueryEditor: React.FC<
             useHoverTooltipExtension({
                 codeAnalysisRef,
                 metastoreId: 1,
+                language,
             });
 
         const openTableModalCommand = useCallback((editorView: EditorView) => {

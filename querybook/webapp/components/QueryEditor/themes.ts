@@ -16,7 +16,8 @@ export const CustomXcodeTheme = xcodeLightInit({
         gutterBackground: 'var(--bg-color)',
     },
     styles: [
-        { tag: [t.special(t.propertyName)], color: '#327A9E' },
+        { tag: [t.special(t.propertyName)], color: '#005cc5' },
         { tag: [t.constant(t.name), t.standard(t.name)], color: '#D23423' },
+        { tag: [t.number], color: '#098658' },
     ],
 });
