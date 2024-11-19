@@ -24,9 +24,9 @@ function builtInTypeSplit(
     /**
      * This is needed because codemirror 5 mixes type and builtin keywords together.
      * In our case, we want:
-     *  - keywords: standard SQL keywords, from SQLKeywords
-     *  - builtin: functions, operators, etc
-     *  - type: data types
+     * - keywords: standard SQL keywords, from SQLKeywords
+     * - builtin: functions, operators, etc
+     * - type: data types
      *
      * returns [builtIn, Type]
      */
