@@ -1,6 +1,6 @@
 import { acceptCompletion, startCompletion } from '@codemirror/autocomplete';
+import { indentService } from '@codemirror/language';
 import { EditorView } from '@codemirror/view';
-import { monokai } from '@uiw/codemirror-theme-monokai';
 import CodeMirror, { ReactCodeMirrorRef } from '@uiw/react-codemirror';
 import clsx from 'clsx';
 import React, {
@@ -34,6 +34,8 @@ import { format, ISQLFormatOptions } from 'lib/sql-helper/sql-formatter';
 import { TableToken } from 'lib/sql-helper/sql-lexer';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { IconButton } from 'ui/Button/IconButton';
+
+import { CustomMonokaiDarkTheme, CustomXcodeTheme } from './themes';
 
 import './QueryEditor.scss';
 
@@ -292,22 +294,28 @@ export const QueryEditor: React.FC<
         const { extension: hoverTooltipExtension, getTableAtCursor } =
             useHoverTooltipExtension({
                 codeAnalysisRef,
-                metastoreId: 1,
+                metastoreId,
+                language,
             });
 
-        const openTableModalCommand = useCallback((editorView: EditorView) => {
-            const table = getTableAtCursor(editorView);
-            if (table) {
-                getTableByName(table.schema, table.name).then((tableInfo) => {
-                    if (tableInfo) {
-                        navigateWithinEnv(`/table/${tableInfo.id}/`, {
-                            isModal: true,
-                        });
-                    }
-                });
-            }
-            return true;
-        }, []);
+        const openTableModalCommand = useCallback(
+            (editorView: EditorView) => {
+                const table = getTableAtCursor(editorView);
+                if (table) {
+                    getTableByName(table.schema, table.name).then(
+                        (tableInfo) => {
+                            if (tableInfo) {
+                                navigateWithinEnv(`/table/${tableInfo.id}/`, {
+                                    isModal: true,
+                                });
+                            }
+                        }
+                    );
+                }
+                return true;
+            },
+            [getTableAtCursor, getTableByName]
+        );
 
         const keyBindings = useMemo(
             () => [
@@ -359,7 +367,7 @@ export const QueryEditor: React.FC<
 
         const extensions = useMemo(
             () => [
-                mixedSQL(),
+                mixedSQL(language),
                 keyMapExtention,
                 statusBarExtension,
                 eventsExtension,
@@ -370,8 +378,10 @@ export const QueryEditor: React.FC<
                 searchExtension,
                 selectionExtension,
                 sqlCompleteExtension,
+                indentService.of((context, pos) => context.lineIndent(pos - 1)),
             ],
             [
+                language,
                 keyMapExtention,
                 statusBarExtension,
                 eventsExtension,
@@ -432,7 +442,11 @@ export const QueryEditor: React.FC<
                 {floatButtons}
                 <CodeMirror
                     ref={editorRef}
-                    theme={theme === 'dark' ? monokai : 'light'}
+                    theme={
+                        theme === 'dark'
+                            ? CustomMonokaiDarkTheme
+                            : CustomXcodeTheme
+                    }
                     className="ReactCodeMirror"
                     value={value}
                     height="100%"

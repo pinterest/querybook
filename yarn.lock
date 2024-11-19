@@ -6257,6 +6257,13 @@
   dependencies:
     "@uiw/codemirror-themes" "4.23.6"
 
+"@uiw/codemirror-theme-xcode@^4.23.6":
+  version "4.23.6"
+  resolved "https://registry.yarnpkg.com/@uiw/codemirror-theme-xcode/-/codemirror-theme-xcode-4.23.6.tgz#fdc070f743088d9792e1034194b3b4b639e9c410"
+  integrity sha512-t4shD5Cq6e1mqzG6w/+oMCw3oXn6QSbYZbCHDZ7GrbN51f6ZttKVOSZgUInlNeh9Spbvag8ZE5osMFFv6+twcQ==
+  dependencies:
+    "@uiw/codemirror-themes" "4.23.6"
+
 "@uiw/codemirror-themes@4.23.6":
   version "4.23.6"
   resolved "https://registry.yarnpkg.com/@uiw/codemirror-themes/-/codemirror-themes-4.23.6.tgz#47a101733a9c4aa382696178bc4b7bc0ecf0e5fa"

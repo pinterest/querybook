@@ -11,7 +11,7 @@ export interface ILanguageSetting {
 }
 
 const SQL_KEYWORDS =
-    'alter and as asc between by count create delete desc distinct drop from group having in insert into is join like not on or order select set table union update values where limit ';
+    'alter and as asc between by count create delete desc distinct drop from group having in insert into is join like not on or order select set table union update values where limit';
 
 const SettingsByLanguage: Record<string, ILanguageSetting> = {
     hive: {
