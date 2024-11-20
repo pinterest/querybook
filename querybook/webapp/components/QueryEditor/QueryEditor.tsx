@@ -1,7 +1,10 @@
 import { acceptCompletion, startCompletion } from '@codemirror/autocomplete';
 import { indentService } from '@codemirror/language';
 import { EditorView } from '@codemirror/view';
-import CodeMirror, { ReactCodeMirrorRef } from '@uiw/react-codemirror';
+import CodeMirror, {
+    BasicSetupOptions,
+    ReactCodeMirrorRef,
+} from '@uiw/react-codemirror';
 import clsx from 'clsx';
 import React, {
     useCallback,
@@ -395,12 +398,12 @@ export const QueryEditor: React.FC<
             ]
         );
 
-        const basicSetup = useMemo(
+        const basicSetup = useMemo<BasicSetupOptions>(
             () => ({
                 drawSelection: true,
                 highlightSelectionMatches: true,
                 searchKeymap: false,
-                foldGutter: false,
+                foldGutter: true,
                 allowMultipleSelections: true,
             }),
             []
@@ -456,6 +459,7 @@ export const QueryEditor: React.FC<
                     editable={!readOnly}
                     autoFocus={false}
                     onChange={onChangeHandler}
+                    indentWithTab={false}
                 />
             </div>
         );
