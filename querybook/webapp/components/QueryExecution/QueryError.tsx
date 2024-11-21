@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { AutoFixButton } from 'components/AIAssistant/AutoFixButton';
 import { ErrorSuggestion } from 'components/DataDocStatementExecution/ErrorSuggestion';
-import PublicConfig from 'config/querybook_public_config.yaml';
 import { IQueryEngine } from 'const/queryEngine';
 import {
     IQueryError,
@@ -11,6 +10,7 @@ import {
     IStatementExecution,
     QueryExecutionErrorType,
 } from 'const/queryExecution';
+import { isAIFeatureEnabled } from 'lib/public-config';
 import {
     getQueryLinePosition,
     IToken,
@@ -30,8 +30,6 @@ import { Tabs } from 'ui/Tabs/Tabs';
 import { ExecutedQueryCell } from './ExecutedQueryCell';
 
 import './QueryError.scss';
-
-const AIAssistantConfig = PublicConfig.ai_assistant;
 
 interface IProps {
     queryEngine: IQueryEngine;
@@ -186,15 +184,13 @@ export const QueryError: React.FunctionComponent<IProps> = ({
                 <Icon name="AlertOctagon" size={20} className="mr8" />
                 {errorTitle}
             </div>
-            {!readonly &&
-                AIAssistantConfig.enabled &&
-                AIAssistantConfig.query_auto_fix.enabled && (
-                    <AutoFixButton
-                        query={queryExecution.query}
-                        queryExecutionId={queryExecution.id}
-                        onUpdateQuery={changeCellContext}
-                    />
-                )}
+            {!readonly && isAIFeatureEnabled('query_auto_fix') && (
+                <AutoFixButton
+                    query={queryExecution.query}
+                    queryExecutionId={queryExecution.id}
+                    onUpdateQuery={changeCellContext}
+                />
+            )}
         </div>
     );
 

@@ -24,7 +24,6 @@ import { QuerySnippetInsertionModal } from 'components/QuerySnippetInsertionModa
 import { TemplatedQueryView } from 'components/TemplateQueryView/TemplatedQueryView';
 import { TranspileQueryModal } from 'components/TranspileQueryModal/TranspileQueryModal';
 import { UDFForm } from 'components/UDFForm/UDFForm';
-import PublicConfig from 'config/querybook_public_config.yaml';
 import { ComponentType, ElementType } from 'const/analytics';
 import {
     IDataQueryCellMeta,
@@ -37,6 +36,7 @@ import { SurveySurfaceType } from 'const/survey';
 import { triggerSurvey } from 'hooks/ui/useSurveyTrigger';
 import { trackClick } from 'lib/analytics';
 import CodeMirror from 'lib/codemirror';
+import { isAIFeatureEnabled } from 'lib/public-config';
 import { getQueryAsExplain } from 'lib/sql-helper/sql-lexer';
 import { DEFAULT_ROW_LIMIT } from 'lib/sql-helper/sql-limiter';
 import { getPossibleTranspilers } from 'lib/templated-query/transpile';
@@ -64,8 +64,6 @@ import { AccentText } from 'ui/StyledText/StyledText';
 import { ErrorQueryCell } from './ErrorQueryCell';
 
 import './DataDocQueryCell.scss';
-
-const AIAssistantConfig = PublicConfig.ai_assistant;
 
 const ON_CHANGE_DEBOUNCE_MS = 500;
 const FORMAT_QUERY_SHORTCUT = getShortcutSymbols(
@@ -221,8 +219,11 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     public get sampleRate() {
-        // -1 for tables don't support sampling, 0 for default sample rate (which means disable sampling)
-        return this.hasSamplingTables ? this.state.meta.sample_rate ?? 0 : -1;
+        // -1 for tables don't support sampling
+        const sampleRate = this.hasSamplingTables
+            ? this.state.meta.sample_rate
+            : -1;
+        return sampleRate;
     }
 
     @decorate(memoizeOne)
@@ -809,7 +810,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                         {this.getAdditionalDropDownButtonDOM()}
                     </div>
                 </div>
-                {AIAssistantConfig.enabled && isEditable && (
+                {isAIFeatureEnabled() && isEditable && (
                     <AICommandBar
                         query={query}
                         queryEngine={queryEngineById[this.engineId]}

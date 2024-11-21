@@ -1,9 +1,9 @@
 import React from 'react';
 
 import { QueryComparison } from 'components/TranspileQueryModal/QueryComparison';
-import PublicConfig from 'config/querybook_public_config.yaml';
 import { ISamplingTables } from 'const/datadoc';
 import { useResource } from 'hooks/useResource';
+import { TABLE_SAMPLING_CONFIG } from 'lib/public-config';
 import { formatError } from 'lib/utils/error';
 import { QueryTransformResource } from 'resource/queryTransform';
 import { Link } from 'ui/Link/Link';
@@ -27,7 +27,7 @@ export const DataDocTableSamplingInfo: React.FC<IProps> = ({
     onHide,
 }) => {
     const sampleUserGuideLink =
-        PublicConfig.table_sampling?.sample_user_guide_link ?? '';
+        TABLE_SAMPLING_CONFIG.sample_user_guide_link ?? '';
 
     const {
         data: sampledQuery,

@@ -1,16 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import PublicConfig from 'config/querybook_public_config.yaml';
 import { AICommandType } from 'const/aiAssistant';
 import { ComponentType, ElementType } from 'const/analytics';
 import { useAISocket } from 'hooks/useAISocket';
 import { trackClick } from 'lib/analytics';
+import { isAIFeatureEnabled } from 'lib/public-config';
 import { IconButton } from 'ui/Button/IconButton';
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
 
 import './QueryCellTitle.scss';
-
-const AIAssistantConfig = PublicConfig.ai_assistant;
 
 interface IQueryCellTitleProps {
     cellId: number;
@@ -30,9 +28,7 @@ export const QueryCellTitle: React.FC<IQueryCellTitleProps> = ({
     forceSaveQuery,
 }) => {
     const titleGenerationEnabled =
-        AIAssistantConfig.enabled &&
-        AIAssistantConfig.query_title_generation.enabled &&
-        query;
+        isAIFeatureEnabled('query_title_generation') && query;
     const [title, setTitle] = useState<string>('');
 
     const socket = useAISocket(AICommandType.SQL_TITLE, ({ data }) => {

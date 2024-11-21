@@ -72,7 +72,8 @@ export const Select: React.FunctionComponent<ISelectProps> = ({
 export type IOptions = Array<
     | {
           key: any;
-          value: string;
+          label?: string;
+          value: string | number;
           hidden?: boolean;
       }
     | string
@@ -92,7 +93,7 @@ export function makeSelectOptions(options: IOptions) {
                     key={option.key}
                     hidden={option.hidden}
                 >
-                    {option.value}
+                    {option.label ?? option.value}
                 </option>
             )
     );
