@@ -1,7 +1,7 @@
-import { indentWithTab } from '@codemirror/commands';
 import { indentUnit } from '@codemirror/language';
-import { EditorState, EditorView, keymap } from '@uiw/react-codemirror';
+import { EditorView } from '@uiw/react-codemirror';
 import { useMemo } from 'react';
+import { EditorState, Extension } from '@codemirror/state';
 
 export const useOptionsExtension = ({
     lineWrapping = true,
@@ -11,11 +11,10 @@ export const useOptionsExtension = ({
     options: Record<string, any>;
 }) => {
     const extension = useMemo(() => {
-        const extensions = [];
+        const extensions: Extension[] = [];
 
         if (options.indentWithTabs) {
             extensions.push(indentUnit.of('\t'));
-            extensions.push(keymap.of([indentWithTab]));
             extensions.push(EditorState.tabSize.of(options.tabSize));
         } else {
             extensions.push(indentUnit.of(' '.repeat(options.indentUnit)));

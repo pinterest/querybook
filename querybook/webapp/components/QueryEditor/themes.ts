@@ -3,7 +3,9 @@ import { tags as t } from '@lezer/highlight';
 import { xcodeLightInit } from '@uiw/codemirror-theme-xcode';
 
 export const CustomMonokaiDarkTheme = monokaiInit({
-    settings: {},
+    settings: {
+        gutterBackground: 'var(--bg-lightest)',
+    },
     styles: [
         { tag: [t.name], color: 'var(--text-dark)' },
         { tag: [t.constant(t.name), t.standard(t.name)], color: '#FD971F' },
@@ -12,8 +14,8 @@ export const CustomMonokaiDarkTheme = monokaiInit({
 
 export const CustomXcodeTheme = xcodeLightInit({
     settings: {
-        background: 'var(--bg-color)',
-        gutterBackground: 'var(--bg-color)',
+        background: 'var(--bg-lightest)',
+        gutterBackground: 'var(--bg-light)',
     },
     styles: [
         { tag: [t.special(t.propertyName)], color: '#005cc5' },
