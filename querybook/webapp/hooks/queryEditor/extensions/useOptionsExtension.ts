@@ -18,18 +18,20 @@ const handleTabKey =
         }
 
         // Insert 2 or 4 spaces instead of a real tab to reach the next tab stop
-        const line = state.doc.lineAt(state.selection.main.from);
-        const column = state.selection.main.from - line.from;
-        const spacesToInsert = tabSize - (column % tabSize);
+        const changes = state.changeByRange((range) => {
+            const line = state.doc.lineAt(range.from);
+            const column = range.from - line.from;
+            const spacesToInsert = tabSize - (column % tabSize);
 
-        let changes = state.changeByRange((range) => ({
-            changes: {
-                from: range.from,
-                to: range.to,
-                insert: ' '.repeat(spacesToInsert),
-            },
-            range: EditorSelection.cursor(range.from + spacesToInsert),
-        }));
+            return {
+                changes: {
+                    from: range.from,
+                    to: range.to,
+                    insert: ' '.repeat(spacesToInsert),
+                },
+                range: EditorSelection.cursor(range.from + spacesToInsert),
+            };
+        });
 
         dispatch(state.update(changes, { userEvent: 'input' }));
         return true;
