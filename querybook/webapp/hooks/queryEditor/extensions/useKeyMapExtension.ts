@@ -2,7 +2,6 @@ import { KeyBinding, keymap, Prec } from '@uiw/react-codemirror';
 import { useCallback, useMemo } from 'react';
 
 import { CodeMirrorKeyMap } from 'lib/codemirror';
-import { indentLess, insertTab } from '@codemirror/commands';
 
 export const useKeyMapExtension = ({
     keyMap = {},
@@ -41,7 +40,6 @@ export const useKeyMapExtension = ({
                     })),
                 ])
             ),
-            keymap.of([{ key: 'Tab', run: insertTab, shift: indentLess }]),
         ],
         [keyBindings, keyMap, transformKey]
     );

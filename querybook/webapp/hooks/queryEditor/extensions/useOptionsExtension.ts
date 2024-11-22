@@ -1,7 +1,41 @@
+import { indentLess, indentMore, insertTab } from '@codemirror/commands';
 import { indentUnit } from '@codemirror/language';
-import { EditorView } from '@uiw/react-codemirror';
+import { EditorSelection, EditorState, Extension } from '@codemirror/state';
+import { EditorView, keymap } from '@uiw/react-codemirror';
 import { useMemo } from 'react';
-import { EditorState, Extension } from '@codemirror/state';
+
+const handleTabKey =
+    (indentWithTabs: boolean, tabSize: number) =>
+    ({ state, dispatch }) => {
+        // If there is a selection, indent the selection
+        if (!state.selection.main.empty) {
+            return indentMore({ state, dispatch });
+        }
+
+        // If user chooses to use a real tab, insert a real tab
+        if (indentWithTabs) {
+            return insertTab({ state, dispatch });
+        }
+
+        // Insert 2 or 4 spaces instead of a real tab to reach the next tab stop
+        const changes = state.changeByRange((range) => {
+            const line = state.doc.lineAt(range.from);
+            const column = range.from - line.from;
+            const spacesToInsert = tabSize - (column % tabSize);
+
+            return {
+                changes: {
+                    from: range.from,
+                    to: range.to,
+                    insert: ' '.repeat(spacesToInsert),
+                },
+                range: EditorSelection.cursor(range.from + spacesToInsert),
+            };
+        });
+
+        dispatch(state.update(changes, { userEvent: 'input' }));
+        return true;
+    };
 
 export const useOptionsExtension = ({
     lineWrapping = true,
@@ -15,10 +49,20 @@ export const useOptionsExtension = ({
 
         if (options.indentWithTabs) {
             extensions.push(indentUnit.of('\t'));
-            extensions.push(EditorState.tabSize.of(options.tabSize));
         } else {
+            extensions.push(EditorState.tabSize.of(options.tabSize));
             extensions.push(indentUnit.of(' '.repeat(options.indentUnit)));
         }
+
+        extensions.push(
+            keymap.of([
+                {
+                    key: 'Tab',
+                    run: handleTabKey(options.indentWithTabs, options.tabSize),
+                    shift: indentLess,
+                },
+            ])
+        );
 
         if (lineWrapping) {
             extensions.push(EditorView.lineWrapping);
