@@ -3,11 +3,14 @@ import * as React from 'react';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import PublicConfig from 'config/querybook_public_config.yaml';
 import { IQueryEngine, QueryEngineStatus } from 'const/queryEngine';
 import { queryEngineStatusToIconStatus } from 'const/queryStatusIcon';
 import { TooltipDirection } from 'const/tooltip';
 import { MIN_ENGINE_TO_SHOW_FILTER } from 'const/uiConfig';
+import {
+    getTableSamplingRateOptions,
+    TABLE_SAMPLING_CONFIG,
+} from 'lib/public-config';
 import {
     ALLOW_UNLIMITED_QUERY,
     DEFAULT_ROW_LIMIT,
@@ -17,6 +20,7 @@ import { getShortcutSymbols, KeyMap } from 'lib/utils/keyboard';
 import { stopPropagation } from 'lib/utils/noop';
 import { formatNumber } from 'lib/utils/number';
 import { queryEngineStatusByIdEnvSelector } from 'redux/queryEngine/selector';
+import { IStoreState } from 'redux/store/types';
 import { AsyncButton, IAsyncButtonHandles } from 'ui/AsyncButton/AsyncButton';
 import { IconButton } from 'ui/Button/IconButton';
 import { Dropdown } from 'ui/Dropdown/Dropdown';
@@ -287,29 +291,23 @@ const QueryLimitSelector: React.FC<{
     );
 };
 
-const TABLE_SAMPLING_CONFIG = PublicConfig.table_sampling ?? {
-    enabled: false,
-    sample_rates: [],
-    default_sample_rate: 0,
-};
-const sampleRateOptions = [{ label: 'none', value: 0 }].concat(
-    TABLE_SAMPLING_CONFIG.sample_rates.map((value) => ({
-        label: value + '%',
-        value,
-    }))
-);
-const DEFAULT_SAMPLE_RATE = TABLE_SAMPLING_CONFIG.default_sample_rate;
 const TableSamplingSelector: React.FC<{
-    sampleRate: number;
+    sampleRate: number | undefined;
     setSampleRate: (sampleRate: number) => void;
     tooltipPos: TooltipDirection;
     onTableSamplingInfoClick: () => void;
 }> = ({ sampleRate, setSampleRate, tooltipPos, onTableSamplingInfoClick }) => {
+    const sampleRateOptions = React.useMemo(getTableSamplingRateOptions, []);
+    const userDefaultTableSampleRate = useSelector(
+        (state: IStoreState) => state.user.computedSettings['table_sample_rate']
+    );
+
     React.useEffect(() => {
-        if (!sampleRateOptions.some((option) => option.value === sampleRate)) {
-            setSampleRate(DEFAULT_SAMPLE_RATE);
+        // If it is a new cell without the sample rate selected, use the default sample rate from user settings
+        if (sampleRate === undefined) {
+            setSampleRate(parseFloat(userDefaultTableSampleRate));
         }
-    }, [sampleRate, setSampleRate]);
+    }, [sampleRate, setSampleRate, userDefaultTableSampleRate]);
 
     const selectedSampleRateText = React.useMemo(() => {
         if (sampleRate > 0) {

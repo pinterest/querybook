@@ -50,6 +50,12 @@ show_full_view:
         - disabled
     helper: Instead of modal, show full view when opening table/execution/snippet
 
+table_sample_rate:
+    default: ''
+    tab: general
+    options: []
+    helper: The sample rate will be pre-selected when a table supports sampling.
+
 editor_font_size:
     default: medium
     tab: editor

@@ -2,8 +2,12 @@ import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { UserSettingsTab } from 'components/EnvironmentAppRouter/modalRoute/UserSettingsMenuRoute';
-import PublicConfig from 'config/querybook_public_config.yaml';
 import userSettingConfig from 'config/user_setting.yaml';
+import {
+    getTableSamplingRateOptions,
+    isAIFeatureEnabled,
+    TABLE_SAMPLING_CONFIG,
+} from 'lib/public-config';
 import { titleize } from 'lib/utils';
 import { availableEnvironmentsSelector } from 'redux/environment/selector';
 import { notificationServiceSelector } from 'redux/notificationService/selector';
@@ -13,8 +17,6 @@ import * as userActions from 'redux/user/action';
 import { makeSelectOptions, Select } from 'ui/Select/Select';
 
 import './UserSettingsMenu.scss';
-
-const AIAssistantConfig = PublicConfig.ai_assistant;
 
 export const UserSettingsMenu: React.FC<{ tab: UserSettingsTab }> = ({
     tab,
@@ -41,9 +43,7 @@ export const UserSettingsMenu: React.FC<{ tab: UserSettingsTab }> = ({
             Object.entries(userSettingConfig).filter(([key, value]) => {
                 if (key === 'sql_complete') {
                     return (
-                        AIAssistantConfig.enabled &&
-                        AIAssistantConfig.sql_complete.enabled &&
-                        value.tab === tab
+                        isAIFeatureEnabled('sql_complete') && value.tab === tab
                     );
                 }
                 return value.tab === tab;
@@ -81,6 +81,9 @@ export const UserSettingsMenu: React.FC<{ tab: UserSettingsTab }> = ({
                 return makeSelectOptions(
                     notifiers.map((notifier) => notifier.name)
                 );
+            } else if (key === 'table_sample_rate') {
+                const options = getTableSamplingRateOptions();
+                return makeSelectOptions(options);
             }
             return makeSelectOptions(userSettingConfig[key].options);
         },
@@ -100,9 +103,18 @@ export const UserSettingsMenu: React.FC<{ tab: UserSettingsTab }> = ({
         [userSettingByKey, setUserSettings, getRawKey]
     );
 
+    const getValueByKey = (key: string) => {
+        let defaultValue = userSettingConfig[key].default;
+
+        if (key === 'table_sample_rate') {
+            defaultValue = TABLE_SAMPLING_CONFIG.default_sample_rate.toString();
+        }
+
+        return userSettingByKey[getRawKey(key)] ?? defaultValue;
+    };
+
     const makeFieldByKey = (key: string) => {
-        const value =
-            userSettingByKey[getRawKey(key)] ?? userSettingConfig[key].default;
+        const value = getValueByKey(key);
 
         const formField = (
             <>

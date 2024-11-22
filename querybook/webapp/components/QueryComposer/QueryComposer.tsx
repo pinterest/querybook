@@ -167,7 +167,7 @@ const useTableSampleRate = (
     samplingTables: Record<string, any>
 ) => {
     const sampleRate = useSelector(
-        (state: IStoreState) => state.adhocQuery[environmentId]?.sampleRate ?? 0
+        (state: IStoreState) => state.adhocQuery[environmentId]?.sampleRate
     );
     const setSampleRate = useCallback(
         (newSampleRate: number) =>

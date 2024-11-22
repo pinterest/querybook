@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
 import { SamplingInfoButton } from 'components/QueryRunButton/QueryRunButton';
-import PublicConfig from 'config/querybook_public_config.yaml';
 import { IQueryExecution, QueryExecutionStatus } from 'const/queryExecution';
+import { TABLE_SAMPLING_CONFIG } from 'lib/public-config';
 import { Message } from 'ui/Message/Message';
 import { AccentText } from 'ui/StyledText/StyledText';
 
@@ -21,8 +21,7 @@ export const SamplingTooltip: React.FC<SamplingTooltipProps> = ({
     hasSamplingTables,
     sampleRate,
 }) => {
-    const { enabled, sampling_tool_tip_delay: delay } =
-        PublicConfig.table_sampling;
+    const { enabled, sampling_tool_tip_delay: delay } = TABLE_SAMPLING_CONFIG;
 
     const [showSamplingTip, setShowSamplingTip] = useState(false);
 

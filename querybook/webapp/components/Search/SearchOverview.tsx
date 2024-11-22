@@ -6,7 +6,6 @@ import CreatableSelect from 'react-select/creatable';
 
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
 import { UserSelect } from 'components/UserSelect/UserSelect';
-import PublicConfig from 'config/querybook_public_config.yaml';
 import { ComponentType, ElementType } from 'const/analytics';
 import {
     IBoardPreview,
@@ -19,6 +18,7 @@ import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import { useSurveyTrigger } from 'hooks/ui/useSurveyTrigger';
 import { useTrackView } from 'hooks/useTrackView';
 import { trackClick, trackView } from 'lib/analytics';
+import { isAIFeatureEnabled } from 'lib/public-config';
 import { titleize } from 'lib/utils';
 import { getCurrentEnv } from 'lib/utils/query-string';
 import {
@@ -68,8 +68,6 @@ import { SearchSchemaSelect } from './SearchSchemaSelect';
 import { TableSelect } from './TableSelect';
 
 import './SearchOverview.scss';
-
-const AIAssistantConfig = PublicConfig.ai_assistant;
 
 const userReactSelectStyle = makeReactSelectStyle(
     true,
@@ -314,8 +312,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                     autoFocus
                 />
                 {searchType === SearchType.Table &&
-                    AIAssistantConfig.enabled &&
-                    AIAssistantConfig.table_vector_search.enabled && (
+                    isAIFeatureEnabled('table_vector_search') && (
                         <div className="mt8 flex-row">
                             <AccentText weight="bold" className="ml8 mr12">
                                 Natural Language Search
