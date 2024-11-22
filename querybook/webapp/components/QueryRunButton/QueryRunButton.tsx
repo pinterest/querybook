@@ -303,18 +303,11 @@ const TableSamplingSelector: React.FC<{
     );
 
     React.useEffect(() => {
-        if (
-            sampleRate === undefined ||
-            !sampleRateOptions.some((option) => option.value === sampleRate)
-        ) {
+        // If it is a new cell without the sample rate selected, use the default sample rate from user settings
+        if (sampleRate === undefined) {
             setSampleRate(parseFloat(userDefaultTableSampleRate));
         }
-    }, [
-        sampleRate,
-        setSampleRate,
-        sampleRateOptions,
-        userDefaultTableSampleRate,
-    ]);
+    }, [sampleRate, setSampleRate, userDefaultTableSampleRate]);
 
     const selectedSampleRateText = React.useMemo(() => {
         if (sampleRate > 0) {
