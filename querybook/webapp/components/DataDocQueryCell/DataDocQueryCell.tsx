@@ -15,6 +15,7 @@ import { QueryCellTitle } from 'components/QueryCellTitle/QueryCellTitle';
 import { runQuery, transformQuery } from 'components/QueryComposer/RunQuery';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
 import { IQueryEditorHandles } from 'components/QueryEditor/QueryEditor';
+import { QueryPeerReviewModal } from 'components/QueryPeerReviewModal/QueryPeerReviewModal';
 import {
     IQueryRunButtonHandles,
     QueryEngineSelector,
@@ -115,6 +116,7 @@ interface IState {
     tableNamesInQuery: string[];
     samplingTables: ISamplingTables;
     showTableSamplingInfoModal: boolean;
+    showPeerReviewModal: boolean;
 
     transpilerConfig?: {
         toEngine: IQueryEngine;
@@ -144,6 +146,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             tableNamesInQuery: [],
             samplingTables: {},
             showTableSamplingInfoModal: false,
+            showPeerReviewModal: false,
         };
     }
 
@@ -524,6 +527,22 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
+    public async handlePeerReviewConfirm(
+        reviewerIds: number[],
+        externalRecipients: string[],
+        notifierName: string,
+        justification: string,
+        query: string,
+        queryEngine: IQueryEngine
+    ) {
+        try {
+            console.error('TODO: Implement API call here');
+        } catch (error) {
+            console.error('Failed to request peer review:', error);
+        }
+    }
+
+    @bind
     public async explainQuery() {
         const renderedQuery = getQueryAsExplain(
             await this.getTransformedQuery()
@@ -562,6 +581,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     public getAdditionalDropDownButtonDOM() {
         const { isEditable, queryEngines, queryTranspilers } = this.props;
         const queryEngine = this.queryEngine;
+        const hasPeerReviewFeature = queryEngine?.feature_params?.peer_review;
 
         const queryCollapsed = this.queryCollapsed;
 
@@ -636,6 +656,14 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             });
         }
 
+        if (hasPeerReviewFeature && isEditable) {
+            additionalButtons.push({
+                name: 'Request Query Review',
+                onClick: this.toggleShowPeerReviewModal,
+                icon: 'Send',
+            });
+        }
+
         return additionalButtons.length > 0 ? (
             <Dropdown
                 className="query-cell-additional-dropdown"
@@ -675,6 +703,13 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     public toggleShowRenderedTemplateModal() {
         this.setState(({ showRenderedTemplateModal }) => ({
             showRenderedTemplateModal: !showRenderedTemplateModal,
+        }));
+    }
+
+    @bind
+    public toggleShowPeerReviewModal() {
+        this.setState(({ showPeerReviewModal }) => ({
+            showPeerReviewModal: !showPeerReviewModal,
         }));
     }
 
@@ -943,6 +978,15 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             />
         );
 
+        const peerReviewModalDOM = this.state.showPeerReviewModal ? (
+            <QueryPeerReviewModal
+                queryEngine={this.queryEngine}
+                query={this.state.query}
+                onConfirm={this.handlePeerReviewConfirm}
+                onHide={this.toggleShowPeerReviewModal}
+            />
+        ) : null;
+
         return (
             <>
                 {editorDOM}
@@ -951,6 +995,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 {UDFModal}
                 {transpilerModal}
                 {renderTableSamplingInfoDOM}
+                {peerReviewModalDOM}
             </>
         );
     }

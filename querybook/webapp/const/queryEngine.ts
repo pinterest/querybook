@@ -15,6 +15,7 @@ export interface IQueryEngine {
         status_checker?: string;
         upload_exporter?: string;
         validator?: string;
+        peer_review?: boolean;
     };
 }
 

@@ -133,6 +133,10 @@ declare module 'config/querybook_public_config.yaml' {
         github_integration: {
             enabled: boolean;
         };
+        peer_review: {
+            description: string;
+            user_guide_link: string;
+        };
     };
     export default data;
 }

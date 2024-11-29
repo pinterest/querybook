@@ -37,3 +37,8 @@ export const getTableSamplingRateOptions = () => {
         label: rate === 0 ? 'none' : rate + '%',
     }));
 };
+
+export const PEER_REVIEW_CONFIG = PublicConfig.peer_review ?? {
+    description: '',
+    user_guide_link: '',
+};

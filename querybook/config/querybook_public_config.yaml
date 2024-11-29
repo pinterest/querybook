@@ -44,3 +44,7 @@ table_sampling:
 
 github_integration:
     enabled: false
+
+peer_review:
+    description: 'Use this feature to ensure the accuracy and compliance of your sensitive queries, such as those modifying production tables. Select trusted reviewers who will verify your query before it is executed.'
+    user_guide_link: 'https://www.querybook.org/'
