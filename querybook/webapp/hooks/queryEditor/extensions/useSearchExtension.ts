@@ -75,6 +75,7 @@ export const useSearchExtension = ({
             if (shouldHighlight) {
                 editorView?.dispatch({
                     selection: EditorSelection.single(item.from, item.to),
+                    effects: EditorView.scrollIntoView(item.from),
                 });
             } else {
                 editorView?.dispatch({
