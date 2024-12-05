@@ -294,18 +294,27 @@ const FetchInfo: React.FC<{
                 <span className="accent-warning-text ml4">
                     Sampled {sampleRate}%
                 </span>
-                {sampleUserGuideLink ? (
-                    <IconButton
-                        className="ml4"
-                        onClick={() => {
-                            window.open(sampleUserGuideLink, '_blank');
-                        }}
-                        icon="Info"
-                        size={16}
-                        noPadding
-                    />
-                ) : null}
                 )
+                <span className="accent-warning-text ml4">
+                    Results must be upscaled by {Math.round(100 / sampleRate)}x
+                </span>
+                .
+                {sampleUserGuideLink ? (
+                    <>
+                        <span className="ml4">
+                            Learn more about accuracy and opt-out
+                        </span>
+                        <IconButton
+                            className="ml4"
+                            onClick={() => {
+                                window.open(sampleUserGuideLink, '_blank');
+                            }}
+                            icon="Info"
+                            size={16}
+                            noPadding
+                        />
+                    </>
+                ) : null}
             </div>
         );
 
