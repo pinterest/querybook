@@ -462,6 +462,7 @@ export const QueryEditor: React.FC<
                     extensions={extensions}
                     basicSetup={basicSetup}
                     editable={!readOnly}
+                    readOnly={readOnly}
                     autoFocus={false}
                     onChange={onChangeHandler}
                     indentWithTab={false}

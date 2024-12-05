@@ -294,6 +294,11 @@ const FetchInfo: React.FC<{
                 <span className="accent-warning-text ml4">
                     Sampled {sampleRate}%
                 </span>
+                )
+                <span className="accent-warning-text ml4">
+                    Results must be upscaled by {Math.round(100 / sampleRate)}x
+                </span>
+                . Learn more about accuracy and opt-out
                 {sampleUserGuideLink ? (
                     <IconButton
                         className="ml4"
@@ -305,7 +310,6 @@ const FetchInfo: React.FC<{
                         noPadding
                     />
                 ) : null}
-                )
             </div>
         );
 

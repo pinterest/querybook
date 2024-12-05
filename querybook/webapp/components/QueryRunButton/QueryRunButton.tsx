@@ -298,14 +298,19 @@ const TableSamplingSelector: React.FC<{
     onTableSamplingInfoClick: () => void;
 }> = ({ sampleRate, setSampleRate, tooltipPos, onTableSamplingInfoClick }) => {
     const sampleRateOptions = React.useMemo(getTableSamplingRateOptions, []);
-    const userDefaultTableSampleRate = useSelector(
-        (state: IStoreState) => state.user.computedSettings['table_sample_rate']
-    );
+    const userDefaultTableSampleRate = useSelector((state: IStoreState) => {
+        const sampleRateSetting = parseFloat(
+            state.user.computedSettings['table_sample_rate']
+        );
+        return isNaN(sampleRateSetting)
+            ? TABLE_SAMPLING_CONFIG.default_sample_rate
+            : sampleRateSetting;
+    });
 
     React.useEffect(() => {
         // If it is a new cell without the sample rate selected, use the default sample rate from user settings
         if (sampleRate === undefined) {
-            setSampleRate(parseFloat(userDefaultTableSampleRate));
+            setSampleRate(userDefaultTableSampleRate);
         }
     }, [sampleRate, setSampleRate, userDefaultTableSampleRate]);
 
