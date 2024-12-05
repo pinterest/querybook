@@ -309,7 +309,7 @@ const TableSamplingSelector: React.FC<{
 
     React.useEffect(() => {
         // If it is a new cell without the sample rate selected, use the default sample rate from user settings
-        if (sampleRate === undefined) {
+        if (isNaN(sampleRate)) {
             setSampleRate(userDefaultTableSampleRate);
         }
     }, [sampleRate, setSampleRate, userDefaultTableSampleRate]);
