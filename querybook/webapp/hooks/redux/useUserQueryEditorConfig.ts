@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 
 import { UserSettingsFontSizeToCSSFontSize } from 'const/font';
+import { AutoCompleteType } from 'hooks/queryEditor/extensions/useAutoCompleteExtension';
 import CodeMirror from 'lib/codemirror';
-import { AutoCompleteType } from 'lib/sql-helper/sql-autocompleter';
 import { IStoreState } from 'redux/store/types';
 
 import { useShallowSelector } from './useShallowSelector';
