@@ -27,7 +27,7 @@ export const FunctionDocumentationTooltip: React.FunctionComponent<IProps> = ({
             return (
                 <div key={index}>
                     <div className="rich-text-content">
-                        <div className="table-tooltip-header">{signature}</div>
+                        <div className="tooltip-header">{signature}</div>
 
                         <div className="tooltip-title">Returns</div>
                         <div className="tooltip-content">{returnType}</div>
