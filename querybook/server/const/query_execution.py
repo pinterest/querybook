@@ -15,6 +15,8 @@ class QueryExecutionStatus(Enum):
     DONE = 3
     ERROR = 4
     CANCEL = 5
+    PENDING_REVIEW = 6
+    REJECTED = 7
 
 
 class StatementExecutionStatus(Enum):
