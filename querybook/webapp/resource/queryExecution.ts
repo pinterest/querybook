@@ -71,7 +71,9 @@ export const QueryExecutionResource = {
         query: string,
         engineId: number,
         cellId?: number,
-        metadata?: Record<string, string | number>
+        metadata?: Record<string, string | number>,
+        peerReviewParams?: Record<any, any>,
+        delayExecution?: boolean
     ) => {
         const params = {
             query,
@@ -85,6 +87,11 @@ export const QueryExecutionResource = {
         if (cellId != null) {
             params['data_cell_id'] = cellId;
             params['originator'] = dataDocSocket.socketId;
+        }
+
+        if (delayExecution != null) {
+            params['peer_review_params'] = peerReviewParams;
+            params['delay_execution'] = delayExecution;
         }
 
         return ds.save<IRawQueryExecution>('/query_execution/', params);

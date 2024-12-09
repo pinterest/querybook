@@ -26,9 +26,7 @@ interface IQueryPeerReviewFormProps {
         reviewerIds: number[],
         externalRecipients: string[],
         notifierName: string,
-        justification: string,
-        query: string,
-        queryEngine: IQueryEngine
+        justification: string
     ) => Promise<void>;
     onHide: () => void;
 }
@@ -93,9 +91,7 @@ const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
                     reviewerIds,
                     externalRecipients,
                     notifierName,
-                    values.justification,
-                    query,
-                    queryEngine
+                    values.justification
                 );
                 onHide();
                 toast.success(
@@ -105,7 +101,7 @@ const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
                 toast.error('Failed to request review.');
             }
         },
-        [onConfirm, onHide, query, queryEngine]
+        [onConfirm, onHide]
     );
 
     return (

@@ -531,15 +531,42 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         reviewerIds: number[],
         externalRecipients: string[],
         notifierName: string,
-        justification: string,
-        query: string,
-        queryEngine: IQueryEngine
+        justification: string
     ) {
-        try {
-            console.error('TODO: Implement API call here');
-        } catch (error) {
-            console.error('Failed to request peer review:', error);
+        trackClick({
+            component: ComponentType.DATADOC_QUERY_CELL,
+            element: ElementType.PEER_REVIEW_QUERY_BUTTON,
+            aux: {
+                lintError: this.state.hasLintError,
+                sampleRate: this.sampleRate,
+            },
+        });
+
+        const transformedQuery = await this.getTransformedQuery();
+        if (!transformedQuery) {
+            return null;
         }
+
+        const executionMetadata =
+            this.sampleRate > 0 ? { sample_rate: this.sampleRate } : null;
+
+        const peerReviewParams = {
+            reviewer_ids: reviewerIds,
+            external_recipients: externalRecipients,
+            notifier_name: notifierName,
+            review_request_reason: justification,
+        };
+
+        const delayExecution = true;
+
+        await this.props.createQueryExecution(
+            transformedQuery,
+            this.engineId,
+            this.props.cellId,
+            executionMetadata,
+            peerReviewParams,
+            delayExecution
+        );
     }
 
     @bind
@@ -1129,8 +1156,20 @@ function mapDispatchToProps(dispatch: Dispatch) {
             query: string,
             engineId: number,
             cellId: number,
-            metadata: Record<string, string | number>
-        ) => dispatch(createQueryExecution(query, engineId, cellId, metadata)),
+            metadata: Record<string, string | number>,
+            peerReviewParams?: Record<any, any>,
+            delayExecution?: boolean
+        ) =>
+            dispatch(
+                createQueryExecution(
+                    query,
+                    engineId,
+                    cellId,
+                    metadata,
+                    peerReviewParams,
+                    delayExecution
+                )
+            ),
 
         setTableSidebarId: (id: number) => dispatch(setSidebarTableId(id)),
 
