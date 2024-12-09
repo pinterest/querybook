@@ -1,7 +1,7 @@
 import { bind } from 'lodash-decorators';
 
 import { IDataColumn } from 'const/metastore';
-import { ICodeAnalysis, TableToken } from 'lib/sql-helper/sql-lexer';
+import { ICodeAnalysis, IPosition, TableToken } from 'lib/sql-helper/sql-lexer';
 import {
     getLanguageSetting,
     ILanguageSetting,
@@ -59,7 +59,7 @@ export class SqlParser {
      * @param pos position of the cursor or mouse pointer
      * @returns string: 'table', 'column' or 'none'
      */
-    public getContextAtPos(pos: { line: number; ch: number }): string {
+    public getContextAtPos(pos: IPosition): string {
         if (!this.codeAnalysis?.editorLines) {
             return 'none';
         }
@@ -77,7 +77,7 @@ export class SqlParser {
      * @param pos position of the cursor or mouse pointer
      * @returns TableToken if the cursor is on a table, otherwise null
      */
-    public getTableAtPos(pos: { line: number; ch: number }): TableToken | null {
+    public getTableAtPos(pos: IPosition): TableToken | null {
         const { line, ch } = pos;
         if (this.codeAnalysis) {
             const tableReferences: TableToken[] = [].concat.apply(
@@ -111,10 +111,7 @@ export class SqlParser {
      * @param text the token text before or at the cursor
      * @returns IDataColumn if the cursor is on a column, otherwise null
      */
-    public getColumnAtPos(
-        pos: { line: number; ch: number },
-        text: string
-    ): IDataColumn | null {
+    public getColumnAtPos(pos: IPosition, text: string): IDataColumn | null {
         const columns = this.getColumnMatches(pos, text, true);
         if (columns.length === 1) {
             return columns[0];
@@ -129,23 +126,20 @@ export class SqlParser {
      * @returns Array of column values if the cursor is on a column, otherwise empty array
      */
     public getColumnValues(
-        cursor: { line: number; ch: number },
+        cursor: IPosition,
         text: string
     ): Array<number | string> {
         const columns = this.getColumnMatches(cursor, text, true);
 
-        if (columns.length === 1) {
-            const colStats = columns[0].stats ?? [];
+        if (columns.length !== 1) return [];
 
-            // find the stat with key="distinct_values"
-            const distinctValuesStat = colStats.find(
-                (stat) => stat.key === 'distinct_values'
-            );
-            if (distinctValuesStat?.value instanceof Array) {
-                return distinctValuesStat?.value;
-            }
-
-            return [];
+        const colStats = columns[0].stats ?? [];
+        // find the stat with key="distinct_values"
+        const distinctValuesStat = colStats.find(
+            (stat) => stat.key === 'distinct_values'
+        );
+        if (distinctValuesStat?.value instanceof Array) {
+            return distinctValuesStat?.value;
         }
 
         return [];
@@ -159,7 +153,7 @@ export class SqlParser {
      * @param exactMatch whether to do exact match or prefix match
      */
     public getColumnMatches(
-        cursor: { line: number; ch: number },
+        cursor: IPosition,
         text: string,
         exactMatch: boolean = false
     ): IDataColumn[] {
@@ -255,7 +249,7 @@ export class SqlParser {
         });
     }
 
-    private getLineAnalysis(cursor: { line: number; ch: number }) {
+    private getLineAnalysis(cursor: IPosition): ILineAnalysis {
         const lineAnalysis: ILineAnalysis = {
             context: 'none',
             alias: {},

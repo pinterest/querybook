@@ -2,11 +2,14 @@ import {
     autocompletion,
     Completion,
     CompletionContext,
+    CompletionResult,
     startCompletion,
 } from '@codemirror/autocomplete';
 import { EditorView } from '@uiw/react-codemirror';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { CodeMirrorToken } from 'lib/codemirror/utils';
+import { IPosition } from 'lib/sql-helper/sql-lexer';
 import { SqlParser } from 'lib/sql-helper/sql-parser';
 
 export type AutoCompleteType = 'none' | 'schema' | 'all';
@@ -26,8 +29,7 @@ export const useAutoCompleteExtension = ({
     const [typing, setTyping] = useState(false);
 
     const getColumnValueCompletions = useCallback(
-        (cursor, token) => {
-            console.log('getColumnValueCompletions', cursor, token);
+        (cursor: IPosition, token: CodeMirrorToken): CompletionResult => {
             const [textBeforeEqual, textAfterEqual] = token.text
                 .split('=')
                 .map((s) => s.trim());
@@ -49,40 +51,15 @@ export const useAutoCompleteExtension = ({
         [sqlParserRef]
     );
 
-    const getCompletions = useCallback(
-        async (context: CompletionContext) => {
-            if (type === 'none') {
-                return null;
-            }
-
-            // Get the token before the cursor, token could be in below foramts
-            //  - column: schema.table.column, table.column, column
-            //  - table: schema.table, table
-            //  - keyword: any keyword
-            //  - column value: column = value, (value may be quoted)
-            const token = context.matchBefore(
-                /(\w+\.){0,2}\w*|(\w+.)?\s*=\s*'?\w*/
-            );
-
-            // no token before the cursor, don't open completions.
-            if (!token?.text) return null;
-
-            // Get the cursor position in codemirror v5 format
-            const cursorPos = context.pos;
-            const line = context.state.doc.lineAt(cursorPos);
-            const cursor = { line: line.number - 1, ch: cursorPos - line.from };
-
+    const getGeneralCompletions = useCallback(
+        async (
+            context: string,
+            cursor: IPosition,
+            token: CodeMirrorToken
+        ): Promise<CompletionResult> => {
             const tokenText = token.text.toLowerCase();
-            const sqlParserContext =
-                sqlParserRef.current.getContextAtPos(cursor);
-
-            // handle the case where the token is a column and the user is trying to type a value in a where clause
-            if (sqlParserContext === 'column' && tokenText.includes('=')) {
-                return getColumnValueCompletions(cursor, token);
-            }
-
             const options: Completion[] = [];
-            if (sqlParserContext === 'column') {
+            if (context === 'column') {
                 const columns = sqlParserRef.current.getColumnMatches(
                     cursor,
                     token.text
@@ -93,7 +70,7 @@ export const useAutoCompleteExtension = ({
                         detail: 'column',
                     }))
                 );
-            } else if (sqlParserContext === 'table') {
+            } else if (context === 'table') {
                 const tableNames =
                     await sqlParserRef.current.getTableNameMatches(tokenText);
                 options.push(
@@ -118,13 +95,56 @@ export const useAutoCompleteExtension = ({
             );
 
             let from = token.from;
-            if (sqlParserContext === 'column') {
+            if (context === 'column') {
                 from += token.text.lastIndexOf('.') + 1;
             }
 
             return { from, options };
         },
-        [sqlParserRef, type, getColumnValueCompletions]
+        [sqlParserRef, type]
+    );
+
+    const getCompletions = useCallback(
+        async (context: CompletionContext) => {
+            if (type === 'none') {
+                return null;
+            }
+
+            // Get the token before the cursor, token could be in below foramts
+            //  - column value: column = value (value may be quoted)
+            const columnValueRegex = /(\w+\.)?\w+\s*=\s*['"]?\w*/;
+            //  - column: schema.table.column, table.column, column
+            //  - table: schema.table, table
+            //  - keyword: any keyword
+            const generalTokenRegex = /(\w+\.){0,2}\w*/;
+
+            const columnValueToken = context.matchBefore(columnValueRegex);
+            const generalToken =
+                !columnValueToken && context.matchBefore(generalTokenRegex);
+
+            // no token before the cursor, don't open completions.
+            if (!columnValueToken?.text && !generalToken.text) return null;
+
+            // Get the cursor position in codemirror v5 format
+            const cursorPos = context.pos;
+            const line = context.state.doc.lineAt(cursorPos);
+            const cursor = { line: line.number - 1, ch: cursorPos - line.from };
+
+            const sqlParserContext =
+                sqlParserRef.current.getContextAtPos(cursor);
+
+            // handle the case where the token is a column and the user is trying to type a value in a where clause
+            if (sqlParserContext === 'column' && columnValueToken?.text) {
+                return getColumnValueCompletions(cursor, columnValueToken);
+            }
+
+            return getGeneralCompletions(
+                sqlParserContext,
+                cursor,
+                generalToken
+            );
+        },
+        [sqlParserRef, type, getColumnValueCompletions, getGeneralCompletions]
     );
 
     const triggerCompletionOnType = () => {
