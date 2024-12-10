@@ -123,7 +123,7 @@ export const useAutoCompleteExtension = ({
                 !columnValueToken && context.matchBefore(generalTokenRegex);
 
             // no token before the cursor, don't open completions.
-            if (!columnValueToken?.text && !generalToken.text) return null;
+            if (!columnValueToken?.text && !generalToken?.text) return null;
 
             // Get the cursor position in codemirror v5 format
             const cursorPos = context.pos;
