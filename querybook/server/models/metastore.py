@@ -316,6 +316,7 @@ class DataTableColumn(TruncateString("name", "type", "comment"), Base):
             "comment": self.comment,
             "description": self.description,
             "table_id": self.table_id,
+            "stats": self.statistics,
         }
 
         if include_table:

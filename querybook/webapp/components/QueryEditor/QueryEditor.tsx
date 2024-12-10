@@ -17,7 +17,10 @@ import toast from 'react-hot-toast';
 import { TDataDocMetaVariables } from 'const/datadoc';
 import KeyMap from 'const/keyMap';
 import { IDataTable } from 'const/metastore';
-import { useAutoCompleteExtension } from 'hooks/queryEditor/extensions/useAutoCompleteExtension';
+import {
+    AutoCompleteType,
+    useAutoCompleteExtension,
+} from 'hooks/queryEditor/extensions/useAutoCompleteExtension';
 import { useEventsExtension } from 'hooks/queryEditor/extensions/useEventsExtension';
 import { useHoverTooltipExtension } from 'hooks/queryEditor/extensions/useHoverTooltipExtension';
 import { useKeyMapExtension } from 'hooks/queryEditor/extensions/useKeyMapExtension';
@@ -26,13 +29,12 @@ import { useOptionsExtension } from 'hooks/queryEditor/extensions/useOptionsExte
 import { useSearchExtension } from 'hooks/queryEditor/extensions/useSearchExtension';
 import { useSqlCompleteExtension } from 'hooks/queryEditor/extensions/useSqlCompleteExtension';
 import { useStatusBarExtension } from 'hooks/queryEditor/extensions/useStatusBarExtension';
-import { useAutoComplete } from 'hooks/queryEditor/useAutoComplete';
 import { useCodeAnalysis } from 'hooks/queryEditor/useCodeAnalysis';
 import { useLint } from 'hooks/queryEditor/useLint';
+import { useSqlParser } from 'hooks/queryEditor/useSqlParser';
 import useDeepCompareEffect from 'hooks/useDeepCompareEffect';
 import { CodeMirrorKeyMap } from 'lib/codemirror';
 import { mixedSQL } from 'lib/codemirror/codemirror-mixed';
-import { AutoCompleteType } from 'lib/sql-helper/sql-autocompleter';
 import { format, ISQLFormatOptions } from 'lib/sql-helper/sql-formatter';
 import { TableToken } from 'lib/sql-helper/sql-lexer';
 import { navigateWithinEnv } from 'lib/utils/query-string';
@@ -204,12 +206,7 @@ export const QueryEditor: React.FC<
             language,
             query: value,
         });
-        const autoCompleterRef = useAutoComplete(
-            metastoreId,
-            autoCompleteType,
-            language,
-            codeAnalysis
-        );
+        const sqlParserRef = useSqlParser(metastoreId, language, codeAnalysis);
 
         const tableReferences: TableToken[] = useMemo(
             () =>
@@ -287,7 +284,8 @@ export const QueryEditor: React.FC<
 
         const autoCompleteExtension = useAutoCompleteExtension({
             view: editorRef.current?.view,
-            autoCompleterRef,
+            sqlParserRef,
+            type: autoCompleteType,
         });
 
         const lintExtension = useLintExtension({
@@ -296,7 +294,7 @@ export const QueryEditor: React.FC<
 
         const { extension: hoverTooltipExtension, getTableAtCursor } =
             useHoverTooltipExtension({
-                codeAnalysisRef,
+                sqlParserRef,
                 metastoreId,
                 language,
             });
