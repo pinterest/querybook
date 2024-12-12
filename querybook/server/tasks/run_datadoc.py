@@ -84,6 +84,7 @@ def run_datadoc_with_config(
                     raw_query,
                     data_doc.meta_variables,
                     engine_id,
+                    user_id,
                     session=session,
                 )
             except Exception as e:

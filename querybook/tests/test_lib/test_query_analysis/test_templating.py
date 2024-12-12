@@ -19,6 +19,7 @@ from lib.query_analysis.templating import (
 
 class TemplatingTestCase(TestCase):
     DEFAULT_ENGINE_ID = 1
+    DEFAULT_USER_ID = 1
 
     def setUp(self):
         self.engine_mock = mock.Mock()
@@ -34,6 +35,14 @@ class TemplatingTestCase(TestCase):
         self.get_metastore_loader_mock = get_metastore_loader_patch.start()
         self.addCleanup(get_metastore_loader_patch.stop)
         self.get_metastore_loader_mock.return_value = self.metastore_loader_mock
+
+        self.user_mock = mock.Mock()
+        self.user_mock.username = "test_user"
+        self.user_mock.email = "test_user@querybook.org"
+        get_user_by_id_patch = mock.patch("logic.user.get_user_by_id")
+        self.get_user_by_id_mock = get_user_by_id_patch.start()
+        self.addCleanup(get_user_by_id_patch.stop)
+        self.get_user_by_id_mock.return_value = self.user_mock
 
 
 class DetectCycleTestCase(TemplatingTestCase):
@@ -212,7 +221,9 @@ class RenderTemplatedQueryTestCase(TemplatingTestCase):
         query = 'select * from table where dt="{{ date }}"'
         variable = {"date": "1970-01-01"}
         self.assertEqual(
-            render_templated_query(query, variable, self.DEFAULT_ENGINE_ID),
+            render_templated_query(
+                query, variable, self.DEFAULT_ENGINE_ID, self.DEFAULT_USER_ID
+            ),
             'select * from table where dt="1970-01-01"',
         )
 
@@ -224,7 +235,9 @@ class RenderTemplatedQueryTestCase(TemplatingTestCase):
             "date3": "01",
         }
         self.assertEqual(
-            render_templated_query(query, variable, self.DEFAULT_ENGINE_ID),
+            render_templated_query(
+                query, variable, self.DEFAULT_ENGINE_ID, self.DEFAULT_USER_ID
+            ),
             'select * from table where dt="1970-01-01"',
         )
 
@@ -235,7 +248,10 @@ class RenderTemplatedQueryTestCase(TemplatingTestCase):
             query = 'select * from table where dt="{{ date }}"'
             self.assertEqual(
                 render_templated_query(
-                    query, {"date": "{{ today }}"}, self.DEFAULT_ENGINE_ID
+                    query,
+                    {"date": "{{ today }}"},
+                    self.DEFAULT_ENGINE_ID,
+                    self.DEFAULT_USER_ID,
                 ),
                 'select * from table where dt="1970-01-01"',
             )
@@ -248,6 +264,7 @@ class RenderTemplatedQueryTestCase(TemplatingTestCase):
             'select * from {{ table }} where dt="{{ date }}"',
             {"table": "foo"},
             self.DEFAULT_ENGINE_ID,
+            self.DEFAULT_USER_ID,
         )
 
         # Missing variable but recursive
@@ -257,6 +274,7 @@ class RenderTemplatedQueryTestCase(TemplatingTestCase):
             'select * from {{ table }} where dt="{{ date }}"',
             {"table": "foo", "date": "{{ bar }}"},
             self.DEFAULT_ENGINE_ID,
+            self.DEFAULT_USER_ID,
         )
 
         # Circular dependency
@@ -266,6 +284,7 @@ class RenderTemplatedQueryTestCase(TemplatingTestCase):
             'select * from {{ table }} where dt="{{ date }}"',
             {"date": "{{ date2 }}", "date2": "{{ date }}"},
             self.DEFAULT_ENGINE_ID,
+            self.DEFAULT_USER_ID,
         )
 
         # Invalid template usage
@@ -275,6 +294,7 @@ class RenderTemplatedQueryTestCase(TemplatingTestCase):
             'select * from {{ table  where dt="{{ date }}"',
             {"table": "foo", "date": "{{ bar }}"},
             self.DEFAULT_ENGINE_ID,
+            self.DEFAULT_USER_ID,
         )
 
     def test_escape_comments(self):
@@ -291,7 +311,10 @@ sample_table limit 5;
 {{ end_date}}*/
 -- {{ end_date }}"""
         self.assertEqual(
-            render_templated_query(query, {}, self.DEFAULT_ENGINE_ID), query
+            render_templated_query(
+                query, {}, self.DEFAULT_ENGINE_ID, self.DEFAULT_USER_ID
+            ),
+            query,
         )
 
     def test_escape_comments_non_greedy(self):
@@ -306,7 +329,10 @@ sample_table limit 5;
 """
         self.assertEqual(
             render_templated_query(
-                query_non_greedy, {"test": "render"}, self.DEFAULT_ENGINE_ID
+                query_non_greedy,
+                {"test": "render"},
+                self.DEFAULT_ENGINE_ID,
+                self.DEFAULT_USER_ID,
             ),
             """select * from
 /*
@@ -390,6 +416,7 @@ class LatestPartitionTestCase(TemplatingTestCase):
             'select * from table where dt="{{ latest_partition("default.table", "dt") }}"',
             {},
             self.DEFAULT_ENGINE_ID,
+            self.DEFAULT_USER_ID,
         )
 
     def test_invalid_table_name(self):
@@ -399,6 +426,7 @@ class LatestPartitionTestCase(TemplatingTestCase):
             'select * from table where dt="{{ latest_partition("table", "dt") }}"',
             {},
             self.DEFAULT_ENGINE_ID,
+            self.DEFAULT_USER_ID,
         )
 
     def test_invalid_partition_name(self):
@@ -411,6 +439,7 @@ class LatestPartitionTestCase(TemplatingTestCase):
             'select * from table where dt="{{ latest_partition("default.table", "date") }}"',
             {},
             self.DEFAULT_ENGINE_ID,
+            self.DEFAULT_USER_ID,
         )
 
     def test_no_latest_partition(self):
@@ -421,6 +450,7 @@ class LatestPartitionTestCase(TemplatingTestCase):
             'select * from table where dt="{{ latest_partition("default.table", "dt") }}"',
             {},
             self.DEFAULT_ENGINE_ID,
+            self.DEFAULT_USER_ID,
         )
 
     def test_multiple_partition_columns(self):
@@ -444,6 +474,7 @@ class LatestPartitionTestCase(TemplatingTestCase):
             'select * from table where dt="{{ latest_partition("default.table", "dt") }}"',
             {},
             self.DEFAULT_ENGINE_ID,
+            self.DEFAULT_USER_ID,
         )
         self.assertEqual(templated_query, 'select * from table where dt="2021-01-01"')
 
@@ -452,6 +483,7 @@ class LatestPartitionTestCase(TemplatingTestCase):
             'select * from table where dt="{{ latest_part }}"',
             {"latest_part": '{{latest_partition("default.table", "dt")}}'},
             self.DEFAULT_ENGINE_ID,
+            self.DEFAULT_USER_ID,
         )
         self.assertEqual(templated_query, 'select * from table where dt="2021-01-01"')
 
@@ -465,4 +497,93 @@ class LatestPartitionTestCase(TemplatingTestCase):
             'select * from table where dt="{{ latest_partition("default.table") }}"',
             {},
             self.DEFAULT_ENGINE_ID,
+            self.DEFAULT_USER_ID,
+        )
+
+
+class CurrentUserTestCase(TemplatingTestCase):
+    def test_current_user(self):
+        query = 'select * from table where user="{{ current_user }}"'
+        self.assertEqual(
+            render_templated_query(
+                query, {}, self.DEFAULT_ENGINE_ID, self.DEFAULT_USER_ID
+            ),
+            f'select * from table where user="{self.user_mock.username}"',
+        )
+
+    def test_current_user_email(self):
+        query = 'select * from table where user="{{ current_user_email }}"'
+        self.assertEqual(
+            render_templated_query(
+                query, {}, self.DEFAULT_ENGINE_ID, self.DEFAULT_USER_ID
+            ),
+            f'select * from table where user="{self.user_mock.email}"',
+        )
+
+
+class SlugifyTestCase(TemplatingTestCase):
+    def test_simple(self):
+        query = 'select "{{ "Hello World" | slugify }}"'
+        self.assertEqual(
+            render_templated_query(
+                query, {}, self.DEFAULT_ENGINE_ID, self.DEFAULT_USER_ID
+            ),
+            'select "hello_world"',
+        )
+
+    def test_remove_special_characters(self):
+        query = 'select "{{ "Hello World #2024" | slugify }}"'
+        self.assertEqual(
+            render_templated_query(
+                query, {}, self.DEFAULT_ENGINE_ID, self.DEFAULT_USER_ID
+            ),
+            'select "hello_world_2024"',
+        )
+
+    def test_trim_leading_and_trailing_spaces(self):
+        query = 'select "{{ " Hello World " | slugify }}"'
+        self.assertEqual(
+            render_templated_query(
+                query, {}, self.DEFAULT_ENGINE_ID, self.DEFAULT_USER_ID
+            ),
+            'select "hello_world"',
+        )
+
+    def test_chinese(self):
+        query = 'select "{{ "你好世界" | slugify }}"'
+        self.assertEqual(
+            render_templated_query(
+                query, {}, self.DEFAULT_ENGINE_ID, self.DEFAULT_USER_ID
+            ),
+            'select "ni_hao_shi_jie"',
+        )
+
+    def test_empty_string(self):
+        query = 'select "{{ "" | slugify }}"'
+        self.assertEqual(
+            render_templated_query(
+                query, {}, self.DEFAULT_ENGINE_ID, self.DEFAULT_USER_ID
+            ),
+            'select ""',
+        )
+
+    def test_non_alphanumeric_characters(self):
+        query = 'select "{{ "!@#$%^&*()" | slugify }}"'
+        self.assertEqual(
+            render_templated_query(
+                query, {}, self.DEFAULT_ENGINE_ID, self.DEFAULT_USER_ID
+            ),
+            'select ""',
+        )
+
+    def test_today(self):
+        query = "select * from report_{{ today | slugify }}"
+        self.assertEqual(
+            render_templated_query(
+                query,
+                {"today": "2024-01-01"},
+                self.DEFAULT_ENGINE_ID,
+                self.DEFAULT_USER_ID,
+            ),
+            "select * from report_2024_01_01",
         )

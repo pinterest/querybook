@@ -534,7 +534,10 @@ def get_templated_query(
 ):
     try:
         return render_templated_query(
-            query, var_config_to_var_dict(var_config), engine_id
+            query,
+            var_config_to_var_dict(var_config),
+            engine_id,
+            current_user.id,
         )
     except QueryTemplatingError as e:
         raise RequestException(e, status_code=INVALID_SEMANTIC_STATUS_CODE)
