@@ -22,7 +22,7 @@ import './QueryPeerReviewModal.scss';
 interface IQueryPeerReviewFormProps {
     query: string;
     queryEngine: IQueryEngine;
-    onConfirm: (
+    onSubmit: (
         reviewerIds: number[],
         externalRecipients: string[],
         notifierName: string,
@@ -34,7 +34,7 @@ interface IQueryPeerReviewFormProps {
 const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
     query,
     queryEngine,
-    onConfirm,
+    onSubmit,
     onHide,
 }) => {
     const notifiers = useSelector(notificationServiceSelector);
@@ -87,7 +87,7 @@ const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
                     .filter((v) => !('isUser' in v) || !v.isUser)
                     .map((v) => v.value);
 
-                await onConfirm(
+                await onSubmit(
                     reviewerIds,
                     externalRecipients,
                     notifierName,
@@ -101,7 +101,7 @@ const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
                 toast.error('Failed to request review.');
             }
         },
-        [onConfirm, onHide]
+        [onHide, onSubmit]
     );
 
     return (
@@ -191,7 +191,7 @@ const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
 
 export const QueryPeerReviewModal: React.FC<
     IQueryPeerReviewFormProps & IStandardModalProps
-> = ({ query, queryEngine, onConfirm, onHide, ...modalProps }) => (
+> = ({ query, queryEngine, onSubmit, onHide, ...modalProps }) => (
     <Modal
         {...modalProps}
         onHide={onHide}
@@ -201,7 +201,7 @@ export const QueryPeerReviewModal: React.FC<
         <QueryPeerReviewForm
             query={query}
             queryEngine={queryEngine}
-            onConfirm={onConfirm}
+            onSubmit={onSubmit}
             onHide={onHide}
         />
     </Modal>

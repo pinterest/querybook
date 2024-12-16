@@ -446,29 +446,63 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
-    public async onRunButtonClick() {
+    public async executeQuery(options: {
+        element: ElementType;
+        peerReviewParams?: Record<string, any>;
+        delayExecution?: boolean;
+        onSuccess?: (queryId: number) => void;
+    }): Promise<number | null> {
+        const { element, peerReviewParams, delayExecution, onSuccess } =
+            options;
+
         trackClick({
             component: ComponentType.DATADOC_QUERY_CELL,
-            element: ElementType.RUN_QUERY_BUTTON,
+            element,
             aux: {
                 lintError: this.state.hasLintError,
                 sampleRate: this.sampleRate,
             },
         });
 
-        return runQuery(
-            await this.getTransformedQuery(),
-            this.engineId,
-            async (query, engineId) => {
-                const queryId = (
-                    await this.props.createQueryExecution(
-                        query,
-                        engineId,
-                        this.props.cellId,
-                        this.getQueryExecutionMetadata()
-                    )
-                ).id;
+        const transformedQuery = await this.getTransformedQuery();
+        const executionMetadata = this.getQueryExecutionMetadata();
 
+        try {
+            // Execute the query using the existing runQuery function
+            const queryId = await runQuery(
+                transformedQuery,
+                this.engineId,
+                async (query: string, engineId: number) => {
+                    const queryExecution =
+                        await this.props.createQueryExecution(
+                            query,
+                            engineId,
+                            this.props.cellId,
+                            executionMetadata,
+                            peerReviewParams,
+                            delayExecution
+                        );
+                    return queryExecution.id;
+                }
+            );
+
+            if (onSuccess) {
+                onSuccess(queryId);
+            }
+
+            return queryId;
+        } catch (error) {
+            toast.error('Failed to execute query.');
+            console.error('Query Execution Error:', error);
+            throw error;
+        }
+    }
+
+    @bind
+    public async onRunButtonClick() {
+        return this.executeQuery({
+            element: ElementType.RUN_QUERY_BUTTON,
+            onSuccess: (queryId: number) => {
                 // Only trigger survey if the query is modified within 5 minutes
                 if (Date.now() - this.state.modifiedAt < 5 * 60 * 1000) {
                     triggerSurvey(SurveySurfaceType.QUERY_AUTHORING, {
@@ -476,10 +510,29 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                         cell_id: this.props.cellId,
                     });
                 }
+            },
+        });
+    }
 
-                return queryId;
-            }
-        );
+    @bind
+    public async onPeerReviewSubmit(
+        reviewerIds: number[],
+        externalRecipients: string[],
+        notifierName: string,
+        justification: string
+    ) {
+        const peerReviewParams = {
+            reviewer_ids: reviewerIds,
+            external_recipients: externalRecipients,
+            notifier_name: notifierName,
+            review_request_reason: justification,
+        };
+
+        await this.executeQuery({
+            element: ElementType.PEER_REVIEW_QUERY_BUTTON,
+            peerReviewParams,
+            delayExecution: true,
+        });
     }
 
     @bind
@@ -523,49 +576,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 });
                 toast.success(`Query transpiled to ${engine.name}`);
             }
-        );
-    }
-
-    @bind
-    public async handlePeerReviewConfirm(
-        reviewerIds: number[],
-        externalRecipients: string[],
-        notifierName: string,
-        justification: string
-    ) {
-        trackClick({
-            component: ComponentType.DATADOC_QUERY_CELL,
-            element: ElementType.PEER_REVIEW_QUERY_BUTTON,
-            aux: {
-                lintError: this.state.hasLintError,
-                sampleRate: this.sampleRate,
-            },
-        });
-
-        const transformedQuery = await this.getTransformedQuery();
-        if (!transformedQuery) {
-            return null;
-        }
-
-        const executionMetadata =
-            this.sampleRate > 0 ? { sample_rate: this.sampleRate } : null;
-
-        const peerReviewParams = {
-            reviewer_ids: reviewerIds,
-            external_recipients: externalRecipients,
-            notifier_name: notifierName,
-            review_request_reason: justification,
-        };
-
-        const delayExecution = true;
-
-        await this.props.createQueryExecution(
-            transformedQuery,
-            this.engineId,
-            this.props.cellId,
-            executionMetadata,
-            peerReviewParams,
-            delayExecution
         );
     }
 
@@ -1009,7 +1019,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             <QueryPeerReviewModal
                 queryEngine={this.queryEngine}
                 query={this.state.query}
-                onConfirm={this.handlePeerReviewConfirm}
+                onSubmit={this.onPeerReviewSubmit}
                 onHide={this.toggleShowPeerReviewModal}
             />
         ) : null;

@@ -34,6 +34,7 @@ from const.query_execution import (
 )
 from logic import (
     query_execution as logic,
+    query_review as query_review_logic,
     datadoc as datadoc_logic,
     user as user_logic,
     admin as admin_logic,
@@ -60,7 +61,9 @@ from lib.notify.utils import notify_user
 QUERY_RESULT_LIMIT_CONFIG = get_config_value("query_result_limit")
 
 
-def process_query_execution(query_execution_id, metadata, data_cell_id, session):
+def process_query_execution_metadata(
+    query_execution_id, metadata, data_cell_id, session
+):
     """Process execution metadata and associate query execution with DataDoc."""
     metadata = metadata or {}
 
@@ -84,7 +87,6 @@ def process_query_execution(query_execution_id, metadata, data_cell_id, session)
 
 
 def initiate_query_peer_review_workflow(
-    self,
     query_execution_id: int,
     uid: int,
     peer_review_params: dict,
@@ -99,21 +101,18 @@ def initiate_query_peer_review_workflow(
     notifier_name = peer_review_params.get("notifier_name", "")
     review_request_reason = peer_review_params.get("review_request_reason", "")
 
-    query_review = logic.create_query_review(
+    query_review = query_review_logic.create_query_review(
         query_author_id=uid,
         query_execution_id=query_execution_id,
         review_request_reason=review_request_reason,
+        reviewer_ids=reviewer_ids,
         commit=False,
         session=session,
     )
-
-    # Add reviewers to the query_review.reviewers relationship
-    for reviewer_id in reviewer_ids:
-        reviewer = user_logic.get_user_by_id(reviewer_id, session=session)
-        if reviewer:
-            query_review.reviewers.append(reviewer)
-
-    session.commit()
+    # TODO: Implement notification logic for reviewers
+    print(external_recipients)
+    print(notifier_name)
+    print(query_review)
 
 
 def initiate_query_execution(
@@ -179,7 +178,7 @@ def create_query_execution(
             session=session,
         )
 
-        data_doc = process_query_execution(
+        data_doc = process_query_execution_metadata(
             query_execution_id=query_execution.id,
             metadata=metadata,
             data_cell_id=data_cell_id,
@@ -411,9 +410,9 @@ def download_statement_execution_result(statement_execution_id):
             raw = reader.read_raw()
             response = Response(raw)
             response.headers["Content-Type"] = "text/csv"
-            response.headers["Content-Disposition"] = (
-                f'attachment; filename="{download_file_name}"'
-            )
+            response.headers[
+                "Content-Disposition"
+            ] = f'attachment; filename="{download_file_name}"'
         return response
 
 
