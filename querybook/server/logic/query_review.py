@@ -1,4 +1,3 @@
-import datetime
 from app.db import with_session
 from logic.query_execution import get_query_execution_by_id
 from models.query_review import QueryReview
@@ -55,7 +54,6 @@ def update_query_review(query_review_id: int, commit=True, session=None, **field
     )
 
     if updated:
-        query_review.updated_at = datetime.datetime.now()
         if commit:
             session.commit()
         else:
@@ -72,5 +70,4 @@ def get_query_review(query_review_id: int, session=None):
 
 @with_session
 def get_query_review_from_query_execution_id(query_execution_id: int, session=None):
-    query_execution = get_query_execution_by_id(query_execution_id, session=session)
-    return query_execution.review if query_execution else None
+    return QueryReview.get(query_execution_id=query_execution_id, session=session)

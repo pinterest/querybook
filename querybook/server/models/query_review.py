@@ -1,19 +1,13 @@
 import sqlalchemy as sql
 from sqlalchemy.orm import relationship, backref
-from enum import Enum
 
 from app import db
 from const.db import now, description_length
+from const.query_execution import QueryExecutionStatus
 from lib.sqlalchemy import CRUDMixin
 from lib.utils.serialize import with_formatted_date
 
 Base = db.Base
-
-
-class QueryReviewStatus(Enum):
-    PENDING = "pending"
-    APPROVED = "approved"
-    REJECTED = "rejected"
 
 
 class QueryReview(Base, CRUDMixin):
@@ -27,16 +21,12 @@ class QueryReview(Base, CRUDMixin):
         nullable=False,
         unique=True,
     )
-    query_author_id = sql.Column(
-        sql.Integer, sql.ForeignKey("user.id", ondelete="CASCADE"), nullable=False
+    reviewed_by = sql.Column(
+        sql.Integer,
+        sql.ForeignKey("user.id", ondelete="SET NULL"),
+        nullable=True,
     )
-
-    status = sql.Column(
-        sql.Enum(QueryReviewStatus), nullable=False, default=QueryReviewStatus.PENDING
-    )
-    review_request_reason = sql.Column(
-        sql.String(length=description_length), nullable=True
-    )
+    request_reason = sql.Column(sql.String(length=description_length), nullable=False)
     rejection_reason = sql.Column(sql.String(length=description_length), nullable=True)
     created_at = sql.Column(sql.DateTime, default=now, nullable=False)
     updated_at = sql.Column(sql.DateTime, default=now, onupdate=now, nullable=False)
@@ -48,16 +38,14 @@ class QueryReview(Base, CRUDMixin):
             "review", uselist=False, cascade="all, delete-orphan", passive_deletes=True
         ),
     )
-    author = relationship(
+    reviewer = relationship(
         "User",
-        foreign_keys=[query_author_id],
+        foreign_keys=[reviewed_by],
         backref=backref(
-            "submitted_query_reviews",
-            cascade="all, delete-orphan",
-            passive_deletes=True,
+            "reviewed_query_reviews", cascade="all, delete-orphan", passive_deletes=True
         ),
     )
-    reviewers = relationship(
+    assigned_reviewers = relationship(
         "User",
         secondary="query_execution_reviewer",
         backref=backref("assigned_query_reviews", cascade="all", passive_deletes=True),
@@ -68,14 +56,33 @@ class QueryReview(Base, CRUDMixin):
         return {
             "id": self.id,
             "query_execution_id": self.query_execution_id,
-            "query_author_id": self.query_author_id,
-            "status": self.status.value,
-            "review_request_reason": self.review_request_reason,
+            "requested_by": self.query_execution.uid if self.query_execution else None,
+            "reviewed_by": self.reviewed_by,
+            "status": self.get_status(),
+            "request_reason": self.request_reason,
             "rejection_reason": self.rejection_reason,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
-            "reviewer_ids": [reviewer.id for reviewer in self.reviewers],
+            "reviewer_ids": [reviewer.id for reviewer in self.assigned_reviewers],
         }
+
+    def get_status(self):
+        """
+        Determines the current status of the QueryReview based on the associated QueryExecution.
+
+        Returns:
+            str: One of 'pending', 'rejected', or 'approved'.
+        """
+        if not self.query_execution:
+            return None
+
+        status = self.query_execution.status
+        if status == QueryExecutionStatus.PENDING_REVIEW:
+            return "pending"
+        elif status == QueryExecutionStatus.REJECTED:
+            return "rejected"
+        else:
+            return "approved"
 
 
 class QueryExecutionReviewer(Base, CRUDMixin):
