@@ -136,6 +136,7 @@ declare module 'config/querybook_public_config.yaml' {
         peer_review: {
             description: string;
             user_guide_link: string;
+            review_tip: string;
         };
     };
     export default data;

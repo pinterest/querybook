@@ -71,6 +71,12 @@ const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
         justification: Yup.string().required('Justification is required'),
     });
 
+    const {
+        description: featureDescription,
+        user_guide_link: helpLink,
+        review_tip: reviewTip,
+    } = PEER_REVIEW_CONFIG;
+
     const handleSubmit = useCallback(
         async (values) => {
             try {
@@ -102,9 +108,6 @@ const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
         [onConfirm, onHide, query, queryEngine]
     );
 
-    const { description: featureDescription, user_guide_link: helpLink } =
-        PEER_REVIEW_CONFIG;
-
     return (
         <Formik
             initialValues={initialValues}
@@ -122,12 +125,14 @@ const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
                                 </Link>
                             </Message>
                         </div>
-                        <Message
-                            className="mb12"
-                            type="warning"
-                            size="small"
-                            message="Tip: Before submitting your sensitive query for review, run it once to validate its syntax and feasibility. This helps identify errors early and reduces unnecessary review cycles."
-                        />
+                        {reviewTip && (
+                            <Message
+                                className="mb12"
+                                type="warning"
+                                size="small"
+                                message={reviewTip}
+                            />
+                        )}
 
                         <SimpleField
                             label="Notify With"
