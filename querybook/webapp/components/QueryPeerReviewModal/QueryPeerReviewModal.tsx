@@ -66,7 +66,9 @@ const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
         reviewers: Yup.array()
             .min(1, 'Please select at least one reviewer')
             .required('Please select at least one reviewer'),
-        justification: Yup.string().required('Justification is required'),
+        justification: Yup.string()
+            .trim()
+            .required('Justification is required'),
     });
 
     const {

@@ -380,8 +380,7 @@ export function createQueryExecution(
     engineId?: number,
     cellId?: number,
     metadata?: Record<string, string | number>,
-    peerReviewParams?: Record<any, any>,
-    delayExecution?: boolean
+    peerReviewParams?: Record<any, any>
 ): ThunkResult<Promise<IQueryExecution>> {
     return async (dispatch, getState) => {
         const state = getState();
@@ -392,8 +391,7 @@ export function createQueryExecution(
             selectedEngineId,
             cellId,
             metadata,
-            peerReviewParams,
-            delayExecution
+            peerReviewParams
         );
         dispatch(receiveQueryExecution(queryExecution, cellId));
 

@@ -100,11 +100,13 @@ def initiate_query_peer_review_workflow(
     external_recipients = peer_review_params.get("external_recipients", [])
     notifier_name = peer_review_params.get("notifier_name", "")
     review_request_reason = peer_review_params.get("review_request_reason", "")
+    rejection_reason = peer_review_params.get("rejection_reason", "")
 
     query_review = query_review_logic.create_query_review(
         query_author_id=uid,
         query_execution_id=query_execution_id,
         review_request_reason=review_request_reason,
+        rejection_reason=rejection_reason,
         reviewer_ids=reviewer_ids,
         commit=False,
         session=session,
@@ -115,12 +117,10 @@ def initiate_query_peer_review_workflow(
     print(query_review)
 
 
-def initiate_query_execution(
-    query_execution, uid, delay_execution, peer_review_params, session
-):
+def initiate_query_execution(query_execution, uid, peer_review_params, session):
     """Initiate the query execution based on delay_execution flag."""
     # Initiate peer review workflow
-    if delay_execution:
+    if peer_review_params:
         initiate_query_peer_review_workflow(
             query_execution_id=query_execution.id,
             uid=uid,
@@ -144,7 +144,6 @@ def create_query_execution(
     data_cell_id=None,
     originator=None,
     peer_review_params=None,
-    delay_execution=False,
 ):
     """
     Creates a new QueryExecution.
@@ -167,7 +166,7 @@ def create_query_execution(
         uid = current_user.id
         status = (
             QueryExecutionStatus.PENDING_REVIEW
-            if delay_execution
+            if peer_review_params
             else QueryExecutionStatus.INITIALIZED
         )
         query_execution = logic.create_query_execution(
@@ -189,7 +188,6 @@ def create_query_execution(
             initiate_query_execution(
                 query_execution=query_execution,
                 uid=uid,
-                delay_execution=delay_execution,
                 peer_review_params=peer_review_params,
                 session=session,
             )

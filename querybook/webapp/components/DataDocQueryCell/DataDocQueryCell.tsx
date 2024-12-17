@@ -449,11 +449,9 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     public async executeQuery(options: {
         element: ElementType;
         peerReviewParams?: Record<string, any>;
-        delayExecution?: boolean;
         onSuccess?: (queryId: number) => void;
     }): Promise<number | null> {
-        const { element, peerReviewParams, delayExecution, onSuccess } =
-            options;
+        const { element, peerReviewParams, onSuccess } = options;
 
         trackClick({
             component: ComponentType.DATADOC_QUERY_CELL,
@@ -468,7 +466,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         const executionMetadata = this.getQueryExecutionMetadata();
 
         try {
-            // Execute the query using the existing runQuery function
             const queryId = await runQuery(
                 transformedQuery,
                 this.engineId,
@@ -479,8 +476,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                             engineId,
                             this.props.cellId,
                             executionMetadata,
-                            peerReviewParams,
-                            delayExecution
+                            peerReviewParams
                         );
                     return queryExecution.id;
                 }
@@ -531,7 +527,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
         await this.executeQuery({
             element: ElementType.PEER_REVIEW_QUERY_BUTTON,
             peerReviewParams,
-            delayExecution: true,
         });
     }
 
@@ -698,6 +693,8 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 name: 'Request Query Review',
                 onClick: this.toggleShowPeerReviewModal,
                 icon: 'Send',
+                tooltip: 'Request a peer review for your query',
+                tooltipPos: 'right',
             });
         }
 
@@ -1167,8 +1164,7 @@ function mapDispatchToProps(dispatch: Dispatch) {
             engineId: number,
             cellId: number,
             metadata: Record<string, string | number>,
-            peerReviewParams?: Record<any, any>,
-            delayExecution?: boolean
+            peerReviewParams?: Record<any, any>
         ) =>
             dispatch(
                 createQueryExecution(
@@ -1176,8 +1172,7 @@ function mapDispatchToProps(dispatch: Dispatch) {
                     engineId,
                     cellId,
                     metadata,
-                    peerReviewParams,
-                    delayExecution
+                    peerReviewParams
                 )
             ),
 

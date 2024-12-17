@@ -16,6 +16,7 @@ import { DataDocTemplateVarForm } from 'components/DataDocTemplateButton/DataDoc
 import { detectVariableType } from 'components/DataDocTemplateButton/helpers';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
 import { IQueryEditorHandles } from 'components/QueryEditor/QueryEditor';
+import { QueryPeerReviewModal } from 'components/QueryPeerReviewModal/QueryPeerReviewModal';
 import {
     IQueryRunButtonHandles,
     QueryRunButton,
@@ -431,6 +432,9 @@ const QueryComposer: React.FC = () => {
     const [showTableSamplingInfoModal, setShowTableSamplingInfoModal] =
         useState(false);
 
+    const [showPeerReviewModal, setShowPeerReviewModal] = useState(false);
+    const hasPeerReviewFeature = engine?.feature_params?.peer_review;
+
     const runButtonRef = useRef<IQueryRunButtonHandles>(null);
     const clickOnRunButton = useCallback(() => {
         if (runButtonRef.current) {
@@ -477,9 +481,10 @@ const QueryComposer: React.FC = () => {
         navigateWithinEnv(`/datadoc/${dataDoc.id}/`);
     }, [executionId, query, engine.id, templatedVariables]);
 
-    const getCurrentSelectedQuery = useCallback(() => {
-        return queryEditorRef.current?.getSelection?.() ?? query;
-    }, [queryEditorRef, query]);
+    const getCurrentSelectedQuery = useCallback(
+        () => queryEditorRef.current?.getSelection?.() ?? query,
+        [queryEditorRef, query]
+    );
 
     const triggerSurvey = useSurveyTrigger();
 
@@ -494,67 +499,106 @@ const QueryComposer: React.FC = () => {
         return Object.keys(metadata).length === 0 ? null : metadata;
     }, [getSampleRate]);
 
-    const handleRunQuery = React.useCallback(async () => {
-        const sampleRate = getSampleRate();
-        const samplingTables = getSamplingTables();
-        const queryExecutionMetadata = getQueryExecutionMetadata();
+    const handleRunQuery = useCallback(
+        async (options?: {
+            element?: ElementType;
+            peerReviewParams?: Record<string, any>;
+            onSuccess?: (queryId: number) => void;
+        }) => {
+            const {
+                element = ElementType.RUN_QUERY_BUTTON,
+                peerReviewParams,
+                onSuccess,
+            } = options ?? {};
 
-        trackClick({
-            component: ComponentType.ADHOC_QUERY,
-            element: ElementType.RUN_QUERY_BUTTON,
-            aux: {
-                lintError: hasLintErrors,
-                sampleRate,
-            },
-        });
-        // Throttle to prevent double run
-        await sleep(250);
+            const sampleRate = getSampleRate();
+            const samplingTables = getSamplingTables();
+            const queryExecutionMetadata = getQueryExecutionMetadata();
 
-        const transformedQuery = await transformQuery(
-            getCurrentSelectedQuery(),
-            engine.language,
-            templatedVariables,
-            engine,
-            rowLimit,
-            samplingTables,
-            sampleRate
-        );
+            trackClick({
+                component: ComponentType.ADHOC_QUERY,
+                element,
+                aux: {
+                    lintError: hasLintErrors,
+                    sampleRate,
+                },
+            });
 
-        const queryId = await runQuery(
-            transformedQuery,
-            engine.id,
-            async (query, engineId) => {
-                const data = await dispatch(
-                    queryExecutionsAction.createQueryExecution(
-                        query,
-                        engineId,
-                        null,
-                        queryExecutionMetadata
-                    )
-                );
-                return data.id;
+            // Throttle to prevent double run
+            await sleep(250);
+
+            const transformedQuery = await transformQuery(
+                getCurrentSelectedQuery(),
+                engine.language,
+                templatedVariables,
+                engine,
+                rowLimit,
+                samplingTables,
+                sampleRate
+            );
+
+            const queryId = await runQuery(
+                transformedQuery,
+                engine.id,
+                async (query, engineId) => {
+                    const data = await dispatch(
+                        queryExecutionsAction.createQueryExecution(
+                            query,
+                            engineId,
+                            null,
+                            queryExecutionMetadata,
+                            peerReviewParams
+                        )
+                    );
+                    return data.id;
+                }
+            );
+
+            triggerSurvey(SurveySurfaceType.QUERY_AUTHORING, {
+                query_execution_id: queryId,
+            });
+
+            if (queryId != null) {
+                setExecutionId(queryId);
+                setResultsCollapsed(false);
+                onSuccess?.(queryId);
             }
-        );
-        triggerSurvey(SurveySurfaceType.QUERY_AUTHORING, {
-            query_execution_id: queryId,
-        });
-        if (queryId != null) {
-            setExecutionId(queryId);
-            setResultsCollapsed(false);
-        }
-    }, [
-        getSampleRate,
-        getSamplingTables,
-        getQueryExecutionMetadata,
-        hasLintErrors,
-        getCurrentSelectedQuery,
-        engine,
-        templatedVariables,
-        rowLimit,
-        triggerSurvey,
-        dispatch,
-        setExecutionId,
-    ]);
+        },
+        [
+            getSampleRate,
+            getSamplingTables,
+            getQueryExecutionMetadata,
+            hasLintErrors,
+            getCurrentSelectedQuery,
+            engine,
+            templatedVariables,
+            rowLimit,
+            triggerSurvey,
+            dispatch,
+            setExecutionId,
+        ]
+    );
+
+    const onPeerReviewSubmit = useCallback(
+        async (
+            reviewerIds: number[],
+            externalRecipients: string[],
+            notifierName: string,
+            justification: string
+        ) => {
+            setShowPeerReviewModal(false);
+            await handleRunQuery({
+                element: ElementType.PEER_REVIEW_QUERY_BUTTON,
+                peerReviewParams: {
+                    recipients: externalRecipients,
+                    reviewer_ids: reviewerIds,
+                    notifier_name: notifierName,
+                    justification,
+                },
+            });
+        },
+        [handleRunQuery, setShowPeerReviewModal]
+    );
 
     const keyMap = useKeyMap(clickOnRunButton, queryEngines, setEngineId);
 
@@ -767,6 +811,15 @@ const QueryComposer: React.FC = () => {
         </Modal>
     );
 
+    const peerReviewModalDOM = showPeerReviewModal && (
+        <QueryPeerReviewModal
+            queryEngine={engine}
+            query={query}
+            onSubmit={onPeerReviewSubmit}
+            onHide={() => setShowPeerReviewModal(false)}
+        />
+    );
+
     const getAdditionalDropDownButtonDOM = () => {
         const additionalButtons: IListMenuItem[] = [
             {
@@ -827,6 +880,16 @@ const QueryComposer: React.FC = () => {
             });
         }
 
+        if (hasPeerReviewFeature) {
+            additionalButtons.push({
+                name: 'Request Query Review',
+                onClick: () => setShowPeerReviewModal(true),
+                icon: 'Send',
+                tooltip: 'Request a peer review for your query',
+                tooltipPos: 'right',
+            });
+        }
+
         return (
             <>
                 <Dropdown
@@ -837,6 +900,7 @@ const QueryComposer: React.FC = () => {
                 </Dropdown>
                 {templatedModalDOM}
                 {templatedQueryViewModalDOM}
+                {peerReviewModalDOM}
             </>
         );
     };
