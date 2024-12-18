@@ -2,6 +2,7 @@ import { normalize, schema } from 'normalizr';
 import type { Socket } from 'socket.io-client';
 
 import { IAccessRequest } from 'const/accessRequest';
+import { IPeerReviewParams } from 'const/datadoc';
 import {
     IQueryExecution,
     IQueryExecutionViewer,
@@ -379,7 +380,8 @@ export function createQueryExecution(
     query: string,
     engineId?: number,
     cellId?: number,
-    metadata?: Record<string, string | number>
+    metadata?: Record<string, string | number>,
+    peerReviewParams?: IPeerReviewParams
 ): ThunkResult<Promise<IQueryExecution>> {
     return async (dispatch, getState) => {
         const state = getState();
@@ -389,7 +391,8 @@ export function createQueryExecution(
             query,
             selectedEngineId,
             cellId,
-            metadata
+            metadata,
+            peerReviewParams
         );
         dispatch(receiveQueryExecution(queryExecution, cellId));
 

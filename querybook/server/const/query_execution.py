@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import List, Optional, TypedDict
 
 # Keep these the same as const/queryExecution.ts
 
@@ -15,6 +16,8 @@ class QueryExecutionStatus(Enum):
     DONE = 3
     ERROR = 4
     CANCEL = 5
+    PENDING_REVIEW = 6
+    REJECTED = 7
 
 
 class StatementExecutionStatus(Enum):
@@ -43,6 +46,13 @@ class QueryEngineStatus(Enum):
     GOOD = 1  # Executor is running without problem
     WARN = 2  # Executor is running with warnings
     ERROR = 3  # Executor is down, queries cannot be issued
+
+
+class PeerReviewParamsDict(TypedDict):
+    reviewer_ids: List[int]
+    external_recipients: List[str]
+    notifier_name: Optional[str]
+    request_reason: str
 
 
 QUERY_EXECUTION_NAMESPACE = "/query_execution"

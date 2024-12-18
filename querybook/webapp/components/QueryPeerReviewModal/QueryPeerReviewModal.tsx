@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import * as Yup from 'yup';
 
 import { MultiCreatableUserSelect } from 'components/UserSelect/MultiCreatableUserSelect';
-import { IQueryEngine } from 'const/queryEngine';
+import { IPeerReviewParams } from 'const/datadoc';
 import { PEER_REVIEW_CONFIG } from 'lib/public-config';
 import { notificationServiceSelector } from 'redux/notificationService/selector';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
@@ -20,23 +20,12 @@ import { IStandardModalProps } from 'ui/Modal/types';
 import './QueryPeerReviewModal.scss';
 
 interface IQueryPeerReviewFormProps {
-    query: string;
-    queryEngine: IQueryEngine;
-    onConfirm: (
-        reviewerIds: number[],
-        externalRecipients: string[],
-        notifierName: string,
-        justification: string,
-        query: string,
-        queryEngine: IQueryEngine
-    ) => Promise<void>;
+    onSubmit: (peerReviewParams: IPeerReviewParams) => Promise<void>;
     onHide: () => void;
 }
 
 const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
-    query,
-    queryEngine,
-    onConfirm,
+    onSubmit,
     onHide,
 }) => {
     const notifiers = useSelector(notificationServiceSelector);
@@ -58,7 +47,7 @@ const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
     const initialValues = {
         notifyWith: '',
         reviewers: [],
-        justification: '',
+        requestReason: '',
     };
 
     const peerReviewFormSchema = Yup.object().shape({
@@ -68,7 +57,9 @@ const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
         reviewers: Yup.array()
             .min(1, 'Please select at least one reviewer')
             .required('Please select at least one reviewer'),
-        justification: Yup.string().required('Justification is required'),
+        requestReason: Yup.string()
+            .trim()
+            .required('Justification is required'),
     });
 
     const {
@@ -89,23 +80,24 @@ const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
                     .filter((v) => !('isUser' in v) || !v.isUser)
                     .map((v) => v.value);
 
-                await onConfirm(
-                    reviewerIds,
-                    externalRecipients,
-                    notifierName,
-                    values.justification,
-                    query,
-                    queryEngine
-                );
+                const peerReviewParams = {
+                    reviewer_ids: reviewerIds,
+                    external_recipients: externalRecipients,
+                    notifier_name: notifierName,
+                    request_reason: values.requestReason,
+                };
+                await onSubmit(peerReviewParams);
+
                 onHide();
                 toast.success(
-                    'Review request sent! Your reviewers have been notified, and if approved, your query will be executed.'
+                    'Review request sent! Reviewers were notified and your query will run upon approval.',
+                    { duration: 3000 }
                 );
             } catch (error) {
                 toast.error('Failed to request review.');
             }
         },
-        [onConfirm, onHide, query, queryEngine]
+        [onHide, onSubmit]
     );
 
     return (
@@ -166,7 +158,8 @@ const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
                         </FormField>
 
                         <SimpleField
-                            name="justification"
+                            name="requestReason"
+                            label="Justification"
                             type="textarea"
                             placeholder="Provide a justification."
                             rows={4}
@@ -195,18 +188,13 @@ const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
 
 export const QueryPeerReviewModal: React.FC<
     IQueryPeerReviewFormProps & IStandardModalProps
-> = ({ query, queryEngine, onConfirm, onHide, ...modalProps }) => (
+> = ({ onSubmit, onHide, ...modalProps }) => (
     <Modal
         {...modalProps}
         onHide={onHide}
         title="Request a peer review for your query"
         className="QueryPeerReviewModal"
     >
-        <QueryPeerReviewForm
-            query={query}
-            queryEngine={queryEngine}
-            onConfirm={onConfirm}
-            onHide={onHide}
-        />
+        <QueryPeerReviewForm onSubmit={onSubmit} onHide={onHide} />
     </Modal>
 );
