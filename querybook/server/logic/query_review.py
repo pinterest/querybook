@@ -6,10 +6,8 @@ from logic.user import get_user_by_id
 
 @with_session
 def create_query_review(
-    query_author_id: int,
     query_execution_id: int,
-    review_request_reason: str = "",
-    rejection_reason: str = "",
+    request_reason: str = "",
     reviewer_ids: list[int] = None,
     commit=True,
     session=None,
@@ -18,16 +16,11 @@ def create_query_review(
     assert (
         query_execution is not None
     ), f"QueryExecution with id {query_execution_id} does not exist."
-    assert (
-        query_execution.uid == query_author_id
-    ), "You are not the author of this query execution."
 
     query_review = QueryReview.create(
         fields={
             "query_execution_id": query_execution_id,
-            "query_author_id": query_author_id,
-            "review_request_reason": review_request_reason,
-            "rejection_reason": rejection_reason,
+            "request_reason": request_reason,
         },
         commit=False,
         session=session,
@@ -38,7 +31,7 @@ def create_query_review(
         for reviewer_id in reviewer_ids:
             reviewer = get_user_by_id(reviewer_id, session=session)
             if reviewer:
-                query_review.reviewers.append(reviewer)
+                query_review.assigned_reviewers.append(reviewer)
 
     if commit:
         session.commit()

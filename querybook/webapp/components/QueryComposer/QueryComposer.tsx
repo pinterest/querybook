@@ -30,7 +30,7 @@ import { TemplatedQueryView } from 'components/TemplateQueryView/TemplatedQueryV
 import { TranspileQueryModal } from 'components/TranspileQueryModal/TranspileQueryModal';
 import { UDFForm } from 'components/UDFForm/UDFForm';
 import { ComponentType, ElementType } from 'const/analytics';
-import { IDataDocMetaVariable } from 'const/datadoc';
+import { IDataDocMetaVariable, IPeerReviewParams } from 'const/datadoc';
 import KeyMap from 'const/keyMap';
 import { IDataTable } from 'const/metastore';
 import { IQueryEngine } from 'const/queryEngine';
@@ -502,7 +502,7 @@ const QueryComposer: React.FC = () => {
     const handleRunQuery = useCallback(
         async (options?: {
             element?: ElementType;
-            peerReviewParams?: Record<string, any>;
+            peerReviewParams?: IPeerReviewParams;
             onSuccess?: (queryId: number) => void;
         }) => {
             const {
@@ -580,21 +580,11 @@ const QueryComposer: React.FC = () => {
     );
 
     const onPeerReviewSubmit = useCallback(
-        async (
-            reviewerIds: number[],
-            externalRecipients: string[],
-            notifierName: string,
-            justification: string
-        ) => {
+        async (peerReviewParams: IPeerReviewParams) => {
             setShowPeerReviewModal(false);
             await handleRunQuery({
                 element: ElementType.PEER_REVIEW_QUERY_BUTTON,
-                peerReviewParams: {
-                    recipients: externalRecipients,
-                    reviewer_ids: reviewerIds,
-                    notifier_name: notifierName,
-                    justification,
-                },
+                peerReviewParams,
             });
         },
         [handleRunQuery, setShowPeerReviewModal]
@@ -813,8 +803,6 @@ const QueryComposer: React.FC = () => {
 
     const peerReviewModalDOM = showPeerReviewModal && (
         <QueryPeerReviewModal
-            queryEngine={engine}
-            query={query}
             onSubmit={onPeerReviewSubmit}
             onHide={() => setShowPeerReviewModal(false)}
         />

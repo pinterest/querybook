@@ -1,5 +1,5 @@
 import type { IAccessRequest } from 'const/accessRequest';
-import { TDataDocMetaVariables } from 'const/datadoc';
+import { IPeerReviewParams, TDataDocMetaVariables } from 'const/datadoc';
 import { IQueryTranspiler, ITranspiledQuery } from 'const/queryEngine';
 import {
     IQueryError,
@@ -72,7 +72,7 @@ export const QueryExecutionResource = {
         engineId: number,
         cellId?: number,
         metadata?: Record<string, string | number>,
-        peerReviewParams?: Record<any, any>
+        peerReviewParams?: IPeerReviewParams
     ) => {
         const params = {
             query,

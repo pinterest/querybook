@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Dict, Optional
 
 from flask import abort, Response, redirect, request
 from flask_login import current_user
@@ -27,6 +28,7 @@ from const.datasources import (
     INVALID_SEMANTIC_STATUS_CODE,
 )
 from const.query_execution import (
+    PeerReviewParamsDict,
     QueryExecutionExportStatus,
     QueryExecutionStatus,
     QUERY_EXECUTION_NAMESPACE,
@@ -89,7 +91,7 @@ def process_query_execution_metadata(
 def initiate_query_peer_review_workflow(
     query_execution_id: int,
     uid: int,
-    peer_review_params: dict,
+    peer_review_params: PeerReviewParamsDict,
     session=None,
 ):
     """
@@ -99,14 +101,11 @@ def initiate_query_peer_review_workflow(
     reviewer_ids = peer_review_params.get("reviewer_ids", [])
     external_recipients = peer_review_params.get("external_recipients", [])
     notifier_name = peer_review_params.get("notifier_name", "")
-    review_request_reason = peer_review_params.get("review_request_reason", "")
-    rejection_reason = peer_review_params.get("rejection_reason", "")
+    request_reason = peer_review_params.get("request_reason", "")
 
     query_review = query_review_logic.create_query_review(
-        query_author_id=uid,
         query_execution_id=query_execution_id,
-        review_request_reason=review_request_reason,
-        rejection_reason=rejection_reason,
+        request_reason=request_reason,
         reviewer_ids=reviewer_ids,
         commit=False,
         session=session,
@@ -138,12 +137,12 @@ def initiate_query_execution(query_execution, uid, peer_review_params, session):
 
 @register("/query_execution/", methods=["POST"])
 def create_query_execution(
-    query,
-    engine_id,
-    metadata=None,
-    data_cell_id=None,
-    originator=None,
-    peer_review_params=None,
+    query: str,
+    engine_id: int,
+    metadata: Optional[Dict] = None,
+    data_cell_id: Optional[int] = None,
+    originator: Optional[str] = None,
+    peer_review_params: Optional[PeerReviewParamsDict] = None,
 ):
     """
     Creates a new QueryExecution.
