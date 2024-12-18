@@ -20,7 +20,6 @@ from . import survey
 from . import query_transform
 from . import github
 
-
 # Keep this at the end of imports to make sure the plugin APIs override the default ones
 try:
     import api_plugin

@@ -1,5 +1,5 @@
 import type { IAccessRequest } from 'const/accessRequest';
-import { TDataDocMetaVariables } from 'const/datadoc';
+import { IPeerReviewParams, TDataDocMetaVariables } from 'const/datadoc';
 import { IQueryTranspiler, ITranspiledQuery } from 'const/queryEngine';
 import {
     IQueryError,
@@ -71,7 +71,8 @@ export const QueryExecutionResource = {
         query: string,
         engineId: number,
         cellId?: number,
-        metadata?: Record<string, string | number>
+        metadata?: Record<string, string | number>,
+        peerReviewParams?: IPeerReviewParams
     ) => {
         const params = {
             query,
@@ -85,6 +86,10 @@ export const QueryExecutionResource = {
         if (cellId != null) {
             params['data_cell_id'] = cellId;
             params['originator'] = dataDocSocket.socketId;
+        }
+
+        if (peerReviewParams != null) {
+            params['peer_review_params'] = peerReviewParams;
         }
 
         return ds.save<IRawQueryExecution>('/query_execution/', params);

@@ -142,3 +142,10 @@ export type ISamplingTables = Record<
     string,
     { sampled_table?: string; sample_rate?: number }
 >;
+
+export interface IPeerReviewParams {
+    reviewer_ids: number[];
+    external_recipients: string[];
+    notifier_name?: string;
+    request_reason: string;
+}
