@@ -437,6 +437,13 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                     type="toggle"
                                     label="(Experimental) Enable Row Limit"
                                 />
+
+                                <SimpleField
+                                    stacked
+                                    name="feature_params.peer_review"
+                                    type="toggle"
+                                    label="(Experimental) Enable Peer Reviews"
+                                />
                             </div>
                         </div>
 
