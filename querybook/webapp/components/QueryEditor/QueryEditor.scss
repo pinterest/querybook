@@ -74,9 +74,9 @@
                     word-break: break-word;
                     font-size: var(--text-size);
 
-                    .table-tooltip-header {
+                    .tooltip-header {
                         font-size: var(--text-size);
-                        color: var(--text-dark);
+                        color: var(--color-accent-dark);
                         font-weight: var(--bold-font);
                         justify-content: space-between;
                         align-items: start;
