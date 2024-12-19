@@ -36,7 +36,6 @@ from const.query_execution import (
 )
 from logic import (
     query_execution as logic,
-    query_review as query_review_logic,
     datadoc as datadoc_logic,
     user as user_logic,
     admin as admin_logic,
@@ -59,6 +58,7 @@ from models.access_request import AccessRequest
 from app.db import with_session
 from env import QuerybookSettings
 from lib.notify.utils import notify_user
+from lib.query_review import query_review_handler
 
 QUERY_RESULT_LIMIT_CONFIG = get_config_value("query_result_limit")
 
@@ -88,39 +88,11 @@ def process_query_execution_metadata(
     return data_doc
 
 
-def initiate_query_peer_review_workflow(
-    query_execution_id: int,
-    uid: int,
-    peer_review_params: PeerReviewParamsDict,
-    session=None,
-):
-    """
-    Initiates the query peer review workflow by creating a QueryReview,
-    assigning reviewers, and sending notifications.
-    """
-    reviewer_ids = peer_review_params.get("reviewer_ids", [])
-    external_recipients = peer_review_params.get("external_recipients", [])
-    notifier_name = peer_review_params.get("notifier_name", "")
-    request_reason = peer_review_params.get("request_reason", "")
-
-    query_review = query_review_logic.create_query_review(
-        query_execution_id=query_execution_id,
-        request_reason=request_reason,
-        reviewer_ids=reviewer_ids,
-        commit=False,
-        session=session,
-    )
-    # TODO: Implement notification logic for reviewers
-    print(external_recipients)
-    print(notifier_name)
-    print(query_review)
-
-
 def initiate_query_execution(query_execution, uid, peer_review_params, session):
-    """Initiate the query execution based on delay_execution flag."""
+    """Initiate the query execution based on peer_review_params."""
     # Initiate peer review workflow
     if peer_review_params:
-        initiate_query_peer_review_workflow(
+        query_review_handler.initiate_query_peer_review_workflow(
             query_execution_id=query_execution.id,
             uid=uid,
             peer_review_params=peer_review_params,
@@ -154,7 +126,6 @@ def create_query_execution(
         data_cell_id (int, optional): ID of the DataDoc cell to associate with.
         originator (str, optional): Identifier for the originator of the request.
         peer_review_params (dict, optional): Parameters for peer review workflow.
-        delay_execution (bool, optional): Flag to delay query execution.
 
     Returns:
         dict: A dictionary representation of the created QueryExecution.
@@ -226,7 +197,11 @@ def create_query_execution(
 def get_query_execution(query_execution_id):
     verify_query_execution_permission(query_execution_id)
     execution = logic.get_query_execution_by_id(query_execution_id)
-    execution_dict = execution.to_dict(True) if execution is not None else None
+    execution_dict = (
+        execution.to_dict(with_statement=True, with_query_review=True)
+        if execution is not None
+        else None
+    )
     return execution_dict
 
 
@@ -779,3 +754,39 @@ def transpile_query(
 ):
     transpiler = get_transpiler_by_name(transpiler_name)
     return transpiler.transpile(query, from_language, to_language)
+
+
+@register("/query_execution/<int:query_execution_id>/approve_review/", methods=["PUT"])
+def approve_query_review(query_execution_id):
+    with DBSession() as session:
+        verify_query_execution_permission(query_execution_id)
+        reviewer_id = current_user.id
+        query_execution = logic.get_query_execution_by_id(
+            query_execution_id, session=session
+        )
+        query_review = query_execution.review
+        api_assert(
+            query_review is not None,
+            "Review not found",
+        )
+        query_review_handler.approve_review(query_review.id, reviewer_id, session)
+    return query_execution.to_dict(with_statement=False, with_query_review=True)
+
+
+@register("/query_execution/<int:query_execution_id>/reject_review/", methods=["PUT"])
+def reject_query_review(query_execution_id, rejection_reason):
+    with DBSession() as session:
+        verify_query_execution_permission(query_execution_id)
+        reviewer_id = current_user.id
+        query_execution = logic.get_query_execution_by_id(
+            query_execution_id, session=session
+        )
+        query_review = query_execution.review
+        api_assert(
+            query_review is not None,
+            "Review not found",
+        )
+        query_review_handler.reject_review(
+            query_review.id, reviewer_id, rejection_reason, session
+        )
+        return query_execution.to_dict(with_statement=False, with_query_review=True)

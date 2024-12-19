@@ -26,12 +26,11 @@ def create_query_review(
         session=session,
     )
 
-    # Add reviewers to the query_review.reviewers relationship
-    if reviewer_ids:
-        for reviewer_id in reviewer_ids:
-            reviewer = get_user_by_id(reviewer_id, session=session)
-            if reviewer:
-                query_review.assigned_reviewers.append(reviewer)
+    # Add reviewers to the query_review assigned reviewers relationship
+    for reviewer_id in reviewer_ids:
+        reviewer = get_user_by_id(reviewer_id, session=session)
+        if reviewer:
+            query_review.assigned_reviewers.append(reviewer)
 
     if commit:
         session.commit()

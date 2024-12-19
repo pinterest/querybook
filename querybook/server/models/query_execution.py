@@ -63,7 +63,7 @@ class QueryExecution(Base):
     )
 
     @with_formatted_date
-    def to_dict(self, with_statement=True):
+    def to_dict(self, with_statement=True, with_query_review=False):
         item = {
             "id": self.id,
             "task_id": self.task_id,
@@ -79,6 +79,9 @@ class QueryExecution(Base):
             item["statement_executions"] = [
                 s.to_dict() for s in self.statement_executions
             ]
+
+        if with_query_review:
+            item["review"] = self.review.to_dict() if self.review else None
 
         return item
 
