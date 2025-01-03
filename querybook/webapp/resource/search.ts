@@ -81,6 +81,12 @@ export const SearchQueryResource = {
             results: IQueryPreview[];
             count: number;
         }>('/search/queries/', params as unknown as Record<string, unknown>),
+
+    vectorSearch: (params: ISearchQueryParams) =>
+        ds.fetch<{
+            results: IQueryPreview[];
+            count: number;
+        }>('/search/queries/vector/', { ...params }),
 };
 
 export const SearchDataDocResource = {

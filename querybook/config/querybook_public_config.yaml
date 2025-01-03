@@ -15,6 +15,9 @@ ai_assistant:
     table_vector_search:
         enabled: false
 
+    query_vector_search:
+        enabled: false
+
     sql_complete:
         enabled: false
 

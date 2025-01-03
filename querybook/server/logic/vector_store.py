@@ -1,5 +1,6 @@
 from app.db import with_session
 from const.ai_assistant import (
+    DEFAULT_QUERY_SEARCH_LIMIT,
     DEFAULT_TABLE_SEARCH_LIMIT,
     MAX_SAMPLE_QUERY_COUNT_FOR_TABLE_SUMMARY,
 )
@@ -13,6 +14,9 @@ from logic.admin import get_query_engine_by_id
 from logic.elasticsearch import get_sample_query_cells_by_table_name
 from logic.metastore import get_all_table, get_table_by_name
 from models.metastore import DataTable
+from lib.elasticsearch.search_query import (
+    construct_query_search_by_query_cell_ids,
+)
 
 LOG = get_logger(__file__)
 
@@ -172,6 +176,29 @@ def search_tables(
     name_to_doc = {r["full_name"]: r for r in results}
     sorted_docs = [name_to_doc[t[0]] for t in tables if t[0] in name_to_doc]
 
+    return {"count": len(sorted_docs), "results": sorted_docs}
+
+
+def search_query(keywords, filters=None, limit=DEFAULT_QUERY_SEARCH_LIMIT):
+    """Search related SQL queries from vector store based on NLP query text."""
+    queries = get_vector_store().search_query(keywords, k=limit)
+    query_cell_ids = [q[0] for q in queries]
+
+    if not query_cell_ids:
+        return {"count": 0, "results": []}
+
+    es_query = construct_query_search_by_query_cell_ids(
+        ids=query_cell_ids, filters=filters, limit=limit
+    )
+
+    index_name = ES_CONFIG["query_cells"]["index_name"]
+    results = get_matching_objects(es_query, index_name)
+
+    # Reorder the Elasticsearch results based on the vector store ranking
+    es_results_by_id = {res["id"]: res for res in results}
+    sorted_docs = [
+        es_results_by_id[qid] for qid in query_cell_ids if qid in es_results_by_id
+    ]
     return {"count": len(sorted_docs), "results": sorted_docs}
 
 
