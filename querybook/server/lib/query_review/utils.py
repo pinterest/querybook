@@ -1,3 +1,4 @@
+from typing import Any, Dict
 from app.db import with_session
 from env import QuerybookSettings
 from lib.notify.utils import notify_user
@@ -24,6 +25,8 @@ def get_query_execution_url(query_execution_id: int, session=None) -> str:
 def notify_reviewers_of_new_request(
     query_review_id: int,
     uid: int,
+    template_name: str,
+    additional_params: Dict[str, Any],
     session=None,
 ):
     """
@@ -47,10 +50,13 @@ def notify_reviewers_of_new_request(
         "query_execution_url": execution_url,
         "review_request_reason": query_review.request_reason,
     }
+    if additional_params:
+        template_params.update(additional_params)
+
     for reviewer in query_review.assigned_reviewers:
         notify_user(
             user=reviewer,
-            template_name="query_review_request",
+            template_name=template_name,
             template_params=template_params,
             session=session,
         )

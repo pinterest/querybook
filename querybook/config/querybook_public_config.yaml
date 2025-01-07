@@ -46,6 +46,7 @@ github_integration:
     enabled: false
 
 peer_review:
+    enabled: false
     description: 'Use this feature to ensure the accuracy and compliance of your sensitive queries, such as those modifying production tables. Select trusted reviewers who will verify your query before it is executed.'
     user_guide_link: 'https://www.querybook.org/'
     review_tip: 'Tip: Before submitting your sensitive query for review, run it once to validate its syntax and feasibility. This helps identify errors early and reduces unnecessary review cycles.'
