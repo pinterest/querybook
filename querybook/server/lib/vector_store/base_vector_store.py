@@ -3,6 +3,7 @@ from abc import abstractmethod
 from typing import Literal, Optional
 
 from const.ai_assistant import (
+    DEFAULT_QUERY_SEARCH_LIMIT,
     DEFAULT_TABLE_SEARCH_LIMIT,
     DEFAULT_VECTOR_STORE_FETCH_LIMIT,
     DEFAULT_SIMILARITY_SCORE_THRESHOLD,
@@ -113,7 +114,7 @@ class VectorStoreBase(VectorStore):
         self,
         text: str,
         threshold: float = DEFAULT_SIMILARITY_SCORE_THRESHOLD,
-        k=DEFAULT_TABLE_SEARCH_LIMIT,
+        k=DEFAULT_QUERY_SEARCH_LIMIT,
         fetch_k=DEFAULT_VECTOR_STORE_FETCH_LIMIT,
     ) -> list[tuple[int, float]]:
         """
