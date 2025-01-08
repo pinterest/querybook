@@ -125,10 +125,20 @@ export function performSearch(): ThunkResult<Promise<ISearchPreview[]>> {
             }>;
             switch (searchType) {
                 case SearchType.Query:
-                    searchRequest = SearchQueryResource.search({
-                        ...searchParams,
-                        environment_id: state.environment.currentEnvironmentId,
-                    });
+                    if (useVectorSearch) {
+                        searchRequest = SearchQueryResource.vectorSearch({
+                            environment_id:
+                                state.environment.currentEnvironmentId,
+                            keywords: searchString,
+                            filters: searchParams.filters,
+                        });
+                    } else {
+                        searchRequest = SearchQueryResource.search({
+                            ...searchParams,
+                            environment_id:
+                                state.environment.currentEnvironmentId,
+                        });
+                    }
                     break;
                 case SearchType.DataDoc:
                     searchRequest = SearchDataDocResource.search({

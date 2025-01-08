@@ -103,6 +103,10 @@ declare module 'config/querybook_public_config.yaml' {
                 enabled: boolean;
             };
 
+            query_vector_search: {
+                enabled: boolean;
+            };
+
             sql_complete: {
                 enabled: boolean;
             };

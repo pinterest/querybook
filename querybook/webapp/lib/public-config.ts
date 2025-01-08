@@ -6,6 +6,7 @@ export const isAIFeatureEnabled = (
         | 'query_generation'
         | 'query_auto_fix'
         | 'table_vector_search'
+        | 'query_vector_search'
         | 'sql_complete'
 ): boolean => {
     const aiAssistantConfig = PublicConfig.ai_assistant;

@@ -82,6 +82,20 @@ def search_query(
     return {"count": count, "results": results}
 
 
+@register("/search/queries/vector/", methods=["GET"])
+def vector_search_query(
+    environment_id,
+    keywords,
+    filters=[],
+):
+    from logic import vector_store as vs_logic
+
+    verify_environment_permission([environment_id])
+    filters.append(["environment_id", environment_id])
+
+    return vs_logic.search_query(keywords, filters)
+
+
 @register("/search/tables/", methods=["GET"])
 def search_tables(
     metastore_id,
