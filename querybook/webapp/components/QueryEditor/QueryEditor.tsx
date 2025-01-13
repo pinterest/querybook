@@ -459,7 +459,9 @@ export const QueryEditor: React.FC<
                     maxHeight={height === 'auto' ? '50vh' : null}
                     extensions={extensions}
                     basicSetup={basicSetup}
-                    editable={!readOnly}
+                    // editable is working on the editor view. set as true to make it still respond to keymaps, e.g. search
+                    editable={true}
+                    // readonly is working on the editor state. when true, the editor content will not change anyway.
                     readOnly={readOnly}
                     autoFocus={false}
                     onChange={onChangeHandler}
