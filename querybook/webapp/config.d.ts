@@ -135,9 +135,13 @@ declare module 'config/querybook_public_config.yaml' {
         };
         peer_review: {
             enabled: boolean;
-            description: string;
-            user_guide_link: string;
-            review_tip: string;
+            texts: {
+                modal: {
+                    description: string;
+                    guide_link: string;
+                    tip: string;
+                };
+            };
         };
     };
     export default data;

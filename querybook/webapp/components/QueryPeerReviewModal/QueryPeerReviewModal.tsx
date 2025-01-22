@@ -5,7 +5,6 @@ import * as Yup from 'yup';
 
 import { MultiCreatableUserSelect } from 'components/UserSelect/MultiCreatableUserSelect';
 import { IPeerReviewParams } from 'const/datadoc';
-import { PEER_REVIEW_CONFIG } from 'lib/public-config';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { FormField } from 'ui/Form/FormField';
 import { FormWrapper } from 'ui/Form/FormWrapper';
@@ -16,6 +15,7 @@ import { Modal } from 'ui/Modal/Modal';
 import { IStandardModalProps } from 'ui/Modal/types';
 
 import './QueryPeerReviewModal.scss';
+import { usePeerReview } from 'lib/peer-review/config';
 
 interface IQueryPeerReviewFormProps {
     onSubmit: (peerReviewParams: IPeerReviewParams) => Promise<void>;
@@ -41,10 +41,10 @@ const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
     });
 
     const {
-        description: featureDescription,
-        user_guide_link: helpLink,
-        review_tip: reviewTip,
-    } = PEER_REVIEW_CONFIG;
+        texts: {
+            modal: { description, guideLink, reviewTip },
+        },
+    } = usePeerReview();
 
     const handleSubmit = useCallback(
         async (values) => {
@@ -82,8 +82,8 @@ const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
                     <Form>
                         <div className="mb4 flex-row">
                             <Message type="info" size="large">
-                                {featureDescription} Learn more{' '}
-                                <Link to={helpLink} newTab>
+                                {description} Learn more{' '}
+                                <Link to={guideLink} newTab>
                                     <strong>here</strong>.
                                 </Link>
                             </Message>

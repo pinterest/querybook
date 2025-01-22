@@ -16,6 +16,8 @@ export enum QueryExecutionStatus {
     DONE,
     ERROR,
     CANCEL,
+    PENDING_REVIEW,
+    REJECTED,
 }
 
 export enum StatementExecutionStatus {
@@ -63,6 +65,7 @@ export interface IQueryExecution {
     uid: number;
 
     statement_executions?: number[];
+    query_review_id?: number;
 
     // If the query is still running
     // it may have a field called total which
@@ -84,6 +87,7 @@ export interface IQueryExecutionExportStatusInfo {
 
 export type IRawQueryExecution = IQueryExecution & {
     statement_executions: IStatementExecution[];
+    review?: IQueryReview;
 };
 
 export interface IStatementExecution {
@@ -107,6 +111,20 @@ export interface IStatementExecution {
     log?: string[];
     downloadUrl?: string;
     downloadUrlFailed?: boolean;
+}
+
+export interface IQueryReview {
+    id: number;
+    query_execution_id: number;
+    requested_by: number;
+    reviewed_by?: number;
+    status: 'pending' | 'approved' | 'rejected';
+    request_reason: string;
+    rejection_reason?: string;
+    created_at: number;
+    updated_at: number;
+    reviewer_ids: number[];
+    execution?: IQueryExecution;
 }
 
 export interface IStatementResult {

@@ -17,6 +17,7 @@ import { Link } from 'ui/Link/Link';
 import { Entity } from './types';
 
 import './EntitySidebar.scss';
+import { usePeerReview } from 'lib/peer-review/config';
 
 interface IEntitySidebarProps {
     selectedEntity: Entity;
@@ -27,6 +28,7 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> =
     React.memo(({ selectedEntity, onSelectEntity }) => {
         const environment = useSelector(currentEnvironmentSelector);
         const queryMetastores = useSelector(queryMetastoresSelector);
+        const { isEnabled: isPeerReviewEnabled } = usePeerReview();
 
         return (
             <div className="EntitySidebar">
@@ -153,6 +155,22 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> =
                         }}
                         active={selectedEntity === 'execution'}
                     />
+                    {isPeerReviewEnabled && (
+                        <IconButton
+                            icon="Clipboard"
+                            tooltip="Requested & Assigned Reviews"
+                            tooltipPos="right"
+                            active={selectedEntity === 'reviews'}
+                            onClick={() => {
+                                trackClick({
+                                    component: ComponentType.LEFT_SIDEBAR,
+                                    element: ElementType.REVIEWS_BUTTON,
+                                });
+                                onSelectEntity('reviews');
+                            }}
+                            title="Reviews"
+                        />
+                    )}
                 </div>
                 <div className="apps-list flex-column">
                     <QueryEngineStatusButton />

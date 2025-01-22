@@ -1,0 +1,104 @@
+@import '../../scss_variables.scss';
+
+.QueryReviewsNavigator {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    .reviews-header {
+        border-bottom: var(--border);
+        background-color: var(--bg-lightest);
+        padding: 8px 16px;
+
+        .list-header {
+            background-color: transparent !important;
+            margin: 0;
+        }
+    }
+
+    .list-content {
+        overflow-y: auto;
+        padding: 8px;
+
+        .empty-section-message {
+            text-align: center;
+            font-size: var(--xlarge-text-size);
+            user-select: none;
+            padding: 16px;
+            font-weight: bold;
+            color: var(--text-light);
+        }
+    }
+}
+
+.QueryReviewItem {
+    cursor: pointer;
+    background: var(--bg-light);
+    border-radius: var(--border-radius-sm);
+    padding: 12px;
+    margin-bottom: var(--margin-xs);
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: var(--bg-hover);
+    }
+
+    .review-header {
+        .StatusIcon {
+            margin-right: 8px;
+        }
+    }
+
+    .review-content {
+        .review-row {
+            display: flex;
+            margin-bottom: 8px;
+
+            .label {
+                color: var(--text-light);
+                min-width: 100px;
+                margin-right: 12px;
+                padding-top: 4px;
+            }
+
+            .value {
+                flex: 1;
+                word-break: break-word;
+
+                &.text-ellipsis {
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+            }
+
+            .reviewers-list {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                align-items: center;
+
+                .UserBadge {
+                    margin-right: 0;
+                }
+
+                .show-more-reviewers {
+                    color: var(--text-light);
+                    font-size: var(--xsmall-text-size);
+                    cursor: pointer;
+                    padding: 2px 4px;
+                    border-radius: var(--border-radius-sm);
+
+                    &:hover {
+                        background: var(--bg-hover);
+                        color: var(--text);
+                    }
+                }
+            }
+        }
+    }
+}

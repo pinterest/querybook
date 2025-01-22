@@ -35,6 +35,7 @@ import {
 import { AdminDeletedList } from './AdminDeletedList';
 
 import './AdminQueryEngine.scss';
+import { usePeerReview } from 'lib/peer-review/config';
 
 interface IProps {
     queryEngines: IAdminQueryEngine[];
@@ -263,7 +264,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
         item: IAdminQueryEngine,
         onChange: (fieldName: string, fieldValue: any) => void
     ) => {
-        const { enabled: peerReviewEnabled } = PEER_REVIEW_CONFIG;
+        const { isEnabled: peerReviewEnabled } = usePeerReview();
 
         const updateExecutor = (executor: string) => {
             onChange('executor', executor);

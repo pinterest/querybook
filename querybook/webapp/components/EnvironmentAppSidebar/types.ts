@@ -1,1 +1,1 @@
-export type Entity = 'datadoc' | 'table' | 'snippet' | 'execution';
+export type Entity = 'datadoc' | 'table' | 'snippet' | 'execution' | 'reviews';
