@@ -41,9 +41,7 @@ const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
     });
 
     const {
-        texts: {
-            modal: { description, guideLink, reviewTip },
-        },
+        requestTexts: { description, guideLink, reviewTip },
     } = usePeerReview();
 
     const handleSubmit = useCallback(

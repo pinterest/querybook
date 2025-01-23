@@ -47,7 +47,7 @@ github_integration:
 
 peer_review:
     enabled: false
-    modal_texts: # Review request modal texts
+    request_texts: # When users request reviews
         description: >-
             Use this feature to ensure the accuracy and compliance of your sensitive queries,
             such as those modifying production tables. Select trusted reviewers who will
@@ -57,3 +57,7 @@ peer_review:
             Tip: Before submitting your sensitive query for review, run it once to validate
             its syntax and feasibility. This helps identify errors early and reduces
             unnecessary review cycles.
+    reviewer_texts: # When reviewers take actions
+        approve_message: >-
+            By approving this query, you confirm it meets our organization's standards
+            and security requirements. This action cannot be undone.

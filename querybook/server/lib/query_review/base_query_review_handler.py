@@ -1,16 +1,24 @@
 from abc import ABCMeta, abstractmethod
 from typing import Any, Dict, Tuple
 from app.datasource import api_assert
+from app.db import with_session
 from const.datasources import (
     INVALID_SEMANTIC_STATUS_CODE,
     RESOURCE_NOT_FOUND_STATUS_CODE,
 )
-from const.query_execution import PeerReviewParamsDict, QueryExecutionStatus
-from lib.query_review.utils import notify_reviewers_of_new_request
+from lib.logger import get_logger
+from lib.query_review.utils import (
+    notify_query_author_of_approval,
+    notify_query_author_of_rejection,
+    notify_reviewers_of_new_request,
+)
 from logic import query_review as logic, query_execution as qe_logic
+from const.query_execution import PeerReviewParamsDict, QueryExecutionStatus
 from models.query_execution import QueryExecution
 from models.query_review import QueryReview
 from tasks.run_query import run_query_task
+
+LOG = get_logger(__file__)
 
 
 class BaseQueryReviewHandler(metaclass=ABCMeta):
@@ -145,50 +153,56 @@ class BaseQueryReviewHandler(metaclass=ABCMeta):
 
         return query_execution, query_review
 
+    @with_session
     def approve_review(
         self, query_execution_id: int, reviewer_id: int, session=None
     ) -> QueryExecution:
-        """
-        Approve a review request and notifies review author.
+        """Approves a review request and initiates query execution."""
+        try:
+            # 1. Validate review
+            query_execution, query_review = self._validate_review(
+                query_execution_id, reviewer_id, session
+            )
 
-        Args:
-            query_execution_id (int): ID of the query execution.
-            reviewer_id (int): ID of the reviewing user.
-            session: Database session.
+            # 2. Update review status
+            logic.update_query_review(
+                query_review_id=query_review.id,
+                reviewed_by=reviewer_id,
+                commit=False,
+                session=session,
+            )
 
-        Returns:
-            QueryExecution: The updated query execution object.
-        """
-        query_execution, query_review = self._validate_review(
-            query_execution_id, reviewer_id, session
-        )
+            # 3. Update execution status
+            qe_logic.update_query_execution(
+                query_execution_id=query_execution.id,
+                status=QueryExecutionStatus.INITIALIZED,
+                commit=False,
+                session=session,
+            )
 
-        # Update review status
-        logic.update_query_review(
-            query_review_id=query_review.id,
-            reviewed_by=reviewer_id,
-            commit=False,
-            session=session,
-        )
+            # 4. Run  approval actions
+            self._additional_approval_actions(
+                query_review.id, reviewer_id, session=session
+            )
 
-        # Update execution status
-        qe_logic.update_query_execution(
-            query_execution_id=query_execution.id,
-            status=QueryExecutionStatus.INITIALIZED,
-            commit=False,
-            session=session,
-        )
+            session.commit()
 
-        session.commit()
+            run_query_task.apply_async(args=[query_execution.id])
+            notify_query_author_of_approval(
+                query_review=query_review,
+                query_execution=query_execution,
+                reviewer_id=reviewer_id,
+                session=session,
+            )
 
-        # Start query execution
-        run_query_task.apply_async(args=[query_execution.id])
+            return query_execution
 
-        # Custom post-approval actions
-        self._additional_approval_actions(query_review.id, reviewer_id, session)
+        except Exception as e:
+            LOG.error(f"approve_review failed: {str(e)}")
+            session.rollback()
+            raise
 
-        return query_execution
-
+    @with_session
     def reject_review(
         self,
         query_execution_id: int,
@@ -230,5 +244,13 @@ class BaseQueryReviewHandler(metaclass=ABCMeta):
         )
 
         session.commit()
+
+        notify_query_author_of_rejection(
+            query_review=query_review,
+            query_execution=query_execution,
+            reviewer_id=reviewer_id,
+            rejection_reason=rejection_reason,
+            session=session,
+        )
 
         return query_execution

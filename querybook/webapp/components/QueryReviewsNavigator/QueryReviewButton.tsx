@@ -38,9 +38,10 @@ export const QueryReviewButton = React.memo<IQueryReviewButtonProps>(
         const { pendingReviews } = useAssignedReviews();
 
         const buttonTitle = pendingReviews.length
-            ? `You have ${pendingReviews.length} pending reviews`
+            ? `You have ${pendingReviews.length} pending ${
+                  pendingReviews.length === 1 ? 'review' : 'reviews'
+              }`
             : 'No pending reviews';
-
         return (
             <span className="QueryReviewButton">
                 <IconButton

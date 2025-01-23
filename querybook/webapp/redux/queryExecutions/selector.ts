@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 
-import { IQueryExecution } from 'const/queryExecution';
+import { IQueryExecution, IQueryReview } from 'const/queryExecution';
 import { IStoreState } from 'redux/store/types';
 
 const queryExecutionIdSetSelector = (state: IStoreState, cellId: number) =>
@@ -45,6 +45,16 @@ export const queryExecutionSelector = (
     state: IStoreState,
     executionId: number
 ) => state.queryExecutions.queryExecutionById[executionId] as IQueryExecution;
+
+export const queryReviewByExecutionIdSelector = (
+    state: IStoreState,
+    queryExecutionId: number | null
+): IQueryReview => {
+    if (queryExecutionId == null) {
+        return null;
+    }
+    return state.queryExecutions.queryReviewByExecutionId[queryExecutionId];
+};
 
 // returns array of query statement ids
 export const makeQueryExecutionStatementExecutionSelector = () =>
