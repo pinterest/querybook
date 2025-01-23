@@ -21,17 +21,24 @@ import { Tabs } from 'ui/Tabs/Tabs';
 import { QueryReviewItem } from './QueryReviewItem';
 
 import './QueryReviewsNavigator.scss';
+import { TooltipDirection } from 'const/tooltip';
 
 type TabType = 'myReviews' | 'assigned';
 
 const NAVIGATOR_TABS = [
     {
         key: 'myReviews' as TabType,
-        name: 'My Requested Reviews',
+        name: 'Pending Reviews',
+        icon: 'Clock' as const,
+        tooltip: 'Reviews you have requested',
+        tooltipPos: 'down' as TooltipDirection,
     },
     {
         key: 'assigned' as TabType,
-        name: 'Reviews Assigned to Me',
+        name: 'Assigned Reviews',
+        icon: 'ListOrdered' as const,
+        tooltip: 'Reviews assigned to you',
+        tooltipPos: 'down' as TooltipDirection,
     },
 ];
 
@@ -99,8 +106,12 @@ export const QueryReviewsNavigator: React.FC = () => {
                 items={NAVIGATOR_TABS}
                 selectedTabKey={activeTab}
                 onSelect={handleTabChange}
+                pills
                 wide
+                selectColor
+                size="small"
                 className="list-header"
+                align="center"
             />
         </div>
     );

@@ -9,6 +9,7 @@ import { SearchContainer } from 'components/Search/SearchContainer';
 import { UserMenu } from 'components/UserMenu/UserMenu';
 import { ComponentType, ElementType } from 'const/analytics';
 import { trackClick } from 'lib/analytics';
+import { usePeerReview } from 'lib/peer-review/config';
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
 import { IconButton } from 'ui/Button/IconButton';
@@ -17,7 +18,7 @@ import { Link } from 'ui/Link/Link';
 import { Entity } from './types';
 
 import './EntitySidebar.scss';
-import { usePeerReview } from 'lib/peer-review/config';
+import { QueryReviewButton } from 'components/QueryReviewsNavigator/QueryReviewButton';
 
 interface IEntitySidebarProps {
     selectedEntity: Entity;
@@ -156,10 +157,7 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> =
                         active={selectedEntity === 'execution'}
                     />
                     {isPeerReviewEnabled && (
-                        <IconButton
-                            icon="Clipboard"
-                            tooltip="Requested & Assigned Reviews"
-                            tooltipPos="right"
+                        <QueryReviewButton
                             active={selectedEntity === 'reviews'}
                             onClick={() => {
                                 trackClick({
@@ -168,7 +166,6 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> =
                                 });
                                 onSelectEntity('reviews');
                             }}
-                            title="Reviews"
                         />
                     )}
                 </div>

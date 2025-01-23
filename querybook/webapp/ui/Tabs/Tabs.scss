@@ -15,14 +15,12 @@
             justify-content: center;
 
             a {
+                display: flex;
+                align-items: center;
+                gap: 8px;
                 color: var(--text);
 
                 .Icon {
-                    & ~ span {
-                        // To create gap between icon and title
-                        margin-left: 4px;
-                    }
-
                     svg {
                         height: 20px;
                         width: 20px;
