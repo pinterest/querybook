@@ -55,7 +55,7 @@ def assert_can_read(doc_id, session=None):
         api_assert(
             user_can_read(doc_id, uid=current_user.id, session=session),
             "CANNOT_READ_DATADOC",
-            UNAUTHORIZED_STATUS_CODE,
+            ACCESS_RESTRICTED_STATUS_CODE,
         )
     except DocDoesNotExist:
         api_assert(False, "DOC_DNE", RESOURCE_NOT_FOUND_STATUS_CODE)

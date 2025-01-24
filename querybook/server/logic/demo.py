@@ -6,6 +6,7 @@ from const.data_element import (
     DataElementAssociationType,
 )
 from const.schedule import ScheduleTaskType
+from const.user import UserGroup
 from lib.lineage.utils import lineage as lineage_logic
 from logic import (
     admin as admin_logic,
@@ -126,6 +127,32 @@ def set_up_demo(uid: int, session=None):
             "environment": environment.name,
             "data_doc_id": data_doc_id,
         }
+
+
+@with_session
+def create_demo_users(session=None):
+    user_logic.create_user(
+        username="demo-user-1",
+        password="password",
+        fullname="Demo User 1",
+        email="demo-user-1@pins.com",
+        session=session,
+    )
+    user_logic.create_user(
+        username="demo-user-2",
+        password="password",
+        fullname="Demo User 2",
+        email="demo-user-2@pins.com",
+        session=session,
+    )
+    demo_user_group = UserGroup(
+        name="demo-group",
+        display_name="Demo User Group",
+        description="Demo user group",
+        email="demo-group@pins.com",
+        members=["demo-user-1", "demo-user-2"],
+    )
+    user_logic.create_or_update_user_group(demo_user_group, session=session)
 
 
 @with_session
