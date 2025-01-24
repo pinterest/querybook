@@ -67,6 +67,8 @@ def set_up_demo(uid: int, session=None):
         environment.id, engine_id, commit=False, session=session
     )
 
+    create_demo_users(session=session)
+
     task_schedule_id = TaskSchedule.create(
         {
             "name": "update_metastore_{}".format(metastore_id),
