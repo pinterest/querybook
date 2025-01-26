@@ -158,13 +158,13 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> =
                     />
                     {isPeerReviewEnabled && (
                         <QueryReviewButton
-                            active={selectedEntity === 'reviews'}
+                            active={selectedEntity === 'review'}
                             onClick={() => {
                                 trackClick({
                                     component: ComponentType.LEFT_SIDEBAR,
                                     element: ElementType.REVIEWS_BUTTON,
                                 });
-                                onSelectEntity('reviews');
+                                onSelectEntity('review');
                             }}
                         />
                     )}

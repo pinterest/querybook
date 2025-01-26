@@ -21,6 +21,12 @@ interface IQueryReviewItemProps {
     type: ReviewType;
 }
 
+const STATUS_COLOR_MAP: Record<string, Status> = {
+    pending: Status.warning,
+    approved: Status.success,
+    rejected: Status.error,
+} as const;
+
 const ReviewHeader: React.FC<{ review: IQueryReview; statusColor: Status }> = ({
     review,
     statusColor,
@@ -136,11 +142,7 @@ export const QueryReviewItem: React.FC<IQueryReviewItemProps> = ({
     }, [queryExecutionUrl]);
 
     const statusColor: Status =
-        review.status === 'pending'
-            ? Status.warning
-            : review.status === 'approved'
-            ? Status.success
-            : Status.error;
+        STATUS_COLOR_MAP[review.status] ?? Status.warning;
 
     return (
         <>

@@ -96,7 +96,7 @@ export const EnvironmentAppSidebar: React.FunctionComponent = () => {
                 />
             ) : entity === 'execution' ? (
                 <QueryViewNavigator />
-            ) : entity === 'reviews' ? (
+            ) : entity === 'review' ? (
                 <QueryReviewsNavigator />
             ) : (
                 <div />
