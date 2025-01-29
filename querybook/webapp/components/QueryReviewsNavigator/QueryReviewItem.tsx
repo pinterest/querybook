@@ -5,7 +5,7 @@ import { IQueryReview } from 'const/queryExecution';
 import { Status } from 'const/queryStatus';
 import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
-import { getWithinEnvUrl } from 'lib/utils/query-string';
+import { navigateWithinEnv } from 'lib/utils/query-string';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
 import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
@@ -133,12 +133,12 @@ export const QueryReviewItem: React.FC<IQueryReviewItemProps> = ({
     const selfRef = useRef<HTMLDivElement>();
 
     const queryExecutionUrl = useMemo(
-        () => getWithinEnvUrl(`/query_execution/${review.query_execution_id}/`),
+        () => `/query_execution/${review.query_execution_id}/`,
         [review.query_execution_id]
     );
 
     const handleClick = useCallback(() => {
-        history.push(queryExecutionUrl, { isModal: true });
+        navigateWithinEnv(queryExecutionUrl);
     }, [queryExecutionUrl]);
 
     const statusColor: Status =
