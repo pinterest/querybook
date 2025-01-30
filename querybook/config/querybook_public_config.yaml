@@ -46,18 +46,30 @@ github_integration:
     enabled: false
 
 peer_review:
-    enabled: false
-    request_texts: # When users request reviews
-        description: >-
-            Use this feature to ensure the accuracy and compliance of your sensitive queries,
-            such as those modifying production tables. Select trusted reviewers who will
-            verify your query before it is executed.
+    enabled: true
+    request_texts:  # When users request reviews
+        description: |
+            This peer review system helps ensure query quality and data safety.
+
+            Note: Queries that fail after approval will require a new review request.
+
+            Important Guidelines:
+            • Choose reviewers familiar with the affected data
+            • Include relevant references in query title or justification
+            • Document query purpose and impact
         guide_link: 'https://www.querybook.org/'
-        tip: >-
-            Tip: Before submitting your sensitive query for review, run it once to validate
-            its syntax and feasibility. This helps identify errors early and reduces
-            unnecessary review cycles.
-    reviewer_texts: # When reviewers take actions
-        approve_message: >-
-            By approving this query, you confirm it meets our organization's standards
-            and security requirements. This action cannot be undone.
+        tip: |
+            Before Submitting:
+            • Run query to verify syntax
+            • Validate table names and fields
+            • Check query performance
+    reviewer_texts:  # When reviewers take actions
+        approve_message: |
+            As a reviewer, you are responsible for validating:
+
+            • Query purpose and necessity
+            • Potential data impact
+            • Compliance with data policies
+
+            Request clarification if more context is needed.
+            Approval cannot be reversed.

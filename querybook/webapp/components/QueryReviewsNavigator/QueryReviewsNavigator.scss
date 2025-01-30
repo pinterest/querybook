@@ -10,10 +10,22 @@
         border-bottom: var(--border);
         background-color: var(--bg-lightest);
         padding: 8px 16px;
+        display: flex;
+        align-items: center;
 
         .list-header {
             background-color: transparent !important;
             margin: 0;
+        }
+
+        .Tabs {
+            flex: 1;
+            ul {
+                flex: 1;
+                li {
+                    flex: 1;
+                }
+            }
         }
     }
 
@@ -23,7 +35,7 @@
 
         .empty-section-message {
             text-align: center;
-            font-size: var(--xlarge-text-size);
+            font-size: var(--med-text-size);
             user-select: none;
             padding: 16px;
             font-weight: bold;
