@@ -1,13 +1,10 @@
 import { Form, Formik } from 'formik';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { toast } from 'react-hot-toast';
-import { useSelector } from 'react-redux';
 import * as Yup from 'yup';
 
 import { MultiCreatableUserSelect } from 'components/UserSelect/MultiCreatableUserSelect';
 import { IPeerReviewParams } from 'const/datadoc';
-import { PEER_REVIEW_CONFIG } from 'lib/public-config';
-import { notificationServiceSelector } from 'redux/notificationService/selector';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { FormField } from 'ui/Form/FormField';
 import { FormWrapper } from 'ui/Form/FormWrapper';
@@ -16,44 +13,59 @@ import { Link } from 'ui/Link/Link';
 import { Message } from 'ui/Message/Message';
 import { Modal } from 'ui/Modal/Modal';
 import { IStandardModalProps } from 'ui/Modal/types';
+import { Icon } from 'ui/Icon/Icon';
 
 import './QueryPeerReviewModal.scss';
+import { usePeerReview } from 'lib/peer-review/config';
 
 interface IQueryPeerReviewFormProps {
     onSubmit: (peerReviewParams: IPeerReviewParams) => Promise<void>;
     onHide: () => void;
 }
 
-const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
+interface IDescriptionSectionProps {
+    description: string;
+    tip: string;
+    guideLink: string;
+}
+
+const DescriptionSection: React.FC<IDescriptionSectionProps> = ({
+    description,
+    tip,
+    guideLink,
+}) => (
+    <div className="description-section">
+        <Message type="info" size="large">
+            <div className="description-content">
+                <div className="main-description">
+                    <h4>About Peer Review</h4>
+                    <div className="description-text">{description}</div>
+                </div>
+
+                <div className="checklist-box">
+                    <h4>Review Checklist</h4>
+                    <div className="checklist-content">{tip}</div>
+                    <div className="guide-link">
+                        <Link to={guideLink} newTab>
+                            <Icon name="Book" size={12} />
+                            <span>View Complete Guidelines</span>
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        </Message>
+    </div>
+);
+export const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
     onSubmit,
     onHide,
 }) => {
-    const notifiers = useSelector(notificationServiceSelector);
-    const notifierOptions = useMemo(
-        () =>
-            notifiers.map((notifier) => ({
-                value: notifier.name,
-                label: notifier.name,
-            })),
-        [notifiers]
-    );
-    const getNotifierHelp = useCallback(
-        (notifierName: string) =>
-            notifiers.find((n) => n.name === notifierName)?.help ||
-            'Add comma(,) separated recipients here',
-        [notifiers]
-    );
-
     const initialValues = {
-        notifyWith: '',
         reviewers: [],
         requestReason: '',
     };
 
     const peerReviewFormSchema = Yup.object().shape({
-        notifyWith: Yup.string().required(
-            'Please select a notification method'
-        ),
         reviewers: Yup.array()
             .min(1, 'Please select at least one reviewer')
             .required('Please select at least one reviewer'),
@@ -63,27 +75,18 @@ const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
     });
 
     const {
-        description: featureDescription,
-        user_guide_link: helpLink,
-        review_tip: reviewTip,
-    } = PEER_REVIEW_CONFIG;
+        requestTexts: { description, guideLink, reviewTip },
+    } = usePeerReview();
 
     const handleSubmit = useCallback(
         async (values) => {
             try {
-                const notifierName = values.notifyWith;
                 const reviewerIds = values.reviewers
                     .filter((v) => 'isUser' in v && v.isUser)
                     .map((v) => v.value);
 
-                const externalRecipients = values.reviewers
-                    .filter((v) => !('isUser' in v) || !v.isUser)
-                    .map((v) => v.value);
-
                 const peerReviewParams = {
                     reviewer_ids: reviewerIds,
-                    external_recipients: externalRecipients,
-                    notifier_name: notifierName,
                     request_reason: values.requestReason,
                 };
                 await onSubmit(peerReviewParams);
@@ -109,38 +112,16 @@ const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
             {({ submitForm, isSubmitting, isValid, setFieldValue, values }) => (
                 <FormWrapper minLabelWidth="150px">
                     <Form>
-                        <div className="mb4 flex-row">
-                            <Message type="info" size="large">
-                                {featureDescription} Learn more{' '}
-                                <Link to={helpLink} newTab>
-                                    <strong>here</strong>.
-                                </Link>
-                            </Message>
-                        </div>
-                        {reviewTip && (
-                            <Message
-                                className="mb12"
-                                type="warning"
-                                size="small"
-                                message={reviewTip}
-                            />
-                        )}
-
-                        <SimpleField
-                            label="Notify With"
-                            name="notifyWith"
-                            type="react-select"
-                            options={notifierOptions}
-                            withDeselect={false}
-                            stacked
+                        <DescriptionSection
+                            description={description}
+                            tip={reviewTip}
+                            guideLink={guideLink}
                         />
 
                         <FormField
                             label="Reviewers"
                             stacked
-                            help={
-                                'Ensure selected reviewers have sufficient context to review the query'
-                            }
+                            help="Ensure selected reviewers have sufficient context to review the query"
                             required
                         >
                             <MultiCreatableUserSelect
@@ -150,9 +131,9 @@ const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
                                 }}
                                 selectProps={{
                                     isClearable: true,
-                                    placeholder: getNotifierHelp(
-                                        values.notifyWith
-                                    ),
+                                    placeholder:
+                                        'Select reviewers for the query',
+                                    isValidNewOption: () => false,
                                 }}
                             />
                         </FormField>
@@ -164,13 +145,11 @@ const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
                             placeholder="Provide a justification."
                             rows={4}
                             stacked
-                            help={
-                                'Why do you need to run this sensitive query?'
-                            }
+                            help="Why do you need to run this sensitive query?"
                             required
                         />
 
-                        <div className="center-align mt16">
+                        <div className="modal-footer-buttons">
                             <AsyncButton
                                 onClick={submitForm}
                                 disabled={!isValid || isSubmitting}
@@ -192,7 +171,7 @@ export const QueryPeerReviewModal: React.FC<
     <Modal
         {...modalProps}
         onHide={onHide}
-        title="Request a peer review for your query"
+        title="Request a Peer Review for Your Query"
         className="QueryPeerReviewModal"
     >
         <QueryPeerReviewForm onSubmit={onSubmit} onHide={onHide} />

@@ -134,9 +134,17 @@ declare module 'config/querybook_public_config.yaml' {
             enabled: boolean;
         };
         peer_review: {
-            description: string;
-            user_guide_link: string;
-            review_tip: string;
+            enabled: boolean;
+            request_texts: {
+                // When users request reviews
+                description: string;
+                guide_link: string;
+                tip: string;
+            };
+            reviewer_texts: {
+                // When reviewers take actions
+                approve_message: string;
+            };
         };
     };
     export default data;

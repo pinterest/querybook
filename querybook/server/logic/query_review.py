@@ -1,6 +1,7 @@
 from app.db import with_session
 from logic.query_execution import get_query_execution_by_id
-from models.query_review import QueryReview
+from models.query_execution import QueryExecution
+from models.query_review import QueryExecutionReviewer, QueryReview
 from logic.user import get_user_by_id
 
 
@@ -26,12 +27,11 @@ def create_query_review(
         session=session,
     )
 
-    # Add reviewers to the query_review.reviewers relationship
-    if reviewer_ids:
-        for reviewer_id in reviewer_ids:
-            reviewer = get_user_by_id(reviewer_id, session=session)
-            if reviewer:
-                query_review.assigned_reviewers.append(reviewer)
+    # Add reviewers to the query_review assigned reviewers relationship
+    for reviewer_id in reviewer_ids:
+        reviewer = get_user_by_id(reviewer_id, session=session)
+        if reviewer:
+            query_review.assigned_reviewers.append(reviewer)
 
     if commit:
         session.commit()
@@ -75,3 +75,47 @@ def get_query_review(query_review_id: int, session=None):
 @with_session
 def get_query_review_from_query_execution_id(query_execution_id: int, session=None):
     return QueryReview.get(query_execution_id=query_execution_id, session=session)
+
+
+@with_session
+def get_reviews_created_by_user(user_id: int, session=None):
+    """
+    Get all query reviews created by a specific user.
+
+    Args:
+        user_id: The ID of the user who created the reviews
+        session: SQLAlchemy session
+
+    Returns:
+        List[QueryReview]: List of query reviews created by the user,
+                          ordered by creation date descending
+    """
+    return (
+        session.query(QueryReview)
+        .join(QueryExecution)
+        .filter(QueryExecution.uid == user_id)
+        .order_by(QueryReview.created_at.desc())
+        .all()
+    )
+
+
+@with_session
+def get_reviews_assigned_to_user(user_id: int, session=None):
+    """
+    Get all query reviews where a specific user is assigned as a reviewer.
+
+    Args:
+        user_id: The ID of the assigned reviewer
+        session: SQLAlchemy session
+
+    Returns:
+        List[QueryReview]: List of query reviews assigned to the user,
+                          ordered by creation date descending
+    """
+    return (
+        session.query(QueryReview)
+        .join(QueryExecutionReviewer)
+        .filter(QueryExecutionReviewer.uid == user_id)
+        .order_by(QueryReview.created_at.desc())
+        .all()
+    )

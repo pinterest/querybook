@@ -39,7 +39,13 @@ export const getTableSamplingRateOptions = () => {
 };
 
 export const PEER_REVIEW_CONFIG = PublicConfig.peer_review ?? {
-    description: '',
-    user_guide_link: '',
-    review_tip: '',
+    enabled: false,
+    request_texts: {
+        description: '',
+        guide_link: '',
+        tip: '',
+    },
+    reviewer_texts: {
+        approve_message: '',
+    },
 };

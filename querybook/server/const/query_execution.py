@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Optional, TypedDict
+from typing import List, TypedDict
 
 # Keep these the same as const/queryExecution.ts
 
@@ -50,8 +50,6 @@ class QueryEngineStatus(Enum):
 
 class PeerReviewParamsDict(TypedDict):
     reviewer_ids: List[int]
-    external_recipients: List[str]
-    notifier_name: Optional[str]
     request_reason: str
 
 

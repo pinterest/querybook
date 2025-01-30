@@ -34,6 +34,7 @@ import {
 import { AdminDeletedList } from './AdminDeletedList';
 
 import './AdminQueryEngine.scss';
+import { usePeerReview } from 'lib/peer-review/config';
 
 interface IProps {
     queryEngines: IAdminQueryEngine[];
@@ -262,6 +263,8 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
         item: IAdminQueryEngine,
         onChange: (fieldName: string, fieldValue: any) => void
     ) => {
+        const { isEnabled: isPeerReviewEnabled } = usePeerReview();
+
         const updateExecutor = (executor: string) => {
             onChange('executor', executor);
             onChange(
@@ -438,12 +441,14 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                     label="(Experimental) Enable Row Limit"
                                 />
 
-                                <SimpleField
-                                    stacked
-                                    name="feature_params.peer_review"
-                                    type="toggle"
-                                    label="(Experimental) Enable Peer Reviews"
-                                />
+                                {isPeerReviewEnabled && (
+                                    <SimpleField
+                                        stacked
+                                        name="feature_params.peer_review"
+                                        type="toggle"
+                                        label="(Experimental) Enable Peer Reviews"
+                                    />
+                                )}
                             </div>
                         </div>
 

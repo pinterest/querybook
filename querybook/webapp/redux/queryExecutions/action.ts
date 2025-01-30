@@ -35,12 +35,40 @@ import {
 } from './types';
 
 const statementExecutionSchema = new schema.Entity('statementExecution');
+const reviewSchema = new schema.Entity('review');
 const dataCellSchema = new schema.Entity('dataCell');
 const queryExecutionSchema = new schema.Entity('queryExecution', {
     statement_executions: [statementExecutionSchema],
     data_cell: dataCellSchema,
+    review: reviewSchema,
 });
 export const queryExecutionSchemaList = [queryExecutionSchema];
+
+export function approveQueryReview(
+    executionId: number
+): ThunkResult<Promise<IQueryExecution>> {
+    return async (dispatch) => {
+        const { data: execution } = await QueryExecutionResource.approveReview(
+            executionId
+        );
+        dispatch(receiveQueryExecution(execution));
+        return execution;
+    };
+}
+
+export function rejectQueryReview(
+    executionId: number,
+    rejectionReason: string
+): ThunkResult<Promise<IQueryExecution>> {
+    return async (dispatch) => {
+        const { data: execution } = await QueryExecutionResource.rejectReview(
+            executionId,
+            rejectionReason
+        );
+        dispatch(receiveQueryExecution(execution));
+        return execution;
+    };
+}
 
 export function addQueryExecutionAccessRequest(
     executionId: number
@@ -167,12 +195,15 @@ export function receiveQueryExecution(
     const {
         queryExecution: queryExecutionById = {},
         statementExecution: statementExecutionById = {},
+        review: queryReviewById = {},
     } = normalizedData.entities;
+
     return {
         type: '@@queryExecutions/RECEIVE_QUERY_EXECUTION',
         payload: {
             queryExecutionById,
             statementExecutionById,
+            queryReviewById,
             dataCellId,
         },
     };
