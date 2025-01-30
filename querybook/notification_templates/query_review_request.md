@@ -1,12 +1,9 @@
-🚨 Action Required: Query Review Request
+New Query Review Required: Request from {{ requested_by }}
 
-A query requires your review before execution. Please review the SQL changes to ensure they meet your organization's standards and requirements.
+Query review requested on {{ requested_at }}
 
-**Details:**
+**Request Reason:** {{ review_request_reason }}
 
--   Requested by: {{ requested_by }}
--   Submitted: {{ requested_at }}
--   Review URL: {{ query_execution_url }}
--   Reason for Review: {{ review_request_reason }}
+**Here is the url for review: <{{ query_execution_url }}>**
 
-Please review the query at your earliest convenience.
+Please review the query at your earliest convenience to ensure it meets standards and requirements.

@@ -40,7 +40,12 @@ export const getTableSamplingRateOptions = () => {
 
 export const PEER_REVIEW_CONFIG = PublicConfig.peer_review ?? {
     enabled: false,
-    description: '',
-    user_guide_link: '',
-    review_tip: '',
+    request_texts: {
+        description: '',
+        guide_link: '',
+        tip: '',
+    },
+    reviewer_texts: {
+        approve_message: '',
+    },
 };

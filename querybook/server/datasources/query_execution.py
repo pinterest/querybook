@@ -758,23 +758,21 @@ def transpile_query(
 
 @register("/query_execution/<int:query_execution_id>/approve_review/", methods=["PUT"])
 def approve_query_review(query_execution_id):
-    with DBSession() as session:
-        verify_query_execution_permission(query_execution_id)
-        reviewer_id = current_user.id
+    verify_query_execution_permission(query_execution_id)
+    reviewer_id = current_user.id
 
-        query_execution = query_review_handler.approve_review(
-            query_execution_id, reviewer_id, session
-        )
-        return query_execution.to_dict(with_statement=False, with_query_review=True)
+    query_execution = query_review_handler.approve_review(
+        query_execution_id, reviewer_id
+    )
+    return query_execution.to_dict(with_statement=False, with_query_review=True)
 
 
 @register("/query_execution/<int:query_execution_id>/reject_review/", methods=["PUT"])
 def reject_query_review(query_execution_id, rejection_reason):
-    with DBSession() as session:
-        verify_query_execution_permission(query_execution_id)
-        reviewer_id = current_user.id
+    verify_query_execution_permission(query_execution_id)
+    reviewer_id = current_user.id
 
-        query_execution = query_review_handler.reject_review(
-            query_execution_id, reviewer_id, rejection_reason, session
-        )
-        return query_execution.to_dict(with_statement=False, with_query_review=True)
+    query_execution = query_review_handler.reject_review(
+        query_execution_id, reviewer_id, rejection_reason
+    )
+    return query_execution.to_dict(with_statement=False, with_query_review=True)

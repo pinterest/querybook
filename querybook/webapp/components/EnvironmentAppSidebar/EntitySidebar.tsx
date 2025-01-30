@@ -9,6 +9,7 @@ import { SearchContainer } from 'components/Search/SearchContainer';
 import { UserMenu } from 'components/UserMenu/UserMenu';
 import { ComponentType, ElementType } from 'const/analytics';
 import { trackClick } from 'lib/analytics';
+import { usePeerReview } from 'lib/peer-review/config';
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
 import { IconButton } from 'ui/Button/IconButton';
@@ -17,6 +18,7 @@ import { Link } from 'ui/Link/Link';
 import { Entity } from './types';
 
 import './EntitySidebar.scss';
+import { QueryReviewButton } from 'components/QueryReviewsNavigator/QueryReviewButton';
 
 interface IEntitySidebarProps {
     selectedEntity: Entity;
@@ -27,6 +29,7 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> =
     React.memo(({ selectedEntity, onSelectEntity }) => {
         const environment = useSelector(currentEnvironmentSelector);
         const queryMetastores = useSelector(queryMetastoresSelector);
+        const { isEnabled: isPeerReviewEnabled } = usePeerReview();
 
         return (
             <div className="EntitySidebar">
@@ -153,6 +156,18 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> =
                         }}
                         active={selectedEntity === 'execution'}
                     />
+                    {isPeerReviewEnabled && (
+                        <QueryReviewButton
+                            active={selectedEntity === 'review'}
+                            onClick={() => {
+                                trackClick({
+                                    component: ComponentType.LEFT_SIDEBAR,
+                                    element: ElementType.REVIEWS_BUTTON,
+                                });
+                                onSelectEntity('review');
+                            }}
+                        />
+                    )}
                 </div>
                 <div className="apps-list flex-column">
                     <QueryEngineStatusButton />

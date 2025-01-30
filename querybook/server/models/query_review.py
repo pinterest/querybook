@@ -52,8 +52,8 @@ class QueryReview(Base, CRUDMixin):
     )
 
     @with_formatted_date
-    def to_dict(self):
-        return {
+    def to_dict(self, with_execution=False):
+        data = {
             "id": self.id,
             "query_execution_id": self.query_execution_id,
             "requested_by": self.query_execution.uid if self.query_execution else None,
@@ -65,6 +65,18 @@ class QueryReview(Base, CRUDMixin):
             "updated_at": self.updated_at,
             "reviewer_ids": [reviewer.id for reviewer in self.assigned_reviewers],
         }
+
+        if with_execution:
+            data["execution"] = (
+                self.query_execution.to_dict(
+                    with_statement=False,
+                    with_query_review=False,  # Prevent circular reference
+                )
+                if self.query_execution
+                else None
+            )
+
+        return data
 
     def get_status(self):
         """

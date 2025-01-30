@@ -21,6 +21,7 @@ import {
     IQueryExecutionState,
     QueryExecutionAction,
 } from 'redux/queryExecutions/types';
+import { IQueryReviewState, QueryReviewAction } from 'redux/queryReview/types';
 import {
     IQuerySnippetsState,
     QuerySnippetsAction,
@@ -53,6 +54,7 @@ export interface IStoreState {
     readonly tag: ITagState;
     readonly scheduledDocs: IScheduledDataDocState;
     readonly comment: ICommentState;
+    readonly queryReview: IQueryReviewState;
 }
 
 export type AllAction =
@@ -73,6 +75,7 @@ export type AllAction =
     | GlobalStateAction
     | TagAction
     | ScheduledDataDocAction
-    | CommentAction;
+    | CommentAction
+    | QueryReviewAction;
 
 export type Dispatch = ThunkDispatch<IStoreState, null, AllAction>;

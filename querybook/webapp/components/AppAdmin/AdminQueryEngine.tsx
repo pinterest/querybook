@@ -8,7 +8,6 @@ import { AdminAuditLogButton } from 'components/AdminAuditLog/AdminAuditLogButto
 import { IAdminMetastore, IAdminQueryEngine } from 'const/admin';
 import { QueryEngineStatus } from 'const/queryEngine';
 import { useResource } from 'hooks/useResource';
-import { PEER_REVIEW_CONFIG } from 'lib/public-config';
 import { sendConfirm } from 'lib/querybookUI';
 import history from 'lib/router-history';
 import { titleize } from 'lib/utils';
@@ -35,6 +34,7 @@ import {
 import { AdminDeletedList } from './AdminDeletedList';
 
 import './AdminQueryEngine.scss';
+import { usePeerReview } from 'lib/peer-review/config';
 
 interface IProps {
     queryEngines: IAdminQueryEngine[];
@@ -263,7 +263,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
         item: IAdminQueryEngine,
         onChange: (fieldName: string, fieldValue: any) => void
     ) => {
-        const { enabled: peerReviewEnabled } = PEER_REVIEW_CONFIG;
+        const { isEnabled: isPeerReviewEnabled } = usePeerReview();
 
         const updateExecutor = (executor: string) => {
             onChange('executor', executor);
@@ -441,7 +441,7 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                     label="(Experimental) Enable Row Limit"
                                 />
 
-                                {peerReviewEnabled && (
+                                {isPeerReviewEnabled && (
                                     <SimpleField
                                         stacked
                                         name="feature_params.peer_review"
