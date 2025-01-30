@@ -51,6 +51,8 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
 }) => {
     const { id: queryEngineId } = useParams();
 
+    const { isEnabled: isPeerReviewEnabled } = usePeerReview();
+
     const { data: queryEngineTemplates } = useResource(
         AdminQueryEngineResource.getTemplates
     );
@@ -263,8 +265,6 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
         item: IAdminQueryEngine,
         onChange: (fieldName: string, fieldValue: any) => void
     ) => {
-        const { isEnabled: isPeerReviewEnabled } = usePeerReview();
-
         const updateExecutor = (executor: string) => {
             onChange('executor', executor);
             onChange(
