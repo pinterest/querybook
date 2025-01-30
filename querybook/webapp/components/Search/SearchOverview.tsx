@@ -299,6 +299,12 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                 ? 'Search data docs'
                 : 'Search tables';
 
+        const showVectorSearch =
+            (searchType === SearchType.Table &&
+                isAIFeatureEnabled('table_vector_search')) ||
+            (searchType === SearchType.Query &&
+                isAIFeatureEnabled('query_vector_search'));
+
         return (
             <div className="search-bar-wrapper">
                 <SearchBar
@@ -311,18 +317,17 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                     placeholder={placeholder}
                     autoFocus
                 />
-                {searchType === SearchType.Table &&
-                    isAIFeatureEnabled('table_vector_search') && (
-                        <div className="mt8 flex-row">
-                            <AccentText weight="bold" className="ml8 mr12">
-                                Natural Language Search
-                            </AccentText>
-                            <ToggleSwitch
-                                checked={useVectorSearch}
-                                onChange={(val) => updateUseVectorSearch(val)}
-                            />
-                        </div>
-                    )}
+                {showVectorSearch && (
+                    <div className="mt8 flex-row">
+                        <AccentText weight="bold" className="ml8 mr12">
+                            Natural Language Search
+                        </AccentText>
+                        <ToggleSwitch
+                            checked={useVectorSearch}
+                            onChange={(val) => updateUseVectorSearch(val)}
+                        />
+                    </div>
+                )}
             </div>
         );
     };

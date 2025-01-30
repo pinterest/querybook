@@ -27,5 +27,7 @@ DEFAULT_SIMILARITY_SCORE_THRESHOLD_GREAT_MATCH = 0.7
 DEFAULT_VECTOR_STORE_FETCH_LIMIT = 30
 # how many tables to return from vector table search eventually
 DEFAULT_TABLE_SEARCH_LIMIT = 10
+# how many queries to return from vector query search eventually
+DEFAULT_QUERY_SEARCH_LIMIT = 10
 # how many tables to select for text-to-sql
 DEFAULT_TABLE_SELECT_LIMIT = 3

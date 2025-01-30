@@ -91,3 +91,19 @@ def construct_query_search_query(
     )
 
     return query
+
+
+def construct_query_search_by_query_cell_ids(ids, filters, limit):
+    if not ids:
+        return {"query": {"match_all": {}}, "size": 0}
+
+    bool_query = {"must": [{"terms": {"id": ids}}]}
+
+    if filters:
+        filter_query = match_filters(filters, and_filter_names=FILTERS_TO_AND)
+        if filter_query:
+            bool_query["filter"] = filter_query["filter"]
+
+    es_query = {"query": {"bool": bool_query}, "size": limit}
+
+    return es_query
