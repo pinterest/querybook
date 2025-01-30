@@ -99,6 +99,19 @@ export const QueryExecutionResource = {
 
     getError: (executionId: number) =>
         ds.fetch<IQueryError>(`/query_execution/${executionId}/error/`),
+
+    approveReview: (executionId: number) =>
+        ds.update<IRawQueryExecution>(
+            `/query_execution/${executionId}/approve_review/`
+        ),
+
+    rejectReview: (executionId: number, rejectionReason: string) =>
+        ds.update<IRawQueryExecution>(
+            `/query_execution/${executionId}/reject_review/`,
+            {
+                rejection_reason: rejectionReason,
+            }
+        ),
 };
 
 export const QueryExecutionMetadataResource = {

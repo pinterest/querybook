@@ -2,7 +2,7 @@ import { produce } from 'immer';
 import moment from 'moment';
 import { combineReducers } from 'redux';
 
-import { StatementExecutionStatus } from 'const/queryExecution';
+import { IQueryReview, StatementExecutionStatus } from 'const/queryExecution';
 import { arrayGroupByField, linkifyLog } from 'lib/utils';
 
 import { IQueryExecutionState, QueryExecutionAction } from './types';
@@ -10,6 +10,7 @@ import { IQueryExecutionState, QueryExecutionAction } from './types';
 const initialState: IQueryExecutionState = {
     queryExecutionById: {},
     statementExecutionById: {},
+    queryReviewByExecutionId: {},
 
     dataCellIdQueryExecution: {},
     queryExecutionIdToCellInfo: {},
@@ -184,6 +185,38 @@ function queryExecutionByIdReducer(
             }
         }
     });
+}
+
+function queryReviewByExecutionIdReducer(
+    state = initialState.queryReviewByExecutionId,
+    action: QueryExecutionAction
+) {
+    switch (action.type) {
+        case '@@queryExecutions/RECEIVE_QUERY_EXECUTION': {
+            const { queryReviewById } = action.payload;
+            if (queryReviewById) {
+                const queryReviewByExecutionId = {};
+
+                Object.values(queryReviewById).forEach(
+                    (queryReview: IQueryReview) => {
+                        if (queryReview) {
+                            queryReviewByExecutionId[
+                                queryReview.query_execution_id
+                            ] = queryReview;
+                        }
+                    }
+                );
+
+                return {
+                    ...state,
+                    ...queryReviewByExecutionId,
+                };
+            }
+            return state;
+        }
+        default:
+            return state;
+    }
 }
 
 function getPartialLogHeader() {
@@ -449,4 +482,5 @@ export default combineReducers({
     statementExporters: statementExportersReducer,
     accessRequestsByExecutionIdUserId: accessRequestsByExecutionIdUserIdReducer,
     viewersByExecutionIdUserId: viewersByExecutionIdUserIdReducer,
+    queryReviewByExecutionId: queryReviewByExecutionIdReducer,
 });

@@ -13,6 +13,7 @@ import { Link } from 'ui/Link/Link';
 import { Message } from 'ui/Message/Message';
 import { Modal } from 'ui/Modal/Modal';
 import { IStandardModalProps } from 'ui/Modal/types';
+import { Icon } from 'ui/Icon/Icon';
 
 import './QueryPeerReviewModal.scss';
 import { usePeerReview } from 'lib/peer-review/config';
@@ -22,7 +23,40 @@ interface IQueryPeerReviewFormProps {
     onHide: () => void;
 }
 
-const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
+interface IDescriptionSectionProps {
+    description: string;
+    tip: string;
+    guideLink: string;
+}
+
+const DescriptionSection: React.FC<IDescriptionSectionProps> = ({
+    description,
+    tip,
+    guideLink,
+}) => (
+    <div className="description-section">
+        <Message type="info" size="large">
+            <div className="description-content">
+                <div className="main-description">
+                    <h4>About Peer Review</h4>
+                    <div className="description-text">{description}</div>
+                </div>
+
+                <div className="checklist-box">
+                    <h4>Review Checklist</h4>
+                    <div className="checklist-content">{tip}</div>
+                    <div className="guide-link">
+                        <Link to={guideLink} newTab>
+                            <Icon name="Book" size={12} />
+                            <span>View Complete Guidelines</span>
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        </Message>
+    </div>
+);
+export const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
     onSubmit,
     onHide,
 }) => {
@@ -41,9 +75,7 @@ const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
     });
 
     const {
-        texts: {
-            modal: { description, guideLink, reviewTip },
-        },
+        requestTexts: { description, guideLink, reviewTip },
     } = usePeerReview();
 
     const handleSubmit = useCallback(
@@ -80,29 +112,16 @@ const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
             {({ submitForm, isSubmitting, isValid, setFieldValue, values }) => (
                 <FormWrapper minLabelWidth="150px">
                     <Form>
-                        <div className="mb4 flex-row">
-                            <Message type="info" size="large">
-                                {description} Learn more{' '}
-                                <Link to={guideLink} newTab>
-                                    <strong>here</strong>.
-                                </Link>
-                            </Message>
-                        </div>
-                        {reviewTip && (
-                            <Message
-                                className="mb12"
-                                type="warning"
-                                size="small"
-                                message={reviewTip}
-                            />
-                        )}
+                        <DescriptionSection
+                            description={description}
+                            tip={reviewTip}
+                            guideLink={guideLink}
+                        />
 
                         <FormField
                             label="Reviewers"
                             stacked
-                            help={
-                                'Ensure selected reviewers have sufficient context to review the query'
-                            }
+                            help="Ensure selected reviewers have sufficient context to review the query"
                             required
                         >
                             <MultiCreatableUserSelect
@@ -126,13 +145,11 @@ const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
                             placeholder="Provide a justification."
                             rows={4}
                             stacked
-                            help={
-                                'Why do you need to run this sensitive query?'
-                            }
+                            help="Why do you need to run this sensitive query?"
                             required
                         />
 
-                        <div className="center-align mt16">
+                        <div className="modal-footer-buttons">
                             <AsyncButton
                                 onClick={submitForm}
                                 disabled={!isValid || isSubmitting}
@@ -154,7 +171,7 @@ export const QueryPeerReviewModal: React.FC<
     <Modal
         {...modalProps}
         onHide={onHide}
-        title="Request a peer review for your query"
+        title="Request a Peer Review for Your Query"
         className="QueryPeerReviewModal"
     >
         <QueryPeerReviewForm onSubmit={onSubmit} onHide={onHide} />

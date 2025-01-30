@@ -1,0 +1,196 @@
+.QueryViewReview {
+    --review-spacing: 16px;
+    margin: 24px 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    transition: box-shadow 0.2s ease;
+
+    &:hover {
+        box-shadow: var(--shadow-mid);
+    }
+
+    .review-header {
+        padding: var(--review-spacing);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--bg-lightest);
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .review-content {
+        padding: var(--review-spacing);
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+
+            // Center UserBadge
+            &:first-child {
+                align-items: center;
+                text-align: center;
+            }
+
+            .request-reason {
+                width: 100%;
+                background: var(--bg-light);
+                padding: 12px;
+                border-radius: 6px;
+                line-height: 1.6;
+                font-size: 15px;
+                border: 1px solid var(--border-light);
+                color: var(--text);
+            }
+        }
+    }
+
+    .review-actions {
+        padding: var(--review-spacing);
+        border-top: 1px solid var(--border-light);
+        background: var(--bg-lightest);
+
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+    }
+
+    .reject-form-container {
+        padding: var(--review-spacing);
+
+        .reject-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+
+            textarea {
+                min-height: 120px;
+                width: 100%;
+                resize: vertical;
+            }
+
+            .form-buttons {
+                display: flex;
+                justify-content: flex-end;
+                gap: 8px;
+                margin-top: 8px;
+            }
+        }
+    }
+
+    .review-notifier,
+    .outcome-msg {
+        margin: 0;
+        border-radius: 0;
+        border-top: 1px solid var(--border-light);
+
+        &.error {
+            background-color: var(--bg-error-light);
+            border-left: 4px solid var(--color-error);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .details-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .Modal {
+        .form-buttons {
+            margin-top: 16px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+    }
+
+    .rejection-details {
+        .rejection-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--bg-lightest);
+            border-radius: 6px;
+            margin-bottom: 16px;
+            margin: 8px 0 16px;
+
+            .reviewer-info {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 12px;
+                background: var(--bg-lightest);
+                border-radius: 8px;
+            }
+        }
+
+        .rejection-reason {
+            background: var(--bg);
+            padding: 12px;
+            border-radius: 6px;
+            line-height: 1.6;
+            font-size: 15px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: var(--text);
+            margin: 12px 0;
+            border: 1px solid var(--border-light);
+        }
+
+        .rejection-content {
+            padding: 16px;
+            background: var(--bg-light);
+            border-radius: 8px;
+            border: 1px solid var(--border-light);
+            transition: background-color 0.2s ease;
+
+            .rejection-reason {
+                margin: 12px 0;
+                padding: 12px;
+                background: var(--bg);
+                border-radius: 6px;
+                line-height: 1.6;
+                font-size: 15px;
+                white-space: pre-wrap;
+                word-wrap: break-word;
+                color: var(--text);
+            }
+
+            .rejection-note {
+                color: var(--text-light);
+                font-style: italic;
+            }
+        }
+    }
+
+    .rejection-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 16px;
+        color: var(--text);
+    }
+}
+
+.Button:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
