@@ -66,7 +66,7 @@ export const QueryReviewsNavigator: React.FC = () => {
     // Load saved tab from localStorage
     useEffect(() => {
         dispatch(initializeTabFromStorage());
-    }, [dispatch]);
+    }, []);
 
     useEffect(() => {
         if (activeTab === 'myReviews') {

@@ -89,13 +89,17 @@ export const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
                     reviewer_ids: reviewerIds,
                     request_reason: values.requestReason,
                 };
-                await onSubmit(peerReviewParams);
+                const queryId = await onSubmit(peerReviewParams);
 
-                onHide();
-                toast.success(
-                    'Review request sent! Reviewers were notified and your query will run upon approval.',
-                    { duration: 3000 }
-                );
+                if (queryId !== null) {
+                    onHide();
+                    toast.success(
+                        'Review request sent! Reviewers were notified and your query will run upon approval.',
+                        { duration: 3000 }
+                    );
+                } else {
+                    toast.error('Failed to request review.');
+                }
             } catch (error) {
                 toast.error('Failed to request review.');
             }
