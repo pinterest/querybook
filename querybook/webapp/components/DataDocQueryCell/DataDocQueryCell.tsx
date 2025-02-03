@@ -497,7 +497,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
     @bind
     public async onRunButtonClick() {
-        return this.executeQuery({
+        return await this.executeQuery({
             element: ElementType.RUN_QUERY_BUTTON,
             onSuccess: (queryId: number) => {
                 // Only trigger survey if the query is modified within 5 minutes
@@ -513,7 +513,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
     @bind
     public async onPeerReviewSubmit(peerReviewParams: IPeerReviewParams) {
-        await this.executeQuery({
+        return await this.executeQuery({
             element: ElementType.PEER_REVIEW_QUERY_BUTTON,
             peerReviewParams,
         });

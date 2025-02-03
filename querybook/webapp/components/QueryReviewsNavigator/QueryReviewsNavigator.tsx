@@ -6,6 +6,7 @@ import {
     fetchAssignedReviews,
     fetchMyReviews,
     setActiveTab,
+    initializeTabFromStorage,
 } from 'redux/queryReview/action';
 import {
     selectAssignedReviews,
@@ -61,6 +62,11 @@ export const QueryReviewsNavigator: React.FC = () => {
     );
 
     const dispatch = useDispatch();
+
+    // Load saved tab from localStorage
+    useEffect(() => {
+        dispatch(initializeTabFromStorage());
+    }, []);
 
     useEffect(() => {
         if (activeTab === 'myReviews') {

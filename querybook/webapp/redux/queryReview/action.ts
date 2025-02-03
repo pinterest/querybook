@@ -2,6 +2,10 @@ import { Dispatch } from 'redux';
 
 import { QueryReviewResource } from 'resource/queryReview';
 
+import localStore from 'lib/local-store';
+
+const QUERY_REVIEW_TAB_KEY = 'query_review_active_tab';
+
 import {
     FETCH_ASSIGNED_REVIEWS_FAILURE,
     FETCH_ASSIGNED_REVIEWS_REQUEST,
@@ -48,9 +52,25 @@ export const fetchAssignedReviews =
         }
     };
 
-export const setActiveTab = (
-    tab: 'myReviews' | 'assigned'
-): QueryReviewAction => ({
-    type: SET_ACTIVE_TAB,
-    payload: tab,
-});
+export const setActiveTab =
+    (tab: 'myReviews' | 'assigned'): ThunkResult<void> =>
+    async (dispatch) => {
+        dispatch({
+            type: SET_ACTIVE_TAB,
+            payload: tab,
+        });
+        await localStore.set(QUERY_REVIEW_TAB_KEY, tab);
+    };
+
+export const initializeTabFromStorage =
+    (): ThunkResult<void> => async (dispatch) => {
+        const savedTab = await localStore.get<'myReviews' | 'assigned'>(
+            QUERY_REVIEW_TAB_KEY
+        );
+        if (savedTab) {
+            dispatch({
+                type: SET_ACTIVE_TAB,
+                payload: savedTab,
+            });
+        }
+    };
