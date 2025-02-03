@@ -122,7 +122,11 @@ const ReviewActions: React.FC<{
             {showApproveModal && (
                 <ConfirmationMessage
                     header="Confirm Query Approval"
-                    message={reviewerTexts.approveMessage}
+                    message={
+                        <div className="approve-message">
+                            {reviewerTexts.approveMessage}
+                        </div>
+                    }
                     onConfirm={onApprove}
                     onDismiss={() => setShowApproveModal(false)}
                     onHide={() => setShowApproveModal(false)}

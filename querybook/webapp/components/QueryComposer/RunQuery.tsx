@@ -84,6 +84,7 @@ async function transformTemplatedQuery(
                 duration: 5000,
             }
         );
+        throw e;
     }
 }
 
