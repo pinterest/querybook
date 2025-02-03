@@ -483,8 +483,8 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 }
             );
 
-            if (onSuccess) {
-                onSuccess(queryId);
+            if (queryId != null) {
+                onSuccess?.(queryId);
             }
 
             return queryId;
@@ -497,7 +497,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
     @bind
     public async onRunButtonClick() {
-        return await this.executeQuery({
+        return this.executeQuery({
             element: ElementType.RUN_QUERY_BUTTON,
             onSuccess: (queryId: number) => {
                 // Only trigger survey if the query is modified within 5 minutes
@@ -513,9 +513,15 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
     @bind
     public async onPeerReviewSubmit(peerReviewParams: IPeerReviewParams) {
-        return await this.executeQuery({
+        return this.executeQuery({
             element: ElementType.PEER_REVIEW_QUERY_BUTTON,
             peerReviewParams,
+            onSuccess: () => {
+                toast.success(
+                    'Review request sent! Reviewers were notified and your query will run upon approval.',
+                    { duration: 3000 }
+                );
+            },
         });
     }
 

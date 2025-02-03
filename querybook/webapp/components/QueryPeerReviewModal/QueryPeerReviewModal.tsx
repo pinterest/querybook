@@ -19,7 +19,7 @@ import './QueryPeerReviewModal.scss';
 import { usePeerReview } from 'lib/peer-review/config';
 
 interface IQueryPeerReviewFormProps {
-    onSubmit: (peerReviewParams: IPeerReviewParams) => Promise<void>;
+    onSubmit: (peerReviewParams: IPeerReviewParams) => Promise<number>;
     onHide: () => void;
 }
 
@@ -56,6 +56,7 @@ const DescriptionSection: React.FC<IDescriptionSectionProps> = ({
         </Message>
     </div>
 );
+
 export const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
     onSubmit,
     onHide,
@@ -90,18 +91,11 @@ export const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
                     request_reason: values.requestReason,
                 };
                 const queryId = await onSubmit(peerReviewParams);
-
-                if (queryId !== null) {
-                    onHide();
-                    toast.success(
-                        'Review request sent! Reviewers were notified and your query will run upon approval.',
-                        { duration: 3000 }
-                    );
-                } else {
-                    toast.error('Failed to request review.');
-                }
+                onHide();
+                return queryId;
             } catch (error) {
                 toast.error('Failed to request review.');
+                throw error;
             }
         },
         [onHide, onSubmit]

@@ -3,6 +3,8 @@ import React, { useEffect, useMemo } from 'react';
 import { UnControlled as ReactCodeMirror } from 'react-codemirror2';
 import styled from 'styled-components';
 
+import 'lib/codemirror';
+
 import { IHighlightRange } from './types';
 
 const EmbeddedCodeMirrorContainer = styled.div`
