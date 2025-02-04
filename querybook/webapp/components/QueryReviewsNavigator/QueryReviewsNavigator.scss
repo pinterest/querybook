@@ -52,6 +52,11 @@
     margin-bottom: var(--margin-xs);
     transition: background-color 0.2s ease;
 
+    &.is-selected {
+        background-color: var(--bg);
+        border-left: 3px solid var(--color-accent);
+    }
+
     &:hover {
         background-color: var(--bg-hover);
     }
