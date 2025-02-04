@@ -17,6 +17,25 @@
         align-items: center;
         background: var(--bg-lightest);
         border-bottom: 1px solid var(--border-light);
+        cursor: default;
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            .StatusIcon {
+                cursor: default;
+            }
+        }
+
+        .Tag {
+            cursor: default;
+
+            &:hover {
+                cursor: default;
+            }
+        }
     }
 
     .header-left {
