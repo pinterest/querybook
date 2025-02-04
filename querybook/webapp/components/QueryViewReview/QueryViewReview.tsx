@@ -73,7 +73,7 @@ const ReviewContent: React.FC<{
                 <AccentText color="light" size="small">
                     Requested By
                 </AccentText>
-                <UserBadge uid={review.requested_by} />
+                <UserBadge uid={review.requested_by} mini cardStyle />
             </div>
             <div className="detail-item">
                 <AccentText color="light" size="small">
@@ -237,9 +237,31 @@ const ReviewStatus: React.FC<{
                 <Message
                     className="outcome-msg"
                     type="success"
-                    title="Approved"
+                    title={
+                        <div className="approval-title">
+                            <Icon name="Check" size={20} />
+                            <span>Review Approved</span>
+                        </div>
+                    }
                 >
-                    The query has been approved and is now executing.
+                    <div className="approval-details">
+                        <div className="approval-content">
+                            <AccentText className="approval-status">
+                                This query has been approved and will be
+                                executed.
+                            </AccentText>
+                            <AccentText
+                                color="light"
+                                size="small"
+                                className="approval-note"
+                            >
+                                Note: If the query fails during execution due to
+                                syntax errors or other issues, you will need to
+                                submit a new review request with the corrected
+                                query.
+                            </AccentText>
+                        </div>
+                    </div>
                 </Message>
             );
         }
@@ -350,7 +372,7 @@ export const QueryViewReview: React.FC<{
             <ReviewHeader
                 status={status}
                 tooltip={tooltip}
-                label="Execution Review"
+                label="Query Review"
                 tagClass={tagClass}
                 tagText={tagText}
             />

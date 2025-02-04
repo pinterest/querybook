@@ -218,3 +218,11 @@
     white-space: pre-wrap;
     line-height: 1.6;
 }
+
+.approval-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    color: var(--text);
+}
