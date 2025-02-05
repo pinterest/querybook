@@ -162,7 +162,7 @@ def create_query_execution(
                 session=session,
             )
 
-            query_execution_dict = query_execution.to_dict()
+            query_execution_dict = query_execution.to_dict(with_query_review=True)
 
             if data_doc:
                 socketio.emit(

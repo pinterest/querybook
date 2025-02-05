@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
@@ -44,6 +44,8 @@ const NAVIGATOR_TABS = [
 ];
 
 export const QueryReviewsNavigator: React.FC = () => {
+    const [selectedReviewId, setSelectedReviewId] = useState<number>(null);
+
     const { reviews, isLoading, activeTab } = useShallowSelector(
         (state: IStoreState) => {
             const tab = state.queryReview.activeTab;
@@ -103,7 +105,13 @@ export const QueryReviewsNavigator: React.FC = () => {
         ) : null;
 
     const reviewListDOM = reviews.map((review) => (
-        <QueryReviewItem key={review.id} review={review} type={activeTab} />
+        <QueryReviewItem
+            key={review.id}
+            review={review}
+            type={activeTab}
+            isSelected={review.id === selectedReviewId}
+            onClick={() => setSelectedReviewId(review.id)}
+        />
     ));
 
     const tabsDOM = (

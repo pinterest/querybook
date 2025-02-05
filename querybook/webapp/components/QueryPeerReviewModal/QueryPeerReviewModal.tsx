@@ -2,6 +2,7 @@ import { Form, Formik } from 'formik';
 import React, { useCallback } from 'react';
 import { toast } from 'react-hot-toast';
 import * as Yup from 'yup';
+import { navigateWithinEnv } from 'lib/utils/query-string';
 
 import { MultiCreatableUserSelect } from 'components/UserSelect/MultiCreatableUserSelect';
 import { IPeerReviewParams } from 'const/datadoc';
@@ -92,6 +93,15 @@ export const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
                 };
                 const queryId = await onSubmit(peerReviewParams);
                 onHide();
+
+                if (queryId) {
+                    toast.success(
+                        'Peer review request submitted successfully. You may also check the Reviews panel on the left to track all review statuses.',
+                        { duration: 5000 }
+                    );
+                    navigateWithinEnv(`/query_execution/${queryId}/`);
+                }
+
                 return queryId;
             } catch (error) {
                 toast.error('Failed to request review.');

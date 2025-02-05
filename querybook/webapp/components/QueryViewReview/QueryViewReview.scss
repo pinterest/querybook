@@ -17,6 +17,25 @@
         align-items: center;
         background: var(--bg-lightest);
         border-bottom: 1px solid var(--border-light);
+        cursor: default;
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            .StatusIcon {
+                cursor: default;
+            }
+        }
+
+        .Tag {
+            cursor: default;
+
+            &:hover {
+                cursor: default;
+            }
+        }
     }
 
     .header-left {
@@ -104,6 +123,70 @@
             background-color: var(--bg-error-light);
             border-left: 4px solid var(--color-error);
         }
+
+        .message-note {
+            font-style: italic;
+            margin-top: 8px;
+        }
+
+        .semi-bold {
+            font-weight: 600;
+        }
+
+        .approval-title,
+        .rejection-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            color: var(--text);
+        }
+
+        .approval-details,
+        .rejection-details {
+            .approval-header,
+            .rejection-header {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 16px;
+
+                .reviewer-info {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                }
+            }
+
+            .approval-content,
+            .rejection-content {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
+
+        .status-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-details {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+
+            .reviewer-info {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+        }
+
+        .message-note {
+            font-style: italic;
+        }
     }
 
     @media (max-width: 768px) {
@@ -121,72 +204,11 @@
         }
     }
 
-    .rejection-details {
-        .rejection-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 12px;
-            background: var(--bg-lightest);
-            border-radius: 6px;
-            margin-bottom: 16px;
-            margin: 8px 0 16px;
-
-            .reviewer-info {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                padding: 12px;
-                background: var(--bg-lightest);
-                border-radius: 8px;
-            }
-        }
-
-        .rejection-reason {
-            background: var(--bg);
-            padding: 12px;
-            border-radius: 6px;
-            line-height: 1.6;
-            font-size: 15px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            color: var(--text);
-            margin: 12px 0;
-            border: 1px solid var(--border-light);
-        }
-
-        .rejection-content {
-            padding: 16px;
-            background: var(--bg-light);
-            border-radius: 8px;
-            border: 1px solid var(--border-light);
-            transition: background-color 0.2s ease;
-
-            .rejection-reason {
-                margin: 12px 0;
-                padding: 12px;
-                background: var(--bg);
-                border-radius: 6px;
-                line-height: 1.6;
-                font-size: 15px;
-                white-space: pre-wrap;
-                word-wrap: break-word;
-                color: var(--text);
-            }
-
-            .rejection-note {
-                color: var(--text-light);
-                font-style: italic;
-            }
-        }
-    }
-
-    .rejection-title {
+    .review-content-wrapper {
         display: flex;
+        justify-content: space-between;
         align-items: center;
-        gap: 8px;
-        font-size: 16px;
-        color: var(--text);
+        gap: 16px;
     }
 }
 
@@ -198,4 +220,71 @@
 .approve-message {
     white-space: pre-wrap;
     line-height: 1.6;
+}
+
+.approval-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    color: var(--text);
+}
+
+.approval-details {
+    .approval-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        background: var(--bg-lightest);
+        border-radius: 6px;
+        margin-bottom: 16px;
+        margin: 8px 0 16px;
+
+        .reviewer-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            background: var(--bg-lightest);
+            border-radius: 8px;
+        }
+    }
+}
+
+.review-notifier {
+    .flex-column {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .flex-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .mb8 {
+        margin-bottom: 8px;
+    }
+
+    .mr16 {
+        margin-right: 16px;
+    }
+
+    .review-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .review-content-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .copy-button-wrapper {
+        margin-left: auto;
+    }
 }

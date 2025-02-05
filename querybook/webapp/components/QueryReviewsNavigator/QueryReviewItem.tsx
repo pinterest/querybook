@@ -3,7 +3,6 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { UserBadge } from 'components/UserBadge/UserBadge';
 import { IQueryReview } from 'const/queryExecution';
 import { Status } from 'const/queryStatus';
-import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
@@ -11,6 +10,7 @@ import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 import { AccentText } from 'ui/StyledText/StyledText';
 import { Tag } from 'ui/Tag/Tag';
+import clsx from 'clsx';
 
 import './QueryReviewsNavigator.scss';
 
@@ -19,6 +19,8 @@ type ReviewType = 'myReviews' | 'assigned';
 interface IQueryReviewItemProps {
     review: IQueryReview;
     type: ReviewType;
+    isSelected?: boolean;
+    onClick?: () => void;
 }
 
 const STATUS_COLOR_MAP: Record<string, Status> = {
@@ -129,6 +131,8 @@ const ReviewTimestamp: React.FC<{
 export const QueryReviewItem: React.FC<IQueryReviewItemProps> = ({
     review,
     type,
+    isSelected,
+    onClick,
 }) => {
     const selfRef = useRef<HTMLDivElement>();
 
@@ -138,19 +142,20 @@ export const QueryReviewItem: React.FC<IQueryReviewItemProps> = ({
     );
 
     const handleClick = useCallback(() => {
+        onClick?.();
         navigateWithinEnv(queryExecutionUrl);
-    }, [queryExecutionUrl]);
+    }, [queryExecutionUrl, onClick]);
 
     const statusColor: Status =
         STATUS_COLOR_MAP[review.status] ?? Status.warning;
 
+    const className = clsx('QueryReviewItem', {
+        'is-selected': isSelected,
+    });
+
     return (
         <>
-            <div
-                className="QueryReviewItem"
-                onClick={handleClick}
-                ref={selfRef}
-            >
+            <div className={className} onClick={handleClick} ref={selfRef}>
                 <ReviewHeader review={review} statusColor={statusColor} />
 
                 <div className="review-content mb4">
