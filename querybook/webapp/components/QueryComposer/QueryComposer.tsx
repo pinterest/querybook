@@ -586,12 +586,6 @@ const QueryComposer: React.FC = () => {
             return handleRunQuery({
                 element: ElementType.PEER_REVIEW_QUERY_BUTTON,
                 peerReviewParams,
-                onSuccess: () => {
-                    toast.success(
-                        'Review request sent! Reviewers were notified and your query will run upon approval.',
-                        { duration: 3000 }
-                    );
-                },
             });
         },
         [handleRunQuery, setShowPeerReviewModal]

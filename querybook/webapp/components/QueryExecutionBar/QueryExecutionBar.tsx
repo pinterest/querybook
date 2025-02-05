@@ -16,7 +16,7 @@ interface IProps {
     queryExecution: IQueryExecution;
 }
 
-function useQueryExecutionUrl(queryExecution: IQueryExecution) {
+export function useQueryExecutionUrl(queryExecution: IQueryExecution) {
     return useMemo(
         () =>
             `${location.protocol}//${location.host}${getWithinEnvUrl(

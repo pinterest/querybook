@@ -3,7 +3,6 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { UserBadge } from 'components/UserBadge/UserBadge';
 import { IQueryReview } from 'const/queryExecution';
 import { Status } from 'const/queryStatus';
-import history from 'lib/router-history';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';

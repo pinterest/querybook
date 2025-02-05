@@ -25,6 +25,8 @@ import { Icon } from 'ui/Icon/Icon';
 import './QueryViewReview.scss';
 import { QueryReviewState } from 'hooks/useQueryReview';
 import { usePeerReview } from 'lib/peer-review/config';
+import { useQueryExecutionUrl } from 'components/QueryExecutionBar/QueryExecutionBar';
+import { CopyButton } from 'ui/CopyButton/CopyButton';
 
 const rejectSchema = Yup.object().shape({
     rejectionReason: Yup.string()
@@ -73,7 +75,7 @@ const ReviewContent: React.FC<{
                 <AccentText color="light" size="small">
                     Requested By
                 </AccentText>
-                <UserBadge uid={review.requested_by} mini cardStyle />
+                <UserBadge uid={review.requested_by} mini />
             </div>
             <div className="detail-item">
                 <AccentText color="light" size="small">
@@ -186,12 +188,47 @@ const ReviewActions: React.FC<{
     );
 });
 
+const MessageContent = ({
+    icon,
+    title,
+    type,
+    userReview,
+    statusMessage,
+    note,
+}) => (
+    <Message
+        className="outcome-msg"
+        type={type}
+        title={
+            <div className="status-title">
+                <Icon name={icon} size={20} />
+                <span>{title}</span>
+            </div>
+        }
+    >
+        <div className="status-details">
+            <div className="reviewer-info">
+                <UserBadge uid={userReview.reviewed_by} mini />
+                <AccentText>
+                    has reviewed and{' '}
+                    {type === 'success' ? 'approved' : 'rejected'} this query
+                </AccentText>
+            </div>
+            <AccentText size="small">{statusMessage}</AccentText>
+            <AccentText className="message-note" size="small" color="light">
+                Note: {note}
+            </AccentText>
+        </div>
+    </Message>
+);
+
 const ReviewStatus: React.FC<{
     isReviewer: boolean;
     isPending: boolean;
     isApproved: boolean;
     isRejected: boolean;
     queryReview: IQueryReview;
+    queryExecution: IQueryExecution;
     showRejectForm: boolean;
     onShowRejectForm: (show: boolean) => void;
     onApprove: () => void;
@@ -203,20 +240,40 @@ const ReviewStatus: React.FC<{
         isApproved,
         isRejected,
         queryReview,
+        queryExecution,
         showRejectForm,
         onShowRejectForm,
         onApprove,
         onReject,
     }) => {
         if (!isReviewer && isPending) {
+            const permalink = useQueryExecutionUrl(queryExecution);
             return (
                 <Message
                     className="review-notifier"
                     type="info"
-                    title="Review in Progress"
+                    title={
+                        <div className="status-title">
+                            <Icon name="Clock" size={20} />
+                            <span>Review in Progress</span>
+                        </div>
+                    }
                 >
-                    This execution is currently under review. No further actions
-                    are required.
+                    <div className="review-content-wrapper">
+                        <AccentText>
+                            This execution is under review. Reviewers have been
+                            notified and you can share this link directly with
+                            them.
+                        </AccentText>
+                        <CopyButton
+                            copyText={permalink}
+                            icon="Link"
+                            title="Share with reviewers"
+                            type="text"
+                            pushable
+                            tooltipDirection="left"
+                        />
+                    </div>
                 </Message>
             );
         }
@@ -234,77 +291,27 @@ const ReviewStatus: React.FC<{
 
         if (isApproved) {
             return (
-                <Message
-                    className="outcome-msg"
+                <MessageContent
+                    icon="Check"
+                    title="Query Approved"
                     type="success"
-                    title={
-                        <div className="approval-title">
-                            <Icon name="Check" size={20} />
-                            <span>Review Approved</span>
-                        </div>
-                    }
-                >
-                    <div className="approval-details">
-                        <div className="approval-content">
-                            <AccentText className="approval-status">
-                                This query has been approved and will be
-                                executed.
-                            </AccentText>
-                            <AccentText
-                                color="light"
-                                size="small"
-                                className="approval-note"
-                            >
-                                Note: If the query fails during execution due to
-                                syntax errors or other issues, you will need to
-                                submit a new review request with the corrected
-                                query.
-                            </AccentText>
-                        </div>
-                    </div>
-                </Message>
+                    userReview={queryReview}
+                    statusMessage="This query has been approved and will be executed."
+                    note="If the query fails during execution due to syntax errors or other issues, you will need to submit a new review request with the corrected query."
+                />
             );
         }
 
         if (isRejected) {
             return (
-                <Message
-                    className="outcome-msg"
+                <MessageContent
+                    icon="AlertCircle"
+                    title="Query Rejected"
                     type="error"
-                    title={
-                        <div className="rejection-title">
-                            <Icon name="AlertCircle" size={20} />
-                            <span>Query Rejected</span>
-                        </div>
-                    }
-                >
-                    <div className="rejection-details">
-                        <div className="rejection-header">
-                            <div className="reviewer-info">
-                                <UserBadge uid={queryReview.reviewed_by} />
-                                <AccentText>
-                                    has reviewed and rejected this query
-                                </AccentText>
-                            </div>
-                        </div>
-                        <div className="rejection-content">
-                            <AccentText color="light" weight="bold">
-                                Rejection Reason:
-                            </AccentText>
-                            <AccentText className="rejection-reason">
-                                {queryReview.rejection_reason}
-                            </AccentText>
-                            <AccentText
-                                color="light"
-                                size="small"
-                                className="rejection-note"
-                            >
-                                Note: A new query review will need to be
-                                submitted after addressing these changes.
-                            </AccentText>
-                        </div>
-                    </div>
-                </Message>
+                    userReview={queryReview}
+                    statusMessage={`Rejection Reason: ${queryReview.rejection_reason}`}
+                    note="A new query review will need to be submitted after addressing these changes."
+                />
             );
         }
 
@@ -385,6 +392,7 @@ export const QueryViewReview: React.FC<{
                 isApproved={isApproved}
                 isRejected={isRejected}
                 queryReview={queryReview}
+                queryExecution={queryExecution}
                 showRejectForm={showRejectForm}
                 onShowRejectForm={setShowRejectForm}
                 onApprove={handleApprove}
