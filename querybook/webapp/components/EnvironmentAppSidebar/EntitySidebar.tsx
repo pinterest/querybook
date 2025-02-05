@@ -9,7 +9,6 @@ import { SearchContainer } from 'components/Search/SearchContainer';
 import { UserMenu } from 'components/UserMenu/UserMenu';
 import { ComponentType, ElementType } from 'const/analytics';
 import { trackClick } from 'lib/analytics';
-import { usePeerReview } from 'lib/peer-review/config';
 import { queryMetastoresSelector } from 'redux/dataSources/selector';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
 import { IconButton } from 'ui/Button/IconButton';
@@ -19,6 +18,7 @@ import { Entity } from './types';
 
 import './EntitySidebar.scss';
 import { QueryReviewButton } from 'components/QueryReviewsNavigator/QueryReviewButton';
+import { hasEnabledPeerReviewEngineSelector } from 'redux/queryReview/selector';
 
 interface IEntitySidebarProps {
     selectedEntity: Entity;
@@ -29,7 +29,9 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> =
     React.memo(({ selectedEntity, onSelectEntity }) => {
         const environment = useSelector(currentEnvironmentSelector);
         const queryMetastores = useSelector(queryMetastoresSelector);
-        const { isEnabled: isPeerReviewEnabled } = usePeerReview();
+        const hasEnabledPeerReviewEngine = useSelector(
+            hasEnabledPeerReviewEngineSelector
+        );
 
         return (
             <div className="EntitySidebar">
@@ -156,7 +158,7 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> =
                         }}
                         active={selectedEntity === 'execution'}
                     />
-                    {isPeerReviewEnabled && (
+                    {hasEnabledPeerReviewEngine && (
                         <QueryReviewButton
                             active={selectedEntity === 'review'}
                             onClick={() => {
