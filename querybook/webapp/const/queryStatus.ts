@@ -15,6 +15,8 @@ export const STATUS_TO_TEXT_MAPPING = {
     [QueryExecutionStatus.DONE]: 'Success',
     [QueryExecutionStatus.ERROR]: 'Error',
     [QueryExecutionStatus.CANCEL]: 'Cancelled',
+    [QueryExecutionStatus.PENDING_REVIEW]: 'Pending Review',
+    [QueryExecutionStatus.REJECTED]: 'Rejected',
 };
 
 export const queryStatusToStatusIcon = {
@@ -24,4 +26,6 @@ export const queryStatusToStatusIcon = {
     [QueryExecutionStatus.DONE]: Status.success,
     [QueryExecutionStatus.ERROR]: Status.error,
     [QueryExecutionStatus.CANCEL]: Status.none,
+    [QueryExecutionStatus.PENDING_REVIEW]: Status.warning,
+    [QueryExecutionStatus.REJECTED]: Status.error,
 };

@@ -2,6 +2,8 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { AccessRequestButton } from 'components/AccessRequestButton/AccessRequestButton';
+import { QueryViewReview } from 'components/QueryViewReview/QueryViewReview';
+import { useQueryReview } from 'hooks/useQueryReview';
 import { formatError } from 'lib/utils/error';
 import * as queryExecutionsActions from 'redux/queryExecutions/action';
 import * as queryExecutionsSelector from 'redux/queryExecutions/selector';
@@ -23,6 +25,7 @@ export const QueryView: React.FunctionComponent<IProps> = ({ queryId }) => {
     const queryExecution = useSelector((state: IStoreState) =>
         queryExecutionsSelector.queryExecutionSelector(state, queryId)
     );
+    const queryReviewState = useQueryReview(queryExecution?.id);
 
     const handleQueryExecutionAccessRequest = React.useCallback(() => {
         dispatch(
@@ -43,7 +46,7 @@ export const QueryView: React.FunctionComponent<IProps> = ({ queryId }) => {
             return (
                 <ErrorPage
                     errorTitle="Access Denied"
-                    errorMessage="You do not have access to this query execution"
+                    errorMessage="You do not have access to this query execution."
                 >
                     <AccessRequestButton
                         onAccessRequest={handleQueryExecutionAccessRequest}
@@ -61,10 +64,16 @@ export const QueryView: React.FunctionComponent<IProps> = ({ queryId }) => {
                 item={queryExecution}
                 itemKey={queryId}
                 itemLoader={fetchQueryExecution}
-                errorRenderer={(error) => errorPage(error)}
+                errorRenderer={errorPage}
             >
                 <QueryViewEditor queryExecution={queryExecution} />
                 <QueryViewExecution queryExecution={queryExecution} />
+                {queryReviewState.review && (
+                    <QueryViewReview
+                        queryExecution={queryExecution}
+                        queryReviewState={queryReviewState}
+                    />
+                )}
             </Loader>
         </div>
     );

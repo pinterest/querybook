@@ -1,5 +1,5 @@
 import type { IAccessRequest } from 'const/accessRequest';
-import { TDataDocMetaVariables } from 'const/datadoc';
+import { IPeerReviewParams, TDataDocMetaVariables } from 'const/datadoc';
 import { IQueryTranspiler, ITranspiledQuery } from 'const/queryEngine';
 import {
     IQueryError,
@@ -71,7 +71,8 @@ export const QueryExecutionResource = {
         query: string,
         engineId: number,
         cellId?: number,
-        metadata?: Record<string, string | number>
+        metadata?: Record<string, string | number>,
+        peerReviewParams?: IPeerReviewParams
     ) => {
         const params = {
             query,
@@ -87,6 +88,10 @@ export const QueryExecutionResource = {
             params['originator'] = dataDocSocket.socketId;
         }
 
+        if (peerReviewParams != null) {
+            params['peer_review_params'] = peerReviewParams;
+        }
+
         return ds.save<IRawQueryExecution>('/query_execution/', params);
     },
 
@@ -94,6 +99,19 @@ export const QueryExecutionResource = {
 
     getError: (executionId: number) =>
         ds.fetch<IQueryError>(`/query_execution/${executionId}/error/`),
+
+    approveReview: (executionId: number) =>
+        ds.update<IRawQueryExecution>(
+            `/query_execution/${executionId}/approve_review/`
+        ),
+
+    rejectReview: (executionId: number, rejectionReason: string) =>
+        ds.update<IRawQueryExecution>(
+            `/query_execution/${executionId}/reject_review/`,
+            {
+                rejection_reason: rejectionReason,
+            }
+        ),
 };
 
 export const QueryExecutionMetadataResource = {

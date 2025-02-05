@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Dict, Optional
 
 from flask import abort, Response, redirect, request
 from flask_login import current_user
@@ -27,6 +28,7 @@ from const.datasources import (
     INVALID_SEMANTIC_STATUS_CODE,
 )
 from const.query_execution import (
+    PeerReviewParamsDict,
     QueryExecutionExportStatus,
     QueryExecutionStatus,
     QUERY_EXECUTION_NAMESPACE,
@@ -56,46 +58,111 @@ from models.access_request import AccessRequest
 from app.db import with_session
 from env import QuerybookSettings
 from lib.notify.utils import notify_user
+from lib.query_review import query_review_handler
 
 QUERY_RESULT_LIMIT_CONFIG = get_config_value("query_result_limit")
 
 
+def process_query_execution_metadata(
+    query_execution_id, metadata, data_cell_id, session
+):
+    """Process execution metadata and associate query execution with DataDoc."""
+    metadata = metadata or {}
+
+    used_api_token = request.headers.get("api-access-token") is not None
+    if used_api_token:
+        metadata["used_api_token"] = used_api_token
+
+    if metadata:
+        logic.create_query_execution_metadata(
+            query_execution_id, metadata, session=session
+        )
+
+    data_doc = None
+    if data_cell_id:
+        datadoc_logic.append_query_executions_to_data_cell(
+            data_cell_id, [query_execution_id], session=session
+        )
+        data_cell = datadoc_logic.get_data_cell_by_id(data_cell_id, session=session)
+        data_doc = data_cell.doc if data_cell else None
+    return data_doc
+
+
+def initiate_query_execution(query_execution, uid, peer_review_params, session):
+    """Initiate the query execution based on peer_review_params."""
+    # Initiate peer review workflow
+    if peer_review_params:
+        query_review_handler.initiate_query_peer_review_workflow(
+            query_execution_id=query_execution.id,
+            uid=uid,
+            peer_review_params=peer_review_params,
+            session=session,
+        )
+    # Start immediate execution
+    else:
+        run_query_task.apply_async(
+            args=[
+                query_execution.id,
+            ]
+        )
+
+
 @register("/query_execution/", methods=["POST"])
 def create_query_execution(
-    query, engine_id, metadata=None, data_cell_id=None, originator=None
+    query: str,
+    engine_id: int,
+    metadata: Optional[Dict] = None,
+    data_cell_id: Optional[int] = None,
+    originator: Optional[str] = None,
+    peer_review_params: Optional[PeerReviewParamsDict] = None,
 ):
+    """
+    Creates a new QueryExecution.
+
+    Args:
+        query (str): The SQL query to execute.
+        engine_id (int): The ID of the query engine to use.
+        metadata (dict, optional): Additional metadata for the query execution.
+        data_cell_id (int, optional): ID of the DataDoc cell to associate with.
+        originator (str, optional): Identifier for the originator of the request.
+        peer_review_params (dict, optional): Parameters for peer review workflow.
+
+    Returns:
+        dict: A dictionary representation of the created QueryExecution.
+    """
     with DBSession() as session:
         verify_query_engine_permission(engine_id, session=session)
 
         uid = current_user.id
+        status = (
+            QueryExecutionStatus.PENDING_REVIEW
+            if peer_review_params
+            else QueryExecutionStatus.INITIALIZED
+        )
         query_execution = logic.create_query_execution(
-            query=query, engine_id=engine_id, uid=uid, session=session
+            query=query,
+            engine_id=engine_id,
+            uid=uid,
+            status=status,
+            session=session,
         )
 
-        metadata = metadata or {}
-        used_api_token = request.headers.get("api-access-token") is not None
-        if used_api_token:
-            metadata["used_api_token"] = used_api_token
-        if metadata:
-            logic.create_query_execution_metadata(
-                query_execution.id, metadata, session=session
-            )
-
-        data_doc = None
-        if data_cell_id:
-            datadoc_logic.append_query_executions_to_data_cell(
-                data_cell_id, [query_execution.id], session=session
-            )
-            data_cell = datadoc_logic.get_data_cell_by_id(data_cell_id, session=session)
-            data_doc = data_cell.doc
+        data_doc = process_query_execution_metadata(
+            query_execution_id=query_execution.id,
+            metadata=metadata,
+            data_cell_id=data_cell_id,
+            session=session,
+        )
 
         try:
-            run_query_task.apply_async(
-                args=[
-                    query_execution.id,
-                ]
+            initiate_query_execution(
+                query_execution=query_execution,
+                uid=uid,
+                peer_review_params=peer_review_params,
+                session=session,
             )
-            query_execution_dict = query_execution.to_dict()
+
+            query_execution_dict = query_execution.to_dict(with_query_review=True)
 
             if data_doc:
                 socketio.emit(
@@ -130,7 +197,11 @@ def create_query_execution(
 def get_query_execution(query_execution_id):
     verify_query_execution_permission(query_execution_id)
     execution = logic.get_query_execution_by_id(query_execution_id)
-    execution_dict = execution.to_dict(True) if execution is not None else None
+    execution_dict = (
+        execution.to_dict(with_statement=True, with_query_review=True)
+        if execution is not None
+        else None
+    )
     return execution_dict
 
 
@@ -683,3 +754,25 @@ def transpile_query(
 ):
     transpiler = get_transpiler_by_name(transpiler_name)
     return transpiler.transpile(query, from_language, to_language)
+
+
+@register("/query_execution/<int:query_execution_id>/approve_review/", methods=["PUT"])
+def approve_query_review(query_execution_id):
+    verify_query_execution_permission(query_execution_id)
+    reviewer_id = current_user.id
+
+    query_execution = query_review_handler.approve_review(
+        query_execution_id, reviewer_id
+    )
+    return query_execution.to_dict(with_statement=False, with_query_review=True)
+
+
+@register("/query_execution/<int:query_execution_id>/reject_review/", methods=["PUT"])
+def reject_query_review(query_execution_id, rejection_reason):
+    verify_query_execution_permission(query_execution_id)
+    reviewer_id = current_user.id
+
+    query_execution = query_review_handler.reject_review(
+        query_execution_id, reviewer_id, rejection_reason
+    )
+    return query_execution.to_dict(with_statement=False, with_query_review=True)

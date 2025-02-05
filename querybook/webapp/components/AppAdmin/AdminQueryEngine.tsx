@@ -34,6 +34,7 @@ import {
 import { AdminDeletedList } from './AdminDeletedList';
 
 import './AdminQueryEngine.scss';
+import { usePeerReview } from 'lib/peer-review/config';
 
 interface IProps {
     queryEngines: IAdminQueryEngine[];
@@ -49,6 +50,8 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
     loadMetastores,
 }) => {
     const { id: queryEngineId } = useParams();
+
+    const { isEnabled: isPeerReviewEnabled } = usePeerReview();
 
     const { data: queryEngineTemplates } = useResource(
         AdminQueryEngineResource.getTemplates
@@ -437,6 +440,15 @@ export const AdminQueryEngine: React.FunctionComponent<IProps> = ({
                                     type="toggle"
                                     label="(Experimental) Enable Row Limit"
                                 />
+
+                                {isPeerReviewEnabled && (
+                                    <SimpleField
+                                        stacked
+                                        name="feature_params.peer_review"
+                                        type="toggle"
+                                        label="(Experimental) Enable Peer Reviews"
+                                    />
+                                )}
                             </div>
                         </div>
 

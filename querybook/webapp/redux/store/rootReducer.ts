@@ -12,6 +12,7 @@ import notificationService from '../notificationService/reducer';
 import querybookUI from '../querybookUI/reducer';
 import queryEngine from '../queryEngine/reducer';
 import queryExecutions from '../queryExecutions/reducer';
+import queryReview from '../queryReview/reducer';
 import querySnippets from '../querySnippets/reducer';
 import queryView from '../queryView/reducer';
 import scheduledDocs from '../scheduledDataDoc/reducer';
@@ -38,4 +39,5 @@ export default combineReducers({
     tag,
     scheduledDocs,
     comment,
+    queryReview,
 });

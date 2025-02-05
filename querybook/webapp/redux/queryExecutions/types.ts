@@ -7,6 +7,7 @@ import {
     IQueryExecution,
     IQueryExecutionViewer,
     IQueryResultExporter,
+    IQueryReview,
     IStatementExecution,
     IStatementLog,
     IStatementResult,
@@ -30,6 +31,7 @@ export interface IReceiveQueryExecutionAction extends Action {
     payload: {
         queryExecutionById: Record<number, IQueryExecution>;
         statementExecutionById: Record<number, IStatementExecution>;
+        queryReviewById: Record<number, IQueryReview>;
         dataCellId?: number;
     };
 }
@@ -186,6 +188,7 @@ export type QueryExecutionAction =
 export interface IQueryExecutionState {
     queryExecutionById: Record<number, IQueryExecution>;
     statementExecutionById: Record<number, IStatementExecution>;
+    queryReviewByExecutionId: Record<number, IQueryReview>;
 
     dataCellIdQueryExecution: Record<number, Set<number>>;
     queryExecutionIdToCellInfo: Record<

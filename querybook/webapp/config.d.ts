@@ -137,6 +137,19 @@ declare module 'config/querybook_public_config.yaml' {
         github_integration: {
             enabled: boolean;
         };
+        peer_review: {
+            enabled: boolean;
+            request_texts: {
+                // When users request reviews
+                description: string;
+                guide_link: string;
+                tip: string;
+            };
+            reviewer_texts: {
+                // When reviewers take actions
+                approve_message: string;
+            };
+        };
     };
     export default data;
 }

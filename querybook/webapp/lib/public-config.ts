@@ -38,3 +38,15 @@ export const getTableSamplingRateOptions = () => {
         label: rate === 0 ? 'none' : rate + '%',
     }));
 };
+
+export const PEER_REVIEW_CONFIG = PublicConfig.peer_review ?? {
+    enabled: false,
+    request_texts: {
+        description: '',
+        guide_link: '',
+        tip: '',
+    },
+    reviewer_texts: {
+        approve_message: '',
+    },
+};

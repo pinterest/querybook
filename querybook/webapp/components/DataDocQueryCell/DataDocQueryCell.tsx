@@ -15,6 +15,7 @@ import { QueryCellTitle } from 'components/QueryCellTitle/QueryCellTitle';
 import { runQuery, transformQuery } from 'components/QueryComposer/RunQuery';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
 import { IQueryEditorHandles } from 'components/QueryEditor/QueryEditor';
+import { QueryPeerReviewModal } from 'components/QueryPeerReviewModal/QueryPeerReviewModal';
 import {
     IQueryRunButtonHandles,
     QueryEngineSelector,
@@ -27,6 +28,7 @@ import { UDFForm } from 'components/UDFForm/UDFForm';
 import { ComponentType, ElementType } from 'const/analytics';
 import {
     IDataQueryCellMeta,
+    IPeerReviewParams,
     ISamplingTables,
     TDataDocMetaVariables,
 } from 'const/datadoc';
@@ -115,6 +117,7 @@ interface IState {
     tableNamesInQuery: string[];
     samplingTables: ISamplingTables;
     showTableSamplingInfoModal: boolean;
+    showPeerReviewModal: boolean;
 
     transpilerConfig?: {
         toEngine: IQueryEngine;
@@ -144,6 +147,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             tableNamesInQuery: [],
             samplingTables: {},
             showTableSamplingInfoModal: false,
+            showPeerReviewModal: false,
         };
     }
 
@@ -443,29 +447,59 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
-    public async onRunButtonClick() {
+    public async executeQuery(options: {
+        element: ElementType;
+        peerReviewParams?: IPeerReviewParams;
+        onSuccess?: (queryId: number) => void;
+    }): Promise<number | null> {
+        const { element, peerReviewParams, onSuccess } = options;
+
         trackClick({
             component: ComponentType.DATADOC_QUERY_CELL,
-            element: ElementType.RUN_QUERY_BUTTON,
+            element,
             aux: {
                 lintError: this.state.hasLintError,
                 sampleRate: this.sampleRate,
             },
         });
 
-        return runQuery(
-            await this.getTransformedQuery(),
-            this.engineId,
-            async (query, engineId) => {
-                const queryId = (
-                    await this.props.createQueryExecution(
-                        query,
-                        engineId,
-                        this.props.cellId,
-                        this.getQueryExecutionMetadata()
-                    )
-                ).id;
+        const transformedQuery = await this.getTransformedQuery();
+        const executionMetadata = this.getQueryExecutionMetadata();
 
+        try {
+            const queryId = await runQuery(
+                transformedQuery,
+                this.engineId,
+                async (query: string, engineId: number) => {
+                    const queryExecution =
+                        await this.props.createQueryExecution(
+                            query,
+                            engineId,
+                            this.props.cellId,
+                            executionMetadata,
+                            peerReviewParams
+                        );
+                    return queryExecution.id;
+                }
+            );
+
+            if (queryId != null) {
+                onSuccess?.(queryId);
+            }
+
+            return queryId;
+        } catch (error) {
+            toast.error('Failed to execute query.');
+            console.error('Query Execution Error:', error);
+            throw error;
+        }
+    }
+
+    @bind
+    public async onRunButtonClick() {
+        return this.executeQuery({
+            element: ElementType.RUN_QUERY_BUTTON,
+            onSuccess: (queryId: number) => {
                 // Only trigger survey if the query is modified within 5 minutes
                 if (Date.now() - this.state.modifiedAt < 5 * 60 * 1000) {
                     triggerSurvey(SurveySurfaceType.QUERY_AUTHORING, {
@@ -473,10 +507,16 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                         cell_id: this.props.cellId,
                     });
                 }
+            },
+        });
+    }
 
-                return queryId;
-            }
-        );
+    @bind
+    public async onPeerReviewSubmit(peerReviewParams: IPeerReviewParams) {
+        return this.executeQuery({
+            element: ElementType.PEER_REVIEW_QUERY_BUTTON,
+            peerReviewParams,
+        });
     }
 
     @bind
@@ -562,6 +602,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     public getAdditionalDropDownButtonDOM() {
         const { isEditable, queryEngines, queryTranspilers } = this.props;
         const queryEngine = this.queryEngine;
+        const hasPeerReviewFeature = queryEngine?.feature_params?.peer_review;
 
         const queryCollapsed = this.queryCollapsed;
 
@@ -636,6 +677,16 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             });
         }
 
+        if (hasPeerReviewFeature && isEditable) {
+            additionalButtons.push({
+                name: 'Request Query Review',
+                onClick: this.toggleShowPeerReviewModal,
+                icon: 'Send',
+                tooltip: 'Request a peer review for your query',
+                tooltipPos: 'right',
+            });
+        }
+
         return additionalButtons.length > 0 ? (
             <Dropdown
                 className="query-cell-additional-dropdown"
@@ -675,6 +726,18 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     public toggleShowRenderedTemplateModal() {
         this.setState(({ showRenderedTemplateModal }) => ({
             showRenderedTemplateModal: !showRenderedTemplateModal,
+        }));
+    }
+
+    @bind
+    public toggleShowPeerReviewModal() {
+        const { query } = this.props;
+        if (this.state.showPeerReviewModal === false && query.trim() === '') {
+            toast.error('Cannot request a review for an empty query.');
+            return;
+        }
+        this.setState(({ showPeerReviewModal }) => ({
+            showPeerReviewModal: !showPeerReviewModal,
         }));
     }
 
@@ -943,6 +1006,13 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             />
         );
 
+        const peerReviewModalDOM = this.state.showPeerReviewModal ? (
+            <QueryPeerReviewModal
+                onSubmit={this.onPeerReviewSubmit}
+                onHide={this.toggleShowPeerReviewModal}
+            />
+        ) : null;
+
         return (
             <>
                 {editorDOM}
@@ -951,6 +1021,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 {UDFModal}
                 {transpilerModal}
                 {renderTableSamplingInfoDOM}
+                {peerReviewModalDOM}
             </>
         );
     }
@@ -1084,8 +1155,18 @@ function mapDispatchToProps(dispatch: Dispatch) {
             query: string,
             engineId: number,
             cellId: number,
-            metadata: Record<string, string | number>
-        ) => dispatch(createQueryExecution(query, engineId, cellId, metadata)),
+            metadata: Record<string, string | number>,
+            peerReviewParams?: IPeerReviewParams
+        ) =>
+            dispatch(
+                createQueryExecution(
+                    query,
+                    engineId,
+                    cellId,
+                    metadata,
+                    peerReviewParams
+                )
+            ),
 
         setTableSidebarId: (id: number) => dispatch(setSidebarTableId(id)),
 

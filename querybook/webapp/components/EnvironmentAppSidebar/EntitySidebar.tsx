@@ -17,6 +17,8 @@ import { Link } from 'ui/Link/Link';
 import { Entity } from './types';
 
 import './EntitySidebar.scss';
+import { QueryReviewButton } from 'components/QueryReviewsNavigator/QueryReviewButton';
+import { hasEnabledPeerReviewEngineSelector } from 'redux/queryReview/selector';
 
 interface IEntitySidebarProps {
     selectedEntity: Entity;
@@ -27,6 +29,9 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> =
     React.memo(({ selectedEntity, onSelectEntity }) => {
         const environment = useSelector(currentEnvironmentSelector);
         const queryMetastores = useSelector(queryMetastoresSelector);
+        const hasEnabledPeerReviewEngine = useSelector(
+            hasEnabledPeerReviewEngineSelector
+        );
 
         return (
             <div className="EntitySidebar">
@@ -153,6 +158,18 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> =
                         }}
                         active={selectedEntity === 'execution'}
                     />
+                    {hasEnabledPeerReviewEngine && (
+                        <QueryReviewButton
+                            active={selectedEntity === 'review'}
+                            onClick={() => {
+                                trackClick({
+                                    component: ComponentType.LEFT_SIDEBAR,
+                                    element: ElementType.REVIEWS_BUTTON,
+                                });
+                                onSelectEntity('review');
+                            }}
+                        />
+                    )}
                 </div>
                 <div className="apps-list flex-column">
                     <QueryEngineStatusButton />

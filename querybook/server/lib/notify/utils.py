@@ -34,8 +34,14 @@ def notify_user(user, template_name, template_params, notifier_name=None, sessio
 
 
 def render_message(template_name, context):
-    jinja_env = jinja2.Environment(
-        loader=jinja2.FileSystemLoader("./querybook/notification_templates/")
-    )
+    """
+    Render notification template from core or plugin paths.
+    Plugin templates in plugins/notification_templates_plugin/ override core templates.
+    """
+    template_paths = [
+        "./plugins/notification_templates_plugin/",
+        "./querybook/notification_templates/",
+    ]
+    jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_paths))
     template = jinja_env.get_template(f"{template_name}.md")
     return template.render(context)
