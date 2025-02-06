@@ -10,7 +10,6 @@ from const.datasources import (
 )
 from const.permissions import BoardDataDocPermission
 
-from models import User
 from logic.generic_permission import user_has_permission
 
 
