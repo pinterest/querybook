@@ -9,6 +9,7 @@ from const.query_execution import QueryExecutionStatus
 from lib.sqlalchemy import update_model_fields
 from lib.data_doc.data_cell import cell_types, sanitize_data_cell_meta
 from logic.query_execution import get_last_query_execution_from_cell
+from logic.generic_permission import get_all_groups_and_group_members_with_access
 from models.datadoc import (
     DataDoc,
     DataDocDataCell,
@@ -28,7 +29,6 @@ from tasks.sync_es_queries_by_datadoc import (
     sync_es_queries_by_datadoc_id,
     sync_es_query_cells_by_datadoc_id,
 )
-
 
 """
     ----------------------------------------------------------------------------------------------------------
@@ -864,7 +864,23 @@ def get_data_doc_editor_by_id(id, session=None):
 
 @with_session
 def get_data_doc_editors_by_doc_id(data_doc_id, session=None):
-    return session.query(DataDocEditor).filter_by(data_doc_id=data_doc_id).all()
+    editors = get_all_groups_and_group_members_with_access(
+        doc_or_board_id=data_doc_id,
+        editor_type=DataDocEditor,
+        session=session,
+    )
+
+    return [
+        DataDocEditor(
+            # [0] is id, [1] is uid, [2] is read, [3] is write
+            data_doc_id=data_doc_id,
+            id=editor[0],
+            uid=editor[1],
+            read=editor[2],
+            write=editor[3],
+        )
+        for editor in editors
+    ]
 
 
 @with_session
@@ -876,6 +892,12 @@ def get_data_doc_writers_by_doc_id(doc_id, session=None):
 def create_data_doc_editor(
     data_doc_id, uid, read=False, write=False, commit=True, session=None
 ):
+    existing_editor = (
+        session.query(DataDocEditor).filter_by(data_doc_id=data_doc_id, uid=uid).first()
+    )
+    if existing_editor is not None:
+        return update_data_doc_editor(existing_editor.id, read, write, session=session)
+
     editor = DataDocEditor(data_doc_id=data_doc_id, uid=uid, read=read, write=write)
 
     session.add(editor)

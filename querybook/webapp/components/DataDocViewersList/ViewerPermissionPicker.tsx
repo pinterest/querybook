@@ -82,7 +82,7 @@ export const ViewerPermissionPicker: React.FunctionComponent<IProp> = ({
         viewerInfo.permission === Permission.CAN_WRITE;
 
     const pickerButton =
-        canShowEditMenu && !readonly ? (
+        canShowEditMenu && viewerInfo.editorId != null && !readonly ? (
             <div
                 className="permission-text flex-row mr8"
                 onClick={() => setShowEditMenu(true)}
