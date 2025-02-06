@@ -75,14 +75,19 @@ const queryValidationErrorsToDiagnostics = (
             suggestion,
         } = validationError;
 
-        const startPos = posToOffset(editorView, { line, ch });
-        const endPos =
+        let startPos = posToOffset(editorView, { line, ch });
+        let endPos =
             endLine !== null && endCh !== null
                 ? posToOffset(editorView, {
                       line: endLine,
                       ch: endCh + 1,
                   })
                 : startPos + 1;
+
+        // To prevent the range from going out of the document
+        const maxOffset = editorView.state.doc.length;
+        startPos = Math.min(startPos, maxOffset);
+        endPos = Math.min(endPos, maxOffset);
 
         return {
             from: startPos,
