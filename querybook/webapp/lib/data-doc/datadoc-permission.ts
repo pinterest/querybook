@@ -21,7 +21,7 @@ export interface IViewerInfo {
 
 export function editorToPermission(
     isOwner: boolean,
-    editor: IDataDocEditor | IBoardEditor | null
+    editor: IDataDocEditor | IBoardEditor | undefined | null
 ): Permission {
     if (isOwner) {
         return Permission.OWNER;
