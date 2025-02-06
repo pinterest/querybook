@@ -2,9 +2,9 @@ import { createSelector } from 'reselect';
 
 import { IDataCell, IDataQueryCellMeta } from 'const/datadoc';
 import {
+    editorToPermission,
     getViewerInfo,
     permissionToReadWrite,
-    readWriteToPermission,
     sortViewersInfo,
 } from 'lib/data-doc/datadoc-permission';
 import { IStoreState } from 'redux/store/types';
@@ -167,7 +167,7 @@ export const dataDocViewerInfosSelector = createSelector(
     dataDocViewerIdsSelector,
     (state: IStoreState) => state.user.myUserInfo.uid,
     (dataDoc, editorsByUserId, viewerIds, uid) => {
-        const newEditorsByUserId = Object.fromEntries(
+        const nonGroupEditorsByUserId = Object.fromEntries(
             Object.entries(editorsByUserId).filter(
                 // Filter out any editors inherited from groups
                 // (i.e. editors with a uid but no id)
@@ -178,7 +178,7 @@ export const dataDocViewerInfosSelector = createSelector(
             ...new Set(
                 [dataDoc.owner_uid]
                     .concat(viewerIds)
-                    .concat(Object.keys(newEditorsByUserId).map(Number))
+                    .concat(Object.keys(nonGroupEditorsByUserId).map(Number))
             ),
         ];
         const nonExplicitEditorPermissions = {};
@@ -189,7 +189,7 @@ export const dataDocViewerInfosSelector = createSelector(
             allUserIds.map((uid) =>
                 getViewerInfo(
                     uid,
-                    newEditorsByUserId,
+                    nonGroupEditorsByUserId,
                     dataDoc,
                     viewerIds,
                     nonExplicitEditorPermissions
@@ -207,13 +207,10 @@ export const canCurrentUserEditSelector = createSelector(
         if (!dataDoc) {
             return false;
         }
-        const editor = uid in editorsByUserId ? editorsByUserId[uid] : null;
-        const permission = readWriteToPermission(
-            editor ? editor.read : false,
-            editor ? editor.write : false,
+        const editor = editorsByUserId[uid];
+        const permission = editorToPermission(
             dataDoc.owner_uid === uid,
-            dataDoc.public,
-            editor ? editor.id : -1
+            editor
         );
         return permissionToReadWrite(permission).write;
     }

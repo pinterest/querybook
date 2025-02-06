@@ -3,7 +3,7 @@ from app.db import with_session
 from models import UserGroupMember, User, DataDocEditor, BoardEditor
 from sqlalchemy import func, select, Integer
 from sqlalchemy.orm import Session
-from const.permissions import Permission
+from const.permissions import BoardDataDocPermission
 
 
 @with_session
@@ -80,7 +80,7 @@ def get_all_groups_and_group_members_with_access(
 @with_session
 def user_has_permission(
     doc_or_board_id: int,
-    permission_level: Permission,
+    permission_level: BoardDataDocPermission,
     editor_type: Union[DataDocEditor, BoardEditor],
     uid: int,
     session: Optional[Session] = None,
@@ -112,10 +112,10 @@ def user_has_permission(
         )
 
     # Check the user's direct permissions
-    if permission_level == Permission.READ:
+    if permission_level == BoardDataDocPermission.READ:
         if editor is not None and (editor.write or editor.read):
             return True
-    elif permission_level == Permission.WRITE:
+    elif permission_level == BoardDataDocPermission.WRITE:
         if editor is not None and editor.write:
             return True
 
@@ -127,13 +127,14 @@ def user_has_permission(
         session=session,
     )
 
-    if permission_level == Permission.READ:
-        if len(inherited_editors) == 1:
+    if len(inherited_editors) == 0:
+        return False
+
+    if permission_level == BoardDataDocPermission.READ:
+        return True
+    elif permission_level == BoardDataDocPermission.WRITE:
+        # Check if the editor's write privileges are true
+        if inherited_editors[0][3]:
             return True
-    elif permission_level == Permission.WRITE:
-        if len(inherited_editors) == 1:
-            # Check if the editor's write privileges are true
-            if inherited_editors[0][3]:
-                return True
 
     return False

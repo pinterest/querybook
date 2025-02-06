@@ -241,14 +241,13 @@ def get_board_editors_by_board_id(board_id, session=None):
 
     return [
         BoardEditor(
-            # [0] is id, [1] is uid, [2] is read, [3] is write
             board_id=board_id,
-            id=editor[0],
-            uid=editor[1],
-            read=editor[2],
-            write=editor[3],
+            id=id,
+            uid=uid,
+            read=read,
+            write=write,
         )
-        for editor in editors
+        for id, uid, read, write in editors
     ]
 
 

@@ -896,7 +896,7 @@ def create_data_doc_editor(
         session.query(DataDocEditor).filter_by(data_doc_id=data_doc_id, uid=uid).first()
     )
     if existing_editor is not None:
-        return existing_editor
+        return update_data_doc_editor(existing_editor.id, read, write, session=session)
 
     editor = DataDocEditor(data_doc_id=data_doc_id, uid=uid, read=read, write=write)
 
