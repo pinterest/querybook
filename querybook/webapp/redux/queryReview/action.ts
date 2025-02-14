@@ -5,6 +5,7 @@ import { QueryReviewResource } from 'resource/queryReview';
 import localStore from 'lib/local-store';
 
 const QUERY_REVIEW_TAB_KEY = 'query_review_active_tab';
+const PAGE_SIZE = 10;
 
 import {
     FETCH_ASSIGNED_REVIEWS_FAILURE,
@@ -19,13 +20,21 @@ import {
 } from './types';
 
 export const fetchMyReviews =
-    (): ThunkResult<void> => async (dispatch: Dispatch<QueryReviewAction>) => {
+    (page: number = 0): ThunkResult<Promise<void>> =>
+    async (dispatch: Dispatch<QueryReviewAction>) => {
         try {
             dispatch({ type: FETCH_MY_REVIEWS_REQUEST });
-            const reviews = await QueryReviewResource.getReviewsCreatedByMe();
+            const reviews = await QueryReviewResource.getReviewsCreatedByMe(
+                PAGE_SIZE,
+                page * PAGE_SIZE
+            );
             dispatch({
                 type: FETCH_MY_REVIEWS_SUCCESS,
-                payload: reviews.data,
+                payload: {
+                    reviews: reviews.data,
+                    hasMore: reviews.data.length === PAGE_SIZE,
+                    page,
+                },
             });
         } catch (error) {
             dispatch({
@@ -36,13 +45,21 @@ export const fetchMyReviews =
     };
 
 export const fetchAssignedReviews =
-    (): ThunkResult<void> => async (dispatch: Dispatch<QueryReviewAction>) => {
+    (page: number = 0): ThunkResult<void> =>
+    async (dispatch: Dispatch<QueryReviewAction>) => {
         try {
             dispatch({ type: FETCH_ASSIGNED_REVIEWS_REQUEST });
-            const reviews = await QueryReviewResource.getReviewsAssignedToMe();
+            const reviews = await QueryReviewResource.getReviewsAssignedToMe(
+                PAGE_SIZE,
+                page * PAGE_SIZE
+            );
             dispatch({
                 type: FETCH_ASSIGNED_REVIEWS_SUCCESS,
-                payload: reviews.data,
+                payload: {
+                    reviews: reviews.data,
+                    hasMore: reviews.data.length === PAGE_SIZE,
+                    page,
+                },
             });
         } catch (error) {
             dispatch({

@@ -13,30 +13,34 @@ import {
     selectLoadingAssignedReviews,
     selectLoadingMyReviews,
     selectMyReviews,
+    selectMyReviewsPage,
+    selectAssignedReviewsPage,
+    selectMyReviewsHasMore,
+    selectAssignedReviewsHasMore,
 } from 'redux/queryReview/selector';
 import { IStoreState } from 'redux/store/types';
 import { Icon } from 'ui/Icon/Icon';
 import { AccentText } from 'ui/StyledText/StyledText';
 import { Tabs } from 'ui/Tabs/Tabs';
-
 import { QueryReviewItem } from './QueryReviewItem';
+import { TooltipDirection } from 'const/tooltip';
+import { Button } from 'ui/Button/Button';
 
 import './QueryReviewsNavigator.scss';
-import { TooltipDirection } from 'const/tooltip';
 
 type TabType = 'myReviews' | 'assigned';
 
 const NAVIGATOR_TABS = [
     {
         key: 'myReviews' as TabType,
-        name: 'Pending Reviews',
+        name: 'Created',
         icon: 'Clock' as const,
         tooltip: 'Reviews you have requested',
         tooltipPos: 'down' as TooltipDirection,
     },
     {
         key: 'assigned' as TabType,
-        name: 'Assigned Reviews',
+        name: 'Assigned',
         icon: 'ListOrdered' as const,
         tooltip: 'Reviews assigned to you',
         tooltipPos: 'down' as TooltipDirection,
@@ -46,7 +50,7 @@ const NAVIGATOR_TABS = [
 export const QueryReviewsNavigator: React.FC = () => {
     const [selectedReviewId, setSelectedReviewId] = useState<number>(null);
 
-    const { reviews, isLoading, activeTab } = useShallowSelector(
+    const { reviews, isLoading, activeTab, page, hasMore } = useShallowSelector(
         (state: IStoreState) => {
             const tab = state.queryReview.activeTab;
             return {
@@ -59,6 +63,14 @@ export const QueryReviewsNavigator: React.FC = () => {
                         ? selectLoadingMyReviews(state)
                         : selectLoadingAssignedReviews(state),
                 activeTab: tab,
+                page:
+                    tab === 'myReviews'
+                        ? selectMyReviewsPage(state)
+                        : selectAssignedReviewsPage(state),
+                hasMore:
+                    tab === 'myReviews'
+                        ? selectMyReviewsHasMore(state)
+                        : selectAssignedReviewsHasMore(state),
             };
         }
     );
@@ -81,11 +93,26 @@ export const QueryReviewsNavigator: React.FC = () => {
     const handleTabChange = useCallback(
         (key: string) => {
             if (key === 'myReviews' || key === 'assigned') {
+                // Reset to page 0 when switching tabs
+                if (key === 'myReviews') {
+                    dispatch(fetchMyReviews(0));
+                } else {
+                    dispatch(fetchAssignedReviews(0));
+                }
                 dispatch(setActiveTab(key as TabType));
             }
         },
         [dispatch]
     );
+
+    const handleLoadMore = useCallback(() => {
+        const nextPage = page + 1;
+        if (activeTab === 'myReviews') {
+            dispatch(fetchMyReviews(nextPage));
+        } else {
+            dispatch(fetchAssignedReviews(nextPage));
+        }
+    }, [activeTab, page, dispatch]);
 
     const loadingDOM = isLoading ? (
         <div className="flex-column m24">
@@ -121,8 +148,6 @@ export const QueryReviewsNavigator: React.FC = () => {
                 selectedTabKey={activeTab}
                 onSelect={handleTabChange}
                 pills
-                wide
-                selectColor
                 size="small"
                 className="list-header"
                 align="center"
@@ -136,6 +161,11 @@ export const QueryReviewsNavigator: React.FC = () => {
             <div className="list-content scroll-wrapper">
                 {isLoading && loadingDOM}
                 {reviews.length > 0 && reviewListDOM}
+                {!isLoading && hasMore && (
+                    <div className="center-align mt16 mb16">
+                        <Button onClick={handleLoadMore} title="Load More" />
+                    </div>
+                )}
                 {noResultDOM}
             </div>
         </div>

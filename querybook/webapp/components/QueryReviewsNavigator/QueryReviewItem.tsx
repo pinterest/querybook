@@ -1,16 +1,19 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
+import { useSelector } from 'react-redux';
+import clsx from 'clsx';
 
 import { UserBadge } from 'components/UserBadge/UserBadge';
+import { UserAvatarList } from 'components/UserBadge/UserAvatarList';
 import { IQueryReview } from 'const/queryExecution';
-import { Status } from 'const/queryStatus';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { UrlContextMenu } from 'ui/ContextMenu/UrlContextMenu';
-import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
-import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 import { AccentText } from 'ui/StyledText/StyledText';
 import { Tag } from 'ui/Tag/Tag';
-import clsx from 'clsx';
+import { Icon } from 'ui/Icon/Icon';
+import { IStoreState } from 'redux/store/types';
+import { AllLucideIconNames } from 'ui/Icon/LucideIcons';
+import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 
 import './QueryReviewsNavigator.scss';
 
@@ -23,150 +26,129 @@ interface IQueryReviewItemProps {
     onClick?: () => void;
 }
 
-const STATUS_COLOR_MAP: Record<string, Status> = {
-    pending: Status.warning,
-    approved: Status.success,
-    rejected: Status.error,
-} as const;
+const STATUS_ICON_MAP: Record<string, AllLucideIconNames> = {
+    approved: 'Check',
+    rejected: 'X',
+    pending: 'Clock',
+};
 
-const ReviewHeader: React.FC<{ review: IQueryReview; statusColor: Status }> = ({
-    review,
-    statusColor,
-}) => (
-    <div className="review-header horizontal-space-between mb4">
-        <div className="flex-row">
-            <StatusIcon status={statusColor} />
-            <AccentText className="mr8" size="small" weight="bold">
-                Execution {review.query_execution_id}
-            </AccentText>
-        </div>
-        <Tag mini>
-            {review.status.charAt(0).toUpperCase() + review.status.slice(1)}
-        </Tag>{' '}
-    </div>
-);
-
-const AssignedReviewContent: React.FC<{ review: IQueryReview }> = ({
-    review,
-}) => (
-    <>
-        <div className="review-row">
-            <span className="label">Requested By:</span>
-            <UserBadge uid={review.requested_by} mini cardStyle />
-        </div>
-        <div className="review-row">
-            <span className="label">Request Reason:</span>
-            <span
-                className="value text-ellipsis"
-                aria-label={review.request_reason}
-                data-balloon-pos="up"
-            >
-                <ShowMoreText text={review.request_reason} />
-            </span>
-        </div>
-    </>
-);
-
-const MyReviewContent: React.FC<{ review: IQueryReview }> = ({ review }) => {
-    const [showAllReviewers, setShowAllReviewers] = useState(false);
-    const hasMoreReviewers = review.reviewer_ids.length > 3;
-    const displayedReviewers = showAllReviewers
-        ? review.reviewer_ids
-        : review.reviewer_ids.slice(0, 3);
-
+const ReviewHeader: React.FC<{ review: IQueryReview }> = ({ review }) => {
     return (
-        <div className="review-row">
-            <span className="label">Reviewers:</span>
-            <div
-                className="reviewers-list"
-                aria-label={
-                    !showAllReviewers && hasMoreReviewers
-                        ? `${review.reviewer_ids.length} reviewers`
-                        : undefined
-                }
-                data-balloon-pos="up"
-            >
-                {displayedReviewers.map((reviewerId) => (
-                    <UserBadge
-                        key={reviewerId}
-                        uid={reviewerId}
-                        mini
-                        cardStyle
-                    />
-                ))}
-                {hasMoreReviewers && (
-                    <span
-                        className="show-more-reviewers"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            setShowAllReviewers(!showAllReviewers);
-                        }}
-                    >
-                        {showAllReviewers
-                            ? ' show less'
-                            : ` +${review.reviewer_ids.length - 3} more`}
-                    </span>
-                )}
+        <div className="review-header horizontal-space-between">
+            {review.requested_by && (
+                <span aria-label="Requested by" data-balloon-pos="up">
+                    <UserBadge uid={review.requested_by} mini cardStyle />
+                </span>
+            )}
+            <Tag mini light>
+                <Icon
+                    name={STATUS_ICON_MAP[review.status]}
+                    size={12}
+                    className="mr4"
+                />
+                {review.status.charAt(0).toUpperCase() + review.status.slice(1)}
+            </Tag>
+        </div>
+    );
+};
+
+const ReviewContent: React.FC<{ review: IQueryReview }> = ({ review }) => {
+    const isRejected = review.status === 'rejected';
+    const title = isRejected ? 'Rejection Reason' : 'Request Reason';
+    const reasonText = isRejected
+        ? review.rejection_reason
+        : review.request_reason;
+    return (
+        <div className="query-content-section">
+            <AccentText className="content-label" size="small" weight="bold">
+                {title}
+            </AccentText>
+            <div className="reason-text">
+                <ShowMoreText
+                    text={reasonText || 'No reason provided'}
+                    length={50}
+                    seeLess
+                />
             </div>
         </div>
     );
 };
 
-const ReviewTimestamp: React.FC<{
+interface MetaInfoProps {
     review: IQueryReview;
-    type: ReviewType;
-}> = ({ review, type }) => (
-    <AccentText
-        className="horizontal-space-between"
-        size="xsmall"
-        color="lightest"
-    >
-        <span>
-            {type === 'assigned' ? 'Requested' : 'Created'} at:{' '}
-            {generateFormattedDate(review.created_at)}
-        </span>
-    </AccentText>
+    visibleReviewers: number[];
+    extraReviewers: number;
+    userInfoById: IStoreState['user']['userInfoById'];
+}
+
+const MetaInfo: React.FC<MetaInfoProps> = ({
+    review,
+    visibleReviewers,
+    extraReviewers,
+    userInfoById,
+}) => (
+    <div className="meta-info">
+        <div className="reviewers">
+            <span aria-label="Reviewers" data-balloon-pos="up">
+                <Icon name="Users" size={14} className="mr4" />
+            </span>
+            <UserAvatarList
+                users={visibleReviewers.map((id) => {
+                    const userInfo = userInfoById[id];
+                    return {
+                        uid: id,
+                        tooltip: userInfo
+                            ? userInfo.fullname ?? userInfo.username
+                            : `User ${id}`,
+                    };
+                })}
+                extraCount={extraReviewers}
+            />
+        </div>
+        <div className="timestamp">
+            <span aria-label="Updated at" data-balloon-pos="up">
+                <Icon name="Calendar" size={14} className="mr4" />
+                <AccentText size="xsmall" color="light">
+                    {generateFormattedDate(review.created_at)}
+                </AccentText>
+            </span>
+        </div>
+    </div>
 );
 
 export const QueryReviewItem: React.FC<IQueryReviewItemProps> = ({
     review,
-    type,
     isSelected,
     onClick,
 }) => {
-    const selfRef = useRef<HTMLDivElement>();
-
+    const selfRef = useRef<HTMLDivElement>(null);
     const queryExecutionUrl = useMemo(
         () => `/query_execution/${review.query_execution_id}/`,
         [review.query_execution_id]
     );
-
     const handleClick = useCallback(() => {
         onClick?.();
         navigateWithinEnv(queryExecutionUrl);
     }, [queryExecutionUrl, onClick]);
 
-    const statusColor: Status =
-        STATUS_COLOR_MAP[review.status] ?? Status.warning;
-
-    const className = clsx('QueryReviewItem', {
-        'is-selected': isSelected,
-    });
+    const className = clsx('QueryReviewItem', { 'is-selected': isSelected });
+    const userInfoById = useSelector(
+        (state: IStoreState) => state.user.userInfoById
+    );
+    const visibleReviewers = review.reviewer_ids.slice(0, 3);
+    const extraReviewers = Math.max(0, review.reviewer_ids.length - 3);
 
     return (
         <>
             <div className={className} onClick={handleClick} ref={selfRef}>
-                <ReviewHeader review={review} statusColor={statusColor} />
-
-                <div className="review-content mb4">
-                    {type === 'assigned' ? (
-                        <AssignedReviewContent review={review} />
-                    ) : (
-                        <MyReviewContent review={review} />
-                    )}
-                </div>
-
-                <ReviewTimestamp review={review} type={type} />
+                <ReviewHeader review={review} />
+                <ReviewContent review={review} />
+                <MetaInfo
+                    review={review}
+                    visibleReviewers={visibleReviewers}
+                    extraReviewers={extraReviewers}
+                    userInfoById={userInfoById}
+                />
             </div>
             <UrlContextMenu anchorRef={selfRef} url={queryExecutionUrl} />
         </>

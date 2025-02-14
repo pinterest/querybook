@@ -42,3 +42,23 @@ export const hasEnabledPeerReviewEngineSelector = createSelector(
             Boolean(engine?.feature_params?.peer_review)
         )
 );
+
+export const selectMyReviewsPage = createSelector(
+    selectQueryReviewState,
+    (queryReview) => queryReview.myReviewsPage
+);
+
+export const selectAssignedReviewsPage = createSelector(
+    selectQueryReviewState,
+    (queryReview) => queryReview.assignedReviewsPage
+);
+
+export const selectMyReviewsHasMore = createSelector(
+    selectQueryReviewState,
+    (queryReview) => queryReview.myReviewsHasMore
+);
+
+export const selectAssignedReviewsHasMore = createSelector(
+    selectQueryReviewState,
+    (queryReview) => queryReview.assignedReviewsHasMore
+);

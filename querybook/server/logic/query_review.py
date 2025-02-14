@@ -89,44 +89,50 @@ def get_query_review_from_query_execution_id(query_execution_id: int, session=No
 
 
 @with_session
-def get_reviews_created_by_user(user_id: int, session=None):
+def get_reviews_created_by_user(
+    user_id: int, limit: int = None, offset: int = None, session=None
+):
     """
-    Get all query reviews created by a specific user.
+    Get paginated query reviews created by a specific user.
 
     Args:
         user_id: The ID of the user who created the reviews
+        limit: Maximum number of reviews to return
+        offset: Number of reviews to skip
         session: SQLAlchemy session
-
-    Returns:
-        List[QueryReview]: List of query reviews created by the user,
-                          ordered by creation date descending
     """
-    return (
+    query = (
         session.query(QueryReview)
         .join(QueryExecution)
         .filter(QueryExecution.uid == user_id)
         .order_by(QueryReview.created_at.desc())
-        .all()
     )
+
+    if limit is not None:
+        query = query.limit(limit)
+    if offset is not None:
+        query = query.offset(offset)
+
+    return query.all()
 
 
 @with_session
-def get_reviews_assigned_to_user(user_id: int, session=None):
+def get_reviews_assigned_to_user(
+    user_id: int, limit: int = None, offset: int = None, session=None
+):
     """
-    Get all query reviews where a specific user is assigned as a reviewer.
-
-    Args:
-        user_id: The ID of the assigned reviewer
-        session: SQLAlchemy session
-
-    Returns:
-        List[QueryReview]: List of query reviews assigned to the user,
-                          ordered by creation date descending
+    Get paginated query reviews where a specific user is assigned as a reviewer.
     """
-    return (
+    query = (
         session.query(QueryReview)
         .join(QueryExecutionReviewer)
         .filter(QueryExecutionReviewer.uid == user_id)
         .order_by(QueryReview.created_at.desc())
-        .all()
     )
+
+    if limit is not None:
+        query = query.limit(limit)
+    if offset is not None:
+        query = query.offset(offset)
+
+    return query.all()

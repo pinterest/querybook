@@ -7,18 +7,18 @@ LOG = get_logger(__file__)
 
 
 @register("/query_review/created_by_me/", methods=["GET"])
-def get_reviews_created_by_me():
-    """Get all query reviews where the current user is the creator"""
+def get_reviews_created_by_me(limit: int, offset: int):
+    """Get paginated query reviews where the current user is the creator"""
     reviews = logic.get_reviews_created_by_user(
-        user_id=current_user.id,
+        user_id=current_user.id, limit=limit, offset=offset
     )
     return [review.to_dict(with_execution=True) for review in reviews]
 
 
 @register("/query_review/assigned_to_me/", methods=["GET"])
-def get_reviews_assigned_to_me():
-    """Get all query reviews where the current user is an assigned reviewer"""
+def get_reviews_assigned_to_me(limit: int, offset: int):
+    """Get paginated query reviews where the current user is an assigned reviewer"""
     reviews = logic.get_reviews_assigned_to_user(
-        user_id=current_user.id,
+        user_id=current_user.id, limit=limit, offset=offset
     )
     return [review.to_dict(with_execution=True) for review in reviews]

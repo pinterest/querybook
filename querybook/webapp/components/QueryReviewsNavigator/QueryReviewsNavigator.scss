@@ -1,10 +1,11 @@
-@import '../../scss_variables.scss';
+@import './../../scss_variables.scss';
 
 .QueryReviewsNavigator {
     position: relative;
     display: flex;
     flex-direction: column;
     height: 100%;
+    overflow-x: hidden;
 
     .reviews-header {
         border-bottom: var(--border);
@@ -31,6 +32,7 @@
 
     .list-content {
         overflow-y: auto;
+        overflow-x: hidden;
         padding: 8px;
 
         .empty-section-message {
@@ -62,60 +64,46 @@
     }
 
     .review-header {
-        .StatusIcon {
-            margin-right: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+
+        .mr4 {
+            margin-right: 4px;
         }
     }
 
-    .review-content {
-        .review-row {
+    .query-content-section {
+        padding: 8px 0;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 8px;
+
+        .content-label {
+            display: block;
+            margin-bottom: 4px;
+        }
+        .reason-text {
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+    }
+
+    .meta-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .reviewers,
+        .timestamp {
             display: flex;
-            margin-bottom: 8px;
+            align-items: center;
+        }
 
-            .label {
-                color: var(--text-light);
-                min-width: 100px;
-                margin-right: 12px;
-                padding-top: 4px;
-            }
-
-            .value {
-                flex: 1;
-                word-break: break-word;
-
-                &.text-ellipsis {
-                    display: -webkit-box;
-                    -webkit-line-clamp: 2;
-                    line-clamp: 2;
-                    -webkit-box-orient: vertical;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                }
-            }
-
-            .reviewers-list {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 8px;
-                align-items: center;
-
-                .UserBadge {
-                    margin-right: 0;
-                }
-
-                .show-more-reviewers {
-                    color: var(--text-light);
-                    font-size: var(--xsmall-text-size);
-                    cursor: pointer;
-                    padding: 2px 4px;
-                    border-radius: var(--border-radius-sm);
-
-                    &:hover {
-                        background: var(--bg-hover);
-                        color: var(--text);
-                    }
-                }
-            }
+        .timestamp span {
+            display: flex;
+            align-items: center;
         }
     }
 }

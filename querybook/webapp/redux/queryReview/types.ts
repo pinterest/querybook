@@ -28,6 +28,18 @@ export interface IQueryReviewState {
     errorMyReviews: string | null;
     errorAssignedReviews: string | null;
     activeTab: 'myReviews' | 'assigned';
+
+    // pagination state
+    myReviewsPage: number;
+    myReviewsHasMore: boolean;
+    assignedReviewsPage: number;
+    assignedReviewsHasMore: boolean;
+}
+
+interface IReviewsPayload {
+    reviews: IQueryReview[];
+    hasMore: boolean;
+    page: number;
 }
 
 interface IFetchMyReviewsRequestAction extends Action {
@@ -36,7 +48,7 @@ interface IFetchMyReviewsRequestAction extends Action {
 
 interface IFetchMyReviewsSuccessAction extends Action {
     type: typeof FETCH_MY_REVIEWS_SUCCESS;
-    payload: IQueryReview[];
+    payload: IReviewsPayload;
 }
 
 interface IFetchMyReviewsFailureAction extends Action {
@@ -50,7 +62,7 @@ interface IFetchAssignedReviewsRequestAction extends Action {
 
 interface IFetchAssignedReviewsSuccessAction extends Action {
     type: typeof FETCH_ASSIGNED_REVIEWS_SUCCESS;
-    payload: IQueryReview[];
+    payload: IReviewsPayload;
 }
 
 interface IFetchAssignedReviewsFailureAction extends Action {
