@@ -8,16 +8,6 @@ import {
     setActiveTab,
     initializeTabFromStorage,
 } from 'redux/queryReview/action';
-import {
-    selectAssignedReviews,
-    selectLoadingAssignedReviews,
-    selectLoadingMyReviews,
-    selectMyReviews,
-    selectMyReviewsPage,
-    selectAssignedReviewsPage,
-    selectMyReviewsHasMore,
-    selectAssignedReviewsHasMore,
-} from 'redux/queryReview/selector';
 import { IStoreState } from 'redux/store/types';
 import { Icon } from 'ui/Icon/Icon';
 import { AccentText } from 'ui/StyledText/StyledText';
@@ -56,21 +46,15 @@ export const QueryReviewsNavigator: React.FC = () => {
             return {
                 reviews:
                     tab === 'myReviews'
-                        ? selectMyReviews(state)
-                        : selectAssignedReviews(state),
+                        ? state.queryReview.myReviews
+                        : state.queryReview.assignedReviews,
                 isLoading:
                     tab === 'myReviews'
-                        ? selectLoadingMyReviews(state)
-                        : selectLoadingAssignedReviews(state),
+                        ? state.queryReview.loadingMyReviews
+                        : state.queryReview.loadingAssignedReviews,
                 activeTab: tab,
-                page:
-                    tab === 'myReviews'
-                        ? selectMyReviewsPage(state)
-                        : selectAssignedReviewsPage(state),
-                hasMore:
-                    tab === 'myReviews'
-                        ? selectMyReviewsHasMore(state)
-                        : selectAssignedReviewsHasMore(state),
+                page: state.queryReview.currentPage,
+                hasMore: state.queryReview.hasMore,
             };
         }
     );

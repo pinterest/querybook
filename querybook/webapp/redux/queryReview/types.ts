@@ -30,10 +30,8 @@ export interface IQueryReviewState {
     activeTab: 'myReviews' | 'assigned';
 
     // pagination state
-    myReviewsPage: number;
-    myReviewsHasMore: boolean;
-    assignedReviewsPage: number;
-    assignedReviewsHasMore: boolean;
+    currentPage: number;
+    hasMore: boolean;
 }
 
 interface IReviewsPayload {

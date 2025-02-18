@@ -75,8 +75,8 @@ export const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
             .trim()
             .required('Justification is required')
             .min(
-                50,
-                'Please provide a detailed justification (minimum 50 characters)'
+                10,
+                'Please provide a detailed justification (minimum 10 characters)'
             ),
     });
 

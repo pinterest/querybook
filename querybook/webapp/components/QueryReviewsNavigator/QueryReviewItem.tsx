@@ -14,6 +14,7 @@ import { Icon } from 'ui/Icon/Icon';
 import { IStoreState } from 'redux/store/types';
 import { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
+import { capitalize } from 'lodash';
 
 import './QueryReviewsNavigator.scss';
 
@@ -46,7 +47,7 @@ const ReviewHeader: React.FC<{ review: IQueryReview }> = ({ review }) => {
                     size={12}
                     className="mr4"
                 />
-                {review.status.charAt(0).toUpperCase() + review.status.slice(1)}
+                {capitalize(review.status.charAt(0)) + review.status.slice(1)}
             </Tag>
         </div>
     );
@@ -76,45 +77,46 @@ const ReviewContent: React.FC<{ review: IQueryReview }> = ({ review }) => {
 
 interface MetaInfoProps {
     review: IQueryReview;
-    visibleReviewers: number[];
-    extraReviewers: number;
     userInfoById: IStoreState['user']['userInfoById'];
 }
 
-const MetaInfo: React.FC<MetaInfoProps> = ({
-    review,
-    visibleReviewers,
-    extraReviewers,
-    userInfoById,
-}) => (
-    <div className="meta-info">
-        <div className="reviewers">
-            <span aria-label="Reviewers" data-balloon-pos="up">
-                <Icon name="Users" size={14} className="mr4" />
-            </span>
-            <UserAvatarList
-                users={visibleReviewers.map((id) => {
-                    const userInfo = userInfoById[id];
-                    return {
-                        uid: id,
-                        tooltip: userInfo
-                            ? userInfo.fullname ?? userInfo.username
-                            : `User ${id}`,
-                    };
-                })}
-                extraCount={extraReviewers}
-            />
+const MetaInfo: React.FC<MetaInfoProps> = ({ review, userInfoById }) => {
+    const visibleReviewers = useMemo(
+        () => review.reviewer_ids.slice(0, 3),
+        [review.reviewer_ids]
+    );
+    const extraReviewers = Math.max(0, review.reviewer_ids.length - 3);
+
+    return (
+        <div className="meta-info">
+            <div className="reviewers">
+                <span aria-label="Reviewers" data-balloon-pos="up">
+                    <Icon name="Users" size={14} className="mr4" />
+                </span>
+                <UserAvatarList
+                    users={visibleReviewers.map((id) => {
+                        const userInfo = userInfoById[id];
+                        return {
+                            uid: id,
+                            tooltip: userInfo
+                                ? userInfo.fullname ?? userInfo.username
+                                : `User ${id}`,
+                        };
+                    })}
+                    extraCount={extraReviewers}
+                />
+            </div>
+            <div className="timestamp">
+                <span aria-label="Updated at" data-balloon-pos="up">
+                    <Icon name="Calendar" size={14} className="mr4" />
+                    <AccentText size="xsmall" color="light">
+                        {generateFormattedDate(review.created_at)}
+                    </AccentText>
+                </span>
+            </div>
         </div>
-        <div className="timestamp">
-            <span aria-label="Updated at" data-balloon-pos="up">
-                <Icon name="Calendar" size={14} className="mr4" />
-                <AccentText size="xsmall" color="light">
-                    {generateFormattedDate(review.created_at)}
-                </AccentText>
-            </span>
-        </div>
-    </div>
-);
+    );
+};
 
 export const QueryReviewItem: React.FC<IQueryReviewItemProps> = ({
     review,
@@ -135,20 +137,13 @@ export const QueryReviewItem: React.FC<IQueryReviewItemProps> = ({
     const userInfoById = useSelector(
         (state: IStoreState) => state.user.userInfoById
     );
-    const visibleReviewers = review.reviewer_ids.slice(0, 3);
-    const extraReviewers = Math.max(0, review.reviewer_ids.length - 3);
 
     return (
         <>
             <div className={className} onClick={handleClick} ref={selfRef}>
                 <ReviewHeader review={review} />
                 <ReviewContent review={review} />
-                <MetaInfo
-                    review={review}
-                    visibleReviewers={visibleReviewers}
-                    extraReviewers={extraReviewers}
-                    userInfoById={userInfoById}
-                />
+                <MetaInfo review={review} userInfoById={userInfoById} />
             </div>
             <UrlContextMenu anchorRef={selfRef} url={queryExecutionUrl} />
         </>

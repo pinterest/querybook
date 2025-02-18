@@ -1,6 +1,6 @@
 import { Dispatch } from 'redux';
 
-import { QueryReviewResource } from 'resource/queryReview';
+import { QueryReviewResource, ReviewType } from 'resource/queryReview';
 
 import localStore from 'lib/local-store';
 
@@ -24,7 +24,8 @@ export const fetchMyReviews =
     async (dispatch: Dispatch<QueryReviewAction>) => {
         try {
             dispatch({ type: FETCH_MY_REVIEWS_REQUEST });
-            const reviews = await QueryReviewResource.getReviewsCreatedByMe(
+            const reviews = await QueryReviewResource.getReviews(
+                ReviewType.CREATED,
                 PAGE_SIZE,
                 page * PAGE_SIZE
             );
@@ -49,7 +50,8 @@ export const fetchAssignedReviews =
     async (dispatch: Dispatch<QueryReviewAction>) => {
         try {
             dispatch({ type: FETCH_ASSIGNED_REVIEWS_REQUEST });
-            const reviews = await QueryReviewResource.getReviewsAssignedToMe(
+            const reviews = await QueryReviewResource.getReviews(
+                ReviewType.ASSIGNED,
                 PAGE_SIZE,
                 page * PAGE_SIZE
             );

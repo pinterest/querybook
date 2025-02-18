@@ -21,11 +21,9 @@ const initialState: IQueryReviewState = {
     errorAssignedReviews: null,
     activeTab: 'myReviews',
 
-    // Initialize pagination state
-    myReviewsPage: 0,
-    myReviewsHasMore: true,
-    assignedReviewsPage: 0,
-    assignedReviewsHasMore: true,
+    // pagination state
+    currentPage: 0,
+    hasMore: true,
 };
 
 export default function queryReviewReducer(
@@ -44,9 +42,9 @@ export default function queryReviewReducer(
                 draft.myReviews =
                     action.payload.page === 0
                         ? action.payload.reviews
-                        : [...state.myReviews, ...action.payload.reviews]; // Append for subsequent pages
-                draft.myReviewsHasMore = action.payload.hasMore;
-                draft.myReviewsPage = action.payload.page;
+                        : [...state.myReviews, ...action.payload.reviews];
+                draft.currentPage = action.payload.page;
+                draft.hasMore = action.payload.hasMore;
                 break;
 
             case FETCH_MY_REVIEWS_FAILURE:
@@ -65,8 +63,8 @@ export default function queryReviewReducer(
                     action.payload.page === 0
                         ? action.payload.reviews
                         : [...state.assignedReviews, ...action.payload.reviews];
-                draft.assignedReviewsHasMore = action.payload.hasMore;
-                draft.assignedReviewsPage = action.payload.page;
+                draft.currentPage = action.payload.page;
+                draft.hasMore = action.payload.hasMore;
                 break;
 
             case FETCH_ASSIGNED_REVIEWS_FAILURE:
@@ -76,6 +74,8 @@ export default function queryReviewReducer(
 
             case SET_ACTIVE_TAB:
                 draft.activeTab = action.payload;
+                draft.currentPage = 0; // Reset pagination when switching tabs
+                draft.hasMore = true;
                 break;
         }
     });

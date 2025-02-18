@@ -3,6 +3,7 @@ from logic.query_execution import get_query_execution_by_id
 from models.query_execution import QueryExecution, QueryExecutionViewer
 from models.query_review import QueryExecutionReviewer, QueryReview
 from logic.user import get_user_by_id
+from logic.query_execution_permission import user_can_access_query_execution
 
 
 @with_session
@@ -30,19 +31,22 @@ def create_query_review(
     for reviewer_id in reviewer_ids:
         reviewer = get_user_by_id(reviewer_id, session=session)
         if reviewer:
+            # Check if reviewer already has access to the query
+            if not user_can_access_query_execution(
+                uid=reviewer_id, execution_id=query_execution_id, session=session
+            ):
+                QueryExecutionViewer.create(
+                    fields={
+                        "query_execution_id": query_execution_id,
+                        "uid": reviewer_id,
+                        "created_by": query_execution.uid,
+                    },
+                    commit=False,
+                    session=session,
+                )
+
             # Add reviewers to the query_review assigned reviewers relationship
             query_review.assigned_reviewers.append(reviewer)
-
-            # Add reviewer as viewer
-            QueryExecutionViewer.create(
-                fields={
-                    "query_execution_id": query_execution_id,
-                    "uid": reviewer_id,
-                    "created_by": query_execution.uid,  # Original query review creator
-                },
-                commit=False,
-                session=session,
-            )
 
     if commit:
         session.commit()
