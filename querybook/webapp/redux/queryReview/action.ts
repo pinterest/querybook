@@ -19,44 +19,27 @@ import {
     ThunkResult,
 } from './types';
 
-export const fetchMyReviews =
-    (page: number = 0): ThunkResult<Promise<void>> =>
+export const fetchReviews =
+    (reviewType: ReviewType, page: number = 0): ThunkResult<Promise<void>> =>
     async (dispatch: Dispatch<QueryReviewAction>) => {
+        const isMyReviews = reviewType === ReviewType.CREATED;
         try {
-            dispatch({ type: FETCH_MY_REVIEWS_REQUEST });
-            const reviews = await QueryReviewResource.getReviews(
-                ReviewType.CREATED,
-                PAGE_SIZE,
-                page * PAGE_SIZE
-            );
             dispatch({
-                type: FETCH_MY_REVIEWS_SUCCESS,
-                payload: {
-                    reviews: reviews.data,
-                    hasMore: reviews.data.length === PAGE_SIZE,
-                    page,
-                },
+                type: isMyReviews
+                    ? FETCH_MY_REVIEWS_REQUEST
+                    : FETCH_ASSIGNED_REVIEWS_REQUEST,
             });
-        } catch (error) {
-            dispatch({
-                type: FETCH_MY_REVIEWS_FAILURE,
-                payload: error.message,
-            });
-        }
-    };
 
-export const fetchAssignedReviews =
-    (page: number = 0): ThunkResult<void> =>
-    async (dispatch: Dispatch<QueryReviewAction>) => {
-        try {
-            dispatch({ type: FETCH_ASSIGNED_REVIEWS_REQUEST });
             const reviews = await QueryReviewResource.getReviews(
-                ReviewType.ASSIGNED,
+                reviewType,
                 PAGE_SIZE,
                 page * PAGE_SIZE
             );
+
             dispatch({
-                type: FETCH_ASSIGNED_REVIEWS_SUCCESS,
+                type: isMyReviews
+                    ? FETCH_MY_REVIEWS_SUCCESS
+                    : FETCH_ASSIGNED_REVIEWS_SUCCESS,
                 payload: {
                     reviews: reviews.data,
                     hasMore: reviews.data.length === PAGE_SIZE,
@@ -65,14 +48,16 @@ export const fetchAssignedReviews =
             });
         } catch (error) {
             dispatch({
-                type: FETCH_ASSIGNED_REVIEWS_FAILURE,
+                type: isMyReviews
+                    ? FETCH_MY_REVIEWS_FAILURE
+                    : FETCH_ASSIGNED_REVIEWS_FAILURE,
                 payload: error.message,
             });
         }
     };
 
 export const setActiveTab =
-    (tab: 'myReviews' | 'assigned'): ThunkResult<void> =>
+    (tab: ReviewType): ThunkResult<void> =>
     async (dispatch) => {
         dispatch({
             type: SET_ACTIVE_TAB,
@@ -83,9 +68,7 @@ export const setActiveTab =
 
 export const initializeTabFromStorage =
     (): ThunkResult<void> => async (dispatch) => {
-        const savedTab = await localStore.get<'myReviews' | 'assigned'>(
-            QUERY_REVIEW_TAB_KEY
-        );
+        const savedTab = await localStore.get<ReviewType>(QUERY_REVIEW_TAB_KEY);
         if (savedTab) {
             dispatch({
                 type: SET_ACTIVE_TAB,

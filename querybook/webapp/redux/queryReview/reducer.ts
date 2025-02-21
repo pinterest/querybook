@@ -11,6 +11,7 @@ import {
     QueryReviewAction,
     SET_ACTIVE_TAB,
 } from './types';
+import { ReviewType } from 'resource/queryReview';
 
 const initialState: IQueryReviewState = {
     myReviews: [],
@@ -19,7 +20,7 @@ const initialState: IQueryReviewState = {
     loadingAssignedReviews: false,
     errorMyReviews: null,
     errorAssignedReviews: null,
-    activeTab: 'myReviews',
+    activeTab: ReviewType.CREATED,
 
     // pagination state
     currentPage: 0,

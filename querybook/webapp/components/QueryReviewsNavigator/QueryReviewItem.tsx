@@ -17,8 +17,7 @@ import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 import { capitalize } from 'lodash';
 
 import './QueryReviewsNavigator.scss';
-
-type ReviewType = 'myReviews' | 'assigned';
+import { ReviewType } from 'resource/queryReview';
 
 interface IQueryReviewItemProps {
     review: IQueryReview;
@@ -47,7 +46,7 @@ const ReviewHeader: React.FC<{ review: IQueryReview }> = ({ review }) => {
                     size={12}
                     className="mr4"
                 />
-                {capitalize(review.status.charAt(0)) + review.status.slice(1)}
+                {capitalize(review.status)}
             </Tag>
         </div>
     );

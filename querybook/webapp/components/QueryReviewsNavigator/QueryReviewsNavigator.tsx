@@ -3,10 +3,9 @@ import { useDispatch } from 'react-redux';
 
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import {
-    fetchAssignedReviews,
-    fetchMyReviews,
     setActiveTab,
     initializeTabFromStorage,
+    fetchReviews,
 } from 'redux/queryReview/action';
 import { IStoreState } from 'redux/store/types';
 import { Icon } from 'ui/Icon/Icon';
@@ -17,19 +16,18 @@ import { TooltipDirection } from 'const/tooltip';
 import { Button } from 'ui/Button/Button';
 
 import './QueryReviewsNavigator.scss';
-
-type TabType = 'myReviews' | 'assigned';
+import { ReviewType } from 'resource/queryReview';
 
 const NAVIGATOR_TABS = [
     {
-        key: 'myReviews' as TabType,
+        key: ReviewType.CREATED,
         name: 'Created',
         icon: 'Clock' as const,
         tooltip: 'Reviews you have requested',
         tooltipPos: 'down' as TooltipDirection,
     },
     {
-        key: 'assigned' as TabType,
+        key: ReviewType.ASSIGNED,
         name: 'Assigned',
         icon: 'ListOrdered' as const,
         tooltip: 'Reviews assigned to you',
@@ -45,11 +43,11 @@ export const QueryReviewsNavigator: React.FC = () => {
             const tab = state.queryReview.activeTab;
             return {
                 reviews:
-                    tab === 'myReviews'
+                    tab === ReviewType.CREATED
                         ? state.queryReview.myReviews
                         : state.queryReview.assignedReviews,
                 isLoading:
-                    tab === 'myReviews'
+                    tab === ReviewType.CREATED
                         ? state.queryReview.loadingMyReviews
                         : state.queryReview.loadingAssignedReviews,
                 activeTab: tab,
@@ -67,35 +65,20 @@ export const QueryReviewsNavigator: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        if (activeTab === 'myReviews') {
-            dispatch(fetchMyReviews());
-        } else {
-            dispatch(fetchAssignedReviews());
-        }
+        dispatch(fetchReviews(activeTab));
     }, [activeTab, dispatch]);
 
     const handleTabChange = useCallback(
-        (key: string) => {
-            if (key === 'myReviews' || key === 'assigned') {
-                // Reset to page 0 when switching tabs
-                if (key === 'myReviews') {
-                    dispatch(fetchMyReviews(0));
-                } else {
-                    dispatch(fetchAssignedReviews(0));
-                }
-                dispatch(setActiveTab(key as TabType));
-            }
+        (reviewType: ReviewType) => {
+            dispatch(fetchReviews(reviewType, 0));
+            dispatch(setActiveTab(reviewType));
         },
         [dispatch]
     );
 
     const handleLoadMore = useCallback(() => {
         const nextPage = page + 1;
-        if (activeTab === 'myReviews') {
-            dispatch(fetchMyReviews(nextPage));
-        } else {
-            dispatch(fetchAssignedReviews(nextPage));
-        }
+        dispatch(fetchReviews(activeTab, nextPage));
     }, [activeTab, page, dispatch]);
 
     const loadingDOM = isLoading ? (
@@ -110,7 +93,7 @@ export const QueryReviewsNavigator: React.FC = () => {
     const noResultDOM =
         !isLoading && reviews.length === 0 ? (
             <div className="empty-section-message">
-                No {activeTab === 'myReviews' ? 'Requested' : 'Assigned'}{' '}
+                No {activeTab === ReviewType.CREATED ? 'Requested' : 'Assigned'}{' '}
                 Reviews
             </div>
         ) : null;
