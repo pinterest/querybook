@@ -1,5 +1,6 @@
 import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
+import { ReviewType } from 'resource/queryReview';
 
 import { IQueryReview } from 'const/queryExecution';
 
@@ -27,7 +28,17 @@ export interface IQueryReviewState {
     loadingAssignedReviews: boolean;
     errorMyReviews: string | null;
     errorAssignedReviews: string | null;
-    activeTab: 'myReviews' | 'assigned';
+    activeTab: ReviewType;
+
+    // pagination state
+    currentPage: number;
+    hasMore: boolean;
+}
+
+interface IReviewsPayload {
+    reviews: IQueryReview[];
+    hasMore: boolean;
+    page: number;
 }
 
 interface IFetchMyReviewsRequestAction extends Action {
@@ -36,7 +47,7 @@ interface IFetchMyReviewsRequestAction extends Action {
 
 interface IFetchMyReviewsSuccessAction extends Action {
     type: typeof FETCH_MY_REVIEWS_SUCCESS;
-    payload: IQueryReview[];
+    payload: IReviewsPayload;
 }
 
 interface IFetchMyReviewsFailureAction extends Action {
@@ -50,7 +61,7 @@ interface IFetchAssignedReviewsRequestAction extends Action {
 
 interface IFetchAssignedReviewsSuccessAction extends Action {
     type: typeof FETCH_ASSIGNED_REVIEWS_SUCCESS;
-    payload: IQueryReview[];
+    payload: IReviewsPayload;
 }
 
 interface IFetchAssignedReviewsFailureAction extends Action {
@@ -60,7 +71,7 @@ interface IFetchAssignedReviewsFailureAction extends Action {
 
 interface ISetActiveTabAction extends Action {
     type: typeof SET_ACTIVE_TAB;
-    payload: 'myReviews' | 'assigned';
+    payload: ReviewType;
 }
 
 export type QueryReviewAction =

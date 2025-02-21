@@ -3,10 +3,11 @@ import { useDispatch } from 'react-redux';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
 import { TooltipDirection } from 'const/tooltip';
 import { selectAssignedReviews } from 'redux/queryReview/selector';
-import { fetchAssignedReviews } from 'redux/queryReview/action';
+import { fetchReviews } from 'redux/queryReview/action';
 import { IStoreState } from 'redux/store/types';
 import { IconButton } from 'ui/Button/IconButton';
 import { IQueryReview } from 'const/queryExecution';
+import { ReviewType } from 'resource/queryReview';
 
 interface IQueryReviewButtonProps {
     tooltipPos?: TooltipDirection;
@@ -25,7 +26,7 @@ function useAssignedReviews() {
 
     const dispatch = useDispatch();
     React.useEffect(() => {
-        dispatch(fetchAssignedReviews());
+        dispatch(fetchReviews(ReviewType.ASSIGNED));
     }, [dispatch]);
 
     return {
