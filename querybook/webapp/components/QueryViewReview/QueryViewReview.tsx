@@ -135,7 +135,7 @@ const ReviewActions: React.FC<{
                     confirmText="Approve"
                     cancelText="Cancel"
                     confirmColor="confirm"
-                    cancelColor="cancel"
+                    cancelColor="default"
                     confirmIcon="Check"
                     cancelIcon="X"
                 />
@@ -156,23 +156,24 @@ const ReviewActions: React.FC<{
                                 <Form className="reject-form">
                                     <SimpleField
                                         name="rejectionReason"
-                                        label="Reason for Rejection"
+                                        label={''}
+                                        placeholder="Enter reason for rejecting this query..."
                                         help="Author must submit a new query review after addressing the rejection feedback."
                                         type="textarea"
-                                        required
+                                        rows={4}
                                     />
-                                    <div className="form-buttons">
+                                    <div className="flex-right mt16">
                                         <Button
                                             title="Cancel"
                                             onClick={() =>
                                                 onShowRejectForm(false)
                                             }
-                                            className="mr8"
                                             icon="X"
-                                            color="cancel"
+                                            color="default"
+                                            className="mr8"
                                         />
                                         <Button
-                                            title="Submit Rejection"
+                                            title="Reject Query"
                                             color="cancel"
                                             onClick={submitForm}
                                             icon="Send"
