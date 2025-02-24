@@ -1,10 +1,15 @@
 import { IQueryReview } from 'const/queryExecution';
 import ds from 'lib/datasource';
 
-export const QueryReviewResource = {
-    getReviewsCreatedByMe: () =>
-        ds.fetch<IQueryReview[]>('/query_review/created_by_me/'),
+export enum ReviewType {
+    CREATED = 'created',
+    ASSIGNED = 'assigned',
+}
 
-    getReviewsAssignedToMe: () =>
-        ds.fetch<IQueryReview[]>('/query_review/assigned_to_me/'),
+export const QueryReviewResource = {
+    getReviews: (type: ReviewType, limit: number, offset: number) =>
+        ds.fetch<IQueryReview[]>(`/query_review/${type}/`, {
+            limit,
+            offset,
+        }),
 };

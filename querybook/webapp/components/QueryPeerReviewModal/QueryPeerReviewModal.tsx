@@ -73,7 +73,11 @@ export const QueryPeerReviewForm: React.FC<IQueryPeerReviewFormProps> = ({
             .required('Please select at least one reviewer'),
         requestReason: Yup.string()
             .trim()
-            .required('Justification is required'),
+            .required('Justification is required')
+            .min(
+                10,
+                'Please provide a detailed justification (minimum 10 characters)'
+            ),
     });
 
     const {
