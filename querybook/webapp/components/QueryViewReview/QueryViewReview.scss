@@ -1,28 +1,34 @@
-.QueryViewReview {
-    --review-spacing: 16px;
-    margin: 24px 0;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--bg);
-    transition: box-shadow 0.2s ease;
+@import '../../scss_variables.scss';
 
-    &:hover {
-        box-shadow: var(--shadow-mid);
+.QueryViewReview {
+    margin: 16px 0;
+    padding: 16px;
+
+    .Card {
+        background: var(--bg);
+        border-radius: var(--border-radius);
+        transition: box-shadow 0.2s ease;
+
+        &:hover {
+            box-shadow: var(--shadow);
+        }
     }
 
     .review-header {
-        padding: var(--review-spacing);
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background: var(--bg-lightest);
-        border-bottom: 1px solid var(--border-light);
+        margin-bottom: 16px;
         cursor: default;
 
         .header-left {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
+
+            .header-label {
+                min-width: 160px;
+            }
 
             .StatusIcon {
                 cursor: default;
@@ -31,57 +37,41 @@
 
         .Tag {
             cursor: default;
-
-            &:hover {
-                cursor: default;
-            }
         }
-    }
-
-    .header-left {
-        display: flex;
-        align-items: center;
-        gap: 8px;
     }
 
     .review-content {
-        padding: var(--review-spacing);
+        .content-row {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 16px;
 
-        .details-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 16px;
+            .content-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
         }
 
-        .detail-item {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 8px;
-
-            // Center UserBadge
-            &:first-child {
-                align-items: center;
-                text-align: center;
-            }
+        .justification {
+            margin: 12px 0;
 
             .request-reason {
                 width: 100%;
                 background: var(--bg-light);
                 padding: 12px;
-                border-radius: 6px;
+                border-radius: var(--border-radius);
                 line-height: 1.6;
-                font-size: 15px;
-                border: 1px solid var(--border-light);
+                font-size: var(--text-size);
                 color: var(--text);
+                border: 1px solid var(--border-light);
             }
         }
     }
 
     .review-actions {
-        padding: var(--review-spacing);
-        border-top: 1px solid var(--border-light);
-        background: var(--bg-lightest);
+        margin-top: 16px;
 
         .action-buttons {
             display: flex;
@@ -91,7 +81,7 @@
     }
 
     .reject-form-container {
-        padding: var(--review-spacing);
+        padding: 16px;
 
         .reject-form {
             display: flex;
@@ -99,9 +89,15 @@
             gap: 16px;
 
             textarea {
+                background: var(--bg-light);
+                border: 1px solid var(--border-light);
+                border-radius: var(--border-radius);
                 min-height: 120px;
                 width: 100%;
                 resize: vertical;
+                padding: 12px;
+                font-size: var(--text-size);
+                color: var(--text);
             }
 
             .form-buttons {
@@ -115,9 +111,8 @@
 
     .review-notifier,
     .outcome-msg {
-        margin: 0;
-        border-radius: 0;
-        border-top: 1px solid var(--border-light);
+        margin-top: 16px;
+        border-radius: var(--border-radius);
 
         &.error {
             background-color: var(--bg-error-light);
@@ -126,44 +121,8 @@
 
         .message-note {
             font-style: italic;
+            color: var(--text-light);
             margin-top: 8px;
-        }
-
-        .semi-bold {
-            font-weight: 600;
-        }
-
-        .approval-title,
-        .rejection-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 16px;
-            color: var(--text);
-        }
-
-        .approval-details,
-        .rejection-details {
-            .approval-header,
-            .rejection-header {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                margin-bottom: 16px;
-
-                .reviewer-info {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                }
-            }
-
-            .approval-content,
-            .rejection-content {
-                display: flex;
-                flex-direction: column;
-                gap: 12px;
-            }
         }
 
         .status-title {
@@ -182,16 +141,6 @@
                 align-items: center;
                 gap: 8px;
             }
-        }
-
-        .message-note {
-            font-style: italic;
-        }
-    }
-
-    @media (max-width: 768px) {
-        .details-grid {
-            grid-template-columns: 1fr;
         }
     }
 
@@ -220,71 +169,4 @@
 .approve-message {
     white-space: pre-wrap;
     line-height: 1.6;
-}
-
-.approval-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 16px;
-    color: var(--text);
-}
-
-.approval-details {
-    .approval-header {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 12px;
-        background: var(--bg-lightest);
-        border-radius: 6px;
-        margin-bottom: 16px;
-        margin: 8px 0 16px;
-
-        .reviewer-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px;
-            background: var(--bg-lightest);
-            border-radius: 8px;
-        }
-    }
-}
-
-.review-notifier {
-    .flex-column {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .flex-row {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-    }
-
-    .mb8 {
-        margin-bottom: 8px;
-    }
-
-    .mr16 {
-        margin-right: 16px;
-    }
-
-    .review-title {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .review-content-wrapper {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .copy-button-wrapper {
-        margin-left: auto;
-    }
 }

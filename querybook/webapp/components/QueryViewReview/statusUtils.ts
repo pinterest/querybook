@@ -23,9 +23,9 @@ export const getStatusProps = (
     if (isRejected) {
         return {
             status: Status.error,
-            tooltip: 'Changes have been requested.',
+            tooltip: 'Query has been rejected.',
             tagClass: 'Tag--error',
-            tagText: 'CHANGES REQUESTED',
+            tagText: 'REJECTED',
         };
     }
 

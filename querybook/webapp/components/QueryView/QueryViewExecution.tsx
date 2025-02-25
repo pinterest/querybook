@@ -4,16 +4,42 @@ import { QueryExecution } from 'components/QueryExecution/QueryExecution';
 import { QueryExecutionDuration } from 'components/QueryExecution/QueryExecutionDuration';
 import { QueryExecutionBar } from 'components/QueryExecutionBar/QueryExecutionBar';
 import { IQueryExecution } from 'const/queryExecution';
+import { useQueryReview } from 'hooks/useQueryReview';
+import { useToggleState } from 'hooks/useToggleState';
+import { QueryViewReview } from 'components/QueryViewReview/QueryViewReview';
 
-export const QueryViewExecution: React.FunctionComponent<{
+interface IQueryViewExecutionProps {
     queryExecution: IQueryExecution;
-}> = ({ queryExecution }) => {
+}
+
+export const QueryViewExecution: React.FunctionComponent<
+    IQueryViewExecutionProps
+> = ({ queryExecution }) => {
+    const queryReviewState = useQueryReview(queryExecution.id);
+    const [showReviewPanel, setShowReviewPanel, toggleReviewPanel] =
+        useToggleState(
+            // Auto-expand if review exists and is pending
+            queryReviewState.status.isPending
+        );
+    const queryReview = queryReviewState.review;
+
     const queryExecutionDOM = queryExecution && (
         <div className="query-execution-section-inner">
             <div className="horizontal-space-between">
                 <QueryExecutionDuration queryExecution={queryExecution} />
-                <QueryExecutionBar queryExecution={queryExecution} />
+                <QueryExecutionBar
+                    queryExecution={queryExecution}
+                    queryReview={queryReview}
+                    onReviewClick={toggleReviewPanel}
+                />
             </div>
+            {queryReview && showReviewPanel && (
+                <QueryViewReview
+                    queryExecution={queryExecution}
+                    queryReviewState={queryReviewState}
+                    isExpanded={showReviewPanel}
+                />
+            )}
             <QueryExecution id={queryExecution.id} key={queryExecution.id} />
         </div>
     );

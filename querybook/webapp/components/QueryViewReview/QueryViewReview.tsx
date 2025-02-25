@@ -48,19 +48,7 @@ const ReviewHeader: React.FC<{
                 {label}
             </AccentText>
         </div>
-        <Tag
-            className={tagClass}
-            tooltip={tooltip}
-            tooltipPos="up"
-            color={
-                status === Status.success
-                    ? 'green'
-                    : status === Status.error
-                    ? 'red'
-                    : 'yellow'
-            }
-            withBorder
-        >
+        <Tag className={tagClass} tooltip={tooltip} tooltipPos="up" light>
             {tagText}
         </Tag>
     </div>
@@ -70,29 +58,30 @@ const ReviewContent: React.FC<{
     review: IQueryReview;
 }> = memo(({ review }) => (
     <div className="review-content">
-        <div className="details-grid">
-            <div className="detail-item">
+        <div className="content-row">
+            <div className="content-item">
                 <AccentText color="light" size="small">
-                    Requested By
+                    Requested By:
                 </AccentText>
                 <UserBadge uid={review.requested_by} mini />
             </div>
-            <div className="detail-item">
+            <div className="content-item">
                 <AccentText color="light" size="small">
-                    Reason Provided by Author
+                    Requested At:
                 </AccentText>
-                <AccentText className="request-reason">
-                    {review.request_reason || 'No reason provided'}
-                </AccentText>
-            </div>
-            <div className="detail-item">
-                <AccentText color="light" size="small">
-                    Review Requested At
-                </AccentText>
-                <AccentText className="request-reason">
+                <AccentText>
                     {generateFormattedDate(review.created_at)}
                 </AccentText>
             </div>
+        </div>
+
+        <div className="justification">
+            <AccentText color="light" size="small" className="mb8">
+                Justification
+            </AccentText>
+            <AccentText className="request-reason">
+                {review.request_reason || 'No justification provided'}
+            </AccentText>
         </div>
     </div>
 ));
@@ -324,7 +313,8 @@ const ReviewStatus: React.FC<{
 export const QueryViewReview: React.FC<{
     queryExecution: IQueryExecution;
     queryReviewState: QueryReviewState;
-}> = memo(({ queryExecution, queryReviewState }) => {
+    isExpanded: boolean;
+}> = memo(({ queryExecution, queryReviewState, isExpanded }) => {
     const dispatch = useDispatch();
     const {
         permissions: { isReviewer },
@@ -371,35 +361,38 @@ export const QueryViewReview: React.FC<{
         isRejected
     );
 
+    const headerProps = {
+        status,
+        tooltip,
+        label: 'Query Review',
+        tagClass,
+        tagText,
+    };
+    const statusProps = {
+        isReviewer,
+        isPending,
+        isApproved,
+        isRejected,
+        queryReview,
+        queryExecution,
+        showRejectForm,
+        onShowRejectForm: setShowRejectForm,
+        onApprove: handleApprove,
+        onReject: handleReject,
+    };
+
     return (
-        <Card
-            className="QueryViewReview"
-            flexRow={false}
-            alignLeft={true}
-            width="100%"
-        >
-            <ReviewHeader
-                status={status}
-                tooltip={tooltip}
-                label="Query Review"
-                tagClass={tagClass}
-                tagText={tagText}
-            />
-
-            <ReviewContent review={queryReview} />
-
-            <ReviewStatus
-                isReviewer={isReviewer}
-                isPending={isPending}
-                isApproved={isApproved}
-                isRejected={isRejected}
-                queryReview={queryReview}
-                queryExecution={queryExecution}
-                showRejectForm={showRejectForm}
-                onShowRejectForm={setShowRejectForm}
-                onApprove={handleApprove}
-                onReject={handleReject}
-            />
-        </Card>
+        isExpanded && (
+            <Card
+                className="QueryViewReview"
+                flexRow={false}
+                alignLeft={true}
+                width="100%"
+            >
+                <ReviewHeader {...headerProps} />
+                <ReviewContent review={queryReview} />
+                <ReviewStatus {...statusProps} />
+            </Card>
+        )
     );
 });
