@@ -21,6 +21,7 @@ interface IProps {
     queryExecution: IQueryExecution;
     queryReview?: IQueryReview;
     onReviewClick?: () => void;
+    isReviewExpanded?: boolean;
 }
 
 export function useQueryExecutionUrl(queryExecution: IQueryExecution) {
@@ -37,6 +38,7 @@ export const QueryExecutionBar: React.FunctionComponent<IProps> = ({
     queryExecution,
     queryReview,
     onReviewClick,
+    isReviewExpanded = false,
 }) => {
     const permalink = useQueryExecutionUrl(queryExecution);
     const notificationPreference = useSelector(
@@ -66,6 +68,7 @@ export const QueryExecutionBar: React.FunctionComponent<IProps> = ({
             className="ml4"
             review={queryReview}
             onClick={onReviewClick}
+            isExpanded={isReviewExpanded}
         />
     );
 

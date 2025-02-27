@@ -9,6 +9,7 @@ interface IReviewIndicatorButtonProps {
     onClick: () => void;
     tooltipPos?: TooltipDirection;
     className?: string;
+    isExpanded?: boolean;
 }
 
 const STATUS_CONFIG = {
@@ -29,9 +30,14 @@ const STATUS_CONFIG = {
 export const ReviewIndicatorButton: React.FC<IReviewIndicatorButtonProps> = ({
     review,
     onClick,
+    tooltipPos = 'up',
     className = '',
+    isExpanded = false,
 }) => {
-    const config = STATUS_CONFIG[review.status] || STATUS_CONFIG.pending;
+    const config = isExpanded
+        ? { icon: 'ChevronsUp' as const, title: 'Hide Review' }
+        : STATUS_CONFIG[review.status] || STATUS_CONFIG.pending;
+
     const Button = getButtonComponentByType('text');
 
     return (
@@ -39,12 +45,16 @@ export const ReviewIndicatorButton: React.FC<IReviewIndicatorButtonProps> = ({
             size="small"
             icon={config.icon}
             title={config.title}
-            aria-label={'Click to view details'}
-            data-balloon-pos={'up'}
+            aria-label={
+                isExpanded ? 'Hide review details' : 'Click to view details'
+            }
+            data-balloon-pos={tooltipPos}
             onClick={onClick}
             color={'light'}
             theme="text"
-            className={clsx('review-status-button', className)}
+            className={clsx('review-status-button', className, {
+                'is-expanded': isExpanded,
+            })}
         />
     );
 };

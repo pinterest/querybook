@@ -32,6 +32,7 @@ export const QueryViewExecution: React.FunctionComponent<
                     queryExecution={queryExecution}
                     queryReview={queryReview}
                     onReviewClick={toggleReviewPanel}
+                    isReviewExpanded={showReviewPanel}
                 />
             </div>
             {queryReview && showReviewPanel && (
