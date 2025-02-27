@@ -15,9 +15,9 @@ import { IStoreState } from 'redux/store/types';
 import { AllLucideIconNames } from 'ui/Icon/LucideIcons';
 import { ShowMoreText } from 'ui/ShowMoreText/ShowMoreText';
 import { capitalize } from 'lodash';
+import { ReviewType } from 'resource/queryReview';
 
 import './QueryReviewsNavigator.scss';
-import { ReviewType } from 'resource/queryReview';
 
 interface IQueryReviewItemProps {
     review: IQueryReview;
