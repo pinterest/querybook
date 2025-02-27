@@ -62,7 +62,11 @@ export const QueryExecutionBar: React.FunctionComponent<IProps> = ({
     );
 
     const reviewIndicatorDOM = queryReview && (
-        <ReviewIndicatorButton review={queryReview} onClick={onReviewClick} />
+        <ReviewIndicatorButton
+            className="ml4"
+            review={queryReview}
+            onClick={onReviewClick}
+        />
     );
 
     return (

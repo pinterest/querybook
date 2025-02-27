@@ -14,7 +14,7 @@ export const getStatusProps = (
     if (isApproved) {
         return {
             status: Status.success,
-            tooltip: 'Query has been approved.',
+            tooltip: 'Query review has been approved.',
             tagClass: 'Tag--success',
             tagText: 'APPROVED',
         };
@@ -23,7 +23,7 @@ export const getStatusProps = (
     if (isRejected) {
         return {
             status: Status.error,
-            tooltip: 'Query has been rejected.',
+            tooltip: 'Query review has been rejected.',
             tagClass: 'Tag--error',
             tagText: 'REJECTED',
         };

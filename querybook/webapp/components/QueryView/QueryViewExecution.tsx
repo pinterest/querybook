@@ -18,8 +18,9 @@ export const QueryViewExecution: React.FunctionComponent<
     const queryReviewState = useQueryReview(queryExecution.id);
     const [showReviewPanel, setShowReviewPanel, toggleReviewPanel] =
         useToggleState(
-            // Auto-expand if review exists and is pending
-            queryReviewState.status.isPending
+            // Auto-expand if review exists and is pending or rejected
+            queryReviewState.status.isPending ||
+                queryReviewState.status.isRejected
         );
     const queryReview = queryReviewState.review;
 
