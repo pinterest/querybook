@@ -189,11 +189,13 @@ def ds_add(ds: str, days: int) -> str:
 
 def get_templated_query_env(engine_id: int, session=None):
     jinja_env = SandboxedEnvironment()
-
+    macros = {
+        "ds_add": ds_add,
+    }
     # Inject helper functions
     jinja_env.globals.update(
         latest_partition=create_get_latest_partition(engine_id, session=session),
-        ds_add=ds_add,
+        macros=macros,
     )
 
     # Template rendering config
