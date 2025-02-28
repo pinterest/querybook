@@ -68,6 +68,7 @@ def get_default_variables():
     return {
         "today": datetime.today().strftime("%Y-%m-%d"),
         "yesterday": (datetime.today() - timedelta(1)).strftime("%Y-%m-%d"),
+        "ds": (datetime.today() - timedelta(1)).strftime("%Y-%m-%d"),
     }
 
 
@@ -164,12 +165,35 @@ def create_get_latest_partition(
     return get_latest_partition
 
 
+def ds_add(ds: str, days: int) -> str:
+    """
+    Add or subtract days from a YYYY-MM-DD.
+
+    Arguments
+        ds: anchor date in ``YYYY-MM-DD`` format to add to
+        days: number of days to add to the ds, you can use negative values
+
+    Returns
+        str: the resulting date in ``YYYY-MM-DD`` format
+
+    >>> ds_add("2025-02-28", 5)
+    '2015-03-05'
+    >>> ds_add("2025-02-28", -5)
+    '2015-02-23'
+    """
+    if not days:
+        return str(ds)
+    dt = datetime.strptime(str(ds), "%Y-%m-%d") + timedelta(days=days)
+    return dt.strftime("%Y-%m-%d")
+
+
 def get_templated_query_env(engine_id: int, session=None):
     jinja_env = SandboxedEnvironment()
 
     # Inject helper functions
     jinja_env.globals.update(
-        latest_partition=create_get_latest_partition(engine_id, session=session)
+        latest_partition=create_get_latest_partition(engine_id, session=session),
+        ds_add=ds_add,
     )
 
     # Template rendering config

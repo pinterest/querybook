@@ -29,7 +29,25 @@ Gets rendered to:
 SELECT * FROM users WHERE created_at = '2022-02-24';
 ```
 
+`{{ ds }}`: Same as `{{ yesterday }}`
+
 ## Functions
+
+`{{ ds_add(ds, days) }}`: Add or subtract days from a YYYY-MM-DD.
+
+Example:
+
+```sql
+SELECT * FROM default.users
+WHERE dt = '{{ ds_add("2025-02-28", -5) }}'
+```
+
+will get
+
+```sql
+SELECT * FROM default.users
+WHERE dt = '2025-02-23'
+```
 
 `{{ latest_partition('<schema_name>.<table_name>', '<partition_key>') }}`:
 This function can be used to get the latest partition of a table. It queries the metastore directly to get the latest partition.
