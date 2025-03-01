@@ -177,9 +177,9 @@ def ds_add(ds: str, days: int) -> str:
         str: the resulting date in ``YYYY-MM-DD`` format
 
     >>> ds_add("2025-02-28", 5)
-    '2015-03-05'
+    '2025-03-05'
     >>> ds_add("2025-02-28", -5)
-    '2015-02-23'
+    '2025-02-23'
     """
     if not days:
         return str(ds)
