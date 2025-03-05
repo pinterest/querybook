@@ -123,7 +123,7 @@ def _format_partition_filter(
         column_name, column_val = column_filter.split("=")
         column_type = column_type_by_name.get(column_name, None)
         column_quote = ""
-        if column_type == QuerybookColumnType.String:
+        if column_type == QuerybookColumnType.String or column_type is None:
             column_quote = "'"
 
         partition_filters.append(
