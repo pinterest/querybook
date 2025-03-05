@@ -22,12 +22,14 @@ def load_all_change_logs():
         change_log_files = sorted(os.listdir(CHANGE_LOG_PATH), reverse=True)
 
         change_log_plugin_path = os.path.join(
-            QuerybookSettings.QUERYBOOK_PLUGIN_PATH, "./change_log_plugin/changelog/"
+            QuerybookSettings.QUERYBOOK_PLUGIN_PATH, "./changelog_plugin/"
         )
 
-        plugin_change_log_files = sorted(
-            os.listdir(change_log_plugin_path), reverse=True
-        )
+        plugin_change_log_files = []
+        if os.path.exists(change_log_plugin_path):
+            plugin_change_log_files = sorted(
+                os.listdir(change_log_plugin_path), reverse=True
+            )
         # Process main change log files
         for filename in change_log_files:
             if filename.startswith("breaking_change") or filename.startswith(

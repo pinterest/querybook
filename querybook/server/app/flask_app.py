@@ -135,9 +135,9 @@ def make_limiter(app):
             response.headers["flask-limit-amount"] = limiter.current_limit.limit.amount
             response.headers["flask-limit-key"] = limiter.current_limit.key
             response.headers["flask-limit-reset-at"] = limiter.current_limit.reset_at
-            response.headers[
-                "flask-limit-window-size"
-            ] = limiter.current_limit.limit.get_expiry()
+            response.headers["flask-limit-window-size"] = (
+                limiter.current_limit.limit.get_expiry()
+            )
         return response
 
     return limiter
@@ -177,6 +177,9 @@ def make_static_plugin_blue_print(app, limiter):
     plugin_static_path = os.path.join(
         QuerybookSettings.QUERYBOOK_PLUGIN_PATH, "./static_plugin"
     )
+    if not os.path.exists(plugin_static_path):
+        return None
+
     blueprint = Blueprint(
         "static_plugin_bp",
         __name__,
