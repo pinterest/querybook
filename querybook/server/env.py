@@ -57,6 +57,7 @@ class QuerybookSettings(object):
     FLASK_CACHE_CONFIG = get_env_config("FLASK_CACHE_CONFIG")
     WS_CORS_ALLOWED_ORIGINS = get_env_config("WS_CORS_ALLOWED_ORIGINS", optional=False)
     IFRAME_ALLOWED_ORIGINS = get_env_config("IFRAME_ALLOWED_ORIGINS")
+    QUERYBOOK_PLUGIN_PATH = get_env_config("QUERYBOOK_PLUGIN")
 
     # Celery
     REDIS_URL = get_env_config("REDIS_URL", optional=False)

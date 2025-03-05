@@ -1,3 +1,4 @@
+import os
 import sys
 from datetime import timedelta
 
@@ -171,10 +172,27 @@ def make_blue_print(app, limiter):
     return blueprint
 
 
+def make_static_plugin_blue_print(app, limiter):
+    # Serve the plugin static files from /static_plugin
+    plugin_static_path = os.path.join(
+        QuerybookSettings.QUERYBOOK_PLUGIN_PATH, "./static_plugin"
+    )
+    blueprint = Blueprint(
+        "static_plugin_bp",
+        __name__,
+        static_folder=plugin_static_path,
+        static_url_path="/static_plugin",
+    )
+    app.register_blueprint(blueprint)
+    limiter.exempt(blueprint)
+    return blueprint
+
+
 validate_db()
 flask_app = make_flask_app()
 limiter = make_limiter(flask_app)
 make_blue_print(flask_app, limiter)
+make_static_plugin_blue_print(flask_app, limiter)
 cache = make_cache(flask_app)
 celery = make_celery(flask_app)
 socketio = make_socketio(flask_app)
