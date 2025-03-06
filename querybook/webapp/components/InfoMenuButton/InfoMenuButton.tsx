@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { matchPath } from 'react-router-dom';
 
 import { ComponentType, ElementType } from 'const/analytics';
 import { trackClick } from 'lib/analytics';
@@ -7,20 +8,13 @@ import { CHANGE_LOG_KEY, ChangeLogValue } from 'lib/local-store/const';
 import { navigateWithinEnv } from 'lib/utils/query-string';
 import { ChangeLogResource } from 'resource/utils/changelog';
 import { IconButton } from 'ui/Button/IconButton';
-import {
-    Menu,
-    MenuDivider,
-    MenuInfoItem,
-    MenuItem,
-    MenuItemPing,
-} from 'ui/Menu/Menu';
+import { Menu, MenuDivider, MenuInfoItem, MenuItem } from 'ui/Menu/Menu';
 import { Popover } from 'ui/Popover/Popover';
 
 import { QuerybookVersion } from './QuerybookVersion';
 
 export const InfoMenuButton: React.FunctionComponent = () => {
     const [showPanel, setShowPanel] = React.useState(false);
-    const [notification, setNotification] = React.useState(false);
 
     const buttonRef = React.useRef<HTMLAnchorElement>();
 
@@ -30,7 +24,18 @@ export const InfoMenuButton: React.FunctionComponent = () => {
             .then((lastViewedDate) => {
                 ChangeLogResource.getAll(lastViewedDate).then(({ data }) => {
                     if (data) {
-                        setNotification(true);
+                        // Automatically open the changelog modal if there's a new change
+                        // and the current page is not the changelog page
+                        const match = matchPath(location.pathname, {
+                            path: '/:env/changelog/:date?',
+                            exact: true,
+                            strict: false,
+                        });
+                        if (!match) {
+                            navigateWithinEnv('/changelog/', {
+                                isModal: true,
+                            });
+                        }
                     }
                 });
             });
@@ -48,11 +53,9 @@ export const InfoMenuButton: React.FunctionComponent = () => {
                         navigateWithinEnv('/changelog/', {
                             isModal: true,
                         });
-                        setNotification(false);
                     }}
                 >
                     Change Logs
-                    {notification ? <MenuItemPing /> : null}
                 </MenuItem>
                 <MenuItem
                     onClick={() =>
@@ -118,7 +121,6 @@ export const InfoMenuButton: React.FunctionComponent = () => {
                 icon={'HelpCircle'}
                 tooltip={'Logs, Tips, Shortcuts, & FAQs'}
                 tooltipPos="right"
-                ping={notification}
                 title="Help"
             />
             {showPanel ? getPanelDOM() : null}
