@@ -31,6 +31,14 @@
 
         .rt-tr-group {
             border-bottom: none;
+
+            &:nth-child(odd) {
+                background-color: var(--bg-lightest); /* current color for odd rows  */
+            }
+
+            &:nth-child(even) {
+                background-color: var(--bg-dark); /* darker color for noticeable constrast for even rows */
+            }
         }
 
         .rt-tr:not(.-padRow):hover {
