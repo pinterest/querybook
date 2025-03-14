@@ -22,7 +22,7 @@ jobs:
                   echo MINOR_VERSION=$MINOR_VERSION >> $GITHUB_ENV
                   echo MAJOR_VERSION=$MAJOR_VERSION >> $GITHUB_ENV
             - name: Publish to Registry
-              uses: elgohr/Publish-Docker-Github-Action@master
+              uses: elgohr/Publish-Docker-Github-Action@v4
               env:
                   EXTRA_PIP_INSTALLS: extra.txt
               with:
