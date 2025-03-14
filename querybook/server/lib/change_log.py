@@ -19,7 +19,7 @@ def load_all_change_logs():
     global __change_logs
     if not __change_logs:
         change_logs = {}
-        change_log_files = sorted(os.listdir(CHANGE_LOG_PATH), reverse=True)
+        change_log_files = os.listdir(CHANGE_LOG_PATH)
 
         change_log_plugin_path = os.path.join(
             QuerybookSettings.QUERYBOOK_PLUGIN_PATH, "./changelog_plugin/"
@@ -27,11 +27,12 @@ def load_all_change_logs():
 
         plugin_change_log_files = []
         if os.path.exists(change_log_plugin_path):
-            plugin_change_log_files = sorted(
-                os.listdir(change_log_plugin_path), reverse=True
-            )
-        # Process main change log files
-        for filename in change_log_files:
+            plugin_change_log_files = os.listdir(change_log_plugin_path)
+
+        # Merge the two lists of files
+        all_change_log_files = change_log_files + plugin_change_log_files
+
+        for filename in all_change_log_files:
             if filename.startswith("breaking_change") or filename.startswith(
                 "security_advisories"
             ):
@@ -41,15 +42,7 @@ def load_all_change_logs():
 
             with open(os.path.join(CHANGE_LOG_PATH, filename)) as f:
                 changelog_date = filename.split(".")[0]
-                change_logs[changelog_date] = {
-                    "date": changelog_date,
-                    "content": generate_change_log(f.read()),
-                }
-
-        # Process plugin change log files (override if date already exists)
-        for filename in plugin_change_log_files:
-            with open(os.path.join(change_log_plugin_path, filename)) as f:
-                changelog_date = filename.split(".")[0]
+                # Plugin change log files will override the main change log files for the same date
                 change_logs[changelog_date] = {
                     "date": changelog_date,
                     "content": generate_change_log(f.read()),
