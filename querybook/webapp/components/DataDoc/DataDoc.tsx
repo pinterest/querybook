@@ -7,6 +7,7 @@ import memoizeOne from 'memoize-one';
 import React from 'react';
 import toast from 'react-hot-toast';
 import { connect } from 'react-redux';
+import { matchPath } from 'react-router-dom';
 
 import { DataDocCell } from 'components/DataDocCell/DataDocCell';
 import { DataDocLeftSidebar } from 'components/DataDocLeftSidebar/DataDocLeftSidebar';
@@ -189,9 +190,17 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
         cellId = cellId ?? (index != null ? dataDocCells?.[index]?.id : null);
 
         if (cellId != null) {
-            executionId = executionId ?? this.state.cellIdToExecutionId[cellId];
-
-            history.replace(getShareUrl(cellId, executionId, true));
+            const match = matchPath(location.pathname, {
+                path: '/:env/datadoc/:docId/',
+                exact: true,
+                strict: false,
+            });
+            if (match) {
+                // Only replace the url if we are in the datadoc page
+                executionId =
+                    executionId ?? this.state.cellIdToExecutionId[cellId];
+                history.replace(getShareUrl(cellId, executionId, true));
+            }
         }
     }
 

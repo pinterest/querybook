@@ -1,7 +1,8 @@
 import os
 from itertools import islice
-from const.path import CHANGE_LOG_PATH
 
+from const.path import CHANGE_LOG_PATH
+from env import QuerybookSettings
 
 __change_logs = None
 
@@ -17,22 +18,40 @@ def load_all_change_logs():
     # TODO: add a maximum number of change logs to load
     global __change_logs
     if not __change_logs:
-        __change_logs = []
-        change_log_files = sorted(os.listdir(CHANGE_LOG_PATH), reverse=True)
-        for filename in change_log_files:
-            if filename.startswith("breaking_change"):
-                # Breaking change is not included for change logs UI
+        change_logs = {}
+        change_log_files = os.listdir(CHANGE_LOG_PATH)
+
+        change_log_plugin_path = os.path.join(
+            QuerybookSettings.QUERYBOOK_PLUGIN_PATH, "./changelog_plugin/"
+        )
+
+        plugin_change_log_files = []
+        if os.path.exists(change_log_plugin_path):
+            plugin_change_log_files = os.listdir(change_log_plugin_path)
+
+        # Merge the two lists of files
+        all_change_log_files = change_log_files + plugin_change_log_files
+
+        for filename in all_change_log_files:
+            if filename.startswith("breaking_change") or filename.startswith(
+                "security_advisories"
+            ):
+                # Breaking changes and security advisories is not included for change logs UI
                 # These are used for developer references when upgrading
                 continue
 
-            with open(os.path.join(CHANGE_LOG_PATH, "./{}".format(filename))) as f:
+            with open(os.path.join(CHANGE_LOG_PATH, filename)) as f:
                 changelog_date = filename.split(".")[0]
-                __change_logs.append(
-                    {
-                        "date": changelog_date,
-                        "content": generate_change_log(f.read()),
-                    }
-                )
+                # Plugin change log files will override the main change log files for the same date
+                change_logs[changelog_date] = {
+                    "date": changelog_date,
+                    "content": generate_change_log(f.read()),
+                }
+
+        # Convert dictionary to list sorted by date in descending order
+        __change_logs = sorted(
+            change_logs.values(), key=lambda x: x["date"], reverse=True
+        )
     return __change_logs
 
 
