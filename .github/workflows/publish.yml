@@ -28,7 +28,7 @@ jobs:
               with:
                   name: querybook/querybook
                   username: ${{ secrets.DOCKER_USERNAME }}
-                  password: ${{ secrets.DOCKER_PASSWORD }}
+                  password: ${{ secrets.DOCKER_PAT }}
                   tags: 'latest,${{ env.PATCH_VERSION }},${{ env.MINOR_VERSION }},${{ env.MAJOR_VERSION }}'
                   cache: ${{ github.event_name != 'schedule' }}
                   buildargs: EXTRA_PIP_INSTALLS
