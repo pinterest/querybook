@@ -1,8 +1,10 @@
 import { ITag } from 'const/tag';
 import { TableTagResource } from 'resource/table';
+import { DataDocTagResource } from 'resource/dataDoc';
 
 import { ThunkResult } from './types';
 
+// Table Tags
 function fetchTableTagsFromTable(
     tableId: number
 ): ThunkResult<Promise<ITag[]>> {
@@ -74,5 +76,66 @@ export function updateTag(tag: ITag): ThunkResult<Promise<ITag>> {
         });
 
         return newTag;
+    };
+}
+
+// Datadoc Tags
+function fetchDataDocTagsFromTable(
+    datadocId: number
+): ThunkResult<Promise<ITag[]>> {
+    return async (dispatch) => {
+        const { data } = await DataDocTagResource.get(datadocId);
+        dispatch({
+            type: '@@tag/RECEIVE_TAGS_BY_DATADOC',
+            payload: { datadocId, tags: data },
+        });
+        return data;
+    };
+}
+
+export function fetchDataDocTagsFromTableIfNeeded(
+    datadocId: number
+): ThunkResult<Promise<any>> {
+    return (dispatch, getState) => {
+        const state = getState();
+        const tags = state.tag.datadocIdToTagName[datadocId];
+        if (!tags) {
+            return dispatch(fetchDataDocTagsFromTable(datadocId));
+        }
+    };
+}
+
+export function createDataDocTag(
+    datadocId: number,
+    tag: string
+): ThunkResult<Promise<ITag>> {
+    return async (dispatch) => {
+        try {
+            const { data } = await DataDocTagResource.create(datadocId, tag);
+            dispatch({
+                type: '@@tag/RECEIVE_TAG_BY_DATADOC',
+                payload: { datadocId, tag: data },
+            });
+            return data;
+        } catch (e) {
+            console.error(e);
+        }
+    };
+}
+
+export function deleteDataDocTag(
+    datadocId: number,
+    tagName: string
+): ThunkResult<Promise<void>> {
+    return async (dispatch) => {
+        try {
+            await DataDocTagResource.delete(datadocId, tagName);
+            dispatch({
+                type: '@@tag/REMOVE_TAG_FROM_DATADOC',
+                payload: { datadocId, tagName },
+            });
+        } catch (e) {
+            console.error(e);
+        }
     };
 }
