@@ -24,10 +24,10 @@ async function patchPrint(pyodide: {
   import json
   import pandas as pd
   import builtins
-  
+
   # Store the original print function
   _original_print = builtins.print
-  
+
   # Define a new print function that catches DataFrames, lists, and dicts and prints them as JSON
   def _custom_print(*args, **kwargs):
       for arg in args:
@@ -36,7 +36,7 @@ async function patchPrint(pyodide: {
               columns = df.columns.tolist()
               records = df.to_dict(orient='records')
               _original_print(json.dumps({"type":"dataframe", "columns":columns, "records":records}))
-              
+
           elif isinstance(arg, (list, dict)):
               try:
                   # Try to serialize and print the data as JSON
@@ -45,7 +45,7 @@ async function patchPrint(pyodide: {
                   _original_print(arg, **kwargs)
           else:
               _original_print(arg, **kwargs)
-  
+
   # Replace the built-in print function
   builtins.print = _custom_print
   `);
@@ -75,9 +75,9 @@ async function patchMatplotlib(pyodide: {
   import base64
   import json
   from io import BytesIO
-  
+
   import matplotlib.pyplot
-  
+
   def ensure_matplotlib_patch():
       def show():
           buf = BytesIO()
@@ -86,10 +86,10 @@ async function patchMatplotlib(pyodide: {
           # encode to a base64 str
           img = base64.b64encode(buf.read()).decode('utf-8')
           print(json.dumps({"type": "image", "data": img}))
-  
+
       matplotlib.pyplot.show = show
-  
-  ensure_matplotlib_patch() 
+
+  ensure_matplotlib_patch()
   `);
 }
 
@@ -108,7 +108,7 @@ async function createDataFrameHelper(pyodide: {
 }) {
     await pyodide.runPythonAsync(`
   import pandas as pd
-  
+
   def _create_dataframe(records, columns):
     return pd.DataFrame(records, columns=columns)
   `);
