@@ -57,8 +57,6 @@ export interface PythonKernel {
      * @param records - The data records for the DataFrame.
      * @param columns - The column names for the DataFrame.
      * @param namespaceId - The ID of the namespace where the DataFrame will be created.
-     * @param stdoutCallback - An optional callback to handle standard output during creation.
-     * @param stderrCallback - An optional callback to handle standard error output during creation.
      * @returns A promise that resolves when the DataFrame is created.
      */
     createDataFrame: (
