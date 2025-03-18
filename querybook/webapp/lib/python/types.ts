@@ -22,6 +22,7 @@ export enum PythonKernelStatus {
 export interface PythonKernel {
     /**
      * Initializes the kernel, optionally installing the specified packages.
+     *
      * @param packages - An optional array of package names to install during initialization.
      * @returns A promise that resolves when the kernel is initialized.
      */
@@ -30,6 +31,7 @@ export interface PythonKernel {
     /**
      * Executes the given Python code within the specified namespace.
      * If `namespaceId` is not provided, a temporary namespace will be used.
+     *
      * @param code - The Python code to execute.
      * @param namespaceId - An optional ID of the namespace to execute the code in.
      * @param stdoutCallback - An optional callback to handle standard output from the execution.
@@ -50,6 +52,7 @@ export interface PythonKernel {
 
     /**
      * Creates a DataFrame in the specified namespace.
+     *
      * @param dfName - The name of the DataFrame to create.
      * @param records - The data records for the DataFrame.
      * @param columns - The column names for the DataFrame.
@@ -67,6 +70,7 @@ export interface PythonKernel {
 
     /**
      * Retrieves the execution count for the specified namespace.
+     *
      * @param namespaceId - The ID of the namespace.
      * @returns The execution count for the specified namespace.
      */
@@ -74,6 +78,7 @@ export interface PythonKernel {
 
     /**
      * Returns a list of variable names in the specified namespace.
+     *
      * @param namespaceId - The ID of the namespace.
      * @returns An array of variable names in the specified namespace.
      */

@@ -15,15 +15,17 @@ const DEFAULT_PACKAGES = ['micropip', 'numpy', 'pandas', 'matplotlib'];
  * Implements the PythonKernel interface
  */
 class PyodideKernel implements PythonKernel {
+    public version = version;
+
     private loadPyodidePromise: Promise<void> | null = null;
     private namespaces: Record<number, PyProxy> = {};
     private executionCountByNS: Record<number, number> = {};
     private pyodide: PyodideInterface | null = null;
     private interruptBuffer: Uint8Array | null = null;
-    public version = version;
 
     /**
      * Initialize pyodide with specified packages
+     *
      * @param packages - Additional packages to load via micropip
      */
     public async initialize(packages: string[] = []): Promise<void> {
@@ -31,73 +33,13 @@ class PyodideKernel implements PythonKernel {
             throw new Error('Pyodide was already initialized');
         }
 
-        this.loadPyodidePromise = this.loadPyodide(packages);
+        this.loadPyodidePromise = this._loadPyodide(packages);
         return this.loadPyodidePromise;
     }
 
     /**
-     * Load pyodide with specified packages
-     * @param additionalPackages - Additional packages to load via micropip
-     */
-    private async loadPyodide(
-        additionalPackages: string[] = []
-    ): Promise<void> {
-        this.pyodide = await loadPyodide({
-            indexURL: INDEX_URL,
-            packages: DEFAULT_PACKAGES,
-        });
-
-        // Set up interrupt buffer
-        this.interruptBuffer = new Uint8Array(new ArrayBuffer(1));
-        this.pyodide.setInterruptBuffer(this.interruptBuffer);
-
-        // Load additional packages if specified
-        if (additionalPackages.length > 0) {
-            const micropip = this.pyodide.pyimport('micropip');
-            await micropip.install(additionalPackages);
-        }
-
-        // Apply patches
-        await patchPyodide(this.pyodide);
-    }
-
-    /**
-     * Custom print function for Python results
-     */
-    private _customPrint(result: any): void {
-        if (!this.pyodide || result === undefined) return;
-        this.pyodide.globals.get('_custom_print')(result);
-    }
-
-    /**
-     * Patched: Create a DataFrame from records and columns
-     */
-    private _createDataFrame(records: any[][], columns: string[]): any {
-        if (!this.pyodide) return null;
-        return this.pyodide.globals.get('_create_dataframe')(records, columns);
-    }
-
-    /**
-     * Get or create a namespace for the given ID
-     */
-    private getNamespace(namespaceId?: number): PyProxy {
-        if (!this.pyodide) {
-            throw new Error('Pyodide not initialized');
-        }
-
-        // Create a temporary namespace if no ID is provided
-        if (namespaceId === undefined) {
-            return this.pyodide.globals.get('dict')();
-        }
-
-        if (!this.namespaces[namespaceId]) {
-            this.namespaces[namespaceId] = this.pyodide.globals.get('dict')();
-        }
-        return this.namespaces[namespaceId];
-    }
-
-    /**
      * Run Python code in the specified namespace
+     *
      * @returns The result of the execution, if any
      */
     public async runPython(
@@ -135,7 +77,7 @@ class PyodideKernel implements PythonKernel {
         );
 
         // Get namespace for execution
-        const namespace = this.getNamespace(namespaceId);
+        const namespace = this._getNamespace(namespaceId);
 
         // Execute the code
         const result = await this.pyodide.runPythonAsync(code, {
@@ -185,7 +127,7 @@ class PyodideKernel implements PythonKernel {
             throw new Error('Pyodide initialization failed');
         }
 
-        const namespace = this.getNamespace(namespaceId);
+        const namespace = this._getNamespace(namespaceId);
         const df = this._createDataFrame(records, columns);
         namespace.set(dfName, df);
     }
@@ -200,10 +142,76 @@ class PyodideKernel implements PythonKernel {
             );
         }
 
-        const namespace = this.getNamespace(namespaceId);
+        const namespace = this._getNamespace(namespaceId);
         return Object.keys(namespace.toJs()).filter(
             (key) => key !== '__builtins__'
         );
+    }
+
+    /**
+     * Load pyodide with specified packages
+     *
+     * @param additionalPackages - Additional packages to load via micropip
+     */
+    private async _loadPyodide(
+        additionalPackages: string[] = []
+    ): Promise<void> {
+        this.pyodide = await loadPyodide({
+            indexURL: INDEX_URL,
+            packages: DEFAULT_PACKAGES,
+        });
+
+        // Set up interrupt buffer
+        this.interruptBuffer = new Uint8Array(new ArrayBuffer(1));
+        this.pyodide.setInterruptBuffer(this.interruptBuffer);
+
+        // Load additional packages if specified
+        if (additionalPackages.length > 0) {
+            const micropip = this.pyodide.pyimport('micropip');
+            await micropip.install(additionalPackages);
+        }
+
+        // Apply patches
+        await patchPyodide(this.pyodide);
+    }
+
+    /**
+     * Custom print function for Python results
+     */
+    private _customPrint(result: any): void {
+        if (!this.pyodide || result === undefined) {
+            return;
+        }
+        this.pyodide.globals.get('_custom_print')(result);
+    }
+
+    /**
+     * Patched: Create a DataFrame from records and columns
+     */
+    private _createDataFrame(records: any[][], columns: string[]): any {
+        if (!this.pyodide) {
+            return null;
+        }
+        return this.pyodide.globals.get('_create_dataframe')(records, columns);
+    }
+
+    /**
+     * Get or create a namespace for the given ID
+     */
+    private _getNamespace(namespaceId?: number): PyProxy {
+        if (!this.pyodide) {
+            throw new Error('Pyodide not initialized');
+        }
+
+        // Create a temporary namespace if no ID is provided
+        if (namespaceId === undefined) {
+            return this.pyodide.globals.get('dict')();
+        }
+
+        if (!this.namespaces[namespaceId]) {
+            this.namespaces[namespaceId] = this.pyodide.globals.get('dict')();
+        }
+        return this.namespaces[namespaceId];
     }
 }
 
