@@ -1,18 +1,32 @@
 import { PythonContext } from './python-provider';
 import { useCallback, useContext, useState } from 'react';
 
+import { PythonKernelStatus } from './types';
+
 interface UsePythonProps {
     docId?: number;
     onStdout?: (message: string) => void;
     onStderr?: (message: string) => void;
     onComplete?: () => void;
 }
+interface UsePythonReturn {
+    kernelStatus: PythonKernelStatus;
+    runPython: (code: string) => Promise<void>;
+    createDataFrame: (
+        dfName: string,
+        statementExecutionId: number,
+        namespaceId?: number
+    ) => Promise<void>;
+    stdout: string[];
+    stderr: string[];
+    getExecutionCount: (namespaceId: number) => Promise<number>;
+}
 
 export default function usePython({
     docId,
     onStdout,
     onStderr,
-}: UsePythonProps) {
+}: UsePythonProps): UsePythonReturn {
     const [stdout, setStdout] = useState<string[]>([]);
     const [stderr, setStderr] = useState<string[]>([]);
 
@@ -63,25 +77,13 @@ export default function usePython({
 
             await runPython(code, docId, stdoutCallback, stderrCallback);
         },
-        [runPython]
-    );
-
-    /**
-     * Export query results to Python as a DataFrame
-     */
-    const exportQueryResult = useCallback(
-        async (dataframeName, statementResultData) => {
-            const header = statementResultData[0];
-            const records = statementResultData.slice(1);
-            await createDataFrame(dataframeName, records, header, docId);
-        },
-        [createDataFrame, docId]
+        [setStdout, setStdout, runPython, docId, stdoutCallback, stderrCallback]
     );
 
     return {
         kernelStatus: status,
         runPython: runPythonCode,
-        exportQueryResult,
+        createDataFrame,
         stdout,
         stderr,
         getExecutionCount,

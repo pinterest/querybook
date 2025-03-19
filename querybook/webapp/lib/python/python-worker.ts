@@ -10,6 +10,11 @@ import { PythonKernel } from './types';
 const INDEX_URL = `https://cdn.jsdelivr.net/pyodide/v${version}/full/`;
 const DEFAULT_PACKAGES = ['micropip', 'numpy', 'pandas', 'matplotlib'];
 
+enum InterruptBufferStatus {
+    RESET = 0, // Reset
+    SIGINT = 2, // Interrupt the execution
+}
+
 /**
  * PyodideKernel - Handles Pyodide initialization and execution
  * Implements the PythonKernel interface
@@ -48,22 +53,15 @@ class PyodideKernel implements PythonKernel {
         stdoutCallback?: ((text: string) => void) | null,
         stderrCallback?: ((text: string) => void) | null
     ): Promise<void> {
-        if (!this.loadPyodidePromise) {
-            throw new Error(
-                'Pyodide not initialized. Call initialize() first.'
-            );
-        }
-
-        await this.loadPyodidePromise;
-
-        if (!this.pyodide || !this.interruptBuffer) {
-            throw new Error('Pyodide initialization failed');
-        }
+        this._ensurePyodide();
 
         // Reset interrupt buffer and set status
-        this.interruptBuffer[0] = 0;
-        this.executionCountByNS[namespaceId] =
-            this.getExecutionCount(namespaceId) + 1;
+        this.interruptBuffer[0] = InterruptBufferStatus.RESET;
+
+        if (namespaceId !== undefined) {
+            this.executionCountByNS[namespaceId] =
+                this.getExecutionCount(namespaceId) + 1;
+        }
 
         // Load any required packages from imports
         await this.pyodide.loadPackagesFromImports(code);
@@ -81,12 +79,12 @@ class PyodideKernel implements PythonKernel {
 
         // Execute the code
         const result = await this.pyodide.runPythonAsync(code, {
-            globals: namespace,
+            locals: namespace,
         });
 
         // Print result if not undefined
         if (result !== undefined) {
-            this._customPrint(result);
+            this.pyodide.globals.get('_custom_print')(result);
         }
     }
 
@@ -95,7 +93,7 @@ class PyodideKernel implements PythonKernel {
      */
     public cancelRun(): void {
         if (this.interruptBuffer) {
-            this.interruptBuffer[0] = 2;
+            this.interruptBuffer[0] = InterruptBufferStatus.SIGINT;
         }
     }
 
@@ -111,24 +109,15 @@ class PyodideKernel implements PythonKernel {
      */
     public async createDataFrame(
         dfName: string,
-        records: any[][],
-        columns: string[],
+        statementExecutionId: number,
         namespaceId: number
     ): Promise<void> {
-        if (!this.loadPyodidePromise) {
-            throw new Error(
-                'Pyodide not initialized. Call initialize() first.'
-            );
-        }
-
-        await this.loadPyodidePromise;
-
-        if (!this.pyodide) {
-            throw new Error('Pyodide initialization failed');
-        }
+        this._ensurePyodide();
 
         const namespace = this._getNamespace(namespaceId);
-        const df = this._createDataFrame(records, columns);
+        const df = await this.pyodide.globals.get('get_df')(
+            statementExecutionId
+        );
         namespace.set(dfName, df);
     }
 
@@ -136,16 +125,20 @@ class PyodideKernel implements PythonKernel {
      * Get variables in the specified namespace
      */
     public getNamespaceVariables(namespaceId: number): string[] {
-        if (!this.loadPyodidePromise) {
-            throw new Error(
-                'Pyodide not initialized. Call initialize() first.'
-            );
-        }
+        this._ensurePyodide();
 
         const namespace = this._getNamespace(namespaceId);
         return Object.keys(namespace.toJs()).filter(
             (key) => key !== '__builtins__'
         );
+    }
+    /**
+     * Ensure that pyodide is initialized
+     */
+    private _ensurePyodide(): void {
+        if (!this.pyodide) {
+            throw new Error('Pyodide not initialized');
+        }
     }
 
     /**
@@ -176,32 +169,10 @@ class PyodideKernel implements PythonKernel {
     }
 
     /**
-     * Custom print function for Python results
-     */
-    private _customPrint(result: any): void {
-        if (!this.pyodide || result === undefined) {
-            return;
-        }
-        this.pyodide.globals.get('_custom_print')(result);
-    }
-
-    /**
-     * Patched: Create a DataFrame from records and columns
-     */
-    private _createDataFrame(records: any[][], columns: string[]): any {
-        if (!this.pyodide) {
-            return null;
-        }
-        return this.pyodide.globals.get('_create_dataframe')(records, columns);
-    }
-
-    /**
      * Get or create a namespace for the given ID
      */
     private _getNamespace(namespaceId?: number): PyProxy {
-        if (!this.pyodide) {
-            throw new Error('Pyodide not initialized');
-        }
+        this._ensurePyodide();
 
         // Create a temporary namespace if no ID is provided
         if (namespaceId === undefined) {

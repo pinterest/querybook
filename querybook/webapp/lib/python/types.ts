@@ -54,15 +54,13 @@ export interface PythonKernel {
      * Creates a DataFrame in the specified namespace.
      *
      * @param dfName - The name of the DataFrame to create.
-     * @param records - The data records for the DataFrame.
-     * @param columns - The column names for the DataFrame.
+     * @param statementExecutionId - The ID of the statement execution that created the DataFrame.
      * @param namespaceId - The ID of the namespace where the DataFrame will be created.
      * @returns A promise that resolves when the DataFrame is created.
      */
     createDataFrame: (
         dfName: string,
-        records: any[][],
-        columns: string[],
+        statementExecutionId: number,
         namespaceId: number
     ) => Promise<void>;
 

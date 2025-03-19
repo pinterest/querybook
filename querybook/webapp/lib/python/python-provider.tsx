@@ -21,8 +21,7 @@ export interface PythonContextType {
     getExecutionCount: (namespaceId: number) => Promise<number>;
     createDataFrame: (
         dfName: string,
-        records: any[][],
-        columns: string[],
+        statementExecutionId: number,
         namespaceId?: number
     ) => Promise<void>;
 }
@@ -60,7 +59,7 @@ function PythonProvider({ children }: PythonProviderProps) {
 
     const initKernel = useCallback(async () => {
         // Don't initialize if already initializing or initialized
-        if (kernelRef.current) {
+        if (status !== PythonKernelStatus.UNINITIALIZED) {
             return;
         }
 
@@ -119,16 +118,10 @@ function PythonProvider({ children }: PythonProviderProps) {
             stdoutCallback?: (text: string) => void,
             stderrCallback?: (text: string) => void
         ) => {
+            // Kernel is supposed to be initialized
             if (!kernelRef.current) {
-                await initKernel();
-            }
-
-            if (!kernelRef.current) {
-                stderrCallback('Failed to initialize Python kernel');
-            }
-
-            if (status !== PythonKernelStatus.IDLE) {
-                stderrCallback('Kernel is not ready to run code');
+                stderrCallback('Python kernel has not been initialized');
+                return;
             }
 
             try {
