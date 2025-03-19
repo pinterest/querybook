@@ -20,10 +20,10 @@ export const querybookModule = {
      * @returns A promise that resolves to the query result data.
      * @throws An error if the fetch operation fails or the server returns an error.
      */
-    fetchStatementResult: async function (
+    fetchStatementResult: async (
         statementExecutionId: number,
         limit: number
-    ) {
+    ) => {
         const cacheKey = `statement_result_${statementExecutionId}`;
         const cache = await localStore.get(cacheKey);
         // First row is the column names
