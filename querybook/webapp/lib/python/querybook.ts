@@ -24,6 +24,7 @@ export const querybookModule = {
         statementExecutionId: number,
         limit: number
     ) => {
+        // TODO (AP-5030): A better cache solution with a separate cache store and cache expiration.
         const cacheKey = `statement_result_${statementExecutionId}`;
         const cache = await localStore.get(cacheKey);
         // First row is the column names
