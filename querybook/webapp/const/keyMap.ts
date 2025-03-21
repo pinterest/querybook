@@ -91,7 +91,7 @@ const DEFAULT_KEY_MAP = {
             name: 'Open commands',
         },
     },
-    queryEditor: {
+    codeEditor: {
         runQuery: {
             key: 'Shift-Enter',
             name: 'Run query',
@@ -157,8 +157,8 @@ const DEFAULT_KEY_MAP = {
  * to ensure it is compatible for other platforms as well
  */
 if (!isOSX) {
-    const queryEditorConfig = DEFAULT_KEY_MAP.queryEditor;
-    for (const [_, keyConfig] of Object.entries(queryEditorConfig)) {
+    const codeEditorConfig = DEFAULT_KEY_MAP.codeEditor;
+    for (const [_, keyConfig] of Object.entries(codeEditorConfig)) {
         const keyConfigParts = keyConfig.key.split('-');
         if (keyConfigParts.includes('Cmd')) {
             // Swap Cmd with Ctrl

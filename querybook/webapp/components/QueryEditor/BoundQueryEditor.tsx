@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useRef } from 'react';
+import React, { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 import {
@@ -7,7 +7,7 @@ import {
     QueryEditor,
 } from 'components/QueryEditor/QueryEditor';
 import { IQueryEngine } from 'const/queryEngine';
-import { useUserQueryEditorConfig } from 'hooks/redux/useUserQueryEditorConfig';
+import { useUserCodeEditorConfig } from 'hooks/redux/useUserCodeEditorConfig';
 import { useForwardedRef } from 'hooks/useForwardedRef';
 import { fetchDataTableByNameIfNeeded } from 'redux/dataSources/action';
 
@@ -39,7 +39,7 @@ export const BoundQueryEditor = React.forwardRef<
         fontSize,
         autoCompleteType,
         sqlCompleteEnabled,
-    } = useUserQueryEditorConfig();
+    } = useUserCodeEditorConfig();
     const combinedOptions = useMemo(
         () => ({
             ...options,
