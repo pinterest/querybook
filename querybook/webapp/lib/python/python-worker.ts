@@ -149,7 +149,7 @@ class PyodideKernel implements PythonKernel {
 
             // Execute the code
             const result = await this.pyodide.runPythonAsync(code, {
-                locals: namespace,
+                globals: namespace,
             });
 
             // Print result if not undefined
