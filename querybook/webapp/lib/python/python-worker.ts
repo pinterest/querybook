@@ -149,6 +149,7 @@ class PyodideKernel implements PythonKernel {
 
             // Execute the code
             const result = await this.pyodide.runPythonAsync(code, {
+                // globals vs locals: https://github.com/pyodide/pyodide/issues/4673
                 globals: namespace,
             });
 
