@@ -8,22 +8,30 @@ import React, {
     useState,
 } from 'react';
 
-import { PythonKernel, PythonKernelStatus } from './types';
+import {
+    InterruptBufferStatus,
+    PythonExecutionStatus,
+    PythonKernel,
+    PythonKernelStatus,
+    PythonNamespaceInfo,
+} from './types';
 
 export interface PythonContextType {
     status: PythonKernelStatus;
     runPython: (
         code: string,
         namespaceId?: number,
+        progressCallback?: (status: PythonExecutionStatus, data?: any) => void,
         stdoutCallback?: (text: string) => void,
         stderrCallback?: (text: string) => void
     ) => Promise<void>;
-    getExecutionCount: (namespaceId: number) => Promise<number>;
+    cancelRun: () => void;
     createDataFrame: (
         dfName: string,
         statementExecutionId: number,
         namespaceId?: number
     ) => Promise<void>;
+    getNamespaceInfo: (namespaceId: number) => Promise<PythonNamespaceInfo>;
 }
 
 const PythonContext = createContext<PythonContextType>(null);
@@ -36,6 +44,7 @@ function PythonProvider({ children }: PythonProviderProps) {
     const [status, setStatus] = useState(PythonKernelStatus.UNINITIALIZED);
     const workerRef = useRef<Worker>(null);
     const kernelRef = useRef<Remote<PythonKernel>>(null);
+    const sharedInterruptBuffer = useRef<Uint8Array>(null);
 
     /**
      * Terminate the kernel and clean up resources
@@ -79,7 +88,10 @@ function PythonProvider({ children }: PythonProviderProps) {
             // Wrap the worker with comlink
             const kernel: Remote<PythonKernel> = wrap(worker);
             await kernel.initialize();
+
             kernelRef.current = kernel;
+            const sharedBuffer = await kernel.interruptBuffer;
+            sharedInterruptBuffer.current = sharedBuffer;
 
             setStatus(PythonKernelStatus.IDLE);
         } catch (error) {
@@ -87,7 +99,7 @@ function PythonProvider({ children }: PythonProviderProps) {
             setStatus(PythonKernelStatus.FAILED);
             terminateKernel();
         }
-    }, [setStatus, terminateKernel]);
+    }, [status, setStatus, terminateKernel]);
 
     useEffect(() => {
         initKernel();
@@ -99,22 +111,16 @@ function PythonProvider({ children }: PythonProviderProps) {
     }, []);
 
     /**
-     * Get the execution count for a namespace from the kernel
-     */
-    const getExecutionCount = useCallback(async (namespaceId: number) => {
-        if (!kernelRef.current) {
-            return 0;
-        }
-        return kernelRef.current.getExecutionCount(namespaceId);
-    }, []);
-
-    /**
      * Run Python code in the specified namespace
      */
     const runPython = useCallback(
         async (
             code: string,
             namespaceId?: number,
+            progressCallback?: (
+                status: PythonExecutionStatus,
+                data?: any
+            ) => void,
             stdoutCallback?: (text: string) => void,
             stderrCallback?: (text: string) => void
         ) => {
@@ -124,35 +130,53 @@ function PythonProvider({ children }: PythonProviderProps) {
                 return;
             }
 
-            try {
-                // Update status to reflect that we're about to run code
-                setStatus(PythonKernelStatus.BUSY);
+            // Update status to reflect that we're about to run code
+            setStatus(PythonKernelStatus.BUSY);
 
-                // Run the code with specific callbacks for this execution
-                await kernelRef.current.runPython(
-                    code,
-                    namespaceId,
-                    proxy(stdoutCallback),
-                    proxy(stderrCallback)
-                );
-            } catch (error) {
-                if (stderrCallback) {
-                    stderrCallback(`${error.message || String(error)}`);
-                }
-            } finally {
-                setStatus(PythonKernelStatus.IDLE);
-            }
+            // Run the code with specific callbacks for this execution
+            await kernelRef.current.runPython(
+                code,
+                namespaceId,
+                proxy(progressCallback),
+                proxy(stdoutCallback),
+                proxy(stderrCallback)
+            );
+            setStatus(PythonKernelStatus.IDLE);
         },
-        [initKernel, status, setStatus]
+        [initKernel, setStatus]
+    );
+
+    /**
+     * Interrupting a running code execution is achieved using a shared buffer.
+     * This operation must be performed on the main thread.
+     * For more details, refer to https://pyodide.org/en/stable/usage/keyboard-interrupts.html
+     */
+    const cancelRun = useCallback(() => {
+        if (sharedInterruptBuffer.current) {
+            sharedInterruptBuffer.current[0] = InterruptBufferStatus.SIGINT;
+        }
+    }, []);
+
+    const getNamespaceInfo = useCallback(
+        async (namespaceId: number): Promise<PythonNamespaceInfo> => {
+            if (!kernelRef.current) {
+                return;
+            }
+
+            const info = await kernelRef.current.getNamespaceInfo(namespaceId);
+            return JSON.parse(info);
+        },
+        []
     );
 
     return (
         <PythonContext.Provider
             value={{
                 status,
-                getExecutionCount,
                 runPython,
+                cancelRun,
                 createDataFrame: kernelRef.current?.createDataFrame,
+                getNamespaceInfo,
             }}
         >
             {children}

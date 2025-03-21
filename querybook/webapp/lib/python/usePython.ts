@@ -1,7 +1,11 @@
 import { PythonContext } from './python-provider';
 import { useCallback, useContext, useState } from 'react';
 
-import { PythonKernelStatus } from './types';
+import {
+    PythonExecutionStatus,
+    PythonKernelStatus,
+    PythonNamespaceInfo,
+} from './types';
 
 interface UsePythonProps {
     docId?: number;
@@ -12,6 +16,7 @@ interface UsePythonProps {
 interface UsePythonReturn {
     kernelStatus: PythonKernelStatus;
     runPython: (code: string) => Promise<void>;
+    cancelRun: () => void;
     createDataFrame: (
         dfName: string,
         statementExecutionId: number,
@@ -19,7 +24,9 @@ interface UsePythonReturn {
     ) => Promise<void>;
     stdout: string[];
     stderr: string[];
-    getExecutionCount: (namespaceId: number) => Promise<number>;
+    executionStatus: PythonExecutionStatus;
+    executionCount: number;
+    getNamespaceInfo: (namespaceId: number) => Promise<PythonNamespaceInfo>;
 }
 
 export default function usePython({
@@ -29,9 +36,20 @@ export default function usePython({
 }: UsePythonProps): UsePythonReturn {
     const [stdout, setStdout] = useState<string[]>([]);
     const [stderr, setStderr] = useState<string[]>([]);
+    const [executionStatus, setExecutionStatus] =
+        useState<PythonExecutionStatus>();
+    const [executionCount, setExecutionCount] = useState<number>();
 
-    const { status, getExecutionCount, runPython, createDataFrame } =
+    const { status, runPython, cancelRun, createDataFrame, getNamespaceInfo } =
         useContext(PythonContext);
+
+    const progressCallback = useCallback(
+        (status, data) => {
+            setExecutionStatus(status);
+            setExecutionCount(data?.executionCount);
+        },
+        [setExecutionCount, setExecutionStatus]
+    );
 
     const stdoutCallback = useCallback(
         (msg: string) => {
@@ -75,7 +93,17 @@ export default function usePython({
             setStdout([]);
             setStderr([]);
 
-            await runPython(code, docId, stdoutCallback, stderrCallback);
+            // web worker will be blocked when running python code as it is single-threaded
+            // so we need to set the status to pending from the main thread
+            setExecutionStatus(PythonExecutionStatus.PENDING);
+
+            await runPython(
+                code,
+                docId,
+                progressCallback,
+                stdoutCallback,
+                stderrCallback
+            );
         },
         [setStdout, setStdout, runPython, docId, stdoutCallback, stderrCallback]
     );
@@ -83,9 +111,12 @@ export default function usePython({
     return {
         kernelStatus: status,
         runPython: runPythonCode,
+        cancelRun,
         createDataFrame,
         stdout,
         stderr,
-        getExecutionCount,
+        executionStatus,
+        executionCount,
+        getNamespaceInfo,
     };
 }

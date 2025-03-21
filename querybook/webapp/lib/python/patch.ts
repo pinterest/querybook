@@ -7,6 +7,7 @@ export async function patchPyodide(pyodide: PyodideInterface) {
     await patchPrint(pyodide);
     await patchMatplotlib(pyodide);
     await patchDataFrameHelper(pyodide);
+    await patchNamespaceHelper(pyodide);
 }
 
 /**
@@ -123,5 +124,46 @@ async function patchDataFrameHelper(pyodide: PyodideInterface) {
     js_data=await fetchStatementResult(statement_execution_id, limit)
     data = js_data.to_py()
     return pd.DataFrame(data[1:], columns=data[0])
+  `);
+}
+
+/**
+ * Adds a helper function to the Pyodide environment for retrieving the identifiers
+ * in a namespace along with their types.
+ * @param pyodide - The Pyodide instance with a `runPythonAsync` method to execute Python code.
+ */
+async function patchNamespaceHelper(pyodide: PyodideInterface) {
+    await pyodide.runPythonAsync(`
+  import inspect
+  import types
+
+  def _get_namespace_identifiers(namespace):
+      result = []
+
+      # Get all names in current scope
+      for name, obj in namespace.items():
+          try:
+              # Determine the type (simplified to just 4 types)
+              if inspect.ismodule(obj):
+                  type_name = "module"
+              elif inspect.isclass(obj):
+                  type_name = "class"
+              elif inspect.isfunction(obj):
+                  type_name = "function"
+              else:
+                  type_name = "variable"
+
+              result.append({
+                  "name": name,
+                  "type": type_name
+              })
+          except:
+              # Handle cases where eval might fail
+              result.append({
+                  "name": name,
+                  "type": 'unknown'
+              })
+
+      return result
   `);
 }
