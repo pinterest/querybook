@@ -1,0 +1,16 @@
+.PythonEditorStatusBar {
+    display: flex;
+    gap: 4px;
+    padding: 2px;
+    position: relative;
+    width: 100%;
+    height: 24px;
+    color: var(--text);
+
+    .execution-count {
+        position: absolute;
+        left: -8px;
+        top: 50%;
+        transform: translateX(-100%) translateY(-50%);
+    }
+}
