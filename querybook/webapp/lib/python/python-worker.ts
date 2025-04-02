@@ -1,19 +1,20 @@
+import { Task, TaskQueue } from './task-queue';
 import { expose } from 'comlink';
 import { loadPyodide, PyodideInterface, version } from 'pyodide';
 
 import type { PyProxy } from 'pyodide/ffi';
 
 import { patchPyodide } from './patch';
-import { PythonKernel } from './types';
+import {
+    InterruptBufferStatus,
+    PythonExecutionStatus,
+    PythonKernel,
+    PythonNamespaceInfo,
+} from './types';
 
 // Constants
 const INDEX_URL = `https://cdn.jsdelivr.net/pyodide/v${version}/full/`;
 const DEFAULT_PACKAGES = ['micropip', 'numpy', 'pandas', 'matplotlib'];
-
-enum InterruptBufferStatus {
-    RESET = 0, // Reset
-    SIGINT = 2, // Interrupt the execution
-}
 
 /**
  * PyodideKernel - Handles Pyodide initialization and execution
@@ -21,12 +22,13 @@ enum InterruptBufferStatus {
  */
 class PyodideKernel implements PythonKernel {
     public version = version;
+    public interruptBuffer: Uint8Array | null = null;
 
     private loadPyodidePromise: Promise<void> | null = null;
     private namespaces: Record<number, PyProxy> = {};
     private executionCountByNS: Record<number, number> = {};
     private pyodide: PyodideInterface | null = null;
-    private interruptBuffer: Uint8Array | null = null;
+    private taskQueue = new TaskQueue();
 
     /**
      * Initialize pyodide with specified packages
@@ -43,65 +45,39 @@ class PyodideKernel implements PythonKernel {
     }
 
     /**
-     * Run Python code in the specified namespace
-     *
-     * @returns The result of the execution, if any
+     * Run Python code using a task queue to ensure sequential execution
      */
     public async runPython(
         code: string,
         namespaceId?: number,
-        stdoutCallback?: ((text: string) => void) | null,
-        stderrCallback?: ((text: string) => void) | null
+        progressCallback?: (
+            status: PythonExecutionStatus,
+            data?: {
+                executionCount?: number;
+            }
+        ) => void,
+        stdoutCallback?: (text: string) => void,
+        stderrCallback?: (text: string) => void
     ): Promise<void> {
         this._ensurePyodide();
 
-        // Reset interrupt buffer and set status
-        this.interruptBuffer[0] = InterruptBufferStatus.RESET;
-
-        if (namespaceId !== undefined) {
-            this.executionCountByNS[namespaceId] =
-                this.getExecutionCount(namespaceId) + 1;
-        }
-
-        // Load any required packages from imports
-        await this.pyodide.loadPackagesFromImports(code);
-
-        // Set I/O handlers
-        this.pyodide.setStdout(
-            stdoutCallback ? { batched: stdoutCallback } : undefined
-        );
-        this.pyodide.setStderr(
-            stderrCallback ? { batched: stderrCallback } : undefined
-        );
-
-        // Get namespace for execution
-        const namespace = this._getNamespace(namespaceId);
-
-        // Execute the code
-        const result = await this.pyodide.runPythonAsync(code, {
-            locals: namespace,
+        return new Promise((resolve, reject) => {
+            const task: Task = {
+                run: async () => {
+                    // Call the actual runPython method.
+                    await this._runPython(
+                        code,
+                        namespaceId,
+                        progressCallback,
+                        stdoutCallback,
+                        stderrCallback
+                    );
+                },
+                resolve,
+                reject,
+            };
+            this.taskQueue.push(task);
         });
-
-        // Print result if not undefined
-        if (result !== undefined) {
-            this.pyodide.globals.get('_custom_print')(result);
-        }
-    }
-
-    /**
-     * Cancel the current Python execution
-     */
-    public cancelRun(): void {
-        if (this.interruptBuffer) {
-            this.interruptBuffer[0] = InterruptBufferStatus.SIGINT;
-        }
-    }
-
-    /**
-     * Get the execution count for a namespace
-     */
-    public getExecutionCount(namespaceId: number): number {
-        return this.executionCountByNS[namespaceId] || 0;
     }
 
     /**
@@ -122,16 +98,92 @@ class PyodideKernel implements PythonKernel {
     }
 
     /**
-     * Get variables in the specified namespace
+     * Get the namespace information for a given namespace
      */
-    public getNamespaceVariables(namespaceId: number): string[] {
+    public async getNamespaceInfo(namespaceId: number): Promise<string> {
         this._ensurePyodide();
 
         const namespace = this._getNamespace(namespaceId);
-        return Object.keys(namespace.toJs()).filter(
-            (key) => key !== '__builtins__'
-        );
+        const identifiers = await this.pyodide.globals.get(
+            '_get_namespace_identifiers'
+        )(namespace);
+        const executionCount = this.executionCountByNS[namespaceId];
+
+        const info: PythonNamespaceInfo = {
+            identifiers: identifiers.toJs(),
+            executionCount,
+        };
+        // return names.toJs();
+        return JSON.stringify(info);
     }
+
+    /**
+     * Run Python code in the specified namespace
+     */
+    private async _runPython(
+        code: string,
+        namespaceId?: number,
+        progressCallback?: (
+            status: PythonExecutionStatus,
+            data?: {
+                executionCount?: number;
+            }
+        ) => void,
+        stdoutCallback?: (code: string) => void,
+        stderrCallback?: (code: string) => void
+    ): Promise<void> {
+        progressCallback?.(PythonExecutionStatus.RUNNING);
+        // Reset interrupt buffer and set status
+        this.interruptBuffer[0] = InterruptBufferStatus.RESET;
+
+        if (namespaceId !== undefined) {
+            this.executionCountByNS[namespaceId] ??= 0;
+            this.executionCountByNS[namespaceId]++;
+        }
+        const executionCount = this.executionCountByNS[namespaceId];
+
+        try {
+            // Load any required packages from imports
+            await this.pyodide.loadPackagesFromImports(code);
+
+            // Set I/O handlers
+            this.pyodide.setStdout(
+                stdoutCallback ? { batched: stdoutCallback } : undefined
+            );
+            this.pyodide.setStderr(
+                stderrCallback ? { batched: stderrCallback } : undefined
+            );
+
+            // Get namespace for execution
+            const namespace = this._getNamespace(namespaceId);
+
+            // Execute the code
+            const result = await this.pyodide.runPythonAsync(code, {
+                // globals vs locals: https://github.com/pyodide/pyodide/issues/4673
+                globals: namespace,
+            });
+
+            // Print result if not undefined
+            if (result !== undefined) {
+                this.pyodide.globals.get('_custom_print')(result);
+            }
+            progressCallback?.(PythonExecutionStatus.SUCCESS, {
+                executionCount,
+            });
+        } catch (error) {
+            if (error.message?.includes('KeyboardInterrupt')) {
+                progressCallback?.(PythonExecutionStatus.CANCEL, {
+                    executionCount,
+                });
+            } else {
+                progressCallback?.(PythonExecutionStatus.ERROR, {
+                    executionCount,
+                });
+            }
+            stderrCallback?.(`${error.message || String(error)}`);
+        }
+    }
+
     /**
      * Ensure that pyodide is initialized
      */
@@ -155,7 +207,7 @@ class PyodideKernel implements PythonKernel {
         });
 
         // Set up interrupt buffer
-        this.interruptBuffer = new Uint8Array(new ArrayBuffer(1));
+        this.interruptBuffer = new Uint8Array(new SharedArrayBuffer(1));
         this.pyodide.setInterruptBuffer(this.interruptBuffer);
 
         // Load additional packages if specified

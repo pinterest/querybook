@@ -48,6 +48,7 @@
         "@uiw/react-json-view": "^2.0.0-alpha.30",
         "@welldone-software/why-did-you-render": "^6.1.1",
         "axios": "^1.2.2",
+        "balloon-css": "^1.2.0",
         "bignumber.js": "^9.0.1",
         "chart.js": "^3.9.1",
         "chartjs-adapter-moment": "^1.0.0",

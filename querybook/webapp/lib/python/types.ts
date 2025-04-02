@@ -12,7 +12,7 @@ export enum PythonKernelStatus {
     // Kernel is currently executing code.
     BUSY = 'busy',
 
-    // Kernel has encountered an error.
+    // Kernel has encountered an error when initializing.
     FAILED = 'failed',
 }
 
@@ -69,6 +69,7 @@ export interface PythonKernel {
      *
      * @param code - The Python code to execute.
      * @param namespaceId - An optional ID of the namespace to execute the code in.
+     * @param progressCallback - An optional callback to handle execution status updates.
      * @param stdoutCallback - An optional callback to handle standard output from the execution.
      * @param stderrCallback - An optional callback to handle standard error output from the execution.
      * @returns A promise that resolves when the execution is complete.
@@ -76,14 +77,15 @@ export interface PythonKernel {
     runPython: (
         code: string,
         namespaceId?: number,
+        progressCallback?: (
+            status: PythonExecutionStatus,
+            data?: {
+                executionCount?: number;
+            }
+        ) => void,
         stdoutCallback?: (text: string) => void,
         stderrCallback?: (text: string) => void
     ) => Promise<void>;
-
-    /**
-     * Cancels the currently running code execution.
-     */
-    cancelRun: () => void;
 
     /**
      * Creates a DataFrame in the specified namespace.
@@ -100,20 +102,17 @@ export interface PythonKernel {
     ) => Promise<void>;
 
     /**
-     * Retrieves the execution count for the specified namespace.
+     * Retrieves information about the specified namespace, including the execution count and identifiers.
      *
      * @param namespaceId - The ID of the namespace.
-     * @returns The execution count for the specified namespace.
+     * @returns JSON string containing the namespace information (PythonNamespaceInfo).
      */
-    getExecutionCount: (namespaceId: number) => number;
+    getNamespaceInfo: (namespaceId: number) => Promise<string>;
 
     /**
-     * Returns a list of variable names in the specified namespace.
-     *
-     * @param namespaceId - The ID of the namespace.
-     * @returns An array of variable names in the specified namespace.
+     * The shared interrupt buffer used to cancel the current execution
      */
-    getNamespaceVariables: (namespaceId: number) => string[];
+    interruptBuffer: Uint8Array | null;
 
     /**
      * The version of the Python kernel.
