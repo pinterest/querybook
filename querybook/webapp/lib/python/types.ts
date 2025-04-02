@@ -83,8 +83,8 @@ export interface PythonKernel {
                 executionCount?: number;
             }
         ) => void,
-        stdoutCallback?: (code: string) => void,
-        stderrCallback?: (code: string) => void
+        stdoutCallback?: (text: string) => void,
+        stderrCallback?: (text: string) => void
     ) => Promise<void>;
 
     /**

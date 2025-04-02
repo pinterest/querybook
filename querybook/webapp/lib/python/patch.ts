@@ -157,7 +157,7 @@ async function patchNamespaceHelper(pyodide: PyodideInterface) {
                   "name": name,
                   "type": type_name
               })
-          except:
+          except Exception:
               # Handle cases where eval might fail
               result.append({
                   "name": name,

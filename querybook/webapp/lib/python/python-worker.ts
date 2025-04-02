@@ -50,7 +50,12 @@ class PyodideKernel implements PythonKernel {
     public async runPython(
         code: string,
         namespaceId?: number,
-        progressCallback?: (status: PythonExecutionStatus, data?: any) => void,
+        progressCallback?: (
+            status: PythonExecutionStatus,
+            data?: {
+                executionCount?: number;
+            }
+        ) => void,
         stdoutCallback?: (text: string) => void,
         stderrCallback?: (text: string) => void
     ): Promise<void> {
@@ -118,7 +123,12 @@ class PyodideKernel implements PythonKernel {
     private async _runPython(
         code: string,
         namespaceId?: number,
-        progressCallback?: (status: PythonExecutionStatus, data?: any) => void,
+        progressCallback?: (
+            status: PythonExecutionStatus,
+            data?: {
+                executionCount?: number;
+            }
+        ) => void,
         stdoutCallback?: (code: string) => void,
         stderrCallback?: (code: string) => void
     ): Promise<void> {

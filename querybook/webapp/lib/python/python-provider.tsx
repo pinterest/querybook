@@ -21,7 +21,12 @@ export interface PythonContextType {
     runPython: (
         code: string,
         namespaceId?: number,
-        progressCallback?: (status: PythonExecutionStatus, data?: any) => void,
+        progressCallback?: (
+            status: PythonExecutionStatus,
+            data?: {
+                executionCount?: number;
+            }
+        ) => void,
         stdoutCallback?: (text: string) => void,
         stderrCallback?: (text: string) => void
     ) => Promise<void>;
@@ -119,7 +124,9 @@ function PythonProvider({ children }: PythonProviderProps) {
             namespaceId?: number,
             progressCallback?: (
                 status: PythonExecutionStatus,
-                data?: any
+                data?: {
+                    executionCount?: number;
+                }
             ) => void,
             stdoutCallback?: (text: string) => void,
             stderrCallback?: (text: string) => void
