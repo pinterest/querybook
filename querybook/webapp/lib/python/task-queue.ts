@@ -33,6 +33,8 @@ export class TaskQueue {
             task.resolve();
         } catch (error) {
             task.reject(error);
+            // empty the queue on error to keep the behavior consistent with Jupyter notebook
+            this.queue = [];
         } finally {
             this.isRunning = false;
             // Process the next task in queue.
