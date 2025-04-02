@@ -82,7 +82,7 @@ interface IOwnProps {
     docId: number;
     cellId: number;
 
-    queryIndexInDoc: number;
+    codeIndexInDoc: number;
     templatedVariables: TDataDocMetaVariables;
 
     shouldFocus: boolean;
@@ -190,10 +190,10 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     public get defaultCellTitle() {
-        const { queryIndexInDoc } = this.props;
-        return queryIndexInDoc == null
+        const { codeIndexInDoc } = this.props;
+        return codeIndexInDoc == null
             ? 'Untitled'
-            : `Query #${queryIndexInDoc + 1}`;
+            : `Query #${codeIndexInDoc + 1}`;
     }
 
     public get dataCellTitle() {
@@ -836,7 +836,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                     <AccentText
                         className="query-title"
                         weight="bold"
-                        size="large"
+                        size="med"
                     >
                         {queryTitleDOM}
                     </AccentText>

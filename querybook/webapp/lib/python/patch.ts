@@ -85,7 +85,7 @@ async function patchMatplotlib(pyodide: PyodideInterface) {
           buf.seek(0)
           # encode to a base64 str
           img = base64.b64encode(buf.read()).decode('utf-8')
-          print(json.dumps({"type": "image", "data": img}))
+          print(json.dumps({"type": "image", "data": "data:image/png;base64," + img}))
 
       matplotlib.pyplot.show = show
 
@@ -104,6 +104,7 @@ async function patchMatplotlib(pyodide: PyodideInterface) {
  */
 async function patchDataFrameHelper(pyodide: PyodideInterface) {
     await pyodide.runPythonAsync(`
+  import builtins
   import pandas as pd
 
   async def get_df(statement_execution_id, limit = None):
@@ -115,7 +116,7 @@ async function patchDataFrameHelper(pyodide: PyodideInterface) {
         limit (int, optional): The maximum number of rows to fetch. Defaults to None, which retrieves up to ${querybookModule.QUERY_RESULT_SIZE_LIMIT} rows.
 
     Returns:
-        pd.DataFrame: A Pandas DataFrame containing the query results.
+        DataFrame: A Pandas DataFrame containing the query results.
 
     Example:
         df = await get_df(statement_execution_id, 10)
@@ -124,7 +125,9 @@ async function patchDataFrameHelper(pyodide: PyodideInterface) {
     js_data=await fetchStatementResult(statement_execution_id, limit)
     data = js_data.to_py()
     return pd.DataFrame(data[1:], columns=data[0])
-  `);
+
+  builtins.get_df = get_df
+`);
 }
 
 /**

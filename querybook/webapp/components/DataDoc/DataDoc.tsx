@@ -629,7 +629,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
         index: number,
         numberOfCells: number,
         lastQueryCellId: number,
-        queryIndexInDoc: number
+        codeIndexInDoc: number
     ) {
         const { dataDoc, isEditable } = this.props;
         const { focusedCellIndex } = this.state;
@@ -667,7 +667,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                     templatedVariables={dataDoc.meta.variables}
                     cell={cell}
                     index={index}
-                    queryIndexInDoc={queryIndexInDoc}
+                    codeIndexInDoc={codeIndexInDoc}
                     lastQueryCellId={lastQueryCellId}
                     isFocused={focusedCellIndex === index}
                 />
@@ -681,7 +681,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
         const { dataDoc } = this.props;
         const dataDocCells = dataDoc.dataDocCells || [];
         let lastQueryCellId: number = null;
-        let queryIndexInDoc = 0;
+        let codeIndexInDoc = 0;
 
         for (let i = 0; i < numberOfCells + 1; i++) {
             const cell = dataDocCells[i];
@@ -691,13 +691,15 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                     i,
                     numberOfCells,
                     lastQueryCellId,
-                    queryIndexInDoc
+                    codeIndexInDoc
                 )
             );
 
-            const isQueryCell = cell && cell.cell_type === 'query';
-            if (isQueryCell) {
-                queryIndexInDoc++;
+            const isCodeCell =
+                cell &&
+                (cell.cell_type === 'query' || cell.cell_type === 'python');
+            if (isCodeCell) {
+                codeIndexInDoc++;
                 lastQueryCellId = cell.id;
             }
         }

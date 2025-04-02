@@ -15,6 +15,7 @@ from models.datadoc import (
     DataDocDataCell,
     DataCell,
     DataCellQueryExecution,
+    PythonCellResult,
     QuerySnippet,
     FavoriteDataDoc,
     FunctionDocumentation,
@@ -1141,3 +1142,40 @@ def create_or_update_dag_export(data_doc_id, dag, meta, session=None):
 
     session.commit()
     return dag_export
+
+
+"""
+    ----------------------------------------------------------------------------------------------------------
+    Python Cell Result
+    ---------------------------------------------------------------------------------------------------------
+"""
+
+
+@with_session
+def get_python_cell_result_by_data_cell_id(data_cell_id, session=None):
+    result = (
+        session.query(PythonCellResult).filter_by(data_cell_id=data_cell_id).first()
+    )
+    return result
+
+
+@with_session
+def create_or_update_python_cell_result(
+    data_cell_id, output=[], error=None, session=None
+):
+    python_cell_result = get_python_cell_result_by_data_cell_id(
+        data_cell_id, session=session
+    )
+
+    if python_cell_result:
+        python_cell_result.output = output
+        python_cell_result.error = error
+        python_cell_result.updated_at = datetime.datetime.now()
+    else:
+        python_cell_result = PythonCellResult(
+            data_cell_id=data_cell_id, output=output, error=error
+        )
+        session.add(python_cell_result)
+
+    session.commit()
+    return python_cell_result.id

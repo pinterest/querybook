@@ -393,7 +393,9 @@ def download_statement_execution_result(statement_execution_id):
     methods=["GET"],
     require_auth=True,
 )
-def get_statement_execution_result(statement_execution_id, limit=None):
+def get_statement_execution_result(
+    statement_execution_id: int, limit: int = None, from_env: str = None
+):
     # TODO: make this customizable
     limit = (
         QUERY_RESULT_LIMIT_CONFIG["default_query_result_size"]
@@ -410,6 +412,15 @@ def get_statement_execution_result(statement_execution_id, limit=None):
             statement_execution = logic.get_statement_execution_by_id(
                 statement_execution_id, session=session
             )
+            if from_env is not None:
+                environment_names = [
+                    env.name
+                    for env in statement_execution.query_execution.engine.environments
+                ]
+                api_assert(
+                    from_env in environment_names,
+                    message=f"Not allowed to get the statement result from this environment: {from_env}",
+                )
             api_assert(
                 statement_execution is not None, message="Invalid statement execution"
             )

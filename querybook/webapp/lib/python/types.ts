@@ -110,6 +110,12 @@ export interface PythonKernel {
     getNamespaceInfo: (namespaceId: number) => Promise<string>;
 
     /**
+     * Sets the current Querybook environment for the kernel.
+     * @param env - The environment name to set for the kernel.
+     */
+    setEnvironment(env: string): void;
+
+    /**
      * The shared interrupt buffer used to cancel the current execution
      */
     interruptBuffer: Uint8Array | null;

@@ -39,7 +39,7 @@ export function searchDataDocCells(
         return results;
     }
     for (const cell of dataDocCells) {
-        if (cell.cell_type === 'query') {
+        if (cell.cell_type === 'query' || cell.cell_type === 'python') {
             const content = cell.context;
             let match: RegExpExecArray;
             // eslint-disable-next-line

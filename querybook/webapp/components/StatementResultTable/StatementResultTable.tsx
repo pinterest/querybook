@@ -186,6 +186,10 @@ export const StatementResultTable = React.forwardRef<
                         return value;
                     }
 
+                    if (typeof value === 'boolean') {
+                        return String(value);
+                    }
+
                     const transformer = getTransformerForColumn(index);
                     return transformer ? transformer.transform(value) : value;
                 }}

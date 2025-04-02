@@ -15,7 +15,7 @@ export const PythonEditorStatusBar: React.FC<PythonEditorStatusBarProps> = ({
     executionCount,
 }) => {
     const intervalRef = useRef<number | null>(null);
-    const [elapsed, setElapsed] = useState<number>(0);
+    const [elapsed, setElapsed] = useState<number>(0.0);
 
     useEffect(() => {
         // Clear any previous timer
@@ -41,11 +41,6 @@ export const PythonEditorStatusBar: React.FC<PythonEditorStatusBarProps> = ({
 
     return (
         <div className="PythonEditorStatusBar">
-            {executionStatus === PythonExecutionStatus.RUNNING && (
-                <Icon name="Loading" className="mr4" size={16} />
-            )}
-            <div>{executionStatus}</div>
-            <div>{elapsed.toFixed(1)}s</div>
             <div className="execution-count">
                 [
                 {executionStatus === PythonExecutionStatus.RUNNING
@@ -53,6 +48,16 @@ export const PythonEditorStatusBar: React.FC<PythonEditorStatusBarProps> = ({
                     : executionCount ?? ' '}
                 ]
             </div>
+            <div className="execution-status">
+                {executionStatus === PythonExecutionStatus.RUNNING && (
+                    <Icon name="Loading" className="mr4" size={16} />
+                )}
+                <div>{executionStatus}</div>
+                {executionStatus !== undefined && (
+                    <div>{elapsed.toFixed(1)}s</div>
+                )}
+            </div>
+            <div>Python</div>
         </div>
     );
 };

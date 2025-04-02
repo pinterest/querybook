@@ -1,0 +1,37 @@
+.PythonCellResultView {
+    color: var(--text);
+
+    .stdout {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: var(--margin-xs);
+        padding: var(--padding-sm);
+        border-radius: var(--border-radius-sm);
+        background-color: var(--bg-lightest);
+
+        .json-view {
+            max-height: 40vh;
+            overflow: auto;
+        }
+
+        .image-view {
+            max-height: 40vh;
+            overflow: auto;
+        }
+
+        .text-view {
+            border-radius: 0;
+            background-color: var(--bg-lightest);
+            margin: 0;
+        }
+    }
+
+    .stderr {
+        margin: 0;
+        margin-top: var(--margin-xs);
+        font-size: var(--xsmall-text-size);
+        border-radius: var(--border-radius-sm);
+        background-color: var(--color-red-transp-lightest-0);
+    }
+}
