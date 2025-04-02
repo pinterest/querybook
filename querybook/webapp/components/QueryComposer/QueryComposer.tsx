@@ -314,7 +314,7 @@ function useKeyMap(
 ) {
     return useMemo(() => {
         const keyMap = {
-            [KeyMap.queryEditor.runQuery.key]: clickOnRunButton,
+            [KeyMap.codeEditor.runQuery.key]: clickOnRunButton,
         };
 
         for (const [index, engine] of queryEngines.entries()) {
@@ -323,7 +323,7 @@ function useKeyMap(
                 // We have exhausted all number keys on the keyboard
                 break;
             }
-            keyMap[KeyMap.queryEditor.changeEngine.key + '-' + String(key)] =
+            keyMap[KeyMap.codeEditor.changeEngine.key + '-' + String(key)] =
                 () => setEngineId(engine.id);
         }
 

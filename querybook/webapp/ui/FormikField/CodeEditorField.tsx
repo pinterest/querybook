@@ -43,9 +43,9 @@ const CodeEditorField: React.FC<ICodeEditorFieldProps> = ({
             lineNumbers: true,
             gutters: ['CodeMirror-lint-markers'],
             extraKeys: {
-                [KeyMap.queryEditor.autocomplete.key]: 'autocomplete',
-                [KeyMap.queryEditor.indentLess.key]: 'indentLess',
-                [KeyMap.queryEditor.toggleComment.key]: 'toggleComment',
+                [KeyMap.codeEditor.autocomplete.key]: 'autocomplete',
+                [KeyMap.codeEditor.indentLess.key]: 'indentLess',
+                [KeyMap.codeEditor.toggleComment.key]: 'toggleComment',
             },
             indentUnit: 4,
             theme: editorTheme,

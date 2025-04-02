@@ -16,6 +16,41 @@ export enum PythonKernelStatus {
     FAILED = 'failed',
 }
 
+export enum PythonExecutionStatus {
+    // Execution is pending.
+    PENDING = 'pending',
+
+    // Execution is running.
+    RUNNING = 'running',
+
+    // Execution completed successfully.
+    SUCCESS = 'success',
+
+    // Execution failed.
+    ERROR = 'error',
+
+    // Execution was cancelled.
+    CANCEL = 'cancel',
+}
+
+export interface PythonIdentifierInfo {
+    name: string;
+    type: string;
+}
+
+export interface PythonNamespaceInfo {
+    // The execution count of the namespace.
+    executionCount: number;
+
+    // The list of identifiers in the namespace.
+    identifiers: PythonIdentifierInfo[];
+}
+
+export enum InterruptBufferStatus {
+    RESET = 0, // Reset
+    SIGINT = 2, // Interrupt the execution
+}
+
 /**
  * Interface representing a Python kernel for executing Python code and managing namespaces.
  */

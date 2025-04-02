@@ -7,7 +7,7 @@ import { IStoreState } from 'redux/store/types';
 
 import { useShallowSelector } from './useShallowSelector';
 
-export function useUserQueryEditorConfig(): {
+export function useUserCodeEditorConfig(): {
     codeEditorTheme: string;
     fontSize: string;
     options: CodeMirror.EditorConfiguration;
