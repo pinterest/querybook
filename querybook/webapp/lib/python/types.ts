@@ -56,6 +56,16 @@ export enum InterruptBufferStatus {
  */
 export interface PythonKernel {
     /**
+     * The shared interrupt buffer used to cancel the current execution
+     */
+    interruptBuffer: Uint8Array | null;
+
+    /**
+     * The version of the Python kernel.
+     */
+    version: string;
+
+    /**
      * Initializes the kernel, optionally installing the specified packages.
      *
      * @param packages - An optional array of package names to install during initialization.
@@ -114,14 +124,4 @@ export interface PythonKernel {
      * @param env - The environment name to set for the kernel.
      */
     setEnvironment(env: string): void;
-
-    /**
-     * The shared interrupt buffer used to cancel the current execution
-     */
-    interruptBuffer: Uint8Array | null;
-
-    /**
-     * The version of the Python kernel.
-     */
-    version: string;
 }
