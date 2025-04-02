@@ -6,6 +6,7 @@ import CodeMirror, {
     Extension,
     KeyBinding,
     ReactCodeMirrorRef,
+    ViewUpdate,
 } from '@uiw/react-codemirror';
 import React, {
     forwardRef,
@@ -119,7 +120,7 @@ export const CodeEditor = forwardRef<ReactCodeMirrorRef, ICodeEditorProps>(
         });
 
         const onChangeHandler = useCallback(
-            (value, viewUpdate) => {
+            (value: string, viewUpdate: ViewUpdate) => {
                 onChange?.(value);
             },
             [onChange]
