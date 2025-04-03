@@ -1,4 +1,4 @@
-from typing import List, Any, Literal, TypedDict, Union
+from typing import Dict, List, Any, Literal, TypedDict, Union
 
 from app.auth.permission import verify_data_cell_permission
 from app.datasource import register
@@ -10,7 +10,7 @@ LOG = get_logger(__file__)
 
 class PythonOutputDataFrameDataType(TypedDict):
     columns: List[str]
-    records: List[List[Any]]
+    records: List[Dict[str, Any]]
 
 
 class PythonOutputDictType(TypedDict):

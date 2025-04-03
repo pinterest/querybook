@@ -51,6 +51,24 @@ export enum InterruptBufferStatus {
     SIGINT = 2, // Interrupt the execution
 }
 
+export type PythonOutputType =
+    | {
+          type: 'dataframe';
+          data: {
+              columns: string[];
+              records: Record<string, any>[];
+          };
+      }
+    | {
+          type: 'image';
+          data: string;
+      }
+    | {
+          type: 'json';
+          data: object;
+      }
+    | string;
+
 /**
  * Interface representing a Python kernel for executing Python code and managing namespaces.
  */

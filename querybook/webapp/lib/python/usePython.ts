@@ -8,6 +8,7 @@ import {
     PythonExecutionStatus,
     PythonKernelStatus,
     PythonNamespaceInfo,
+    PythonOutputType,
 } from './types';
 
 interface UsePythonProps {
@@ -26,7 +27,7 @@ interface UsePythonReturn {
         statementExecutionId: number,
         namespaceId?: number
     ) => Promise<void>;
-    stdout: string[];
+    stdout: PythonOutputType[];
     stderr: string | null;
     executionStatus: PythonExecutionStatus;
     executionCount: number;
@@ -39,7 +40,7 @@ export default function usePython({
     onStdout,
     onStderr,
 }: UsePythonProps): UsePythonReturn {
-    const [stdout, setStdout] = useState<string[]>([]);
+    const [stdout, setStdout] = useState<PythonOutputType[]>([]);
     const [stderr, setStderr] = useState<string>();
     const [executionStatus, setExecutionStatus] =
         useState<PythonExecutionStatus>();

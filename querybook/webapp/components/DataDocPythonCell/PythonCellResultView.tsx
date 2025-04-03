@@ -5,12 +5,13 @@ import React, { useCallback, useMemo } from 'react';
 
 import { StatementResultTable } from 'components/StatementResultTable/StatementResultTable';
 import { useShallowSelector } from 'hooks/redux/useShallowSelector';
+import { PythonOutputType } from 'lib/python/types';
 import { IStoreState } from 'redux/store/types';
 
 import './PythonCellResultView.scss';
 
 interface IPythonCellResultViewProps {
-    stdout: any[];
+    stdout: PythonOutputType[];
     stderr: string;
 }
 
@@ -40,7 +41,7 @@ export const PythonCellResultView = ({
         ];
     }, []);
 
-    const renderOutput = (output) => {
+    const renderOutput = (output: PythonOutputType) => {
         if (typeof output === 'object') {
             if (output['type'] === 'dataframe') {
                 return (
