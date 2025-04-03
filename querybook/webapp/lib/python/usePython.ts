@@ -1,4 +1,5 @@
 import { PythonContext } from './python-provider';
+import { debounce } from 'lodash';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import { PythonCellResource } from 'resource/pythonCell';
@@ -60,6 +61,15 @@ export default function usePython({
         }
     }, []);
 
+    const debouncedUpdateResult = useCallback(
+        debounce(
+            (cellId, stdout, stderr) =>
+                PythonCellResource.updateResult(cellId, stdout, stderr),
+            1000
+        ),
+        []
+    );
+
     useEffect(() => {
         if (
             cellId &&
@@ -67,7 +77,7 @@ export default function usePython({
                 executionStatus === PythonExecutionStatus.ERROR ||
                 executionStatus === PythonExecutionStatus.CANCEL)
         ) {
-            PythonCellResource.updateResult(cellId, stdout, stderr);
+            debouncedUpdateResult(cellId, stdout, stderr);
         }
     }, [executionStatus, stdout, stderr]);
 
