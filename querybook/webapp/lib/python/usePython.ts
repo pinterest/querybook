@@ -43,7 +43,7 @@ export default function usePython({
     const [executionStatus, setExecutionStatus] =
         useState<PythonExecutionStatus>();
     const [executionCount, setExecutionCount] = useState<number>();
-    const cancelPromiseResolveRef = useRef(null);
+    const cancelPromiseResolveRef = useRef<() => void>(null);
 
     const { status, runPython, cancelRun, createDataFrame, getNamespaceInfo } =
         useContext(PythonContext);
@@ -88,37 +88,37 @@ export default function usePython({
     );
 
     const stdoutCallback = useCallback(
-        (msg: string) => {
+        (text: string) => {
             try {
-                const parsed = JSON.parse(msg);
+                const parsed = JSON.parse(text);
                 if (
                     typeof parsed === 'object' &&
                     ['dataframe', 'image', 'json'].includes(parsed.type)
                 ) {
                     setStdout((prev) => [...prev, parsed]);
                 } else {
-                    setStdout((prev) => [...prev, msg]);
+                    setStdout((prev) => [...prev, text]);
                 }
             } catch (error) {
                 // Not JSON, treat as plain text
-                setStdout((prev) => [...prev, msg]);
+                setStdout((prev) => [...prev, text]);
             }
 
             // Call custom handler if provided
             if (onStdout) {
-                onStdout(msg);
+                onStdout(text);
             }
         },
         [onStdout]
     );
 
     const stderrCallback = useCallback(
-        (msg: string) => {
-            setStderr(msg);
+        (text: string) => {
+            setStderr(text);
 
             // Call custom handler if provided
             if (onStderr) {
-                onStderr(msg);
+                onStderr(text);
             }
         },
         [onStderr]
@@ -144,7 +144,7 @@ export default function usePython({
         [setStdout, setStdout, runPython, docId, stdoutCallback, stderrCallback]
     );
 
-    const cancelRunPython = useCallback(async (): Promise<void> => {
+    const cancelRunPython = useCallback((): Promise<void> => {
         return new Promise((resolve) => {
             cancelRun();
             cancelPromiseResolveRef.current = resolve;

@@ -67,9 +67,8 @@ export const DataDocPythonCell = ({
     }, [docId, getNamespaceInfo, setIdentifiers]);
 
     const runPythonCode = useCallback(async () => {
-        const result = await runPython(context);
-        console.log(result);
-    }, [runPython, context, docId]);
+        await runPython(context);
+    }, [runPython, context]);
 
     const keyBindings = useMemo(
         () => [

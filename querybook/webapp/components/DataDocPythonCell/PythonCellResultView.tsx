@@ -9,7 +9,15 @@ import { IStoreState } from 'redux/store/types';
 
 import './PythonCellResultView.scss';
 
-export const PythonCellResultView = ({ stdout, stderr }) => {
+interface IPythonCellResultViewProps {
+    stdout: any[];
+    stderr: string;
+}
+
+export const PythonCellResultView = ({
+    stdout,
+    stderr,
+}: IPythonCellResultViewProps) => {
     const theme = useShallowSelector(
         (state: IStoreState) => state.user.computedSettings['theme']
     );
@@ -37,7 +45,7 @@ export const PythonCellResultView = ({ stdout, stderr }) => {
             if (output['type'] === 'dataframe') {
                 return (
                     <StatementResultTable
-                        data={getTableData(output)}
+                        data={getTableData(output['data'])}
                         paginate={true}
                     />
                 );

@@ -37,7 +37,7 @@ async function patchPrint(pyodide: PyodideInterface) {
               df = arg.reset_index()
               columns = df.columns.tolist()
               records = df.to_dict(orient='records')
-              _original_print(json.dumps({"type":"dataframe", "columns":columns, "records":records}))
+              _original_print(json.dumps({"type":"dataframe", "data": {"columns":columns, "records":records}}))
 
           elif isinstance(arg, (list, dict)):
               try:
