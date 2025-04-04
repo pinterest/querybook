@@ -21,13 +21,14 @@ export const PythonEditorStatusBar: React.FC<PythonEditorStatusBarProps> = ({
         // Clear any previous timer
         if (intervalRef.current !== null) {
             clearInterval(intervalRef.current);
+            intervalRef.current = null;
         }
 
         if (executionStatus === PythonExecutionStatus.RUNNING) {
             // Reset elapsed time
             setElapsed(0);
             // Start the timer – update elapsed every 100ms
-            intervalRef.current = window.setInterval(() => {
+            intervalRef.current = setInterval(() => {
                 setElapsed((prevElapsed) => prevElapsed + 0.1);
             }, 100);
         }
@@ -35,6 +36,7 @@ export const PythonEditorStatusBar: React.FC<PythonEditorStatusBarProps> = ({
         return () => {
             if (intervalRef.current !== null) {
                 clearInterval(intervalRef.current);
+                intervalRef.current = null;
             }
         };
     }, [executionStatus]);

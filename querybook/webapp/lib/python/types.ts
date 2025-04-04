@@ -51,12 +51,13 @@ export enum InterruptBufferStatus {
     SIGINT = 2, // Interrupt the execution
 }
 
+// Keep it consistent with the backend python type `lib.data_doc.data_cell.PythonOutputType`
 export type PythonOutputType =
     | {
           type: 'dataframe';
           data: {
               columns: string[];
-              records: Record<string, any>[];
+              records: Array<Record<string, any>>;
           };
       }
     | {
