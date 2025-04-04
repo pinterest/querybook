@@ -120,7 +120,7 @@ function PythonProvider({ children }: PythonProviderProps) {
     }, []);
 
     useEffect(() => {
-        if (!kernelRef.current) {
+        if (!kernelRef.current || !currentEnvironment) {
             return;
         }
         kernelRef.current.setEnvironment(currentEnvironment.name);
