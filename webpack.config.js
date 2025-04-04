@@ -4,7 +4,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin;
 const { PyodidePlugin } = require("@pyodide/webpack-plugin");
 
-
 const path = require('path');
 const webpack = require('webpack');
 const fs = require('fs');
