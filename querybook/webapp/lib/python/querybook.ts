@@ -32,7 +32,14 @@ export const querybookModule = {
             return cache.slice(0, limit + 1);
         }
 
-        const searchStr = limit ? `?params=%7B%22limit%22%3A${limit}%7D` : '';
+        const params = {
+            from_env: self.envirionment,
+        };
+        if (limit) {
+            params['limit'] = limit;
+        }
+        const searchStr =
+            '?params=' + encodeURIComponent(JSON.stringify(params));
         const res = await fetch(
             `/ds/statement_execution/${statementExecutionId}/result/${searchStr}`
         );

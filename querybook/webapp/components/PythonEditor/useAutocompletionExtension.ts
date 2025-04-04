@@ -12,8 +12,6 @@ import {
 import { EditorView } from '@uiw/react-codemirror';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-export type AutoCompleteType = 'none' | 'schema' | 'all';
-
 // STATIC
 const RESULT_MAX_LENGTH = 10;
 

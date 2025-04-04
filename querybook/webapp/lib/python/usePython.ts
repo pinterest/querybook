@@ -1,14 +1,19 @@
 import { PythonContext } from './python-provider';
-import { useCallback, useContext, useState } from 'react';
+import { debounce } from 'lodash';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+
+import { PythonCellResource } from 'resource/pythonCell';
 
 import {
     PythonExecutionStatus,
     PythonKernelStatus,
     PythonNamespaceInfo,
+    PythonOutputType,
 } from './types';
 
 interface UsePythonProps {
     docId?: number;
+    cellId?: number;
     onStdout?: (message: string) => void;
     onStderr?: (message: string) => void;
     onComplete?: () => void;
@@ -16,14 +21,14 @@ interface UsePythonProps {
 interface UsePythonReturn {
     kernelStatus: PythonKernelStatus;
     runPython: (code: string) => Promise<void>;
-    cancelRun: () => void;
+    cancelRun: () => Promise<void>;
     createDataFrame: (
         dfName: string,
         statementExecutionId: number,
         namespaceId?: number
     ) => Promise<void>;
-    stdout: string[];
-    stderr: string[];
+    stdout: PythonOutputType[];
+    stderr: string | null;
     executionStatus: PythonExecutionStatus;
     executionCount: number;
     getNamespaceInfo: (namespaceId: number) => Promise<PythonNamespaceInfo>;
@@ -31,58 +36,100 @@ interface UsePythonReturn {
 
 export default function usePython({
     docId,
+    cellId,
     onStdout,
     onStderr,
 }: UsePythonProps): UsePythonReturn {
-    const [stdout, setStdout] = useState<string[]>([]);
-    const [stderr, setStderr] = useState<string[]>([]);
+    const [stdout, setStdout] = useState<PythonOutputType[]>([]);
+    const [stderr, setStderr] = useState<string>();
     const [executionStatus, setExecutionStatus] =
         useState<PythonExecutionStatus>();
     const [executionCount, setExecutionCount] = useState<number>();
+    const cancelPromiseResolveRef = useRef<() => void>(null);
 
     const { status, runPython, cancelRun, createDataFrame, getNamespaceInfo } =
         useContext(PythonContext);
+
+    useEffect(() => {
+        if (cellId) {
+            PythonCellResource.getResult(cellId).then((resp) => {
+                const result = resp.data;
+                if (result) {
+                    setStdout(result.output);
+                    setStderr(result.error);
+                }
+            });
+        }
+    }, []);
+
+    const debouncedUpdateResult = useCallback(
+        debounce(
+            (cellId, stdout, stderr) =>
+                PythonCellResource.updateResult(cellId, stdout, stderr),
+            1000
+        ),
+        []
+    );
+
+    useEffect(() => {
+        if (
+            cellId &&
+            (executionStatus === PythonExecutionStatus.SUCCESS ||
+                executionStatus === PythonExecutionStatus.ERROR ||
+                executionStatus === PythonExecutionStatus.CANCEL)
+        ) {
+            debouncedUpdateResult(cellId, stdout, stderr);
+        }
+    }, [executionStatus, stdout, stderr]);
 
     const progressCallback = useCallback(
         (status, data) => {
             setExecutionStatus(status);
             setExecutionCount(data?.executionCount);
+
+            if (
+                cancelPromiseResolveRef.current &&
+                status === PythonExecutionStatus.CANCEL
+            ) {
+                cancelPromiseResolveRef.current();
+                cancelPromiseResolveRef.current = null;
+            }
         },
         [setExecutionCount, setExecutionStatus]
     );
 
     const stdoutCallback = useCallback(
-        (msg: string) => {
+        (text: string) => {
             try {
-                const parsed = JSON.parse(msg);
+                const parsed = JSON.parse(text);
                 if (
                     typeof parsed === 'object' &&
                     ['dataframe', 'image', 'json'].includes(parsed.type)
                 ) {
                     setStdout((prev) => [...prev, parsed]);
                 } else {
-                    setStdout((prev) => [...prev, msg]);
+                    setStdout((prev) => [...prev, text]);
                 }
             } catch (error) {
                 // Not JSON, treat as plain text
-                setStdout((prev) => [...prev, msg]);
+                setStdout((prev) => [...prev, text]);
             }
 
             // Call custom handler if provided
             if (onStdout) {
-                onStdout(msg);
+                onStdout(text);
             }
         },
         [onStdout]
     );
 
     const stderrCallback = useCallback(
-        (msg: string) => {
-            setStderr((prev) => [...prev, msg]);
+        (text: string) => {
+            setStderr(text);
 
             // Call custom handler if provided
             if (onStderr) {
-                onStderr(msg);
+                onStderr(text);
             }
         },
         [onStderr]
@@ -91,7 +138,7 @@ export default function usePython({
     const runPythonCode = useCallback(
         async (code: string) => {
             setStdout([]);
-            setStderr([]);
+            setStderr(null);
 
             // web worker will be blocked when running python code as it is single-threaded
             // so we need to set the status to pending from the main thread
@@ -108,10 +155,17 @@ export default function usePython({
         [setStdout, setStdout, runPython, docId, stdoutCallback, stderrCallback]
     );
 
+    const cancelRunPython = useCallback((): Promise<void> => {
+        return new Promise((resolve) => {
+            cancelRun();
+            cancelPromiseResolveRef.current = resolve;
+        });
+    }, [cancelRun]);
+
     return {
         kernelStatus: status,
         runPython: runPythonCode,
-        cancelRun,
+        cancelRun: cancelRunPython,
         createDataFrame,
         stdout,
         stderr,

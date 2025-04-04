@@ -39,19 +39,23 @@ export const PythonEditor = ({
     onFocus,
 }: IDataDocPythonCellProps) => {
     const editorRef = React.useRef<ReactCodeMirrorRef>();
+    const statusBarDomRef = React.useRef<HTMLDivElement>();
     const createStatusBar = useCallback(
         (view: EditorView): Panel => {
-            const dom = document.createElement('div');
+            if (!statusBarDomRef.current) {
+                statusBarDomRef.current = document.createElement('div');
+            }
             ReactDOM.render(
                 <PythonEditorStatusBar
                     executionStatus={executionStatus}
                     executionCount={executionCount}
                 />,
-                dom
+                statusBarDomRef.current
             );
-            return { dom };
+
+            return { dom: statusBarDomRef.current };
         },
-        [executionStatus, executionCount]
+        [executionStatus, executionCount, statusBarDomRef.current]
     );
 
     const statusBarExtension = useMemo(

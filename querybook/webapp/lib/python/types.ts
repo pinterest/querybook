@@ -51,10 +51,39 @@ export enum InterruptBufferStatus {
     SIGINT = 2, // Interrupt the execution
 }
 
+// Keep it consistent with the backend python type `lib.data_doc.data_cell.PythonOutputType`
+export type PythonOutputType =
+    | {
+          type: 'dataframe';
+          data: {
+              columns: string[];
+              records: Array<Record<string, any>>;
+          };
+      }
+    | {
+          type: 'image';
+          data: string;
+      }
+    | {
+          type: 'json';
+          data: object;
+      }
+    | string;
+
 /**
  * Interface representing a Python kernel for executing Python code and managing namespaces.
  */
 export interface PythonKernel {
+    /**
+     * The shared interrupt buffer used to cancel the current execution
+     */
+    interruptBuffer: Uint8Array | null;
+
+    /**
+     * The version of the Python kernel.
+     */
+    version: string;
+
     /**
      * Initializes the kernel, optionally installing the specified packages.
      *
@@ -110,12 +139,8 @@ export interface PythonKernel {
     getNamespaceInfo: (namespaceId: number) => Promise<string>;
 
     /**
-     * The shared interrupt buffer used to cancel the current execution
+     * Sets the current Querybook environment for the kernel.
+     * @param env - The environment name to set for the kernel.
      */
-    interruptBuffer: Uint8Array | null;
-
-    /**
-     * The version of the Python kernel.
-     */
-    version: string;
+    setEnvironment(env: string): void;
 }

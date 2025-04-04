@@ -15,19 +15,20 @@ export const PythonEditorStatusBar: React.FC<PythonEditorStatusBarProps> = ({
     executionCount,
 }) => {
     const intervalRef = useRef<number | null>(null);
-    const [elapsed, setElapsed] = useState<number>(0);
+    const [elapsed, setElapsed] = useState<number>(0.0);
 
     useEffect(() => {
         // Clear any previous timer
         if (intervalRef.current !== null) {
             clearInterval(intervalRef.current);
+            intervalRef.current = null;
         }
 
         if (executionStatus === PythonExecutionStatus.RUNNING) {
             // Reset elapsed time
             setElapsed(0);
             // Start the timer – update elapsed every 100ms
-            intervalRef.current = window.setInterval(() => {
+            intervalRef.current = setInterval(() => {
                 setElapsed((prevElapsed) => prevElapsed + 0.1);
             }, 100);
         }
@@ -35,17 +36,13 @@ export const PythonEditorStatusBar: React.FC<PythonEditorStatusBarProps> = ({
         return () => {
             if (intervalRef.current !== null) {
                 clearInterval(intervalRef.current);
+                intervalRef.current = null;
             }
         };
     }, [executionStatus]);
 
     return (
         <div className="PythonEditorStatusBar">
-            {executionStatus === PythonExecutionStatus.RUNNING && (
-                <Icon name="Loading" className="mr4" size={16} />
-            )}
-            <div>{executionStatus}</div>
-            <div>{elapsed.toFixed(1)}s</div>
             <div className="execution-count">
                 [
                 {executionStatus === PythonExecutionStatus.RUNNING
@@ -53,6 +50,16 @@ export const PythonEditorStatusBar: React.FC<PythonEditorStatusBarProps> = ({
                     : executionCount ?? ' '}
                 ]
             </div>
+            <div className="execution-status">
+                {executionStatus === PythonExecutionStatus.RUNNING && (
+                    <Icon name="Loading" className="mr4" size={16} />
+                )}
+                <div>{executionStatus}</div>
+                {executionStatus !== undefined && (
+                    <div>{elapsed.toFixed(1)}s</div>
+                )}
+            </div>
+            <div>Python</div>
         </div>
     );
 };

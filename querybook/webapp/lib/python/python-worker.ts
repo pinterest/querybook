@@ -16,6 +16,13 @@ import {
 const INDEX_URL = `https://cdn.jsdelivr.net/pyodide/v${version}/full/`;
 const DEFAULT_PACKAGES = ['micropip', 'numpy', 'pandas', 'matplotlib'];
 
+declare global {
+    interface Window {
+        envirionment: string;
+    }
+}
+self.envirionment = '';
+
 /**
  * PyodideKernel - Handles Pyodide initialization and execution
  * Implements the PythonKernel interface
@@ -115,6 +122,10 @@ class PyodideKernel implements PythonKernel {
         };
         // return names.toJs();
         return JSON.stringify(info);
+    }
+
+    public setEnvironment(env: string) {
+        self.envirionment = env;
     }
 
     /**

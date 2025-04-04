@@ -20,6 +20,7 @@ from . import survey
 from . import query_transform
 from . import github
 from . import query_review
+from . import python_cell
 
 # Keep this at the end of imports to make sure the plugin APIs override the default ones
 try:
@@ -51,3 +52,4 @@ query_transform
 api_plugin
 github
 query_review
+python_cell

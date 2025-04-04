@@ -7,6 +7,9 @@ import React, {
     useRef,
     useState,
 } from 'react';
+import { useSelector } from 'react-redux';
+
+import { currentEnvironmentSelector } from 'redux/environment/selector';
 
 import {
     InterruptBufferStatus,
@@ -50,6 +53,7 @@ function PythonProvider({ children }: PythonProviderProps) {
     const workerRef = useRef<Worker>(null);
     const kernelRef = useRef<Remote<PythonKernel>>(null);
     const sharedInterruptBuffer = useRef<Uint8Array>(null);
+    const currentEnvironment = useSelector(currentEnvironmentSelector);
 
     /**
      * Terminate the kernel and clean up resources
@@ -114,6 +118,13 @@ function PythonProvider({ children }: PythonProviderProps) {
             terminateKernel();
         };
     }, []);
+
+    useEffect(() => {
+        if (!kernelRef.current || !currentEnvironment) {
+            return;
+        }
+        kernelRef.current.setEnvironment(currentEnvironment.name);
+    }, [kernelRef.current, currentEnvironment]);
 
     /**
      * Run Python code in the specified namespace
