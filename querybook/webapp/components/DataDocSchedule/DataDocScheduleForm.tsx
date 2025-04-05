@@ -85,6 +85,7 @@ const scheduleFormSchema = Yup.object().shape({
                 exporter_params: Yup.object(),
             })
         ),
+        disable_if_running_doc: Yup.boolean().required(),
     }),
 });
 
@@ -109,6 +110,7 @@ interface IScheduleFormValues {
     kwargs: {
         notifications: IDataDocScheduleNotification[];
         exports: IDataDocScheduleKwargs['exports'];
+        disable_if_running_doc?: boolean;
     };
 }
 
@@ -143,6 +145,7 @@ export const DataDocScheduleForm: React.FunctionComponent<
               kwargs: {
                   exports: [],
                   notifications: [],
+                  disable_if_running_doc: true,
               },
           }
         : {
@@ -166,6 +169,7 @@ export const DataDocScheduleForm: React.FunctionComponent<
                           ],
                       },
                   })),
+                  disable_if_running_doc: kwargs.disable_if_running_doc,
               },
           };
 
@@ -215,6 +219,14 @@ export const DataDocScheduleForm: React.FunctionComponent<
                 isValid,
                 dirty,
             }) => {
+                const disableIfRunningDocField = (
+                    <SimpleField
+                        label="Prevent Overlapping Runs"
+                        name="kwargs.disable_if_running_doc"
+                        type="toggle"
+                    />
+                );
+
                 const enabledField = !isCreateForm && (
                     <SimpleField label="Enabled" name="enabled" type="toggle" />
                 );
@@ -281,6 +293,7 @@ export const DataDocScheduleForm: React.FunctionComponent<
                                             setFieldValue('recurrence', val)
                                         }
                                     />
+                                    {disableIfRunningDocField}
                                     {enabledField}
                                     {notificationField}
                                     {exportField}
