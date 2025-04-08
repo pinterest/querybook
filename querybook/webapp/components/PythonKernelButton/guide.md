@@ -18,7 +18,7 @@ For other Pyodide [built-in packages](https://pyodide.org/en/stable/usage/packag
 
 To install other external pure Python packages with wheels, use `micropip`. For example:
 
-```python
+```py
 import micropip
 micropip.install('seaborn')
 ```
@@ -29,7 +29,7 @@ For more details on package loading, refer to the [Pyodide documentation](https:
 
 To retrieve query results as a `DataFrame`, click the `Copy DataFrame` button located to the left of the `Export` button. This action will copy a code snippet for obtaining the query result. Here is an example snippet:
 
-```python
+```py
 df = await get_df(1, limit=10)
 df
 ```
