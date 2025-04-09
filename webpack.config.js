@@ -224,12 +224,8 @@ module.exports = (env, options) => {
                 {
                     test: /\.svg$/i,
                     issuer: /\.[jt]sx?$/,
-                    use: ['@svgr/webpack'],
-                    options: {
-                        typescript: true,
-                        ext: "tsx",
-                      }
-                  },
+                    use: '@svgr/webpack',
+                },
             ],
         },
 
