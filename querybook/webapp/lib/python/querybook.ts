@@ -58,7 +58,7 @@ export const querybookModule = {
     },
 };
 
-// Cleanup expired statement result cache when the module is loaded
+// Cleanup expired statement result cache when the module/querybook is loaded
 (async () => {
     await cleanupExpiredResults();
 })();

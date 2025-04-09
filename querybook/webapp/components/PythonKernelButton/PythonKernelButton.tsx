@@ -1,4 +1,5 @@
-import React, { useContext, useMemo } from 'react';
+import PythonLogoSvg from './python-logo.svg';
+import React, { useContext } from 'react';
 
 import { useToggleState } from 'hooks/useToggleState';
 import { PythonContext } from 'lib/python/python-provider';
@@ -7,28 +8,20 @@ import { Markdown } from 'ui/Markdown/Markdown';
 import { Modal } from 'ui/Modal/Modal';
 import { AccentText } from 'ui/StyledText/StyledText';
 
-import { PythonLogo } from './PythonLogo';
-
 import './PythonKernelButton.scss';
 
 const PythonGuide = require('./guide.md');
 
+const BORDER_COLORS = {
+    [PythonKernelStatus.UNINITIALIZED]: 'var(--color-null)',
+    [PythonKernelStatus.INITIALIZING]: 'var(--color-yellow)',
+    [PythonKernelStatus.IDLE]: 'var(--color-true)',
+    [PythonKernelStatus.FAILED]: 'var(--color-false)',
+};
+
 export const PythonKernelButton = () => {
     const { status } = useContext(PythonContext);
     const [showModal, , toggleShowModal] = useToggleState(false);
-
-    const borderColor = useMemo(() => {
-        switch (status) {
-            case PythonKernelStatus.UNINITIALIZED:
-                return 'var(--color-null)';
-            case PythonKernelStatus.INITIALIZING:
-                return 'var(--color-yellow)';
-            case PythonKernelStatus.IDLE:
-                return 'var(--color-true)';
-            case PythonKernelStatus.FAILED:
-                return 'var(--color-false)';
-        }
-    }, [status]);
 
     return (
         <>
@@ -37,11 +30,11 @@ export const PythonKernelButton = () => {
                 data-balloon-pos="left"
                 className="PythonKernelButton"
                 style={{
-                    borderColor,
+                    borderColor: BORDER_COLORS[status],
                 }}
                 onClick={toggleShowModal}
             >
-                <PythonLogo size={20} />
+                <PythonLogoSvg width={20} height={20} />
                 <AccentText
                     className="icon-title"
                     size="xxxsmall"

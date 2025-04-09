@@ -1,8 +1,10 @@
 The Python cell in Querybook is powered by [Pyodide](https://pyodide.org/en/stable/index.html), a Python distribution based on WebAssembly that runs entirely on the client side (browser).
 
-## Kernel Initializing
+## Kernel
 
 The Python kernel initializes alongside Querybook's loading process. You can monitor the initialization status via the hover tooltip of the Python icon located on the right sidebar.
+
+Each DataDoc has its own isolated namespace. Variables in a Python cell are only accessible within the same DataDoc and cannot be shared with other DataDocs. Within a DataDoc, variables from one Python cell can be used in others if the cells are executed in the correct order.
 
 ## Packages
 
@@ -46,4 +48,4 @@ By default, Python output is rendered as plain text, similar to a standard Pytho
 
 ## Scheduled DataDocs
 
-Since Python cells execute entirely on the client side within the browser, they cannot run in Scheduled DataDocs. Only Query cells are supported for scheduling.
+Since Python cells execute entirely on the client side within the browser, they will be skipped in Scheduled DataDoc runs. Only Query cells are supported for scheduling.

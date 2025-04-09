@@ -3,13 +3,12 @@ import localForage from 'localforage';
 import { IStatementResult } from 'const/queryExecution';
 import { StatementExecutionResultSizes } from 'const/queryResultLimit';
 
-type StatementResultValue = {
+interface StatementResultValue {
     limit: number; // limit might be greater than the actual data length, it is the limit used to fetch from the server
     data: IStatementResult['data'];
     expireAt: number; // only used for cleanup
-};
+}
 
-const STATEMENT_RESULT_KEY_PREFIX = 'statement_result_';
 const STATEMENT_RESULT_TTL_IN_MS = 90 * 24 * 60 * 60 * 1000; // keep the cache for 3 months to prevent overloading the browser storage
 
 export const QUERY_STATEMENT_RESULT_SIZE_LIMIT =
@@ -36,8 +35,6 @@ export const setStatementResult = async (
     value: IStatementResult['data'],
     limit: number
 ) => {
-    const key = `${STATEMENT_RESULT_KEY_PREFIX}${statementExecutionId}`;
-
     const valueWithTTL: StatementResultValue = {
         limit,
         data: value,
@@ -45,7 +42,10 @@ export const setStatementResult = async (
     };
 
     try {
-        return await statementResultStore.setItem(key, valueWithTTL);
+        return await statementResultStore.setItem(
+            `${statementExecutionId}`,
+            valueWithTTL
+        );
     } catch (error) {
         console.error(
             `Error setting result for statementExecutionId ${statementExecutionId}:`,
@@ -66,11 +66,9 @@ export const getStatementResult = async (
     statementExecutionId: number,
     limit: number
 ): Promise<IStatementResult['data'] | null> => {
-    const key = `${STATEMENT_RESULT_KEY_PREFIX}${statementExecutionId}`;
-
     try {
         const value = await statementResultStore.getItem<StatementResultValue>(
-            key
+            `${statementExecutionId}`
         );
         if (value && limit <= value.limit) {
             // First row is the column names
