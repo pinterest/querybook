@@ -133,6 +133,7 @@
         "@storybook/builder-webpack5": "^6.5.12",
         "@storybook/manager-webpack5": "^6.5.12",
         "@storybook/react": "^6.5.12",
+        "@svgr/webpack": "^8.1.0",
         "@trivago/prettier-plugin-sort-imports": "^3.2.0",
         "@types/codemirror": "^5.60.5",
         "@types/d3": "^5.7.2",

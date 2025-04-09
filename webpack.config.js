@@ -221,6 +221,19 @@ module.exports = (env, options) => {
                     test: /\.md$/i,
                     type: 'asset/source',
                 },
+                {
+                    test: /\.svg$/i,
+                    issuer: /\.[jt]sx?$/,
+                    use: [
+                        {
+                          loader: "@svgr/webpack",
+                          options: {
+                            typescript: true,
+                            ext: "tsx",
+                          }
+                        }
+                    ]
+                },
             ],
         },
 

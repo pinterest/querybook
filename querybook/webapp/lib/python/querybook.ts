@@ -1,11 +1,15 @@
-import { StatementExecutionResultSizes } from 'const/queryResultLimit';
-import localStore from 'lib/local-store';
+import {
+    cleanupExpiredResults,
+    getStatementResult,
+    QUERY_STATEMENT_RESULT_SIZE_LIMIT,
+    setStatementResult,
+} from 'lib/local-store/result-store';
 
 export const querybookModule = {
     /**
      * The maximum size limit for query results, same as the maximum limit from the backend.
      */
-    QUERY_RESULT_SIZE_LIMIT: StatementExecutionResultSizes.at(-1),
+    QUERY_STATEMENT_RESULT_SIZE_LIMIT,
 
     /**
      * Fetches the result of a statement execution.
@@ -16,28 +20,26 @@ export const querybookModule = {
      * - If the requested limit exceeds the cached data or the cache is empty, the function fetches the data from the server and updates the cache.
      *
      * @param statementExecutionId - The ID of the statement execution to fetch results for.
-     * @param limit - The maximum number of rows to fetch. If not provided, fetches all rows up to the QUERY_RESULT_SIZE_LIMIT.
+     * @param limit - The maximum number of rows to fetch. If not provided, fetches all rows up to the QUERY_STATEMENT_RESULT_SIZE_LIMIT.
      * @returns A promise that resolves to the query result data.
      * @throws An error if the fetch operation fails or the server returns an error.
      */
     fetchStatementResult: async (
         statementExecutionId: number,
-        limit: number
+        limit: number = QUERY_STATEMENT_RESULT_SIZE_LIMIT
     ) => {
-        // TODO (AP-5030): A better cache solution with a separate cache store and cache expiration.
-        const cacheKey = `statement_result_${statementExecutionId}`;
-        const cache = await localStore.get(cacheKey);
-        // First row is the column names
-        if (cache && limit + 1 <= cache.length) {
-            return cache.slice(0, limit + 1);
+        const cacheValue = await getStatementResult(
+            statementExecutionId,
+            limit
+        );
+        if (cacheValue) {
+            return cacheValue;
         }
 
         const params = {
             from_env: self.envirionment,
+            limit,
         };
-        if (limit) {
-            params['limit'] = limit;
-        }
         const searchStr =
             '?params=' + encodeURIComponent(JSON.stringify(params));
         const res = await fetch(
@@ -45,12 +47,18 @@ export const querybookModule = {
         );
         if (res.status === 200) {
             const data = await res.json();
-            const newCache = data['data'];
-            localStore.set(cacheKey, newCache);
-            return newCache;
+            const newCacheData = data['data'];
+            setStatementResult(statementExecutionId, newCacheData, limit);
+
+            return newCacheData;
         } else {
             const data = await res.json();
             throw new Error(data['error']);
         }
     },
 };
+
+// Cleanup expired statement result cache when the module/querybook is loaded
+(async () => {
+    await cleanupExpiredResults();
+})();

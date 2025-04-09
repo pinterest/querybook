@@ -113,7 +113,7 @@ async function patchDataFrameHelper(pyodide: PyodideInterface) {
 
     Args:
         statement_execution_id (int): The ID of the statement execution to fetch results for.
-        limit (int, optional): The maximum number of rows to fetch. Defaults to None, which retrieves up to ${querybookModule.QUERY_RESULT_SIZE_LIMIT} rows.
+        limit (int, optional): The maximum number of rows to fetch. Defaults to None, which retrieves up to ${querybookModule.QUERY_STATEMENT_RESULT_SIZE_LIMIT} rows.
 
     Returns:
         DataFrame: A Pandas DataFrame containing the query results.
