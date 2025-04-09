@@ -72,3 +72,10 @@ declare global {
     const __APPNAME__: string;
     const __ENVIRONMENT__: string;
 }
+
+declare module '*.svg' {
+    import { FC, SVGProps } from 'react';
+
+    const content: FC<SVGProps<SVGSVGElement>>;
+    export default content;
+}
