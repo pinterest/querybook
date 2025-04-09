@@ -153,3 +153,10 @@ declare module 'config/querybook_public_config.yaml' {
     };
     export default data;
 }
+
+declare module '*.svg' {
+    import { FC, SVGProps } from 'react';
+
+    const content: FC<SVGProps<SVGSVGElement>>;
+    export default content;
+}
