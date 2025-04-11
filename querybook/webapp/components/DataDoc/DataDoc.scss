@@ -150,6 +150,7 @@
                 .additional-dropdown-button,
                 .add-snippet-wrapper,
                 .query-editor-float-buttons-wrapper,
+                .python-cell-controls,
                 .chart-cell-controls {
                     opacity: 0;
                     transition: opacity 0.2s ease-out;
@@ -168,6 +169,7 @@
                     .additional-dropdown-button,
                     .add-snippet-wrapper,
                     .query-editor-float-buttons-wrapper,
+                    .python-cell-controls,
                     .chart-cell-controls {
                         opacity: 1;
                     }

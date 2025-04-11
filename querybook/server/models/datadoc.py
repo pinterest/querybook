@@ -3,7 +3,13 @@ from sqlalchemy.orm import backref, relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from app import db
-from const.db import name_length, now, description_length, mediumtext_length
+from const.db import (
+    name_length,
+    now,
+    description_length,
+    mediumtext_length,
+    text_length,
+)
 from const.data_doc import DataCellType
 from lib.sqlalchemy import CRUDMixin
 from lib.data_doc.meta import (
@@ -307,3 +313,30 @@ class DataDocDAGExport(CRUDMixin, Base):
 
     dag = sql.Column(sql.JSON, default={}, nullable=False)
     meta = sql.Column(sql.JSON, default={}, nullable=False)
+
+
+class PythonCellResult(Base):
+    __tablename__ = "python_cell_result"
+    __table_args__ = {"mysql_engine": "InnoDB", "mysql_charset": "utf8mb4"}
+
+    id = sql.Column(sql.Integer, primary_key=True)
+    data_cell_id = sql.Column(
+        sql.Integer,
+        sql.ForeignKey("data_cell.id", ondelete="CASCADE"),
+        nullable=False,
+        unique=True,
+    )
+
+    output = sql.Column(sql.JSON, default=[], nullable=True)
+    error = sql.Column(sql.Text(length=text_length), nullable=True)
+
+    created_at = sql.Column(sql.DateTime, default=now, nullable=False)
+    updated_at = sql.Column(sql.DateTime, default=now, nullable=False)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "data_cell_id": self.data_cell_id,
+            "output": self.output,
+            "error": self.error,
+        }

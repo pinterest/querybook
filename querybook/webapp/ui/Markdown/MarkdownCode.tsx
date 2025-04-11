@@ -18,6 +18,8 @@ const languageToCodemirrorLanguage = {
 
 const StyledMarkdownCode = styled.div.attrs({ className: 'MarkdownCode' })`
     position: relative;
+    margin-bottom: 12px;
+
     .CopyButton {
         position: absolute;
         top: 16px;

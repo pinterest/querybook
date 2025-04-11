@@ -5,7 +5,7 @@ import { WithOptional } from 'lib/typescript';
 
 import { IChartConfig } from './dataDocChart';
 
-export type CELL_TYPE = 'query' | 'text' | 'chart';
+export type CELL_TYPE = 'query' | 'text' | 'chart' | 'python';
 
 export interface IDataCellBase {
     id: number;
@@ -28,6 +28,16 @@ export interface IDataQueryCellMeta extends IDataCellMetaBase {
     sample_rate?: number;
 }
 
+export interface IDataPythonCellMeta extends IDataCellMetaBase {
+    title?: string;
+}
+
+export interface IDataPythonCell extends IDataCellBase {
+    cell_type: 'python';
+    context: string;
+    meta: IDataPythonCellMeta;
+}
+
 export interface IDataQueryCell extends IDataCellBase {
     cell_type: 'query';
     context: string;
@@ -45,7 +55,8 @@ export type IDataChartCellMeta = IDataCellMetaBase & IChartConfig;
 export type IDataCellMeta =
     | IDataQueryCellMeta
     | IDataCellMetaBase
-    | IDataChartCellMeta;
+    | IDataChartCellMeta
+    | IDataPythonCellMeta;
 
 export interface IDataChartCell extends IDataCellBase {
     cell_type: 'chart';
@@ -53,7 +64,11 @@ export interface IDataChartCell extends IDataCellBase {
     meta: IDataChartCellMeta;
 }
 
-export type IDataCell = IDataQueryCell | IDataTextCell | IDataChartCell;
+export type IDataCell =
+    | IDataQueryCell
+    | IDataTextCell
+    | IDataChartCell
+    | IDataPythonCell;
 export type DataCellUpdateFields = Partial<Pick<IDataCell, 'context' | 'meta'>>;
 
 export const TEMPLATED_VAR_SUPPORTED_TYPES = [
@@ -146,4 +161,9 @@ export type ISamplingTables = Record<
 export interface IPeerReviewParams {
     reviewer_ids: number[];
     request_reason: string;
+}
+
+export interface IPythonCellResult {
+    output: any[];
+    error: string;
 }

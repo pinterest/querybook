@@ -2,6 +2,7 @@ const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin'
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin;
+const { PyodidePlugin } = require("@pyodide/webpack-plugin");
 
 const path = require('path');
 const webpack = require('webpack');
@@ -52,6 +53,11 @@ function getDevServerSettings(env) {
                 target: QUERYBOOK_UPSTREAM,
                 changeOrigin: true,
             },
+        },
+        // To enable SharedArrayBuffer for interrupting Pyodide in a Web Worker from the main thread
+        headers: {
+            "Cross-Origin-Opener-Policy": "same-origin",
+            "Cross-Origin-Embedder-Policy": "require-corp",
         },
         publicPath: '/build/',
         onListening: (server) => {
@@ -215,6 +221,19 @@ module.exports = (env, options) => {
                     test: /\.md$/i,
                     type: 'asset/source',
                 },
+                {
+                    test: /\.svg$/i,
+                    issuer: /\.[jt]sx?$/,
+                    use: [
+                        {
+                          loader: "@svgr/webpack",
+                          options: {
+                            typescript: true,
+                            ext: "tsx",
+                          }
+                        }
+                    ]
+                },
             ],
         },
 
@@ -256,6 +275,7 @@ module.exports = (env, options) => {
                 new ReactRefreshWebpackPlugin({
                     overlay: false,
                 }),
+            new PyodidePlugin(),
         ].filter(Boolean),
     };
 };

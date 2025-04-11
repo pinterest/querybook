@@ -109,6 +109,15 @@ def serialize_cell_content(cell: DataCell, exclude_metadata: bool = False) -> st
             content = f"```sql\n{cell.context.strip()}\n```\n"
         return header + content
 
+    elif cell.cell_type == DataCellType.python:
+        python_title = cell_meta.get("title") or "Python"
+        header = f"## Python: {python_title}\n\n"
+        if exclude_metadata:  # Exclude code fences
+            content = f"{cell.context.strip()}\n"
+        else:
+            content = f"```python\n{cell.context.strip()}\n```\n"
+        return header + content
+
     elif cell.cell_type == DataCellType.text:
         header = "## Text\n\n"
         content = f"{cell.context.strip()}\n"
@@ -207,6 +216,15 @@ def deserialize_datadoc_content(content_str: str) -> List[DataCell]:
             match = sql_pattern.search(cell_content)
             if not match:
                 raise ValueError("Query cell missing SQL code block.")
+            context = match.group(1).strip()
+        elif cell_type_enum == DataCellType.python:
+            # Extract the Python code block
+            python_pattern = re.compile(
+                r"## Python: [^\n]+\n\n```python\n([\s\S]*?)\n```", re.DOTALL
+            )
+            match = python_pattern.search(cell_content)
+            if not match:
+                raise ValueError("Python cell missing Python code block.")
             context = match.group(1).strip()
         elif cell_type_enum == DataCellType.text:
             # Extract text content

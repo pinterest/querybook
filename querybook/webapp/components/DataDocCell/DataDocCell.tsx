@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { DataDocCellControl } from 'components/DataDoc/DataDocCellControl';
 import { DataDocCellWrapper } from 'components/DataDocCellWrapper/DataDocCellWrapper';
 import { DataDocChartCell } from 'components/DataDocChartCell/DataDocChartCell';
+import { DataDocPythonCell } from 'components/DataDocPythonCell/DataDocPythonCell';
 import { DataDocQueryCell } from 'components/DataDocQueryCell/DataDocQueryCell';
 import { DataDocTextCell } from 'components/DataDocTextCell/DataDocTextCell';
 import { UserAvatar } from 'components/UserBadge/UserAvatar';
@@ -33,7 +34,7 @@ interface IDataDocCellProps {
     cell: IDataCell;
     index: number;
     lastQueryCellId: number;
-    queryIndexInDoc: number;
+    codeIndexInDoc: number;
     isFocused: boolean;
 }
 
@@ -60,7 +61,7 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> =
             cell,
             index,
             lastQueryCellId,
-            queryIndexInDoc,
+            codeIndexInDoc,
             isFocused,
         }) => {
             const {
@@ -182,12 +183,22 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> =
                         query: cell.context,
                         docId,
                         cellId: cell.id,
-                        queryIndexInDoc,
+                        codeIndexInDoc,
                         templatedVariables,
                         isFullScreen,
                         toggleFullScreen,
                     };
                     cellDOM = <DataDocQueryCell {...allProps} />;
+                } else if (cell.cell_type === 'python') {
+                    cellDOM = (
+                        <DataDocPythonCell
+                            {...cellProps}
+                            docId={docId}
+                            cellId={cell.id}
+                            codeIndexInDoc={codeIndexInDoc}
+                            context={cell.context}
+                        />
+                    );
                 } else if (cell.cell_type === 'chart') {
                     cellDOM = (
                         <DataDocChartCell
