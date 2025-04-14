@@ -34,17 +34,27 @@ class LatestPartitionException(QueryTemplatingError):
 
 
 def _escape_sql_comments(query: str):
+    """
+    Escapes SQL comments in a query string by replacing them with JSON-encoded placeholders.
+    This function handles single-line comments, multi-line comments, and quoted strings.
+
+    Args:
+        query (str): The SQL query string to process.
+
+    Returns:
+        str: The query string with comments replaced by JSON-encoded placeholders.
+    """
     result = []
     pos = 0
-    n = len(query)
-    while pos < n:
+    query_len = len(query)
+    while pos < query_len:
         ch = query[pos]
         # If inside a quoted string, just copy it verbatim.
         if ch in ("'", '"'):
             quote_char = ch
             start = pos
             pos += 1
-            while pos < n:
+            while pos < query_len:
                 if query[pos] == "\\":
                     pos += 2
                     continue
@@ -57,28 +67,28 @@ def _escape_sql_comments(query: str):
 
         # Handle single-line comment.
         if query.startswith("--", pos):
-            j = query.find("\n", pos)
-            if j == -1:
-                j = n
-            comment = query[pos:j]
+            end_comment_pos = query.find("\n", pos)
+            if end_comment_pos == -1:
+                end_comment_pos = query_len
+            comment = query[pos:end_comment_pos]
             result.append("{{ " + json.dumps(comment) + " }}")
-            pos = j
+            pos = end_comment_pos
             continue
 
         # Handle multi-line comment.
         if query.startswith("/*", pos):
-            j = query.find("*/", pos + 2)
-            if j == -1:
+            end_comment_pos = query.find("*/", pos + 2)
+            if end_comment_pos == -1:
                 # Unclosed multi-line comment: treat the rest of the input as comment.
                 comment = query[pos:]
                 result.append("{{ " + json.dumps(comment) + " }}")
-                pos = n
+                pos = query_len
                 continue
             else:
-                j += 2
-                comment = query[pos:j]
+                end_comment_pos += 2
+                comment = query[pos:end_comment_pos]
                 result.append("{{ " + json.dumps(comment) + " }}")
-                pos = j
+                pos = end_comment_pos
                 continue
 
         # Normal character.
