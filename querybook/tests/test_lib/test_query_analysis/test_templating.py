@@ -369,6 +369,10 @@ limit 100"""
         query = "select '/*' -- test"
         self.assertEqual(_escape_sql_comments(query), """select '/*' {{ "-- test" }}""")
 
+    def test_escape_quote_in_string_literals(self):
+        query = "SELECT 'It''s an /* example */ string' FROM dual"
+        self.assertEqual(_escape_sql_comments(query), query)
+
     def test_unclosed_comments(self):
         # The rest of unclosed /* will be treated as comment
         query = "select 1 \n/* \ntest\n"

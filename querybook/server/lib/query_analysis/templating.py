@@ -49,19 +49,19 @@ def _escape_sql_comments(query: str):
     query_len = len(query)
     while pos < query_len:
         ch = query[pos]
-        # If inside a quoted string, just copy it verbatim.
-        if ch in ("'", '"'):
-            quote_char = ch
+        # If inside a quoted string, just copy it verbatim. ANSI SQL only allows single quotes.
+        if ch == "'":
             start = pos
             pos += 1
             while pos < query_len:
-                if query[pos] == "\\":
-                    pos += 2
-                    continue
-                if query[pos] == quote_char:
+                if query[pos] == "'":
+                    # ANSI SQL uses two single quotes to escape a single quote,
+                    # which can be just treated as two consecutive literals and we dont need to handle it separately.
                     pos += 1
                     break
+
                 pos += 1
+
             result.append(query[start:pos])
             continue
 
