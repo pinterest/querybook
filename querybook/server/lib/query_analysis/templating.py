@@ -34,15 +34,39 @@ class LatestPartitionException(QueryTemplatingError):
     pass
 
 
-# The first part is regex for single line comment, ie -- some comment
-# the second part is for multi line comment, ie /* test */
-comment_re = re.compile(r"((?:--.*)|(?:\/\*(?:.|\n)*?\*\/))", re.MULTILINE)
-
-
 def _escape_sql_comments(query: str):
-    return re.sub(
-        comment_re, lambda match: "{{ " + json.dumps(match.group()) + " }}", query
-    )
+    """
+    Escape SQL comments in the query string by replacing them with a placeholder.
+    """
+    result = []
+    i = 0
+    n = len(query)
+    while i < n:
+        if query.startswith("--", i):
+            # Single-line comment: consume until end of line or end of input
+            j = query.find("\n", i)
+            if j == -1:
+                j = n
+            comment = query[i:j]
+            result.append("{{ " + json.dumps(comment) + " }}")
+            i = j
+        elif query.startswith("/*", i):
+            # Multi-line comment: look for closing */
+            j = query.find("*/", i + 2)
+            if j == -1:
+                # Unclosed multi-line comment:
+                # Append the current character as literal and move on rather than consuming the rest.
+                result.append(query[i])
+                i += 1
+            else:
+                j += 2
+                comment = query[i:j]
+                result.append("{{ " + json.dumps(comment) + " }}")
+                i = j
+        else:
+            result.append(query[i])
+            i += 1
+    return "".join(result)
 
 
 def _detect_cycle_helper(node: str, dag: _DAG, seen: Set[str]) -> bool:

@@ -365,6 +365,10 @@ order by c DESC
 limit 100"""
         self.assertEqual(_escape_sql_comments(query), query)
 
+    def test_big_payload(self):
+        query = " /*" * 32000
+        self.assertEqual(_escape_sql_comments(query), query)
+
 
 class LatestPartitionTestCase(TemplatingTestCase):
     def setUp(self):
