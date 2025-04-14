@@ -367,7 +367,8 @@ limit 100"""
 
     def test_big_payload(self):
         query = " /*" * 32000
-        self.assertEqual(_escape_sql_comments(query), query)
+        expected = ' {{ "' + query.strip() + '" }}'
+        self.assertEqual(_escape_sql_comments(query), expected)
 
 
 class LatestPartitionTestCase(TemplatingTestCase):
