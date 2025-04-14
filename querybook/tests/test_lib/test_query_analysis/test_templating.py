@@ -365,6 +365,18 @@ order by c DESC
 limit 100"""
         self.assertEqual(_escape_sql_comments(query), query)
 
+    def test_string_literals(self):
+        query = "select '/*' -- test"
+        self.assertEqual(_escape_sql_comments(query), """select '/*' {{ "-- test" }}""")
+
+    def test_unclosed_comments(self):
+        # The rest of unclosed /* will be treated as comment
+        query = "select 1 \n/* \ntest\n"
+        self.assertEqual(
+            _escape_sql_comments(query),
+            'select 1 \n{{ "/* \\ntest\\n" }}',
+        )
+
     def test_big_payload(self):
         query = " /*" * 32000
         expected = ' {{ "' + query.strip() + '" }}'
