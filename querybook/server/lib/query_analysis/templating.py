@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 import json
-import re
 from typing import Callable, Dict, Set
 
 from jinja2.exceptions import TemplateSyntaxError
