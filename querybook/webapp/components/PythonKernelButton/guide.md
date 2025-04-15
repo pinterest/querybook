@@ -22,7 +22,7 @@ To install other external pure Python packages with wheels, use `micropip`. For 
 
 ```py
 import micropip
-micropip.install('seaborn')
+await micropip.install('seaborn')
 ```
 
 For more details on package loading, refer to the [Pyodide documentation](https://pyodide.org/en/stable/usage/loading-packages.html#loading-packages).
