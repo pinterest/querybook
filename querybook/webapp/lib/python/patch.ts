@@ -86,6 +86,7 @@ async function patchMatplotlib(pyodide: PyodideInterface) {
           # encode to a base64 str
           img = base64.b64encode(buf.read()).decode('utf-8')
           print(json.dumps({"type": "image", "data": "data:image/png;base64," + img}))
+          matplotlib.pyplot.clf()
 
       matplotlib.pyplot.show = show
 

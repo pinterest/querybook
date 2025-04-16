@@ -38,6 +38,7 @@ export const DataDocPythonCell = ({
     cellId,
     docId,
     context,
+    isEditable,
     onChange,
 }: IDataDocPythonCellProps) => {
     const {
@@ -102,18 +103,22 @@ export const DataDocPythonCell = ({
         <div className="DataDocPythonCell">
             <div className="python-cell-header">
                 <AccentText weight="bold" size="med">
-                    <div>
-                        <ResizableTextArea
-                            value={meta.title}
-                            onChange={updateTitle}
-                            transparent
-                            placeholder={defaultTitlePlaceholder}
-                            className="cell-title"
-                        />
-                    </div>
+                    {isEditable ? (
+                        <div>
+                            <ResizableTextArea
+                                value={meta.title}
+                                onChange={updateTitle}
+                                transparent
+                                placeholder={defaultTitlePlaceholder}
+                                className="cell-title"
+                            />
+                        </div>
+                    ) : (
+                        <span className="p8">{meta.title}</span>
+                    )}
                 </AccentText>
                 <div className="python-cell-controls">
-                    {!isRunning && (
+                    {isEditable && !isRunning && (
                         <AsyncButton
                             className="run-button"
                             onClick={runPythonCode}
@@ -125,7 +130,7 @@ export const DataDocPythonCell = ({
                             color={'accent'}
                         />
                     )}
-                    {isRunning && (
+                    {isEditable && isRunning && (
                         <AsyncButton
                             className="run-button"
                             onClick={cancelRun}
@@ -141,6 +146,7 @@ export const DataDocPythonCell = ({
                 value={context}
                 identifiers={identifiers}
                 keyBindings={keyBindings}
+                readonly={!isEditable}
                 onChange={(value) => {
                     onChange({
                         context: value,

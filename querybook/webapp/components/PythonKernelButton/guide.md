@@ -14,7 +14,7 @@ By default, only the Python standard library and the following packages are avai
 -   pandas
 -   matplotlib
 
-Note: Some modules have been removed from the standard library to reduce download size and may not work. You can view the list of removed modules [here](https://pyodide.org/en/stable/usage/wasm-constraints.html#removed-modules).
+**Note**: Some modules have been removed from the standard library to reduce download size and may not work. You can view the list of removed modules [here](https://pyodide.org/en/stable/usage/wasm-constraints.html#removed-modules).
 
 For other Pyodide [built-in packages](https://pyodide.org/en/stable/usage/packages-in-pyodide.html#packages-in-pyodide), you can import them directly, and they will load automatically when the code is executed.
 
@@ -22,7 +22,7 @@ To install other external pure Python packages with wheels, use `micropip`. For 
 
 ```py
 import micropip
-micropip.install('seaborn')
+await micropip.install('seaborn')
 ```
 
 For more details on package loading, refer to the [Pyodide documentation](https://pyodide.org/en/stable/usage/loading-packages.html#loading-packages).
@@ -35,6 +35,8 @@ To retrieve query results as a `DataFrame`, click the `Copy DataFrame` button lo
 df = await get_df(1, limit=10)
 df
 ```
+
+**Note**: All columns of the query result are string type. Please convert them to the appropriate types as needed.
 
 For more information about the `get_df` function, run `help(get_df)`.
 

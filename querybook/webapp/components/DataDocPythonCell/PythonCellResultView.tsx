@@ -51,7 +51,11 @@ export const PythonCellResultView = ({
                     />
                 );
             } else if (output['type'] === 'image') {
-                return <img src={output['data']} className="image-view" />;
+                return (
+                    <div className="image-view">
+                        <img src={output['data']} />
+                    </div>
+                );
             } else if (output['type'] === 'json') {
                 return (
                     <div className="json-view">

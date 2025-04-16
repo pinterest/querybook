@@ -105,9 +105,22 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
     private searchAndReplaceRef = React.createRef<ISearchAndReplaceHandles>();
     private focusCellIndexAfterInsert: number = null;
 
+    @bind
+    public matchDatadocPath() {
+        return !!matchPath(location.pathname, {
+            path: '/:env/datadoc/:docId/',
+            exact: true,
+            strict: false,
+        });
+    }
+
     // Show data doc title in url and document title
     @decorate(memoizeOne)
     public publishDataDocTitle(title: string) {
+        if (!this.matchDatadocPath()) {
+            return;
+        }
+
         setBrowserTitle(title || 'Untitled DataDoc');
         if (title) {
             const pathParts = location.pathname.split('/');
@@ -189,18 +202,10 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
 
         cellId = cellId ?? (index != null ? dataDocCells?.[index]?.id : null);
 
-        if (cellId != null) {
-            const match = matchPath(location.pathname, {
-                path: '/:env/datadoc/:docId/',
-                exact: true,
-                strict: false,
-            });
-            if (match) {
-                // Only replace the url if we are in the datadoc page
-                executionId =
-                    executionId ?? this.state.cellIdToExecutionId[cellId];
-                history.replace(getShareUrl(cellId, executionId, true));
-            }
+        if (cellId != null && this.matchDatadocPath()) {
+            // Only replace the url if we are in the datadoc page
+            executionId = executionId ?? this.state.cellIdToExecutionId[cellId];
+            history.replace(getShareUrl(cellId, executionId, true));
         }
     }
 
