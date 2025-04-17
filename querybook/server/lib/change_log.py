@@ -29,10 +29,12 @@ def load_all_change_logs():
         if os.path.exists(change_log_plugin_path):
             plugin_change_log_files = os.listdir(change_log_plugin_path)
 
-        # Merge the two lists of files
-        all_change_log_files = change_log_files + plugin_change_log_files
+        # Merge the two lists of files and convert it to be a list of tuples (filename, from_plugin)
+        all_change_log_files = [(filename, False) for filename in change_log_files] + [
+            (filename, True) for filename in plugin_change_log_files
+        ]
 
-        for filename in all_change_log_files:
+        for filename, from_plugin in all_change_log_files:
             if filename.startswith("breaking_change") or filename.startswith(
                 "security_advisories"
             ):
@@ -40,7 +42,10 @@ def load_all_change_logs():
                 # These are used for developer references when upgrading
                 continue
 
-            with open(os.path.join(CHANGE_LOG_PATH, filename)) as f:
+            change_log_path = (
+                CHANGE_LOG_PATH if not from_plugin else change_log_plugin_path
+            )
+            with open(os.path.join(change_log_path, filename)) as f:
                 changelog_date = filename.split(".")[0]
                 # Plugin change log files will override the main change log files for the same date
                 change_logs[changelog_date] = {

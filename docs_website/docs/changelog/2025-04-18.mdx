@@ -1,0 +1,115 @@
+---
+id: apr_2025_3_41_1
+title: Apr 2025 (version 3.41.0)
+sidebar_label: Apr 2025 (3.41.0)
+---
+
+## Highlights
+
+-   **Python Cell Support**: Execute Python code directly in your DataDocs
+-   **User Group Sharing**: Share datadocs and lists with entire user groups at once
+-   **Query Review**: Request and manage reviews for queries before execution
+-   **NLP Query Search**: Find relevant queries using natural language search
+-   **SQL Complete**: AI-powered SQL suggestions similar to GitHub Copilot
+-   **GitHub Integration**: Link DataDocs to GitHub repositories for version control
+
+## V3.41.1 (2025-4-16)
+
+#### Python Cell Support in DataDocs
+
+Added support for Python cells in Querybook DataDocs, powered by [Pyodide](https://pyodide.org/en/stable/index.html) (runs in your browser).
+
+-   Each DataDoc has its own isolated Python namespace.
+-   Python cells can easily access query results as DataFrames.
+-   Output rendering improvements for DataFrames, JSON.
+
+Refer to the user guide for Python cells by clicking the Python kernel status button located in the right sidebar.
+
+![](/changelog/20250418/python_cell.png)
+
+## V3.40.0 (2025-2-6)
+
+#### Share Datadocs and Lists with User Groups
+
+You can now share datadocs and lists directly with user groups. When you grant access to a group, all members of that group will automatically inherit the assigned permissions (such as read or edit). This makes it easier to manage access for teams, as adding or removing users from a group will update their access to all shared datadocs and lists for that group.
+![](/changelog/20250418/user_group.png)
+
+## V3.39.0 (2025-2-5)
+
+#### Query Review
+
+Introduced the Query Review feature.
+
+-   Added the ability to request reviews before query execution.
+-   Support for selecting reviewers and providing justification.
+-   Added "Reviews" tab to track review status and assignments.
+-   Reviewers can approve, reject, or add feedback to queries.
+-   Approved queries execute automatically.
+
+Learn more in the [Query Review User Guide](https://www.querybook.org/docs/user_guide/query_review).
+
+#### NLP Query Search
+
+You can now search for queries using natural language! Similar to NLP table search, this feature helps you find relevant or similar queries quickly and intuitively.
+![](/changelog/20250418/nlp_search.png)
+
+## V3.38.0 (2024-12-10)
+
+#### Column Hover Tooltip & Value Auto-Completion
+
+-   **Column hover tooltips:** Hover over a column name in the editor to see a tooltip with helpful information, similar to table tooltips.
+    ![](/changelog/20250418/column_tooltip.png)
+-   **Column value auto-completion:** When writing a `WHERE` clause, if column stats include distinct values, you’ll now see value suggestions for quicker and more accurate filtering.
+    ![](/changelog/20250418/column_auto_complete.png)
+
+## V3.37.0 (2024-11-15)
+
+#### SQL Complete – AI-Powered SQL Suggestions (Experimental)
+
+We’ve added a new AI assistant feature, **SQL Complete**, to help you write queries faster with smart code suggestions—similar to GitHub Copilot.
+
+-   Get real-time SQL code completions and recommendations as you type in the editor
+-   Disabled by default; enable it any time in your user settings (Editor tab)
+
+![](/changelog/20250418/sql_complete_1.png)
+![](/changelog/20250418/sql_complete_2.png)
+
+## V3.36.0 (2024-11-13)
+
+#### GitHub Integration for DataDocs (Experimental)
+
+You can now link your DataDocs directly to GitHub repositories for seamless version control and collaboration. With this integration, you can:
+
+-   Connect a DataDoc to a GitHub repository and choose where your versions are saved
+-   Commit DataDoc changes directly to GitHub with descriptive messages
+-   View, compare, and restore previous versions using commit history within the DataDoc
+
+Learn more and see setup instructions in the [GitHub User Guide](https://www.querybook.org/docs/user_guide/github_integration).
+
+## V3.35.0 (2024-11-12)
+
+#### Query Editor Upgraded to CodeMirror 6
+
+The query editor has been upgraded to CodeMirror 6. There are no major changes to your workflow, but you may notice some small UI improvements such as:
+
+-   The status bar is now located below the editor
+-   Gutter now supports code folding
+-   Improved hover popups for linter errors and warnings
+
+This upgrade provides a more modern and stable code editing experience.
+![](/changelog/20250418/codemirror_1.png)
+
+## V3.33.2 (2024-04-10)
+
+#### Text to SQL UI Revamp
+
+-   **Enhanced Input Accessibility**: The Text-to-SQL input field is now prominently positioned in the main interface, making it easier to type questions directly.
+-   **Table Mentioning with “@”**: Use “@” to reference specific tables in your question. When working in a new cell, the first mentioned table will automatically generate a simple `SELECT *` query for quick exploration.
+-   **Command Support**: Start commands with “/”, such as `/format`. This flexible system enables new commands to be added in the future.
+-   **Quick Shortcuts**:
+    -   Press `Cmd + I` in the query editor to move focus directly to the command input for rapid command execution.
+    -   Use `Cmd + /` to reset and open the command menu instantly.
+-   **AI Command Results**: AI-generated output now appears in an inline popup view. Clicking outside the popup will dismiss the result, keeping your workspace tidy.
+
+![](/changelog/20250418/text2sql_1.png)
+![](/changelog/20250418/text2sql_2.png)
