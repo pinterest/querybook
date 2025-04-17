@@ -41,6 +41,7 @@
             "integrations/add_surveys",
             "integrations/add_ai_assistant",
             "integrations/add_github_integration",
+            "integrations/add_query_review",
             "integrations/customize_html",
             "integrations/embedded_iframe"
         ],
@@ -56,12 +57,14 @@
         "User Guide": [
             "user_guide/ai_assistant",
             "user_guide/github_integration",
+            "user_guide/query_review",
             "user_guide/api_token",
             "user_guide/faq"
         ],
         "Changelog": [
             "changelog/breaking_changes",
             "changelog/security_advisories",
+            "changelog/apr_2025_3_41_1",
             "changelog/sept_2023_9_20_0",
             "changelog/dec_2022_3_15_0",
             "changelog/nov_2020_2_4_2",

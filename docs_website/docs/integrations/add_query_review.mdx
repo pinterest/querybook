@@ -1,0 +1,119 @@
+---
+id: add_query_review
+title: Query Review
+sidebar_label: Query Review
+---
+
+:::warning
+**Experimental Feature:** The Query Review feature is currently in an experimental phase and may undergo changes that could break existing implementations in future updates. Please use it with caution and stay updated with the latest releases.
+:::
+
+## Overview
+
+Query Review provides a structured workflow for collaborative query validation before execution. This governance mechanism helps teams maintain query quality, ensure data accuracy, and prevent potential issues by requiring approval before query execution.
+
+When enabled, queries can be submitted for review and will automatically execute once approved by designated reviewers.
+
+:::info
+For detailed usage instructions, refer to the [Query Review User Guide](../user_guide/query_review.mdx)
+:::
+
+## How It Works
+
+The Query Review feature implements a controlled workflow:
+
+1. **Submission**: A user submits a query with peer review parameters, which gets saved with a `PENDING_REVIEW` status
+2. **Assignment**: The system creates review records and assigns them to specified reviewers
+3. **Review Process**:
+    - **Approval**: When approved, the query automatically transitions to running state and executes
+    - **Rejection**: If rejected, execution remains blocked until the query is revised and resubmitted
+4. **Notification**: Appropriate notifications are sent to relevant parties throughout the process
+
+## Implementing a Custom Review Handler
+
+To customize the review process with your own logic:
+
+### 1. Create a Custom Handler
+
+Extend the `BaseQueryReviewHandler` abstract base class:
+
+```python
+from lib.query_review.base_query_review_handler import BaseQueryReviewHandler
+
+class MyCustomQueryReviewHandler(BaseQueryReviewHandler):
+    @property
+    def notification_template(self) -> str:
+        # Override the default notification template
+        return "my_custom_review_request"
+
+    @property
+    def notification_template_params(self) -> dict:
+        # Add custom parameters to notifications
+        return {"custom_param": "value"}
+
+    def _additional_approval_actions(self, query_review_id: int, reviewer_id: int, session=None) -> None:
+        # Implement custom logic that runs after approval
+        # Examples: audit logging, integration with other systems
+        pass
+
+    # The base handler includes implementations for:
+    # - Review record creation
+    # - Reviewer notification
+    # - Basic validation
+    # You can override additional methods as needed
+```
+
+One example to have custom \_additional_approval_actions: certain queries are not allowed to run for a query engine, but once the query gets reviewed and approved, it can notify the query engine system to allow the query with the given query review id to run.
+
+### 2. Register your plugin
+
+```python
+# filepath: plugins/query_review_handler_plugin/__init__.py
+from .my_custom_handler import MyCustomQueryReviewHandler
+
+PLUGIN_QUERY_REVIEW_HANDLER = MyCustomQueryReviewHandler()
+```
+
+## How to enable it for a query engine
+
+To enable the peer review workflow:
+
+### 1. Enable peer review in configuration
+
+Add or update your configuration to enable the feature:
+
+```yaml
+# In querybook_public_config.yaml
+peer_review:
+    enabled: true
+
+    # Customize messaging shown when requesting reviews
+    request_texts:
+        description: |
+            This peer review system helps ensure query quality and data safety.
+            Reviewers will validate your query before execution.
+        guide_link: 'https://your-documentation-link'
+        tip: |
+            Before Submitting:
+            • Verify query syntax by running it first
+            • Include clear comments explaining the query purpose
+            • Consider performance implications for large datasets
+
+    # Customize messaging shown to reviewers
+    reviewer_texts:
+        approve_message: |
+            As a reviewer, please validate:
+            • Query correctness and efficiency
+            • Compliance with data access policies
+            • Potential impact on system resources
+            ...
+```
+
+### 2. Enable for Specific Query Engines
+
+After configuring the feature globally:
+
+1. Navigate to the admin panel in Querybook
+2. Select the query engine you want to enable peer review for
+3. In the "Additional Features" section, enable the "(Experimental) Enable Peer Reviews" option
+4. Save your changes
