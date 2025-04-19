@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Dict, Optional
 
+import pandas as pd
 from flask import abort, Response, redirect, request
 from flask_login import current_user
 
@@ -356,6 +357,10 @@ def get_query_execution_metadata(query_execution_id):
     custom_response=True,
 )
 def download_statement_execution_result(statement_execution_id):
+    # Get the type parameter from the request, default to csv
+    type_param = request.args.get("type", "csv")
+    LOG.info(f"Received download request for: {statement_execution_id} of type {type_param}")
+
     with DBSession() as session:
         statement_execution = logic.get_statement_execution_by_id(
             statement_execution_id, session=session
@@ -367,24 +372,61 @@ def download_statement_execution_result(statement_execution_id):
             statement_execution.query_execution_id, session=session
         )
 
-        download_file_name = f"result_{statement_execution.query_execution_id}_{statement_execution_id}.csv"
+        file_extension = "csv" if type_param == "csv" else "xlsx"
+        download_file_name = f"result_{statement_execution.query_execution_id}_{statement_execution_id}.{file_extension}"
 
         reader = GenericReader(statement_execution.result_path)
         response = None
-        if reader.has_download_url:
-            # If the Reader can generate a download,
-            # we let user download the file by redirection
-            download_url = reader.get_download_url(custom_name=download_file_name)
-            response = redirect(download_url)
-        else:
-            # We read the raw file and download it for the user
+
+        try:
+            reader.get_download_url(custom_name=download_file_name)
+            LOG.info(f"Download URL: {reader.get_download_url(custom_name=download_file_name)}")
+        except NotImplementedError:
+            LOG.info("Download URL not implemented")
+        
+        if type_param == "csv":
+            if reader.has_download_url:
+                # If the Reader can generate a download,
+                # we let user download the file by redirection
+                download_url = reader.get_download_url(custom_name=download_file_name)
+                response = redirect(download_url)
+            else:
+                # We read the raw file and download it for the user
+                reader.start()
+                raw = reader.read_raw()
+                response = Response(raw)
+                response.headers["Content-Type"] = "text/csv"
+                response.headers[
+                    "Content-Disposition"
+                ] = f'attachment; filename="{download_file_name}"'
+        else:  # Excel format
+            # Read the CSV data
             reader.start()
-            raw = reader.read_raw()
-            response = Response(raw)
-            response.headers["Content-Type"] = "text/csv"
-            response.headers[
-                "Content-Disposition"
-            ] = f'attachment; filename="{download_file_name}"'
+            csv_data = reader.read_csv(None)
+            
+            if csv_data and len(csv_data) > 0:
+                # Convert to pandas DataFrame
+                # First row is headers, rest is data
+                headers = csv_data[0]
+                data = csv_data[1:] if len(csv_data) > 1 else []
+                
+                # Create DataFrame
+                df = pd.DataFrame(data, columns=headers)
+                
+                # Create Excel file in memory
+                import io
+                output = io.BytesIO()
+                with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                    df.to_excel(writer, sheet_name='Results', index=False)
+                
+                output.seek(0)
+                
+                # Create response
+                response = Response(output.getvalue())
+                response.headers["Content-Type"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                response.headers[
+                    "Content-Disposition"
+                ] = f'attachment; filename="{download_file_name}"'
         return response
 
 
