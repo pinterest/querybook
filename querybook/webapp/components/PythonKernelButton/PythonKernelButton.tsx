@@ -20,17 +20,17 @@ const BORDER_COLORS = {
 };
 
 export const PythonKernelButton = () => {
-    const { status } = useContext(PythonContext);
+    const { kernelStatus } = useContext(PythonContext);
     const [showModal, , toggleShowModal] = useToggleState(false);
 
     return (
         <>
             <div
-                aria-label={`Python kernel: ${status}`}
+                aria-label={`Python kernel: ${kernelStatus}`}
                 data-balloon-pos="left"
                 className="PythonKernelButton"
                 style={{
-                    borderColor: BORDER_COLORS[status],
+                    borderColor: BORDER_COLORS[kernelStatus],
                 }}
                 onClick={toggleShowModal}
             >
