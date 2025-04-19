@@ -47,8 +47,14 @@ export default function usePython({
     const [executionCount, setExecutionCount] = useState<number>();
     const cancelPromiseResolveRef = useRef<() => void>(null);
 
-    const { status, runPython, cancelRun, createDataFrame, getNamespaceInfo } =
-        useContext(PythonContext);
+    const {
+        kernelStatus,
+        setKernelStatus,
+        runPython,
+        cancelRun,
+        createDataFrame,
+        getNamespaceInfo,
+    } = useContext(PythonContext);
 
     useEffect(() => {
         if (cellId) {
@@ -83,9 +89,20 @@ export default function usePython({
     }, [executionStatus, stdout, stderr]);
 
     const progressCallback = useCallback(
-        (status, data) => {
+        (
+            status: PythonExecutionStatus,
+            data?: {
+                executionCount?: number;
+            }
+        ) => {
             setExecutionStatus(status);
             setExecutionCount(data?.executionCount);
+
+            if (status === PythonExecutionStatus.RUNNING) {
+                setKernelStatus(PythonKernelStatus.BUSY);
+            } else {
+                setKernelStatus(PythonKernelStatus.IDLE);
+            }
 
             if (
                 cancelPromiseResolveRef.current &&
@@ -95,7 +112,7 @@ export default function usePython({
                 cancelPromiseResolveRef.current = null;
             }
         },
-        [setExecutionCount, setExecutionStatus]
+        [setExecutionCount, setExecutionStatus, setKernelStatus]
     );
 
     const stdoutCallback = useCallback(
@@ -163,7 +180,7 @@ export default function usePython({
     }, [cancelRun]);
 
     return {
-        kernelStatus: status,
+        kernelStatus,
         runPython: runPythonCode,
         cancelRun: cancelRunPython,
         createDataFrame,

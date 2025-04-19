@@ -20,7 +20,8 @@ import {
 } from './types';
 
 export interface PythonContextType {
-    status: PythonKernelStatus;
+    kernelStatus: PythonKernelStatus;
+    setKernelStatus: (status: PythonKernelStatus) => void;
     runPython: (
         code: string,
         namespaceId?: number,
@@ -148,9 +149,6 @@ function PythonProvider({ children }: PythonProviderProps) {
                 return;
             }
 
-            // Update status to reflect that we're about to run code
-            setStatus(PythonKernelStatus.BUSY);
-
             // Run the code with specific callbacks for this execution
             await kernelRef.current.runPython(
                 code,
@@ -159,7 +157,6 @@ function PythonProvider({ children }: PythonProviderProps) {
                 proxy(stdoutCallback),
                 proxy(stderrCallback)
             );
-            setStatus(PythonKernelStatus.IDLE);
         },
         [initKernel, setStatus]
     );
@@ -190,7 +187,8 @@ function PythonProvider({ children }: PythonProviderProps) {
     return (
         <PythonContext.Provider
             value={{
-                status,
+                kernelStatus: status,
+                setKernelStatus: setStatus,
                 runPython,
                 cancelRun,
                 createDataFrame: kernelRef.current?.createDataFrame,
