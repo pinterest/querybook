@@ -21,7 +21,6 @@ import {
 
 export interface PythonContextType {
     kernelStatus: PythonKernelStatus;
-    setKernelStatus: (status: PythonKernelStatus) => void;
     runPython: (
         code: string,
         namespaceId?: number,
@@ -56,6 +55,28 @@ function PythonProvider({ children }: PythonProviderProps) {
     const sharedInterruptBuffer = useRef<Uint8Array>(null);
     const currentEnvironment = useSelector(currentEnvironmentSelector);
 
+    // Add a ref to track the number of running tasks
+    const taskCounterRef = useRef(0);
+
+    /**
+     * Helper to update kernel status based on task counter
+     */
+    const updateKernelStatus = useCallback(() => {
+        if (
+            status === PythonKernelStatus.UNINITIALIZED ||
+            status === PythonKernelStatus.INITIALIZING ||
+            status === PythonKernelStatus.FAILED
+        ) {
+            // Don't override these states
+            return;
+        }
+        if (taskCounterRef.current > 0) {
+            setStatus(PythonKernelStatus.BUSY);
+        } else {
+            setStatus(PythonKernelStatus.IDLE);
+        }
+    }, [status, setStatus]);
+
     /**
      * Terminate the kernel and clean up resources
      */
@@ -74,6 +95,7 @@ function PythonProvider({ children }: PythonProviderProps) {
 
         // Reset state
         setStatus(PythonKernelStatus.UNINITIALIZED);
+        taskCounterRef.current = 0;
     }, [setStatus]);
 
     const initKernel = useCallback(async () => {
@@ -149,16 +171,26 @@ function PythonProvider({ children }: PythonProviderProps) {
                 return;
             }
 
-            // Run the code with specific callbacks for this execution
-            await kernelRef.current.runPython(
-                code,
-                namespaceId,
-                proxy(progressCallback),
-                proxy(stdoutCallback),
-                proxy(stderrCallback)
-            );
+            // Increment task counter and update status
+            taskCounterRef.current += 1;
+            updateKernelStatus();
+
+            try {
+                // Run the code with specific callbacks for this execution
+                await kernelRef.current.runPython(
+                    code,
+                    namespaceId,
+                    proxy(progressCallback),
+                    proxy(stdoutCallback),
+                    proxy(stderrCallback)
+                );
+            } finally {
+                // Decrement task counter and update status
+                taskCounterRef.current -= 1;
+                updateKernelStatus();
+            }
         },
-        [initKernel, setStatus]
+        [initKernel, setStatus, updateKernelStatus]
     );
 
     /**
@@ -188,7 +220,6 @@ function PythonProvider({ children }: PythonProviderProps) {
         <PythonContext.Provider
             value={{
                 kernelStatus: status,
-                setKernelStatus: setStatus,
                 runPython,
                 cancelRun,
                 createDataFrame: kernelRef.current?.createDataFrame,

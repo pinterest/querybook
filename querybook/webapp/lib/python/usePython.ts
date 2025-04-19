@@ -49,7 +49,6 @@ export default function usePython({
 
     const {
         kernelStatus,
-        setKernelStatus,
         runPython,
         cancelRun,
         createDataFrame,
@@ -98,12 +97,6 @@ export default function usePython({
             setExecutionStatus(status);
             setExecutionCount(data?.executionCount);
 
-            if (status === PythonExecutionStatus.RUNNING) {
-                setKernelStatus(PythonKernelStatus.BUSY);
-            } else {
-                setKernelStatus(PythonKernelStatus.IDLE);
-            }
-
             if (
                 cancelPromiseResolveRef.current &&
                 status === PythonExecutionStatus.CANCEL
@@ -112,7 +105,7 @@ export default function usePython({
                 cancelPromiseResolveRef.current = null;
             }
         },
-        [setExecutionCount, setExecutionStatus, setKernelStatus]
+        [setExecutionCount, setExecutionStatus]
     );
 
     const stdoutCallback = useCallback(
