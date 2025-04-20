@@ -100,7 +100,9 @@ def check_task_inactive_owner(task_dict, session):
 
 def check_task_failed_for_n_runs(task_dict, disable_config: DisableConfig, session):
     n_runs = disable_config.disable_if_failed_for_n_runs
-    task_logs, _ = get_task_run_record_run_by_name(task_dict["name"], limit=n_runs, session=session)
+    task_logs, _ = get_task_run_record_run_by_name(
+        task_dict["name"], limit=n_runs, session=session
+    )
 
     if len(task_logs) == n_runs and all(
         log.status != TaskRunStatus.SUCCESS for log in task_logs
