@@ -19,7 +19,7 @@ from logic.impression import get_viewers_count_by_item_after_date
 from logic.schedule import (
     DATADOC_SCHEDULE_PREFIX,
     delete_task_schedule,
-    get_task_run_records,
+    get_task_run_record_run_by_name,
     update_task_schedule,
     with_task_logging,
 )
@@ -100,7 +100,9 @@ def check_task_inactive_owner(task_dict, session):
 
 def check_task_failed_for_n_runs(task_dict, disable_config: DisableConfig, session):
     n_runs = disable_config.disable_if_failed_for_n_runs
-    task_logs = get_task_run_records(task_dict["name"], limit=n_runs, session=session)
+    task_logs, _ = get_task_run_record_run_by_name(
+        task_dict["name"], limit=n_runs, session=session
+    )
 
     if len(task_logs) == n_runs and all(
         log.status != TaskRunStatus.SUCCESS for log in task_logs
