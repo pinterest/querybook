@@ -50,7 +50,7 @@ github_integration:
 
 peer_review:
     enabled: true
-    request_texts:  # When users request reviews
+    request_texts: # When users request reviews
         description: |
             This peer review system helps ensure query quality and data safety.
 
@@ -60,13 +60,13 @@ peer_review:
             • Choose reviewers familiar with the affected data
             • Include relevant references in query title or justification
             • Document query purpose and impact
-        guide_link: 'https://www.querybook.org/'
+        guide_link: 'https://www.querybook.org/docs/user_guide/query_review/'
         tip: |
             Before Submitting:
             • Run query to verify syntax
             • Validate table names and fields
             • Check query performance
-    reviewer_texts:  # When reviewers take actions
+    reviewer_texts: # When reviewers take actions
         approve_message: |
             As a reviewer, you are responsible for validating:
 
