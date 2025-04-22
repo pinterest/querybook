@@ -50,23 +50,25 @@ github_integration:
 
 peer_review:
     enabled: true
-    request_texts:  # When users request reviews
+    request_texts: # When users request reviews
         description: |
             This peer review system helps ensure query quality and data safety.
 
-            Note: Queries that fail after approval will require a new review request.
+            **Note: Queries that fail after approval will require a new review request.**
 
-            Important Guidelines:
-            • Choose reviewers familiar with the affected data
-            • Include relevant references in query title or justification
-            • Document query purpose and impact
-        guide_link: 'https://www.querybook.org/'
+            **Important Guidelines**:
+
+            - Choose reviewers familiar with the affected data
+            - Include relevant references in query title or justification
+            - Document query purpose and impact
+        guide_link: 'https://www.querybook.org/docs/user_guide/query_review/'
         tip: |
             Before Submitting:
-            • Run query to verify syntax
-            • Validate table names and fields
-            • Check query performance
-    reviewer_texts:  # When reviewers take actions
+
+            - Run query to verify syntax
+            - Validate table names and fields
+            - Check query performance
+    reviewer_texts: # When reviewers take actions
         approve_message: |
             As a reviewer, you are responsible for validating:
 

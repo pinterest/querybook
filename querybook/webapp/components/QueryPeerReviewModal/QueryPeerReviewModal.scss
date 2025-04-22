@@ -33,32 +33,6 @@
             .main-description {
                 padding: 20px;
                 background: var(--bg);
-
-                .description-text {
-                    color: var(--text);
-                    font-size: var(--text-size);
-                    line-height: 1.6;
-                    white-space: pre-wrap;
-
-                    ul {
-                        list-style-type: none;
-                        padding-left: 0;
-                        margin: 12px 0;
-
-                        li {
-                            position: relative;
-                            padding-left: 20px;
-                            margin-bottom: 8px;
-
-                            &:before {
-                                content: "•";
-                                position: absolute;
-                                left: 0;
-                                color: var(--color-accent);
-                            }
-                        }
-                    }
-                }
             }
 
             .checklist-box {
@@ -70,25 +44,6 @@
                     color: var(--text);
                     font-size: var(--text-size);
                     line-height: 1.6;
-
-                    ul {
-                        list-style-type: none;
-                        padding-left: 0;
-                        margin: 12px 0;
-
-                        li {
-                            position: relative;
-                            padding-left: 20px;
-                            margin-bottom: 8px;
-
-                            &:before {
-                                content: "✓";
-                                position: absolute;
-                                left: 0;
-                                color: var(--color-true);
-                            }
-                        }
-                    }
                 }
 
                 .guide-link {
