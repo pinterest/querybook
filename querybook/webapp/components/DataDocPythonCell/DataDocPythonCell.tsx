@@ -1,18 +1,10 @@
-import { ReactCodeMirrorRef } from '@uiw/react-codemirror';
-import JsonView from '@uiw/react-json-view';
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { PythonEditor } from 'components/PythonEditor/PythonEditor';
-import { StatementResultTable } from 'components/StatementResultTable/StatementResultTable';
-import {
-    DataCellUpdateFields,
-    IDataCellMeta,
-    IDataPythonCellMeta,
-} from 'const/datadoc';
+import { DataCellUpdateFields, IDataPythonCellMeta } from 'const/datadoc';
 import { PythonExecutionStatus, PythonKernelStatus } from 'lib/python/types';
 import usePython from 'lib/python/usePython';
 import { KeyMap } from 'lib/utils/keyboard';
-import { PythonCellResource } from 'resource/pythonCell';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { Icon } from 'ui/Icon/Icon';
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
@@ -44,7 +36,6 @@ export const DataDocPythonCell = ({
     const {
         kernelStatus,
         runPython,
-        cancelRun,
         stdout,
         stderr,
         executionStatus,
@@ -118,7 +109,7 @@ export const DataDocPythonCell = ({
                     )}
                 </AccentText>
                 <div className="python-cell-controls">
-                    {isEditable && !isRunning && (
+                    {isEditable && (
                         <AsyncButton
                             className="run-button"
                             onClick={runPythonCode}
@@ -128,13 +119,6 @@ export const DataDocPythonCell = ({
                                 kernelStatus !== PythonKernelStatus.BUSY
                             }
                             color={'accent'}
-                        />
-                    )}
-                    {isEditable && isRunning && (
-                        <AsyncButton
-                            className="run-button"
-                            onClick={cancelRun}
-                            title="Canel"
                         />
                     )}
                 </div>

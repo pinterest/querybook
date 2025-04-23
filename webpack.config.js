@@ -54,11 +54,6 @@ function getDevServerSettings(env) {
                 changeOrigin: true,
             },
         },
-        // To enable SharedArrayBuffer for interrupting Pyodide in a Web Worker from the main thread
-        headers: {
-            "Cross-Origin-Opener-Policy": "same-origin",
-            "Cross-Origin-Embedder-Policy": "require-corp",
-        },
         publicPath: '/build/',
         onListening: (server) => {
             let firstTimeBuildComplete = true;

@@ -21,7 +21,6 @@ interface UsePythonProps {
 interface UsePythonReturn {
     kernelStatus: PythonKernelStatus;
     runPython: (code: string) => Promise<void>;
-    cancelRun: () => Promise<void>;
     createDataFrame: (
         dfName: string,
         statementExecutionId: number,
@@ -175,7 +174,6 @@ export default function usePython({
     return {
         kernelStatus,
         runPython: runPythonCode,
-        cancelRun: cancelRunPython,
         createDataFrame,
         stdout,
         stderr,

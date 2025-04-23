@@ -197,6 +197,10 @@ function PythonProvider({ children }: PythonProviderProps) {
      * Interrupting a running code execution is achieved using a shared buffer.
      * This operation must be performed on the main thread.
      * For more details, refer to https://pyodide.org/en/stable/usage/keyboard-interrupts.html
+     *
+     * The SharedArrayBuffer requires isolated cross-origin access,
+     * which will block cross-origin resources from being loaded.
+     * So we haven't really enabled the required CSP headers for this feature yet.
      */
     const cancelRun = useCallback(() => {
         if (sharedInterruptBuffer.current) {

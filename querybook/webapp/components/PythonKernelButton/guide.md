@@ -48,6 +48,10 @@ By default, Python output is rendered as plain text, similar to a standard Pytho
 -   **JSON**: Rendered as a visualized JSON view.
 -   **Plot images from matplotlib**: Rendered as PNG static images.
 
+## Canceling a Running Python Cell
+
+Canceling or interrupting a running Python cell is **not supported** due to browser security restrictions. If you need to terminate a long-running or stuck Python cell, you can simply reload the page to restart the Python kernel, which will also clear all current Python cell states.
+
 ## Scheduled DataDocs
 
 Since Python cells execute entirely on the client side within the browser, they will be skipped in Scheduled DataDoc runs. Only Query cells are supported for scheduling.
