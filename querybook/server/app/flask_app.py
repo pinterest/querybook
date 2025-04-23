@@ -60,11 +60,6 @@ def make_flask_app():
     @app.after_request
     def add_csp_header(response):
         response.headers["Content-Security-Policy"] = csp_header_value
-
-        # To enable SharedArrayBuffer for interrupting Pyodide in a Web Worker from the main thread
-        response.headers["Cross-Origin-Opener-Policy"] = "same-origin"
-        response.headers["Cross-Origin-Embedder-Policy"] = "require-corp"
-
         return response
 
     return app
