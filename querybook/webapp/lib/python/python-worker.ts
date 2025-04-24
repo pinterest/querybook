@@ -6,7 +6,6 @@ import type { PyProxy } from 'pyodide/ffi';
 
 import { patchPyodide } from './patch';
 import {
-    InterruptBufferStatus,
     PythonExecutionStatus,
     PythonKernel,
     PythonNamespaceInfo,
@@ -29,7 +28,6 @@ self.envirionment = '';
  */
 class PyodideKernel implements PythonKernel {
     public version = version;
-    public interruptBuffer: Uint8Array | null = null;
 
     private loadPyodidePromise: Promise<void> | null = null;
     private namespaces: Record<number, PyProxy> = {};
@@ -144,8 +142,6 @@ class PyodideKernel implements PythonKernel {
         stderrCallback?: (code: string) => void
     ): Promise<void> {
         progressCallback?.(PythonExecutionStatus.RUNNING);
-        // Reset interrupt buffer and set status
-        this.interruptBuffer[0] = InterruptBufferStatus.RESET;
 
         if (namespaceId !== undefined) {
             this.executionCountByNS[namespaceId] ??= 0;
@@ -216,10 +212,6 @@ class PyodideKernel implements PythonKernel {
             indexURL: INDEX_URL,
             packages: DEFAULT_PACKAGES,
         });
-
-        // Set up interrupt buffer
-        this.interruptBuffer = new Uint8Array(new SharedArrayBuffer(1));
-        this.pyodide.setInterruptBuffer(this.interruptBuffer);
 
         // Load additional packages if specified
         if (additionalPackages.length > 0) {

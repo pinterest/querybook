@@ -12,7 +12,6 @@ import { useSelector } from 'react-redux';
 import { currentEnvironmentSelector } from 'redux/environment/selector';
 
 import {
-    InterruptBufferStatus,
     PythonExecutionStatus,
     PythonKernel,
     PythonKernelStatus,
@@ -33,7 +32,6 @@ export interface PythonContextType {
         stdoutCallback?: (text: string) => void,
         stderrCallback?: (text: string) => void
     ) => Promise<void>;
-    cancelRun: () => void;
     createDataFrame: (
         dfName: string,
         statementExecutionId: number,
@@ -122,9 +120,6 @@ function PythonProvider({ children }: PythonProviderProps) {
             await kernel.initialize();
 
             kernelRef.current = kernel;
-            const sharedBuffer = await kernel.interruptBuffer;
-            sharedInterruptBuffer.current = sharedBuffer;
-
             setStatus(PythonKernelStatus.IDLE);
         } catch (error) {
             console.error('Error initializing Python kernel:', error);
@@ -151,6 +146,13 @@ function PythonProvider({ children }: PythonProviderProps) {
 
     /**
      * Run Python code in the specified namespace
+     *
+     * For running cancellation, it needs to use SharedArrayBuffer.
+     * SharedArrayBuffer requires isolated cross-origin access,
+     * which will block cross-origin resources from being loaded.
+     * So we haven't enabled this feature yet.
+     *
+     * For more details, refer to https://pyodide.org/en/stable/usage/keyboard-interrupts.html
      */
     const runPython = useCallback(
         async (
@@ -193,21 +195,6 @@ function PythonProvider({ children }: PythonProviderProps) {
         [initKernel, setStatus, updateKernelStatus]
     );
 
-    /**
-     * Interrupting a running code execution is achieved using a shared buffer.
-     * This operation must be performed on the main thread.
-     * For more details, refer to https://pyodide.org/en/stable/usage/keyboard-interrupts.html
-     *
-     * The SharedArrayBuffer requires isolated cross-origin access,
-     * which will block cross-origin resources from being loaded.
-     * So we haven't really enabled the required CSP headers for this feature yet.
-     */
-    const cancelRun = useCallback(() => {
-        if (sharedInterruptBuffer.current) {
-            sharedInterruptBuffer.current[0] = InterruptBufferStatus.SIGINT;
-        }
-    }, []);
-
     const getNamespaceInfo = useCallback(
         async (namespaceId: number): Promise<PythonNamespaceInfo> => {
             if (!kernelRef.current) {
@@ -225,7 +212,6 @@ function PythonProvider({ children }: PythonProviderProps) {
             value={{
                 kernelStatus: status,
                 runPython,
-                cancelRun,
                 createDataFrame: kernelRef.current?.createDataFrame,
                 getNamespaceInfo,
             }}
