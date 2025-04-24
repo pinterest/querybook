@@ -1,7 +1,9 @@
 import PythonLogoSvg from './python-logo.svg';
 import React, { useContext } from 'react';
 
+import { ComponentType, ElementType } from 'const/analytics';
 import { useToggleState } from 'hooks/useToggleState';
+import { trackClick } from 'lib/analytics';
 import { PythonContext } from 'lib/python/python-provider';
 import { PythonKernelStatus } from 'lib/python/types';
 import { Markdown } from 'ui/Markdown/Markdown';
@@ -32,7 +34,13 @@ export const PythonKernelButton = () => {
                 style={{
                     borderColor: BORDER_COLORS[kernelStatus],
                 }}
-                onClick={toggleShowModal}
+                onClick={() => {
+                    trackClick({
+                        component: ComponentType.DATADOC_PAGE,
+                        element: ElementType.PYTHON_KERNEL_BUTTON,
+                    });
+                    toggleShowModal();
+                }}
             >
                 <PythonLogoSvg width={20} height={20} />
                 <AccentText
