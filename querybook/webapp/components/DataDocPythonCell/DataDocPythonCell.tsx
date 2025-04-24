@@ -1,7 +1,9 @@
 import React, { useCallback, useMemo } from 'react';
 
 import { PythonEditor } from 'components/PythonEditor/PythonEditor';
+import { ComponentType, ElementType } from 'const/analytics';
 import { DataCellUpdateFields, IDataPythonCellMeta } from 'const/datadoc';
+import { trackClick } from 'lib/analytics';
 import { PythonExecutionStatus, PythonKernelStatus } from 'lib/python/types';
 import usePython from 'lib/python/usePython';
 import { KeyMap } from 'lib/utils/keyboard';
@@ -49,7 +51,6 @@ export const DataDocPythonCell = ({
     const [identifiers, setIdentifiers] = React.useState<
         { name: string; type: string }[]
     >([]);
-    const isRunning = executionStatus === PythonExecutionStatus.RUNNING;
 
     const fetchNamespaceIdentifiers = useCallback(async () => {
         const info = await getNamespaceInfo?.(docId);
@@ -59,6 +60,10 @@ export const DataDocPythonCell = ({
     }, [docId, getNamespaceInfo, setIdentifiers]);
 
     const runPythonCode = useCallback(async () => {
+        trackClick({
+            component: ComponentType.DATADOC_PYTHON_CELL,
+            element: ElementType.RUN_PYTHON_BUTTON,
+        });
         await runPython(context);
     }, [runPython, context]);
 
