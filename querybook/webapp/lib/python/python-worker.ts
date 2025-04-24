@@ -6,7 +6,6 @@ import type { PyProxy } from 'pyodide/ffi';
 
 import { patchPyodide } from './patch';
 import {
-    InterruptBufferStatus,
     PythonExecutionStatus,
     PythonKernel,
     PythonNamespaceInfo,
@@ -29,7 +28,6 @@ self.envirionment = '';
  */
 class PyodideKernel implements PythonKernel {
     public version = version;
-    public interruptBuffer: Uint8Array | null = null;
 
     private loadPyodidePromise: Promise<void> | null = null;
     private namespaces: Record<number, PyProxy> = {};
@@ -88,23 +86,6 @@ class PyodideKernel implements PythonKernel {
     }
 
     /**
-     * Create a DataFrame in the specified namespace
-     */
-    public async createDataFrame(
-        dfName: string,
-        statementExecutionId: number,
-        namespaceId: number
-    ): Promise<void> {
-        this._ensurePyodide();
-
-        const namespace = this._getNamespace(namespaceId);
-        const df = await this.pyodide.globals.get('get_df')(
-            statementExecutionId
-        );
-        namespace.set(dfName, df);
-    }
-
-    /**
      * Get the namespace information for a given namespace
      */
     public async getNamespaceInfo(namespaceId: number): Promise<string> {
@@ -144,8 +125,6 @@ class PyodideKernel implements PythonKernel {
         stderrCallback?: (code: string) => void
     ): Promise<void> {
         progressCallback?.(PythonExecutionStatus.RUNNING);
-        // Reset interrupt buffer and set status
-        this.interruptBuffer[0] = InterruptBufferStatus.RESET;
 
         if (namespaceId !== undefined) {
             this.executionCountByNS[namespaceId] ??= 0;
@@ -216,10 +195,6 @@ class PyodideKernel implements PythonKernel {
             indexURL: INDEX_URL,
             packages: DEFAULT_PACKAGES,
         });
-
-        // Set up interrupt buffer
-        this.interruptBuffer = new Uint8Array(new SharedArrayBuffer(1));
-        this.pyodide.setInterruptBuffer(this.interruptBuffer);
 
         // Load additional packages if specified
         if (additionalPackages.length > 0) {

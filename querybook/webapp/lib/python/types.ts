@@ -46,11 +46,6 @@ export interface PythonNamespaceInfo {
     identifiers: PythonIdentifierInfo[];
 }
 
-export enum InterruptBufferStatus {
-    RESET = 0, // Reset
-    SIGINT = 2, // Interrupt the execution
-}
-
 // Keep it consistent with the backend python type `lib.data_doc.data_cell.PythonOutputType`
 export type PythonOutputType =
     | {
@@ -74,11 +69,6 @@ export type PythonOutputType =
  * Interface representing a Python kernel for executing Python code and managing namespaces.
  */
 export interface PythonKernel {
-    /**
-     * The shared interrupt buffer used to cancel the current execution
-     */
-    interruptBuffer: Uint8Array | null;
-
     /**
      * The version of the Python kernel.
      */
@@ -114,20 +104,6 @@ export interface PythonKernel {
         ) => void,
         stdoutCallback?: (text: string) => void,
         stderrCallback?: (text: string) => void
-    ) => Promise<void>;
-
-    /**
-     * Creates a DataFrame in the specified namespace.
-     *
-     * @param dfName - The name of the DataFrame to create.
-     * @param statementExecutionId - The ID of the statement execution that created the DataFrame.
-     * @param namespaceId - The ID of the namespace where the DataFrame will be created.
-     * @returns A promise that resolves when the DataFrame is created.
-     */
-    createDataFrame: (
-        dfName: string,
-        statementExecutionId: number,
-        namespaceId: number
     ) => Promise<void>;
 
     /**

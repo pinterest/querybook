@@ -21,11 +21,6 @@ interface UsePythonProps {
 interface UsePythonReturn {
     kernelStatus: PythonKernelStatus;
     runPython: (code: string) => Promise<void>;
-    createDataFrame: (
-        dfName: string,
-        statementExecutionId: number,
-        namespaceId?: number
-    ) => Promise<void>;
     stdout: PythonOutputType[];
     stderr: string | null;
     executionStatus: PythonExecutionStatus;
@@ -44,15 +39,9 @@ export default function usePython({
     const [executionStatus, setExecutionStatus] =
         useState<PythonExecutionStatus>();
     const [executionCount, setExecutionCount] = useState<number>();
-    const cancelPromiseResolveRef = useRef<() => void>(null);
 
-    const {
-        kernelStatus,
-        runPython,
-        cancelRun,
-        createDataFrame,
-        getNamespaceInfo,
-    } = useContext(PythonContext);
+    const { kernelStatus, runPython, getNamespaceInfo } =
+        useContext(PythonContext);
 
     useEffect(() => {
         if (cellId) {
@@ -95,14 +84,6 @@ export default function usePython({
         ) => {
             setExecutionStatus(status);
             setExecutionCount(data?.executionCount);
-
-            if (
-                cancelPromiseResolveRef.current &&
-                status === PythonExecutionStatus.CANCEL
-            ) {
-                cancelPromiseResolveRef.current();
-                cancelPromiseResolveRef.current = null;
-            }
         },
         [setExecutionCount, setExecutionStatus]
     );
@@ -164,17 +145,9 @@ export default function usePython({
         [setStdout, setStdout, runPython, docId, stdoutCallback, stderrCallback]
     );
 
-    const cancelRunPython = useCallback((): Promise<void> => {
-        return new Promise((resolve) => {
-            cancelRun();
-            cancelPromiseResolveRef.current = resolve;
-        });
-    }, [cancelRun]);
-
     return {
         kernelStatus,
         runPython: runPythonCode,
-        createDataFrame,
         stdout,
         stderr,
         executionStatus,
