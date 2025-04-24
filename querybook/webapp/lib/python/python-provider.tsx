@@ -32,11 +32,6 @@ export interface PythonContextType {
         stdoutCallback?: (text: string) => void,
         stderrCallback?: (text: string) => void
     ) => Promise<void>;
-    createDataFrame: (
-        dfName: string,
-        statementExecutionId: number,
-        namespaceId?: number
-    ) => Promise<void>;
     getNamespaceInfo: (namespaceId: number) => Promise<PythonNamespaceInfo>;
 }
 
@@ -212,7 +207,6 @@ function PythonProvider({ children }: PythonProviderProps) {
             value={{
                 kernelStatus: status,
                 runPython,
-                createDataFrame: kernelRef.current?.createDataFrame,
                 getNamespaceInfo,
             }}
         >

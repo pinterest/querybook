@@ -86,23 +86,6 @@ class PyodideKernel implements PythonKernel {
     }
 
     /**
-     * Create a DataFrame in the specified namespace
-     */
-    public async createDataFrame(
-        dfName: string,
-        statementExecutionId: number,
-        namespaceId: number
-    ): Promise<void> {
-        this._ensurePyodide();
-
-        const namespace = this._getNamespace(namespaceId);
-        const df = await this.pyodide.globals.get('get_df')(
-            statementExecutionId
-        );
-        namespace.set(dfName, df);
-    }
-
-    /**
      * Get the namespace information for a given namespace
      */
     public async getNamespaceInfo(namespaceId: number): Promise<string> {

@@ -21,11 +21,6 @@ interface UsePythonProps {
 interface UsePythonReturn {
     kernelStatus: PythonKernelStatus;
     runPython: (code: string) => Promise<void>;
-    createDataFrame: (
-        dfName: string,
-        statementExecutionId: number,
-        namespaceId?: number
-    ) => Promise<void>;
     stdout: PythonOutputType[];
     stderr: string | null;
     executionStatus: PythonExecutionStatus;
@@ -45,7 +40,7 @@ export default function usePython({
         useState<PythonExecutionStatus>();
     const [executionCount, setExecutionCount] = useState<number>();
 
-    const { kernelStatus, runPython, createDataFrame, getNamespaceInfo } =
+    const { kernelStatus, runPython, getNamespaceInfo } =
         useContext(PythonContext);
 
     useEffect(() => {
@@ -153,7 +148,6 @@ export default function usePython({
     return {
         kernelStatus,
         runPython: runPythonCode,
-        createDataFrame,
         stdout,
         stderr,
         executionStatus,

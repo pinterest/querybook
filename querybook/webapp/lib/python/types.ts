@@ -107,20 +107,6 @@ export interface PythonKernel {
     ) => Promise<void>;
 
     /**
-     * Creates a DataFrame in the specified namespace.
-     *
-     * @param dfName - The name of the DataFrame to create.
-     * @param statementExecutionId - The ID of the statement execution that created the DataFrame.
-     * @param namespaceId - The ID of the namespace where the DataFrame will be created.
-     * @returns A promise that resolves when the DataFrame is created.
-     */
-    createDataFrame: (
-        dfName: string,
-        statementExecutionId: number,
-        namespaceId: number
-    ) => Promise<void>;
-
-    /**
      * Retrieves information about the specified namespace, including the execution count and identifiers.
      *
      * @param namespaceId - The ID of the namespace.
