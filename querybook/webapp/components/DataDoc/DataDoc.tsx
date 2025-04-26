@@ -109,8 +109,6 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
     public matchDatadocPath() {
         return !!matchPath(location.pathname, {
             path: '/:env/datadoc/:docId/',
-            exact: true,
-            strict: false,
         });
     }
 
