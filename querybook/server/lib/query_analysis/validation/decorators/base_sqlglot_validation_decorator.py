@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import List, Tuple
+from typing import List
 from sqlglot import Tokenizer
 from sqlglot.tokens import Token
 
@@ -11,6 +11,7 @@ from lib.query_analysis.validation.base_query_validator import (
 from lib.query_analysis.validation.decorators.base_validation_decorator import (
     BaseValidationDecorator,
 )
+from lib.query_analysis.validation.utils import get_query_coordinate_by_index
 
 
 class BaseSQLGlotValidationDecorator(BaseValidationDecorator):
@@ -32,16 +33,6 @@ class BaseSQLGlotValidationDecorator(BaseValidationDecorator):
     def _tokenize_query(self, query: str) -> List[Token]:
         return self.tokenizer.tokenize(query)
 
-    def _get_query_coordinate_by_index(self, query: str, index: int) -> Tuple[int, int]:
-        rows = query[: index + 1].splitlines(keepends=False)
-        return len(rows) - 1, len(rows[-1]) - 1
-
-    def _get_query_index_by_coordinate(
-        self, query: str, start_line: int, start_ch: int
-    ) -> int:
-        rows = query.splitlines(keepends=True)[:start_line]
-        return sum([len(row) for row in rows]) + start_ch
-
     def _get_query_validation_result(
         self,
         query: str,
@@ -53,8 +44,8 @@ class BaseSQLGlotValidationDecorator(BaseValidationDecorator):
     ):
         if message is None:
             message = self.message
-        start_line, start_ch = self._get_query_coordinate_by_index(query, start_index)
-        end_line, end_ch = self._get_query_coordinate_by_index(query, end_index)
+        start_line, start_ch = get_query_coordinate_by_index(query, start_index)
+        end_line, end_ch = get_query_coordinate_by_index(query, end_index)
 
         return QueryValidationResult(
             start_line,
