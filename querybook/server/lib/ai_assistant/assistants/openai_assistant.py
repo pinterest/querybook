@@ -17,8 +17,11 @@ OPENAI_MODEL_CONTEXT_WINDOW_SIZE = {
     # Current models
     "gpt-4o": 128000,
     "gpt-4o-mini": 128000,
+    "gpt-4.1": 1_047_576,
+    "gpt-4.1-mini": 1_047_576,
+    "gpt-4.1-nano": 1_047_576,
 }
-DEFAULT_MODEL_NAME = "gpt-4o-mini"
+DEFAULT_MODEL_NAME = "gpt-4.1-mini"
 
 
 class OpenAIAssistant(BaseAIAssistant):
@@ -45,7 +48,11 @@ class OpenAIAssistant(BaseAIAssistant):
 
     def _get_token_count(self, ai_command: str, prompt: str) -> int:
         model_name = self._get_llm_config(ai_command)["model_name"]
-        encoding = tiktoken.encoding_for_model(model_name)
+        if model_name.startswith("gpt-4.1"):
+            encoding = tiktoken.get_encoding("o200k_base")
+        else:
+            encoding = tiktoken.encoding_for_model(model_name)
+
         return len(encoding.encode(prompt))
 
     def _get_error_msg(self, error) -> str:

@@ -254,8 +254,25 @@ class BaseAIAssistant(ABC):
             session=session,
         )
 
+        self._generate_sql_query(
+            language=query_engine.language,
+            question=question,
+            table_schemas=table_schemas,
+            original_query=original_query,
+            socket=socket,
+        )
+
+    def _generate_sql_query(
+        self,
+        language: str,
+        question: str,
+        table_schemas: list[str],
+        original_query: str = None,
+        socket=None,
+    ):
+        """Override this method to implement your own SQL generation logic."""
         prompt = self._get_text_to_sql_prompt(
-            dialect=query_engine.language,
+            dialect=language,
             question=question,
             table_schemas=table_schemas,
             original_query=original_query,
@@ -314,10 +331,29 @@ class BaseAIAssistant(ABC):
         query = query_execution.query
         language = query_execution.engine.language
 
+        self._query_auto_fix(
+            socket=socket,
+            metastore_id=query_execution.engine.metastore_id,
+            language=language,
+            query=query,
+            error=self._get_query_execution_error(query_execution),
+            session=session,
+        )
+
+    @with_session
+    def _query_auto_fix(
+        self,
+        socket,
+        metastore_id: int,
+        language: str,
+        query: str,
+        error: str,
+        session=None,
+    ):
+        """Override this method to implement your own query auto fix logic."""
         # get table names
         table_names, _ = process_query(query=query, language=language)
 
-        metastore_id = query_execution.engine.metastore_id
         table_schemas = get_table_schemas_by_names(
             metastore_id=metastore_id,
             full_table_names=[
@@ -326,11 +362,10 @@ class BaseAIAssistant(ABC):
             should_skip_column=self._should_skip_column,
             session=session,
         )
-
         prompt = self._get_sql_fix_prompt(
             dialect=language,
-            query=query_execution.query,
-            error=self._get_query_execution_error(query_execution),
+            query=query,
+            error=error,
             table_schemas=table_schemas,
         )
         llm = self._get_llm(
@@ -410,9 +445,15 @@ class BaseAIAssistant(ABC):
 
     @with_session
     def find_tables(self, metastore_id, question, session=None):
-        """Search similar tables from vector store first, and then ask LLM to select most suitable tables for the question.
+        """Find relevant tables for the provided question.
 
-        It will return at most `DEFAULT_TABLE_SELECT_LIMIT` tables by default.
+        This is the default implementation of the `find_tables` method.
+
+        The method first searches for similar tables in the vector store
+        and then utilizes an LLM to select the most appropriate tables for the question.
+        By default, it returns up to `DEFAULT_TABLE_SELECT_LIMIT` tables.
+
+        You can override this method to customize the table selection logic.
         """
         try:
             tables = get_vector_store().search_tables(
