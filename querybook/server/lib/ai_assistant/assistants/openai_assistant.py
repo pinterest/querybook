@@ -48,6 +48,8 @@ class OpenAIAssistant(BaseAIAssistant):
 
     def _get_token_count(self, ai_command: str, prompt: str) -> int:
         model_name = self._get_llm_config(ai_command)["model_name"]
+        # tiktoken hasn't been upgraded to support gpt-4.1 models
+        # https://github.com/openai/tiktoken/issues/395
         if model_name.startswith("gpt-4.1"):
             encoding = tiktoken.get_encoding("o200k_base")
         else:

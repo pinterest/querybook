@@ -264,11 +264,12 @@ class BaseAIAssistant(ABC):
 
     def _generate_sql_query(
         self,
+        *,
         language: str,
         question: str,
         table_schemas: list[str],
         original_query: str = None,
-        socket=None,
+        socket,
     ):
         """Override this method to implement your own SQL generation logic."""
         prompt = self._get_text_to_sql_prompt(
@@ -343,11 +344,12 @@ class BaseAIAssistant(ABC):
     @with_session
     def _query_auto_fix(
         self,
-        socket,
+        *,
         metastore_id: int,
         language: str,
         query: str,
         error: str,
+        socket,
         session=None,
     ):
         """Override this method to implement your own query auto fix logic."""
