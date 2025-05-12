@@ -10,7 +10,7 @@ repos:
           - id: check-added-large-files
             args: ['--maxkb=10000']
     - repo: https://github.com/psf/black
-      rev: 22.3.0
+      rev: 25.1.0
       hooks:
           - id: black
             files: "^querybook/(server|tests)/.*\\.py$"
