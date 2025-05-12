@@ -202,7 +202,7 @@ def batch_get_data_cell_executions(cell_ids):
         verify_data_cells_permission(cell_ids, session=session)
         cells_executions = logic.get_data_cells_executions(cell_ids, session=session)
         data_cell_executions = []
-        for (cell_id, executions) in cells_executions:
+        for cell_id, executions in cells_executions:
             latest_execution = None
             if executions:
                 latest_execution = executions[0]

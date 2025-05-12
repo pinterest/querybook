@@ -74,9 +74,9 @@ class GoogleReader(BaseReader):
     def get_download_url(self, custom_name=None):
         signed_url_params = {}
         if custom_name is not None:
-            signed_url_params[
-                "response_disposition"
-            ] = f'attachment; filename="{custom_name}"'
+            signed_url_params["response_disposition"] = (
+                f'attachment; filename="{custom_name}"'
+            )
 
         key_signer = GoogleKeySigner(QuerybookSettings.STORE_BUCKET_NAME)
         download_url = key_signer.generate_presigned_url(

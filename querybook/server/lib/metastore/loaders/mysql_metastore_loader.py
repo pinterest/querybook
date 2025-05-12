@@ -37,13 +37,17 @@ class MysqlMetastoreLoader(SqlAlchemyMetastoreLoader):
             name=table_name,
             type=raw_table_info[0],
             owner=None,
-            table_created_at=DATETIME_TO_UTC(raw_table_info[1])
-            if raw_table_info[1] is not None
-            else None,
+            table_created_at=(
+                DATETIME_TO_UTC(raw_table_info[1])
+                if raw_table_info[1] is not None
+                else None
+            ),
             table_updated_by=None,
-            table_updated_at=DATETIME_TO_UTC(raw_table_info[2])
-            if raw_table_info[2] is not None
-            else None,
+            table_updated_at=(
+                DATETIME_TO_UTC(raw_table_info[2])
+                if raw_table_info[2] is not None
+                else None
+            ),
             data_size_bytes=raw_table_info[3],
             location=None,
             partitions=None,

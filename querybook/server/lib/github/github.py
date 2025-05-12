@@ -38,9 +38,9 @@ class GitHubManager(GitHubLoginManager):
     def oauth_config(self) -> Dict[str, Any]:
         config = super().oauth_config
         config["scope"] = "user email " + " ".join(self.additional_scopes)
-        config[
-            "callback_url"
-        ] = f"{QuerybookSettings.PUBLIC_URL}{GITHUB_OAUTH_CALLBACK}"
+        config["callback_url"] = (
+            f"{QuerybookSettings.PUBLIC_URL}{GITHUB_OAUTH_CALLBACK}"
+        )
         if self._client_id:
             config["client_id"] = self._client_id
         if self._client_secret:
