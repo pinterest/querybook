@@ -521,24 +521,56 @@ def get_detailed_column_dict(column: DataTableColumn, with_table=False, session=
     column_dict["tags"] = tag_logic.get_tags_by_column_id(
         column_id=column.id, session=session
     )
-    column_dict[
-        "data_element_association"
-    ] = data_element_logic.get_data_element_association_by_column_id(
-        column.id, session=session
+    column_dict["data_element_association"] = (
+        data_element_logic.get_data_element_association_by_column_id(
+            column.id, session=session
+        )
     )
     return column_dict
 
 
 @with_session
-def get_detailed_columns_dict_by_table_id(table_id, session=None):
+def get_detailed_columns_dict_by_table_id(table_id: int, session=None):
+    """Get detailed information for all columns of a table in a single efficient query.
+
+    This function uses batch loading to retrieve related data for all columns at once,
+    rather than making separate queries for each column.
+    """
+    from logic import tag as tag_logic
+
+    # Get all columns in a single query
     data_table_columns = (
         session.query(DataTableColumn)
         .filter(DataTableColumn.table_id == table_id)
         .all()
     )
+
+    if not data_table_columns:
+        return []
+
+    column_ids = [col.id for col in data_table_columns]
+
+    # Batch get all tags for these columns in a single query
+    all_column_tags = tag_logic.get_tags_by_column_ids(column_ids, session=session)
+
+    # Batch get all data element associations in a single query
+    all_data_element_associations = (
+        data_element_logic.get_data_element_associations_by_column_ids(
+            column_ids, session=session
+        )
+    )
+
+    # Assemble the results
     columns_info = []
     for col in data_table_columns:
-        columns_info.append(get_detailed_column_dict(col, session=session))
+        column_dict = col.to_dict()
+        column_dict["stats"] = [stat.to_dict() for stat in col.statistics]
+        column_dict["tags"] = all_column_tags.get(col.id, [])
+        column_dict["data_element_association"] = all_data_element_associations.get(
+            col.id
+        )
+        columns_info.append(column_dict)
+
     return columns_info
 
 

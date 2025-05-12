@@ -78,6 +78,53 @@ def get_data_element_association_by_column_id(
 
 
 @with_session
+def get_data_element_associations_by_column_ids(column_ids: list[int], session=None):
+    """Get all data element associations for multiple columns at once, organized by column_id
+
+    It retrieves associations for multiple columns in a single query.
+    """
+    if not column_ids:
+        return {}
+
+    # Get all associations in a single query
+    associations = (
+        session.query(DataElementAssociation)
+        .filter(DataElementAssociation.column_id.in_(column_ids))
+        .all()
+    )
+
+    # Group associations by column_id
+    grouped_associations = {}
+    for association in associations:
+        if association.column_id not in grouped_associations:
+            grouped_associations[association.column_id] = []
+        grouped_associations[association.column_id].append(association)
+
+    # Process each column's associations into the expected format
+    result = {}
+    for column_id, column_associations in grouped_associations.items():
+        # Check for multiple association types (error case)
+        association_types = set([r.type for r in column_associations])
+        if len(association_types) > 1:
+            LOG.error(
+                f"Column {column_id} has more than one data element associated with it"
+            )
+            continue
+
+        # Create the data element dictionary for this column
+        data_element = {}
+        for row in column_associations:
+            data_element["type"] = row.type.value
+            data_element[row.property_name] = (
+                row.data_element if row.data_element else row.primitive_type
+            )
+
+        result[column_id] = data_element
+
+    return result
+
+
+@with_session
 def create_or_update_data_element(
     metastore_id: int, data_element_tuple: DataElementTuple, commit=True, session=None
 ):
