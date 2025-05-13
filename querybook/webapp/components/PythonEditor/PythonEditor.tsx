@@ -25,6 +25,7 @@ interface IDataDocPythonCellProps {
     readonly?: boolean;
     onChange: (value: string) => void;
     onFocus?: () => void;
+    onBlur?: () => void;
 }
 
 export const PythonEditor = ({
@@ -37,6 +38,7 @@ export const PythonEditor = ({
     readonly = false,
     onChange,
     onFocus,
+    onBlur,
 }: IDataDocPythonCellProps) => {
     const editorRef = React.useRef<ReactCodeMirrorRef>();
     const statusBarDomRef = React.useRef<HTMLDivElement>();
@@ -81,6 +83,7 @@ export const PythonEditor = ({
                 keyBindings={keyBindings}
                 onChange={onChange}
                 onFocus={onFocus}
+                onBlur={onBlur}
                 extensions={extensions}
                 readonly={readonly}
             />

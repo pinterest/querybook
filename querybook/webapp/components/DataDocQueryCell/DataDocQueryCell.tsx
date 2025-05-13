@@ -292,6 +292,17 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             if (this.props.onBlur) {
                 this.props.onBlur();
             }
+
+            trackClick({
+                component: ComponentType.DATADOC_QUERY_CELL,
+                element: ElementType.QUERY_EDITOR,
+                aux: {
+                    docId: this.props.docId,
+                    cellId: this.props.cellId,
+                    action: 'blur',
+                    query: this.state.query,
+                },
+            });
         }
     }
 
@@ -301,6 +312,17 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             if (this.props.onFocus) {
                 this.props.onFocus();
             }
+
+            trackClick({
+                component: ComponentType.DATADOC_QUERY_CELL,
+                element: ElementType.QUERY_EDITOR,
+                aux: {
+                    docId: this.props.docId,
+                    cellId: this.props.cellId,
+                    action: 'focus',
+                    query: this.state.query,
+                },
+            });
         }
     }
 
