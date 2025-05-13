@@ -1,3 +1,4 @@
+from collections import defaultdict
 import datetime
 
 from app.db import with_session
@@ -30,7 +31,7 @@ def get_tags_by_column_id(column_id: int, session=None):
 
 
 @with_session
-def get_tags_by_column_ids(column_ids: int, session=None):
+def get_tags_by_column_ids(column_ids: list[int], session=None) -> dict[int, list[Tag]]:
     """Get all tags for multiple columns at once, organized by column_id"""
     if not column_ids:
         return {}
@@ -45,10 +46,8 @@ def get_tags_by_column_ids(column_ids: int, session=None):
     )
 
     # Organize results by column_id
-    tags_by_column = {}
+    tags_by_column = defaultdict(list)
     for tag, column_id in tag_results:
-        if column_id not in tags_by_column:
-            tags_by_column[column_id] = []
         tags_by_column[column_id].append(tag)
 
     return tags_by_column

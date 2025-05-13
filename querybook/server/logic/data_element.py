@@ -78,7 +78,9 @@ def get_data_element_association_by_column_id(
 
 
 @with_session
-def get_data_element_associations_by_column_ids(column_ids: list[int], session=None):
+def get_column_to_data_element_mapping(
+    column_ids: list[int], session=None
+) -> dict[int, DataElementAssociationDict]:
     """Get all data element associations for multiple columns at once, organized by column_id
 
     It retrieves associations for multiple columns in a single query.

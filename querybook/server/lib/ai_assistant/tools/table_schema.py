@@ -1,4 +1,5 @@
-from typing import Callable
+from collections import defaultdict
+from typing import Any, Callable, Optional, TypedDict
 
 
 from sqlalchemy import and_, or_
@@ -13,31 +14,53 @@ from models.metastore import (
 from models.tag import TagItem
 
 
-def _get_column(column: DataTableColumn) -> dict[str, str]:
-    column_json = {}
+class ColumnInfo(TypedDict):
+    name: str
+    type: str
+    description: Optional[str]
+    data_element: Optional[str]
+    statistics: Optional[list[dict[str, Any]]]
 
-    column_json["name"] = column.name
-    column_json["type"] = column.type
+
+class TagInfo(TypedDict):
+    type: str
+    name: str
+
+
+class TableSchema(TypedDict):
+    table_name: str
+    table_description: str
+    latest_partitions: Optional[list[str]]
+    column_info: Optional[Any]
+    tags: list[TagInfo]
+    columns: list[ColumnInfo]
+
+
+def _get_column(column: DataTableColumn) -> ColumnInfo:
+    column_info: ColumnInfo = {}
+
+    column_info["name"] = column.name
+    column_info["type"] = column.type
     if column.description:
-        column_json["description"] = column.description
+        column_info["description"] = column.description
     elif column.data_elements:
         # use data element's description when column's description is empty
         # TODO: only handling the REF data element for now. Need to handle ARRAY, MAP and etc in the future.
-        column_json["description"] = column.data_elements[0].description
-        column_json["data_element"] = column.data_elements[0].name
+        column_info["description"] = column.data_elements[0].description
+        column_info["data_element"] = column.data_elements[0].name
 
     if len(column.statistics):
-        column_json["statistics"] = {
+        column_info["statistics"] = {
             stat.key: stat.value for stat in column.statistics if stat.value is not None
         }
 
-    return column_json
+    return column_info
 
 
 def _get_table_schema(
     table: DataTable,
     should_skip_column: Callable[[DataTableColumn], bool] = None,
-) -> dict:
+) -> TableSchema:
     """Generate table schema prompt. The format will be like:
 
     Table Name: [Name_of_table_1]
@@ -54,13 +77,13 @@ def _get_table_schema(
     if not table:
         return {}
 
-    table_json = {}
+    table_schema: TableSchema = {}
 
-    table_json["table_name"] = f"{table.data_schema.name}.{table.name}"
-    table_json["table_description"] = table.information.description
-    table_json["latest_partitions"] = table.information.latest_partitions
-    table_json["column_info"] = table.information.column_info
-    table_json["tags"] = [
+    table_schema["table_name"] = f"{table.data_schema.name}.{table.name}"
+    table_schema["table_description"] = table.information.description
+    table_schema["latest_partitions"] = table.information.latest_partitions
+    table_schema["column_info"] = table.information.column_info
+    table_schema["tags"] = [
         {"type": tag.tag.meta.get("type"), "name": tag.tag_name} for tag in table.tags
     ]
 
@@ -71,8 +94,8 @@ def _get_table_schema(
 
         columns.append(_get_column(column))
 
-    table_json["columns"] = columns
-    return table_json
+    table_schema["columns"] = columns
+    return table_schema
 
 
 @with_session
@@ -80,7 +103,7 @@ def get_table_schema_by_id(
     table_id: int,
     should_skip_column: Callable[[DataTableColumn], bool] = None,
     session=None,
-) -> dict:
+) -> TableSchema:
     """Generate table schema prompt by table id"""
     table = m_logic.get_table_by_id(table_id=table_id, session=session)
     return _get_table_schema(table, should_skip_column)
@@ -91,7 +114,7 @@ def get_table_schemas_by_ids(
     table_ids: list[int],
     should_skip_column: Callable[[DataTableColumn], bool] = None,
     session=None,
-) -> list[dict]:
+) -> list[TableSchema]:
     """Generate table schemas prompt by table ids"""
     return [
         get_table_schema_by_id(
@@ -109,7 +132,7 @@ def get_table_schemas_by_names(
     full_table_names: list[str],
     should_skip_column: Callable[[DataTableColumn], bool] = None,
     session=None,
-) -> list[dict]:
+) -> list[TableSchema | None]:
     """Retrieve table schemas for specified tables in a metastore.
 
     This function fetches table schemas for a list of fully qualified table names
@@ -151,9 +174,6 @@ def get_table_schemas_by_names(
             and_(DataSchema.name == schema_name, DataTable.name == table_name)
         )
 
-    if not conditions:
-        return []
-
     # STEP 1: Get just the basic table data with schema and information
     tables = (
         session.query(DataTable)
@@ -191,10 +211,8 @@ def get_table_schemas_by_names(
     )
 
     # Group columns by table_id
-    columns_by_table = {}
+    columns_by_table = defaultdict(list)
     for col in column_data:
-        if col.table_id not in columns_by_table:
-            columns_by_table[col.table_id] = []
         columns_by_table[col.table_id].append(col)
 
     # STEP 3: Load tags in a separate query
@@ -241,7 +259,7 @@ def get_table_schema_by_name(
     full_table_name: str,
     should_skip_column: Callable[[DataTableColumn], bool] = None,
     session=None,
-) -> dict:
+) -> TableSchema:
     """Generate table schema prompt by full table name"""
     table_schemas = get_table_schemas_by_names(
         metastore_id=metastore_id,
@@ -255,7 +273,7 @@ def get_table_schema_by_name(
 
 def get_slimmed_table_schemas(
     table_schemas: list[dict], column_keys_to_keep=["name", "type"]
-) -> list[dict]:
+) -> list[TableSchema]:
     """Get a slimmed version of the table schemas, which will only keep below fields:
     - table_name
     - table_description

@@ -555,7 +555,7 @@ def get_detailed_columns_dict_by_table_id(table_id: int, session=None):
 
     # Batch get all data element associations in a single query
     all_data_element_associations = (
-        data_element_logic.get_data_element_associations_by_column_ids(
+        data_element_logic.get_column_to_data_element_mapping(
             column_ids, session=session
         )
     )
