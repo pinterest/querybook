@@ -253,22 +253,34 @@ def get_table_schema_by_name(
     return table_schemas[0] if table_schemas else {}
 
 
-def get_slimmed_table_schemas(table_schemas: list[dict]) -> list[dict]:
+def get_slimmed_table_schemas(
+    table_schemas: list[dict], column_keys_to_keep=["name", "type"]
+) -> list[dict]:
     """Get a slimmed version of the table schemas, which will only keep below fields:
     - table_name
+    - table_description
+    - table_tier
     - columns:
         name
         type
     """
-    column_keys_to_keep = ["name", "type"]
 
     return [
         {
             "table_name": schema["table_name"],
-            "columns": [
-                {k: c[k] for k in column_keys_to_keep if k in c}
-                for c in schema["columns"]
-            ],
+            "table_description": schema["table_description"],
+            "table_tier": next(
+                (tag["name"] for tag in schema["tags"] if tag["type"] == "TABLE_TIER"),
+                None,
+            ),
+            # use a compact format for columns to save tokens
+            "columns": {
+                "properties": column_keys_to_keep,
+                "data": [
+                    tuple(c.get(k) for k in column_keys_to_keep in c)
+                    for c in schema["columns"]
+                ],
+            },
         }
         for schema in table_schemas
     ]
