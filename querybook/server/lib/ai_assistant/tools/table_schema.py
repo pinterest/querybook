@@ -76,7 +76,7 @@ def _get_column(column: DataTableColumn) -> ColumnInfo:
 def _get_table_schema(
     table: DataTable,
     should_skip_column: Optional[Callable[[DataTableColumn], bool]] = None,
-) -> TableSchema | None:
+) -> Optional[TableSchema]:
     """Generate table schema prompt. The format will be like:
 
     Table Name: [Name_of_table_1]
@@ -121,7 +121,7 @@ def get_table_schema_by_id(
     table_id: int,
     should_skip_column: Optional[Callable[[DataTableColumn], bool]] = None,
     session=None,
-) -> TableSchema | None:
+) -> Optional[TableSchema]:
     """Generate table schema prompt by table id"""
     table = m_logic.get_table_by_id(table_id=table_id, session=session)
     return _get_table_schema(table, should_skip_column)
@@ -132,7 +132,7 @@ def get_table_schemas_by_ids(
     table_ids: list[int],
     should_skip_column: Optional[Callable[[DataTableColumn], bool]] = None,
     session=None,
-) -> list[TableSchema | None]:
+) -> list[Optional[TableSchema]]:
     """Generate table schemas prompt by table ids"""
     return [
         get_table_schema_by_id(
@@ -150,7 +150,7 @@ def get_table_schemas_by_names(
     full_table_names: list[str],
     should_skip_column: Optional[Callable[[DataTableColumn], bool]] = None,
     session=None,
-) -> list[TableSchema | None]:
+) -> list[Optional[TableSchema]]:
     """Retrieve table schemas for specified tables in a metastore.
 
     This function fetches table schemas for a list of fully qualified table names
@@ -277,7 +277,7 @@ def get_table_schema_by_name(
     full_table_name: str,
     should_skip_column: Optional[Callable[[DataTableColumn], bool]] = None,
     session=None,
-) -> TableSchema | None:
+) -> Optional[TableSchema]:
     """Generate table schema prompt by full table name"""
     table_schemas = get_table_schemas_by_names(
         metastore_id=metastore_id,
