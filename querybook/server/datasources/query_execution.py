@@ -382,9 +382,9 @@ def download_statement_execution_result(statement_execution_id):
             raw = reader.read_raw()
             response = Response(raw)
             response.headers["Content-Type"] = "text/csv"
-            response.headers[
-                "Content-Disposition"
-            ] = f'attachment; filename="{download_file_name}"'
+            response.headers["Content-Disposition"] = (
+                f'attachment; filename="{download_file_name}"'
+            )
         return response
 
 
