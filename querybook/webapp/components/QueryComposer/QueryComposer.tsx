@@ -626,6 +626,30 @@ const QueryComposer: React.FC = () => {
         [setSamplingTables]
     );
 
+    const handleOnFocus = React.useCallback(() => {
+        trackClick({
+            component: ComponentType.ADHOC_QUERY,
+            element: ElementType.QUERY_EDITOR,
+            aux: {
+                action: 'focus',
+                environmentId,
+                query,
+            },
+        });
+    }, [environmentId, query]);
+
+    const handleOnBlur = React.useCallback(() => {
+        trackClick({
+            component: ComponentType.ADHOC_QUERY,
+            element: ElementType.QUERY_EDITOR,
+            aux: {
+                action: 'blur',
+                environmentId,
+                query,
+            },
+        });
+    }, [environmentId, query]);
+
     const editorDOM = (
         <>
             <BoundQueryEditor
@@ -637,6 +661,8 @@ const QueryComposer: React.FC = () => {
                 height="full"
                 engine={engine}
                 hasQueryLint={hasQueryValidators}
+                onFocus={handleOnFocus}
+                onBlur={handleOnBlur}
                 onSelection={handleEditorSelection}
                 onLintCompletion={setHasLintErrors}
                 onTablesChange={handleTablesChange}

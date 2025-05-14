@@ -24,6 +24,8 @@ interface IDataDocPythonCellProps {
     codeIndexInDoc: number;
     isEditable: boolean;
     onChange: (fields: DataCellUpdateFields) => void;
+    onFocus?: () => void;
+    onBlur?: () => void;
 }
 
 export const DataDocPythonCell = ({
@@ -34,6 +36,8 @@ export const DataDocPythonCell = ({
     context,
     isEditable,
     onChange,
+    onFocus,
+    onBlur,
 }: IDataDocPythonCellProps) => {
     const {
         kernelStatus,
@@ -95,6 +99,33 @@ export const DataDocPythonCell = ({
         [onChange]
     );
 
+    const handleOnFocus = useCallback(async () => {
+        trackClick({
+            component: ComponentType.DATADOC_PYTHON_CELL,
+            element: ElementType.PYTHON_EDITOR,
+            aux: {
+                action: 'focus',
+                cellId: cellId,
+                code: context,
+            },
+        });
+        await fetchNamespaceIdentifiers();
+        onFocus?.();
+    }, [cellId, context, fetchNamespaceIdentifiers, onFocus]);
+
+    const handleOnBlur = useCallback(() => {
+        trackClick({
+            component: ComponentType.DATADOC_PYTHON_CELL,
+            element: ElementType.PYTHON_EDITOR,
+            aux: {
+                action: 'blur',
+                cellId: cellId,
+                code: context,
+            },
+        });
+        onBlur?.();
+    }, [cellId, context, onBlur]);
+
     return (
         <div className="DataDocPythonCell">
             <div className="python-cell-header">
@@ -141,7 +172,8 @@ export const DataDocPythonCell = ({
                         context: value,
                     });
                 }}
-                onFocus={fetchNamespaceIdentifiers}
+                onFocus={handleOnFocus}
+                onBlur={handleOnBlur}
             />
             <PythonCellResultView stdout={stdout} stderr={stderr} />
         </div>
