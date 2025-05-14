@@ -19,7 +19,7 @@ class ColumnInfo(TypedDict):
     type: str
     description: Optional[str]
     data_element: Optional[str]
-    statistics: Optional[list[dict[str, Any]]]
+    statistics: Optional[dict[str, Any]]
 
 
 class TagInfo(TypedDict):
@@ -36,11 +36,27 @@ class TableSchema(TypedDict):
     columns: list[ColumnInfo]
 
 
-def _get_column(column: DataTableColumn) -> ColumnInfo:
-    column_info: ColumnInfo = {}
+class SlimmedColumns(TypedDict):
+    properties: list[str]
+    data: list[tuple[str, str]]
 
-    column_info["name"] = column.name
-    column_info["type"] = column.type
+
+class SlimmedTableSchema(TypedDict):
+    table_name: str
+    table_description: str
+    table_tier: Optional[str]
+    columns: SlimmedColumns
+
+
+def _get_column(column: DataTableColumn) -> ColumnInfo:
+    column_info: ColumnInfo = {
+        "name": column.name,
+        "type": column.type,
+        "description": None,
+        "data_element": None,
+        "statistics": None,
+    }
+
     if column.description:
         column_info["description"] = column.description
     elif column.data_elements:
@@ -59,8 +75,8 @@ def _get_column(column: DataTableColumn) -> ColumnInfo:
 
 def _get_table_schema(
     table: DataTable,
-    should_skip_column: Callable[[DataTableColumn], bool] = None,
-) -> TableSchema:
+    should_skip_column: Optional[Callable[[DataTableColumn], bool]] = None,
+) -> TableSchema | None:
     """Generate table schema prompt. The format will be like:
 
     Table Name: [Name_of_table_1]
@@ -75,17 +91,19 @@ def _get_table_schema(
         Data Element: [Data_element_name]
     """
     if not table:
-        return {}
+        return None
 
-    table_schema: TableSchema = {}
-
-    table_schema["table_name"] = f"{table.data_schema.name}.{table.name}"
-    table_schema["table_description"] = table.information.description
-    table_schema["latest_partitions"] = table.information.latest_partitions
-    table_schema["column_info"] = table.information.column_info
-    table_schema["tags"] = [
-        {"type": tag.tag.meta.get("type"), "name": tag.tag_name} for tag in table.tags
-    ]
+    table_schema: TableSchema = {
+        "table_name": f"{table.data_schema.name}.{table.name}",
+        "table_description": table.information.description,
+        "latest_partitions": table.information.latest_partitions,
+        "column_info": table.information.column_info,
+        "tags": [
+            {"type": tag.tag.meta.get("type"), "name": tag.tag_name}
+            for tag in table.tags
+        ],
+        "columns": [],
+    }
 
     columns = []
     for column in table.columns:
@@ -101,9 +119,9 @@ def _get_table_schema(
 @with_session
 def get_table_schema_by_id(
     table_id: int,
-    should_skip_column: Callable[[DataTableColumn], bool] = None,
+    should_skip_column: Optional[Callable[[DataTableColumn], bool]] = None,
     session=None,
-) -> TableSchema:
+) -> TableSchema | None:
     """Generate table schema prompt by table id"""
     table = m_logic.get_table_by_id(table_id=table_id, session=session)
     return _get_table_schema(table, should_skip_column)
@@ -112,9 +130,9 @@ def get_table_schema_by_id(
 @with_session
 def get_table_schemas_by_ids(
     table_ids: list[int],
-    should_skip_column: Callable[[DataTableColumn], bool] = None,
+    should_skip_column: Optional[Callable[[DataTableColumn], bool]] = None,
     session=None,
-) -> list[TableSchema]:
+) -> list[TableSchema | None]:
     """Generate table schemas prompt by table ids"""
     return [
         get_table_schema_by_id(
@@ -130,7 +148,7 @@ def get_table_schemas_by_ids(
 def get_table_schemas_by_names(
     metastore_id: int,
     full_table_names: list[str],
-    should_skip_column: Callable[[DataTableColumn], bool] = None,
+    should_skip_column: Optional[Callable[[DataTableColumn], bool]] = None,
     session=None,
 ) -> list[TableSchema | None]:
     """Retrieve table schemas for specified tables in a metastore.
@@ -154,7 +172,7 @@ def get_table_schemas_by_names(
         This function optimizes database access by loading table metadata, columns,
         and tags in separate queries to minimize the amount of data transferred.
     """
-    if not full_table_names:
+    if not full_table_names or not session:
         return []
 
     # Parse table names
@@ -257,9 +275,9 @@ def get_table_schemas_by_names(
 def get_table_schema_by_name(
     metastore_id: int,
     full_table_name: str,
-    should_skip_column: Callable[[DataTableColumn], bool] = None,
+    should_skip_column: Optional[Callable[[DataTableColumn], bool]] = None,
     session=None,
-) -> TableSchema:
+) -> TableSchema | None:
     """Generate table schema prompt by full table name"""
     table_schemas = get_table_schemas_by_names(
         metastore_id=metastore_id,
@@ -268,12 +286,12 @@ def get_table_schema_by_name(
         session=session,
     )
 
-    return table_schemas[0] if table_schemas else {}
+    return table_schemas[0] if table_schemas else None
 
 
 def get_slimmed_table_schemas(
-    table_schemas: list[dict], column_keys_to_keep=["name", "type"]
-) -> list[TableSchema]:
+    table_schemas: list[TableSchema], column_keys_to_keep=["name", "type"]
+) -> list[SlimmedTableSchema]:
     """Get a slimmed version of the table schemas, which will only keep below fields:
     - table_name
     - table_description
@@ -285,7 +303,7 @@ def get_slimmed_table_schemas(
 
     return [
         {
-            "table_name": schema["table_name"],
+            "table_name": schema.get("table_name"),
             "table_description": schema["table_description"],
             "table_tier": next(
                 (tag["name"] for tag in schema["tags"] if tag["type"] == "TABLE_TIER"),
@@ -295,7 +313,7 @@ def get_slimmed_table_schemas(
             "columns": {
                 "properties": column_keys_to_keep,
                 "data": [
-                    tuple(c.get(k) for k in column_keys_to_keep in c)
+                    tuple(c.get(k) for k in column_keys_to_keep)
                     for c in schema["columns"]
                 ],
             },
