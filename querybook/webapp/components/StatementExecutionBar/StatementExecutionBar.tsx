@@ -98,7 +98,8 @@ export const StatementExecutionBar = React.memo<IProps>(
             />
         );
 
-        const copyAsDataFrameButton = (
+        const copyAsDataFrameButton = queryStatus ===
+            QueryExecutionStatus.DONE && (
             <TextButton
                 onClick={() => {
                     navigator.clipboard.writeText(

@@ -143,6 +143,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
         if (!isLoading && searchString.length > 0 && results.length > 0) {
             const elementType = SearchTypeToElementType[searchType];
             trackView(ComponentType.SEARCH_MODAL, elementType, {
+                nlp: useVectorSearch,
                 search: searchString,
                 results: results.map((r) => r.id),
                 page: currentPage,
@@ -281,6 +282,7 @@ export const SearchOverview: React.FC<ISearchOverviewProps> = ({
                 component: ComponentType.SEARCH_MODAL,
                 element: elementType,
                 aux: {
+                    nlp: useVectorSearch,
                     search: searchString,
                     results: results.map((r) => r.id),
                     page: currentPage,
