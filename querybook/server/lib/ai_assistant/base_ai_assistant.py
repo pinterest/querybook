@@ -228,7 +228,6 @@ class BaseAIAssistant(ABC):
             query_engine_id, session=session
         )
 
-
         self._generate_sql_query(
             query_engine=query_engine,
             tables=tables,
