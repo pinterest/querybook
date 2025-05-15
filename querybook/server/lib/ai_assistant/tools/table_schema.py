@@ -57,13 +57,13 @@ def _get_column(column: DataTableColumn) -> ColumnInfo:
         "statistics": None,
     }
 
-    if column.description:
-        column_info["description"] = column.description
-    elif column.data_elements:
+    if column.data_elements:
         # use data element's description when column's description is empty
         # TODO: only handling the REF data element for now. Need to handle ARRAY, MAP and etc in the future.
         column_info["description"] = column.data_elements[0].description
         column_info["data_element"] = column.data_elements[0].name
+    elif column.description:
+        column_info["description"] = column.description
 
     if len(column.statistics):
         column_info["statistics"] = {
