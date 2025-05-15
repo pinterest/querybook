@@ -1,5 +1,6 @@
 import functools
 from abc import ABC, abstractmethod
+from typing import Optional
 
 from langchain_core.language_models.base import BaseLanguageModel
 from langchain_core.output_parsers import JsonOutputParser, StrOutputParser
@@ -18,6 +19,7 @@ from logic import admin as admin_logic
 from logic import query_execution as qe_logic
 from logic.elasticsearch import get_sample_query_cells_by_table_name
 from logic.metastore import get_table_by_name
+from models.admin import QueryEngine
 from models.metastore import DataTableColumn
 from models.query_execution import QueryExecution
 
@@ -218,7 +220,7 @@ class BaseAIAssistant(ABC):
         query_engine_id: int,
         tables: list[str],
         question: str,
-        original_query: str = None,
+        original_query: Optional[str] = None,
         socket=None,
         session=None,
     ):
@@ -226,6 +228,28 @@ class BaseAIAssistant(ABC):
             query_engine_id, session=session
         )
 
+
+        self._generate_sql_query(
+            query_engine=query_engine,
+            tables=tables,
+            question=question,
+            original_query=original_query,
+            socket=socket,
+            session=session,
+        )
+
+    @with_session
+    def _generate_sql_query(
+        self,
+        *,
+        query_engine: QueryEngine,
+        tables: list[str],
+        question: str,
+        original_query: Optional[str] = None,
+        socket,
+        session=None,
+    ):
+        """Override this method to implement your own SQL generation logic."""
         if not tables:
             suggested_tables = self.find_tables(
                 metastore_id=query_engine.metastore_id,
@@ -253,27 +277,8 @@ class BaseAIAssistant(ABC):
             should_skip_column=self._should_skip_column,
             session=session,
         )
-
-        self._generate_sql_query(
-            language=query_engine.language,
-            question=question,
-            table_schemas=table_schemas,
-            original_query=original_query,
-            socket=socket,
-        )
-
-    def _generate_sql_query(
-        self,
-        *,
-        language: str,
-        question: str,
-        table_schemas: list[str],
-        original_query: str = None,
-        socket,
-    ):
-        """Override this method to implement your own SQL generation logic."""
         prompt = self._get_text_to_sql_prompt(
-            dialect=language,
+            dialect=query_engine.language,
             question=question,
             table_schemas=table_schemas,
             original_query=original_query,
