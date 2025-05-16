@@ -10,6 +10,7 @@ import React, {
 import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { AICommandBar } from 'components/AIAssistant/AICommandBar';
 import { DataDocTableSamplingInfo } from 'components/DataDocTableSamplingInfo/DataDocTableSamplingInfo';
 import { DataDocTemplateInfoButton } from 'components/DataDocTemplateButton/DataDocTemplateInfoButton';
 import { DataDocTemplateVarForm } from 'components/DataDocTemplateButton/DataDocTemplateVarForm';
@@ -42,6 +43,7 @@ import { useBrowserTitle } from 'hooks/useBrowserTitle';
 import { useTrackView } from 'hooks/useTrackView';
 import { trackClick } from 'lib/analytics';
 import { replaceStringIndices, searchText } from 'lib/data-doc/search';
+import { isAIFeatureEnabled } from 'lib/public-config';
 import { DEFAULT_ROW_LIMIT } from 'lib/sql-helper/sql-limiter';
 import { getPossibleTranspilers } from 'lib/templated-query/transpile';
 import { enableResizable, getQueryEngineId, sleep } from 'lib/utils';
@@ -62,6 +64,7 @@ import { FullHeight } from 'ui/FullHeight/FullHeight';
 import { Level, LevelItem } from 'ui/Level/Level';
 import { IListMenuItem, ListMenu } from 'ui/Menu/ListMenu';
 import { Modal } from 'ui/Modal/Modal';
+import { IResizableTextareaHandles } from 'ui/ResizableTextArea/ResizableTextArea';
 
 import { QueryComposerExecution } from './QueryComposerExecution';
 import { runQuery, transformQuery } from './RunQuery';
@@ -432,6 +435,9 @@ const QueryComposer: React.FC = () => {
     const [showTableSamplingInfoModal, setShowTableSamplingInfoModal] =
         useState(false);
 
+    const [tableNamesInQuery, setTableNamesInQuery] = useState([]);
+    const commandInputRef = useRef<IResizableTextareaHandles>();
+
     const [showPeerReviewModal, setShowPeerReviewModal] = useState(false);
     const hasPeerReviewFeature = engine?.feature_params?.peer_review;
 
@@ -622,6 +628,7 @@ const QueryComposer: React.FC = () => {
                 }
             });
             setSamplingTables(samplingTables);
+            setTableNamesInQuery(Object.keys(tablesByName));
         },
         [setSamplingTables]
     );
@@ -715,6 +722,12 @@ const QueryComposer: React.FC = () => {
                             Object.keys(samplingTables).length > 0
                         }
                         sampleRate={getSampleRate()}
+                        onUpdateQuery={(query: string, run?: boolean) => {
+                            setQuery(query);
+                            if (run) {
+                                handleRunQuery();
+                            }
+                        }}
                     />
                 </div>
             </Resizable>
@@ -952,6 +965,19 @@ const QueryComposer: React.FC = () => {
         </div>
     );
 
+    const aiDOM = isAIFeatureEnabled() && (
+        <div className="mv8">
+            <AICommandBar
+                query={query}
+                queryEngine={queryEngineById[engine.id]}
+                tablesInQuery={tableNamesInQuery}
+                onUpdateQuery={setQuery}
+                onFormatQuery={handleFormatQuery}
+                ref={commandInputRef}
+            />
+        </div>
+    );
+
     const transpilerDOM = transpilerConfig ? (
         <TranspileQueryModal
             query={query}
@@ -966,6 +992,7 @@ const QueryComposer: React.FC = () => {
     return (
         <FullHeight flex={'column'} className="QueryComposer">
             {headerDOM}
+            {aiDOM}
             {contentDOM}
             {transpilerDOM}
         </FullHeight>
