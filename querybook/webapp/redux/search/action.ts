@@ -113,7 +113,7 @@ export function performSearch(): ThunkResult<Promise<ISearchPreview[]>> {
                 searchState.searchRequest.cancel();
             }
 
-            const { currentPage, searchType, useVectorSearch } = searchState;
+            const { currentPage, searchType, isNLPSearch } = searchState;
 
             const searchParams = mapStateToSearch(searchState);
 
@@ -125,7 +125,7 @@ export function performSearch(): ThunkResult<Promise<ISearchPreview[]>> {
             }>;
             switch (searchType) {
                 case SearchType.Query:
-                    if (useVectorSearch) {
+                    if (isNLPSearch) {
                         searchRequest = SearchQueryResource.vectorSearch({
                             environment_id:
                                 state.environment.currentEnvironmentId,
@@ -150,7 +150,7 @@ export function performSearch(): ThunkResult<Promise<ISearchPreview[]>> {
                     const metastoreId =
                         state.dataTableSearch.metastoreId ||
                         queryMetastoresSelector(state)[0].id;
-                    if (useVectorSearch) {
+                    if (isNLPSearch) {
                         searchRequest = SearchTableResource.vectorSearch({
                             metastore_id: metastoreId,
                             keywords: searchString,
@@ -300,15 +300,13 @@ export function updateSearchType(searchType: SearchType): ThunkResult<void> {
     };
 }
 
-export function updateUseVectorSearch(
-    useVectorSearch: boolean
-): ThunkResult<void> {
+export function updateUseVectorSearch(isNLPSearch: boolean): ThunkResult<void> {
     return (dispatch, getState) => {
         dispatch(resetSearchResult());
         dispatch({
             type: '@@search/USE_VECTOR_SEARCH_UPDATE',
             payload: {
-                useVectorSearch,
+                isNLPSearch,
             },
         });
         mapStateToQueryParam(getState().search);

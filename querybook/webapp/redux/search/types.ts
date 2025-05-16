@@ -93,7 +93,7 @@ export interface ISearchTypeUpdateAction extends Action {
 export interface IUseVectorSearchUpdateAction extends Action {
     type: '@@search/USE_VECTOR_SEARCH_UPDATE';
     payload: {
-        useVectorSearch: boolean;
+        isNLPSearch: boolean;
     };
 }
 
@@ -159,7 +159,7 @@ export interface ISearchState extends ISearchPaginationState {
     searchOrder: SearchOrder;
     searchType: SearchType;
     searchString: string;
-    useVectorSearch: boolean;
+    isNLPSearch: boolean;
 
     // visuals
     // displayOption: DisplayOption;
