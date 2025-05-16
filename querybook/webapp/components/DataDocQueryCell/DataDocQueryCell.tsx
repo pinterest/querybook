@@ -901,10 +901,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                         queryEngine={queryEngineById[this.engineId]}
                         tablesInQuery={this.state.tableNamesInQuery}
                         onUpdateQuery={this.handleChange}
-                        onUpdateEngineId={this.handleMetaChange.bind(
-                            this,
-                            'engine'
-                        )}
                         onFormatQuery={this.formatQuery.bind(this, {
                             case: 'upper',
                         })}
