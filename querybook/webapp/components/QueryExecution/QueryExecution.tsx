@@ -97,11 +97,10 @@ export const QueryExecution: React.FC<IProps> = ({
     hasSamplingTables,
     sampleRate,
 }) => {
-    const isEditable =
-        isAdhoc ||
-        useSelector((state: IStoreState) =>
-            canCurrentUserEditSelector(state, docId)
-        );
+    const isDatadocEditable = useSelector((state: IStoreState) =>
+        canCurrentUserEditSelector(state, docId)
+    );
+    const isEditable = isAdhoc || isDatadocEditable;
 
     const [statementIndex, setStatementIndex] = useState(0);
     const [showExecutedQuery, , toggleShowExecutedQuery] =
