@@ -1,3 +1,4 @@
+import moment from 'moment';
 import * as React from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -56,15 +57,23 @@ export const ChangeLog: React.FunctionComponent = () => {
             Promise.all([
                 localStore.get<ChangeLogValue>(CHANGE_LOG_KEY),
                 ChangeLogResource.getAll(),
-            ]).then(([localStorageDate, { data }]) => {
-                setChangeLogList(data);
+            ])
+                .then(([localStorageDate, { data }]) => {
+                    setChangeLogList(data);
 
-                const lastViewedDate = localStorageDate ?? '2000-01-01';
-                const content = data
-                    .filter((log) => log.date > lastViewedDate)
-                    .map((log) => log.content);
-                setChangeLogContent(content);
-            });
+                    const lastViewedDate = localStorageDate ?? '2000-01-01';
+                    const content = data
+                        .filter((log) => log.date > lastViewedDate)
+                        .map((log) => log.content);
+                    setChangeLogContent(content);
+                })
+                .finally(() => {
+                    // Update the local storage with the last viewed date
+                    localStore.set<ChangeLogValue>(
+                        CHANGE_LOG_KEY,
+                        moment().format('YYYY-MM-DD')
+                    );
+                });
         }
     }, [changeLogDate]);
 

@@ -306,6 +306,7 @@ class DataTableColumn(TruncateString("name", "type", "comment"), Base):
         "DataTableColumnStatistics",
         uselist=True,
         viewonly=True,
+        lazy="joined",
     )
 
     def to_dict(self, include_table=False):
@@ -316,7 +317,7 @@ class DataTableColumn(TruncateString("name", "type", "comment"), Base):
             "comment": self.comment,
             "description": self.description,
             "table_id": self.table_id,
-            "stats": self.statistics,
+            "stats": [stat.to_dict() for stat in self.statistics],
         }
 
         if include_table:
@@ -454,3 +455,13 @@ class DataTableColumnStatistics(CRUDMixin, Base):
         ),
         foreign_keys=[column_id],
     )
+
+    def to_dict(self):
+        column_statistics = {
+            "id": self.id,
+            "column_id": self.column_id,
+            "key": self.key,
+            "value": self.value,
+            "uid": self.uid,
+        }
+        return column_statistics

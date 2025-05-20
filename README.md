@@ -1,6 +1,7 @@
 # Querybook
 
-[![Build Status](https://github.com/pinterest/querybook/workflows/Tests/badge.svg)](https://github.com/pinterest/querybook/actions)
+[![Build Status](https://github.com/pinterest/querybook/actions/workflows/lint.yml/badge.svg)](https://github.com/pinterest/querybook/actions)
+[![Github Release](https://img.shields.io/github/v/release/pinterest/querybook)](https://github.com/pinterest/querybook/releases)
 [![License](http://img.shields.io/:license-Apache%202-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.txt)
 [![Slack](https://img.shields.io/badge/Slack-Join%20our%20community-brightgreen?style=flat&logo=slack)](https://join.slack.com/t/querybook/shared_invite/zt-se82lvld-yyzRIqvIASsyYozk7jMCYQ)
 

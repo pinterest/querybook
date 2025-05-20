@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 import json
-import re
 from typing import Callable, Dict, Set
 
 from jinja2.exceptions import TemplateSyntaxError
@@ -34,15 +33,68 @@ class LatestPartitionException(QueryTemplatingError):
     pass
 
 
-# The first part is regex for single line comment, ie -- some comment
-# the second part is for multi line comment, ie /* test */
-comment_re = re.compile(r"((?:--.*)|(?:\/\*(?:.|\n)*?\*\/))", re.MULTILINE)
-
-
 def _escape_sql_comments(query: str):
-    return re.sub(
-        comment_re, lambda match: "{{ " + json.dumps(match.group()) + " }}", query
-    )
+    """
+    Escapes SQL comments in a query string by replacing them with JSON-encoded placeholders.
+    This function handles single-line comments, multi-line comments, and quoted strings.
+
+    Args:
+        query (str): The SQL query string to process.
+
+    Returns:
+        str: The query string with comments replaced by JSON-encoded placeholders.
+    """
+    result = []
+    pos = 0
+    query_len = len(query)
+    while pos < query_len:
+        ch = query[pos]
+        # If inside a quoted string, just copy it verbatim. ANSI SQL only allows single quotes.
+        if ch == "'":
+            start = pos
+            pos += 1
+            while pos < query_len:
+                if query[pos] == "'":
+                    # ANSI SQL uses two single quotes to escape a single quote,
+                    # which can be just treated as two consecutive literals and we dont need to handle it separately.
+                    pos += 1
+                    break
+
+                pos += 1
+
+            result.append(query[start:pos])
+            continue
+
+        # Handle single-line comment.
+        if query.startswith("--", pos):
+            end_comment_pos = query.find("\n", pos)
+            if end_comment_pos == -1:
+                end_comment_pos = query_len
+            comment = query[pos:end_comment_pos]
+            result.append("{{ " + json.dumps(comment) + " }}")
+            pos = end_comment_pos
+            continue
+
+        # Handle multi-line comment.
+        if query.startswith("/*", pos):
+            end_comment_pos = query.find("*/", pos + 2)
+            if end_comment_pos == -1:
+                # Unclosed multi-line comment: treat the rest of the input as comment.
+                comment = query[pos:]
+                result.append("{{ " + json.dumps(comment) + " }}")
+                pos = query_len
+                continue
+            else:
+                end_comment_pos += 2
+                comment = query[pos:end_comment_pos]
+                result.append("{{ " + json.dumps(comment) + " }}")
+                pos = end_comment_pos
+                continue
+
+        # Normal character.
+        result.append(ch)
+        pos += 1
+    return "".join(result)
 
 
 def _detect_cycle_helper(node: str, dag: _DAG, seen: Set[str]) -> bool:

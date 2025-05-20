@@ -1,4 +1,5 @@
 import React from 'react';
+import toast from 'react-hot-toast';
 
 import {
     IStatementExecution,
@@ -97,9 +98,25 @@ export const StatementExecutionBar = React.memo<IProps>(
             />
         );
 
+        const copyAsDataFrameButton = queryStatus ===
+            QueryExecutionStatus.DONE && (
+            <TextButton
+                onClick={() => {
+                    navigator.clipboard.writeText(
+                        `df = await get_df(${statementExecution.id}, limit=10)`
+                    );
+                    toast('DataFrame code snippet copied!');
+                }}
+                size="small"
+                icon="Sheet"
+                title="Copy DataFrame"
+            />
+        );
+
         return (
             <div className={'StatementExecutionBar flex-row'}>
                 {showExecutedQueryButton}
+                {copyAsDataFrameButton}
                 {getToggleLogsButtonDOM()}
                 {getToggleMetaButtonDOM()}
                 {cancelQueryButton}

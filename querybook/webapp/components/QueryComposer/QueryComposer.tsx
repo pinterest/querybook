@@ -314,7 +314,7 @@ function useKeyMap(
 ) {
     return useMemo(() => {
         const keyMap = {
-            [KeyMap.queryEditor.runQuery.key]: clickOnRunButton,
+            [KeyMap.codeEditor.runQuery.key]: clickOnRunButton,
         };
 
         for (const [index, engine] of queryEngines.entries()) {
@@ -323,7 +323,7 @@ function useKeyMap(
                 // We have exhausted all number keys on the keyboard
                 break;
             }
-            keyMap[KeyMap.queryEditor.changeEngine.key + '-' + String(key)] =
+            keyMap[KeyMap.codeEditor.changeEngine.key + '-' + String(key)] =
                 () => setEngineId(engine.id);
         }
 
@@ -626,6 +626,30 @@ const QueryComposer: React.FC = () => {
         [setSamplingTables]
     );
 
+    const handleOnFocus = React.useCallback(() => {
+        trackClick({
+            component: ComponentType.ADHOC_QUERY,
+            element: ElementType.QUERY_EDITOR,
+            aux: {
+                action: 'focus',
+                environmentId,
+                query,
+            },
+        });
+    }, [environmentId, query]);
+
+    const handleOnBlur = React.useCallback(() => {
+        trackClick({
+            component: ComponentType.ADHOC_QUERY,
+            element: ElementType.QUERY_EDITOR,
+            aux: {
+                action: 'blur',
+                environmentId,
+                query,
+            },
+        });
+    }, [environmentId, query]);
+
     const editorDOM = (
         <>
             <BoundQueryEditor
@@ -637,6 +661,8 @@ const QueryComposer: React.FC = () => {
                 height="full"
                 engine={engine}
                 hasQueryLint={hasQueryValidators}
+                onFocus={handleOnFocus}
+                onBlur={handleOnBlur}
                 onSelection={handleEditorSelection}
                 onLintCompletion={setHasLintErrors}
                 onTablesChange={handleTablesChange}

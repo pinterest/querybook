@@ -105,9 +105,20 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
     private searchAndReplaceRef = React.createRef<ISearchAndReplaceHandles>();
     private focusCellIndexAfterInsert: number = null;
 
+    @bind
+    public matchDatadocPath() {
+        return !!matchPath(location.pathname, {
+            path: '/:env/datadoc/:docId/',
+        });
+    }
+
     // Show data doc title in url and document title
     @decorate(memoizeOne)
     public publishDataDocTitle(title: string) {
+        if (!this.matchDatadocPath()) {
+            return;
+        }
+
         setBrowserTitle(title || 'Untitled DataDoc');
         if (title) {
             const pathParts = location.pathname.split('/');
@@ -189,18 +200,10 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
 
         cellId = cellId ?? (index != null ? dataDocCells?.[index]?.id : null);
 
-        if (cellId != null) {
-            const match = matchPath(location.pathname, {
-                path: '/:env/datadoc/:docId/',
-                exact: true,
-                strict: false,
-            });
-            if (match) {
-                // Only replace the url if we are in the datadoc page
-                executionId =
-                    executionId ?? this.state.cellIdToExecutionId[cellId];
-                history.replace(getShareUrl(cellId, executionId, true));
-            }
+        if (cellId != null && this.matchDatadocPath()) {
+            // Only replace the url if we are in the datadoc page
+            executionId = executionId ?? this.state.cellIdToExecutionId[cellId];
+            history.replace(getShareUrl(cellId, executionId, true));
         }
     }
 
@@ -629,7 +632,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
         index: number,
         numberOfCells: number,
         lastQueryCellId: number,
-        queryIndexInDoc: number
+        codeIndexInDoc: number
     ) {
         const { dataDoc, isEditable } = this.props;
         const { focusedCellIndex } = this.state;
@@ -667,7 +670,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                     templatedVariables={dataDoc.meta.variables}
                     cell={cell}
                     index={index}
-                    queryIndexInDoc={queryIndexInDoc}
+                    codeIndexInDoc={codeIndexInDoc}
                     lastQueryCellId={lastQueryCellId}
                     isFocused={focusedCellIndex === index}
                 />
@@ -681,7 +684,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
         const { dataDoc } = this.props;
         const dataDocCells = dataDoc.dataDocCells || [];
         let lastQueryCellId: number = null;
-        let queryIndexInDoc = 0;
+        let codeIndexInDoc = 0;
 
         for (let i = 0; i < numberOfCells + 1; i++) {
             const cell = dataDocCells[i];
@@ -691,13 +694,15 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                     i,
                     numberOfCells,
                     lastQueryCellId,
-                    queryIndexInDoc
+                    codeIndexInDoc
                 )
             );
 
-            const isQueryCell = cell && cell.cell_type === 'query';
-            if (isQueryCell) {
-                queryIndexInDoc++;
+            const isCodeCell =
+                cell &&
+                (cell.cell_type === 'query' || cell.cell_type === 'python');
+            if (isCodeCell) {
+                codeIndexInDoc++;
                 lastQueryCellId = cell.id;
             }
         }

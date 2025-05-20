@@ -1,0 +1,23 @@
+.DataDocPythonCell {
+    .python-cell-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 6px;
+
+        .cell-title {
+            font-weight: var(--bold-font);
+        }
+
+        .python-cell-controls {
+            .run-button {
+                width: 120px;
+                height: 36px;
+                display: flex;
+                justify-content: center;
+                margin: 0px 4px;
+                font-weight: bold;
+            }
+        }
+    }
+}

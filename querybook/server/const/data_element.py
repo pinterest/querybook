@@ -21,6 +21,7 @@ class DataElementAssociationProperty(Enum):
 
 # Below types are used for representing data elements sending to frontend through API
 
+
 # Keep it in sync with IDataElement in const/dataElement.ts
 class DataElementDict(TypedDict):
     id: int

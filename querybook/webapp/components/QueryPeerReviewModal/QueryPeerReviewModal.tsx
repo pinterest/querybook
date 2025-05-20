@@ -2,22 +2,23 @@ import { Form, Formik } from 'formik';
 import React, { useCallback } from 'react';
 import { toast } from 'react-hot-toast';
 import * as Yup from 'yup';
-import { navigateWithinEnv } from 'lib/utils/query-string';
 
 import { MultiCreatableUserSelect } from 'components/UserSelect/MultiCreatableUserSelect';
 import { IPeerReviewParams } from 'const/datadoc';
+import { usePeerReview } from 'lib/peer-review/config';
+import { navigateWithinEnv } from 'lib/utils/query-string';
 import { AsyncButton } from 'ui/AsyncButton/AsyncButton';
 import { FormField } from 'ui/Form/FormField';
 import { FormWrapper } from 'ui/Form/FormWrapper';
 import { SimpleField } from 'ui/FormikField/SimpleField';
+import { Icon } from 'ui/Icon/Icon';
 import { Link } from 'ui/Link/Link';
+import { Markdown } from 'ui/Markdown/Markdown';
 import { Message } from 'ui/Message/Message';
 import { Modal } from 'ui/Modal/Modal';
 import { IStandardModalProps } from 'ui/Modal/types';
-import { Icon } from 'ui/Icon/Icon';
 
 import './QueryPeerReviewModal.scss';
-import { usePeerReview } from 'lib/peer-review/config';
 
 interface IQueryPeerReviewFormProps {
     onSubmit: (peerReviewParams: IPeerReviewParams) => Promise<number>;
@@ -40,12 +41,12 @@ const DescriptionSection: React.FC<IDescriptionSectionProps> = ({
             <div className="description-content">
                 <div className="main-description">
                     <h4>About Peer Review</h4>
-                    <div className="description-text">{description}</div>
+                    <Markdown>{description}</Markdown>
                 </div>
 
                 <div className="checklist-box">
                     <h4>Review Checklist</h4>
-                    <div className="checklist-content">{tip}</div>
+                    <Markdown>{tip}</Markdown>
                     <div className="guide-link">
                         <Link to={guideLink} newTab>
                             <Icon name="Book" size={12} />

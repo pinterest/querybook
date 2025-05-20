@@ -1,0 +1,179 @@
+@import './../../scss_variables.scss';
+
+.CodeEditor {
+    position: relative;
+    height: 100%;
+
+    &.fullScreen {
+        @include full-screen(39);
+    }
+
+    .query-editor-float-buttons-wrapper {
+        position: absolute;
+        top: 0;
+        z-index: 9;
+        right: 0;
+
+        .full-screen-button {
+            padding: 3px 0px;
+        }
+
+        .lint-num-errors {
+            color: var(--color-false);
+        }
+
+        .lint-num-warnings {
+            color: var(--color-warn);
+        }
+
+        .lint-passed {
+            color: var(--color-true);
+        }
+    }
+
+    .ReactCodeMirror {
+        height: 100%;
+        border-radius: var(--border-radius-sm);
+
+        // dark theme
+        &.cm-theme {
+            .cm-editor {
+                .cm-panels {
+                    background-color: var(--bg-hover);
+                }
+            }
+        }
+
+        // https://discuss.codemirror.net/t/wondering-how-to-remove-dashed-line-on-focus/7538/3
+        .cm-editor.cm-focused {
+            outline: none;
+        }
+
+        .cm-editor {
+            background-color: transparent;
+
+            .cm-scroller {
+                background-color: var(--bg-lightest);
+                border-top-left-radius: var(--border-radius-sm);
+                border-top-right-radius: var(--border-radius-sm);
+
+                .cm-gutters {
+                    border-right: none;
+                    padding-bottom: 4px;
+                }
+
+                .cm-content {
+                    min-height: 50px !important;
+                    height: 100%;
+                }
+            }
+
+            .cm-tooltip {
+                background-color: var(--bg);
+                border: var(--border);
+                border-radius: var(--border-radius-sm);
+                box-shadow: var(--box-shadow);
+                max-width: 600px;
+
+                .rich-text-content {
+                    max-height: 400px;
+                    overflow-y: auto;
+                    overflow-x: hidden;
+                    padding: 8px;
+                    white-space: pre-wrap;
+                    word-break: break-word;
+                    font-size: var(--text-size);
+
+                    .tooltip-header {
+                        font-size: var(--text-size);
+                        color: var(--color-accent-dark);
+                        font-weight: var(--bold-font);
+                        justify-content: space-between;
+                        align-items: start;
+                    }
+                    .tooltip-title {
+                        font-weight: var(--bold-font);
+                        margin-bottom: 0;
+                    }
+
+                    .tooltip-content {
+                        margin-left: 4px;
+                    }
+                }
+            }
+
+            .cm-tooltip-autocomplete {
+                padding: 5px;
+                border: none;
+                overflow: auto;
+
+                font-size: var(--small-text-size);
+                line-height: 1.5;
+                color: var(--text-dark);
+                white-space: nowrap;
+
+                & > ul {
+                    & > li {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        background: none;
+                    }
+
+                    & > li[aria-selected] {
+                        color: var(--color-accent-dark);
+                    }
+                }
+
+                .cm-completionLabel {
+                    overflow-x: hidden;
+                    text-overflow: ellipsis;
+
+                    .cm-completionMatchedText {
+                        text-decoration: none;
+                        font-weight: bold;
+                    }
+                }
+            }
+
+            .cm-tooltip-lint {
+                .cm-diagnostic:not(:first-child) {
+                    margin-top: 4px;
+                }
+            }
+
+            .cm-panels {
+                z-index: inherit;
+
+                &.cm-panels-bottom {
+                    border-top-color: var(--bg-light);
+
+                    border-bottom-left-radius: var(--border-radius-sm);
+                    border-bottom-right-radius: var(--border-radius-sm);
+                }
+
+                .cm-panel {
+                    padding: 2px 4px;
+                    display: flex;
+                    justify-content: flex-end;
+
+                    .lint-num-errors {
+                        color: var(--color-false);
+                    }
+
+                    .lint-num-warnings {
+                        color: var(--color-warn);
+                    }
+
+                    .lint-passed {
+                        color: var(--color-true);
+                    }
+                }
+
+                .cm-search.cm-panel {
+                    display: none;
+                }
+            }
+        }
+    }
+}

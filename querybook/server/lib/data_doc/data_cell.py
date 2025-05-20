@@ -1,3 +1,4 @@
+from typing import Any, Dict, List, Literal, TypedDict, Union
 from lib.config import get_config_value
 
 cell_types = get_config_value("datadoc.cell_types")
@@ -90,3 +91,56 @@ def check_type_match(actual_val, expected_val) -> bool:
         return True
 
     return False
+
+
+class PythonDataFrameOutput(TypedDict):
+    type: Literal["dataframe"]
+    data: Dict[str, Union[List[str], List[Dict[str, Any]]]]
+
+
+class PythonImageOutput(TypedDict):
+    type: Literal["image"]
+    data: str
+
+
+class PythonJsonOutput(TypedDict):
+    type: Literal["json"]
+    data: Dict[str, Any]
+
+
+PythonOutputType = Union[
+    PythonDataFrameOutput, PythonImageOutput, PythonJsonOutput, str
+]
+
+
+def validate_python_output(output: PythonOutputType) -> None:
+    if not isinstance(output, list):
+        raise ValueError("Output must be a list.")
+
+    for item in output:
+        if not isinstance(item, (str, dict)):
+            raise ValueError(
+                "Each element in the output must be either a string or a dictionary."
+            )
+        if isinstance(item, dict):
+            if "type" not in item or "data" not in item:
+                raise ValueError(
+                    "Each dictionary in the output must contain 'type' and 'data' keys."
+                )
+            if item["type"] not in {"dataframe", "image", "json"}:
+                raise ValueError(
+                    "The 'type' key in the dictionary must be one of 'dataframe', 'image', or 'json'."
+                )
+            if item["type"] == "dataframe":
+                if "columns" not in item["data"] or "records" not in item["data"]:
+                    raise ValueError(
+                        "The 'data' dictionary must contain 'columns' and 'records' keys."
+                    )
+                if not isinstance(item["data"]["columns"], list):
+                    raise ValueError(
+                        "The 'columns' key in the 'data' dictionary must be a list."
+                    )
+                if not isinstance(item["data"]["records"], list):
+                    raise ValueError(
+                        "The 'records' key in the 'data' dictionary must be a list."
+                    )

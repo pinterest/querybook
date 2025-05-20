@@ -4,9 +4,7 @@ from typing import List, Optional
 
 from lib.elasticsearch import search_table
 from lib.query_analysis.lineage import process_query
-from lib.query_analysis.validation.base_query_validator import (
-    QueryValidationResult,
-)
+from lib.query_analysis.validation.base_query_validator import QueryValidationResult
 from lib.query_analysis.validation.decorators.base_sqlglot_validation_decorator import (
     BaseValidationDecorator,
 )
@@ -81,10 +79,25 @@ class BaseTableNameSuggester(BaseValidationDecorator):
         returns None"""
         raise NotImplementedError()
 
+    def get_replacement_end_line_ch(
+        self,
+        validation_result: QueryValidationResult,
+        fuzzy_table_name: str,
+        query: str,
+    ):
+        """Returns the end line and character of the invalid table name. If the table name in
+        the query is different from the fuzzy table name, this function should be overridden
+        """
+        end_line = validation_result.start_line
+        end_ch = validation_result.start_ch + len(fuzzy_table_name) - 1
+        return end_line, end_ch
+
     def _suggest_table_name_if_needed(
         self,
         validation_result: QueryValidationResult,
         engine_id: int,
+        query: str,
+        **kwargs,
     ) -> Optional[str]:
         """Takes validation result and tables in query to update validation result to provide table
         name suggestion"""
@@ -101,10 +114,11 @@ class BaseTableNameSuggester(BaseValidationDecorator):
             table_result = results[0]  # Get top match
             table_suggestion = f"{table_result['schema']}.{table_result['name']}"
             validation_result.suggestion = table_suggestion
-            validation_result.end_line = validation_result.start_line
-            validation_result.end_ch = (
-                validation_result.start_ch + len(fuzzy_table_name) - 1
+            end_line, end_ch = self.get_replacement_end_line_ch(
+                validation_result, fuzzy_table_name, query
             )
+            validation_result.end_line = end_line
+            validation_result.end_ch = end_ch
 
     def decorate_validation_results(
         self,
@@ -115,5 +129,5 @@ class BaseTableNameSuggester(BaseValidationDecorator):
         **kwargs,
     ) -> List[QueryValidationResult]:
         for result in validation_results:
-            self._suggest_table_name_if_needed(result, engine_id)
+            self._suggest_table_name_if_needed(result, engine_id, query)
         return validation_results
