@@ -63,11 +63,11 @@ export const QueryComposerExecution: React.FunctionComponent<IProps> = ({
             </Level>
             <QueryExecution
                 id={id}
-                isAdhoc={true}
+                isFromAdhoc={true}
                 onSamplingInfoClick={onSamplingInfoClick}
                 hasSamplingTables={hasSamplingTables}
                 sampleRate={sampleRate}
-                changeCellContext={onUpdateQuery}
+                onUpdateQuery={onUpdateQuery}
             />
         </div>
     );

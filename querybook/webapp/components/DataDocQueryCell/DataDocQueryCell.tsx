@@ -1052,7 +1052,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 docId={docId}
                 cellId={cellId}
                 isQueryCollapsed={this.queryCollapsed}
-                changeCellContext={isEditable ? this.handleChange : null}
+                onUpdateQuery={isEditable ? this.handleChange : null}
                 onSamplingInfoClick={this.toggleShowTableSamplingInfoModal}
                 hasSamplingTables={this.hasSamplingTables}
                 sampleRate={this.sampleRate}

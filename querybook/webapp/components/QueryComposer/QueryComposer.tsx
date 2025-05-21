@@ -435,8 +435,9 @@ const QueryComposer: React.FC = () => {
     const [showTableSamplingInfoModal, setShowTableSamplingInfoModal] =
         useState(false);
 
-    const [tableNamesInQuery, setTableNamesInQuery] = useState([]);
-    const commandInputRef = useRef<IResizableTextareaHandles>();
+    const [tableNamesInQuery, setTableNamesInQuery] = useState<string[]>([]);
+    const aiCommandInputRef = useRef<IResizableTextareaHandles>();
+    const [shouldRunQuery, setShouldRunQuery] = useState<boolean>(false);
 
     const [showPeerReviewModal, setShowPeerReviewModal] = useState(false);
     const hasPeerReviewFeature = engine?.feature_params?.peer_review;
@@ -597,6 +598,13 @@ const QueryComposer: React.FC = () => {
         [handleRunQuery, setShowPeerReviewModal]
     );
 
+    useEffect(() => {
+        if (shouldRunQuery) {
+            handleRunQuery();
+            setShouldRunQuery(false);
+        }
+    }, [shouldRunQuery, handleRunQuery, setShouldRunQuery]);
+
     const keyMap = useKeyMap(clickOnRunButton, queryEngines, setEngineId);
 
     const [editorHasSelection, setEditorHasSelection] = useState(false);
@@ -725,7 +733,7 @@ const QueryComposer: React.FC = () => {
                         onUpdateQuery={(query: string, run?: boolean) => {
                             setQuery(query);
                             if (run) {
-                                handleRunQuery();
+                                setShouldRunQuery(true);
                             }
                         }}
                     />
@@ -973,7 +981,7 @@ const QueryComposer: React.FC = () => {
                 tablesInQuery={tableNamesInQuery}
                 onUpdateQuery={setQuery}
                 onFormatQuery={handleFormatQuery}
-                ref={commandInputRef}
+                ref={aiCommandInputRef}
             />
         </div>
     );
