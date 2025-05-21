@@ -4,6 +4,7 @@
 [![Github Release](https://img.shields.io/github/v/release/pinterest/querybook)](https://github.com/pinterest/querybook/releases)
 [![License](http://img.shields.io/:license-Apache%202-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.txt)
 [![Slack](https://img.shields.io/badge/Slack-Join%20our%20community-brightgreen?style=flat&logo=slack)](https://join.slack.com/t/querybook/shared_invite/zt-se82lvld-yyzRIqvIASsyYozk7jMCYQ)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/pinterest/querybook)
 
 Querybook is a Big Data IDE that allows you to discover, create, and share data analyses, queries, and tables.
 [Check out the full documentation & feature highlights here.](https://querybook.org)
