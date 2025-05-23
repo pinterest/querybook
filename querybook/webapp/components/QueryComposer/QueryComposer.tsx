@@ -390,6 +390,30 @@ function useTranspileQuery(
     };
 }
 
+function useUpdateAndRunQuery(
+    setQuery: (query: string) => void,
+    runQuery: () => void
+) {
+    const [shouldRunQuery, setShouldRunQuery] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (shouldRunQuery) {
+            runQuery();
+            setShouldRunQuery(false);
+        }
+    }, [shouldRunQuery, runQuery]);
+
+    return useCallback(
+        (query: string, run?: boolean) => {
+            setQuery(query);
+            if (run) {
+                setShouldRunQuery(true);
+            }
+        },
+        [setQuery]
+    );
+}
+
 const QueryComposer: React.FC = () => {
     useTrackView(ComponentType.ADHOC_QUERY);
     useBrowserTitle('Adhoc Query');
@@ -437,7 +461,6 @@ const QueryComposer: React.FC = () => {
 
     const [tableNamesInQuery, setTableNamesInQuery] = useState<string[]>([]);
     const aiCommandInputRef = useRef<IResizableTextareaHandles>();
-    const [shouldRunQuery, setShouldRunQuery] = useState<boolean>(false);
 
     const [showPeerReviewModal, setShowPeerReviewModal] = useState(false);
     const hasPeerReviewFeature = engine?.feature_params?.peer_review;
@@ -598,12 +621,7 @@ const QueryComposer: React.FC = () => {
         [handleRunQuery, setShowPeerReviewModal]
     );
 
-    useEffect(() => {
-        if (shouldRunQuery) {
-            handleRunQuery();
-            setShouldRunQuery(false);
-        }
-    }, [shouldRunQuery, handleRunQuery, setShouldRunQuery]);
+    const updateAndRunQuery = useUpdateAndRunQuery(setQuery, handleRunQuery);
 
     const keyMap = useKeyMap(clickOnRunButton, queryEngines, setEngineId);
 
@@ -730,12 +748,7 @@ const QueryComposer: React.FC = () => {
                             Object.keys(samplingTables).length > 0
                         }
                         sampleRate={getSampleRate()}
-                        onUpdateQuery={(query: string, run?: boolean) => {
-                            setQuery(query);
-                            if (run) {
-                                setShouldRunQuery(true);
-                            }
-                        }}
+                        onUpdateQuery={updateAndRunQuery}
                     />
                 </div>
             </Resizable>
