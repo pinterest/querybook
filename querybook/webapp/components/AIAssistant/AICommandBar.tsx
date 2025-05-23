@@ -31,7 +31,6 @@ interface IQueryCellCommandBarProps {
     queryEngine: IQueryEngine;
     tablesInQuery: string[];
     onUpdateQuery: (query: string, run: boolean) => void;
-    onUpdateEngineId: (engineId: number) => void;
     onFormatQuery: () => void;
     ref: React.Ref<IResizableTextareaHandles>;
 }

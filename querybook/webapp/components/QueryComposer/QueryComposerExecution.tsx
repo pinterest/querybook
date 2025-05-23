@@ -18,6 +18,7 @@ interface IProps {
     onSamplingInfoClick?: () => void;
     hasSamplingTables?: boolean;
     sampleRate: number;
+    onUpdateQuery?: (query: string, run?: boolean) => any;
 }
 
 export const QueryComposerExecution: React.FunctionComponent<IProps> = ({
@@ -25,6 +26,7 @@ export const QueryComposerExecution: React.FunctionComponent<IProps> = ({
     onSamplingInfoClick,
     hasSamplingTables,
     sampleRate,
+    onUpdateQuery,
 }) => {
     const execution = useSelector(
         (state: IStoreState) => state.queryExecutions.queryExecutionById[id]
@@ -61,9 +63,11 @@ export const QueryComposerExecution: React.FunctionComponent<IProps> = ({
             </Level>
             <QueryExecution
                 id={id}
+                isFromAdhoc={true}
                 onSamplingInfoClick={onSamplingInfoClick}
                 hasSamplingTables={hasSamplingTables}
                 sampleRate={sampleRate}
+                onUpdateQuery={onUpdateQuery}
             />
         </div>
     );
