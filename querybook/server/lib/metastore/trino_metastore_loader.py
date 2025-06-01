@@ -39,12 +39,7 @@ class TrinoMetastoreLoader(BaseMetastoreLoader):
         for row in cursor.fetchall():
             column_name = row[0]
             column_type = row[1]
-            columns.append(DataColumn(
-                name=column_name,
-                type=column_type,
-                comment=""  
-            ))
-        
+            columns.append(DataColumn(name=column_name, type=column_type, comment=""))
         table = DataTable(
             name=table_name,
             type=None,  
@@ -54,15 +49,20 @@ class TrinoMetastoreLoader(BaseMetastoreLoader):
         return table, columns
 
     def _get_trino_connection(self, metastore_dict):
-        trino_conf = get_trino_connection_conf(metastore_dict['metastore_params']["connection_string"])
+        trino_conf = get_trino_connection_conf(
+            metastore_dict["metastore_params"]["connection_string"]
+        )
 
         conn = dbapi.connect(
             host=trino_conf.host,
             port=trino_conf.port,
-            user=metastore_dict['metastore_params']["username"],
+            user=metastore_dict["metastore_params"]["username"],
             catalog=trino_conf.catalog,
             schema=trino_conf.schema,
-            http_scheme='https',
-            auth=BasicAuthentication(metastore_dict['metastore_params']["username"], metastore_dict['metastore_params']["password"]),
+            http_scheme="https",
+            auth=BasicAuthentication(
+                metastore_dict["metastore_params"]["username"],
+                metastore_dict["metastore_params"]["password"],
+            ),
         )
         return conn
