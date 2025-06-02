@@ -901,10 +901,6 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                         queryEngine={queryEngineById[this.engineId]}
                         tablesInQuery={this.state.tableNamesInQuery}
                         onUpdateQuery={this.handleChange}
-                        onUpdateEngineId={this.handleMetaChange.bind(
-                            this,
-                            'engine'
-                        )}
                         onFormatQuery={this.formatQuery.bind(this, {
                             case: 'upper',
                         })}
@@ -1056,7 +1052,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 docId={docId}
                 cellId={cellId}
                 isQueryCollapsed={this.queryCollapsed}
-                changeCellContext={isEditable ? this.handleChange : null}
+                onUpdateQuery={isEditable ? this.handleChange : null}
                 onSamplingInfoClick={this.toggleShowTableSamplingInfoModal}
                 hasSamplingTables={this.hasSamplingTables}
                 sampleRate={this.sampleRate}

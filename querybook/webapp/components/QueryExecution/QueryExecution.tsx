@@ -28,8 +28,9 @@ import './QueryExecution.scss';
 
 interface IProps {
     id: number;
+    isFromAdhoc?: boolean;
     docId?: number;
-    changeCellContext?: (context: string, run: boolean) => void;
+    onUpdateQuery?: (query: string, run: boolean) => void;
 
     onSamplingInfoClick?: () => void;
     hasSamplingTables?: boolean;
@@ -88,16 +89,18 @@ function useQueryExecutionDispatch(queryExecutionId: number) {
 
 export const QueryExecution: React.FC<IProps> = ({
     id,
+    isFromAdhoc,
     docId,
-    changeCellContext,
+    onUpdateQuery,
 
     onSamplingInfoClick,
     hasSamplingTables,
     sampleRate,
 }) => {
-    const isEditable = useSelector((state: IStoreState) =>
+    const isDatadocEditable = useSelector((state: IStoreState) =>
         canCurrentUserEditSelector(state, docId)
     );
+    const isEditable = isFromAdhoc || isDatadocEditable;
 
     const [statementIndex, setStatementIndex] = useState(0);
     const [showExecutedQuery, , toggleShowExecutedQuery] =
@@ -186,7 +189,7 @@ export const QueryExecution: React.FC<IProps> = ({
                         to: statementExecution.statement_range_end,
                     }
                 }
-                changeCellContext={changeCellContext}
+                onUpdateQuery={onUpdateQuery}
             />
         ) : null;
 
@@ -254,7 +257,7 @@ export const QueryExecution: React.FC<IProps> = ({
                     queryExecution={queryExecution}
                     statementExecutions={statementExecutions}
                     readonly={!isEditable}
-                    changeCellContext={changeCellContext}
+                    onUpdateQuery={onUpdateQuery}
                 />
             );
         }
