@@ -664,7 +664,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
         } else {
             return (
                 <DataDocCell
-                    key={cell.id}
+                    key={`${cell.id}-${index}`}
                     docId={dataDoc.id}
                     numberOfCells={dataDoc.dataDocCells.length}
                     templatedVariables={dataDoc.meta.variables}

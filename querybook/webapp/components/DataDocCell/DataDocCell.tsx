@@ -281,7 +281,7 @@ export const DataDocCell: React.FunctionComponent<IDataDocCellProps> =
                 <DataDocCellWrapper
                     cellKey={String(cell.id)}
                     placeholderHeight={getEstimatedCellHeight(cell)}
-                    key={cell.id}
+                    key={`${cell.id}-${index}`}
                 >
                     {innerCellContentDOM}
                 </DataDocCellWrapper>
