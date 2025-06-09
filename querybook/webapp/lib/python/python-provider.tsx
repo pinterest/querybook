@@ -124,8 +124,6 @@ function PythonProvider({ children }: PythonProviderProps) {
     }, [status, setStatus, terminateKernel]);
 
     useEffect(() => {
-        initKernel();
-
         // cleanup on unmount
         return () => {
             terminateKernel();
@@ -162,10 +160,13 @@ function PythonProvider({ children }: PythonProviderProps) {
             stdoutCallback?: (text: string) => void,
             stderrCallback?: (text: string) => void
         ) => {
-            // Kernel is supposed to be initialized
+            // Initialize kernel if not already initialized
             if (!kernelRef.current) {
-                stderrCallback('Python kernel has not been initialized');
-                return;
+                await initKernel();
+                if (!kernelRef.current) {
+                    stderrCallback?.('Failed to initialize Python kernel');
+                    return;
+                }
             }
 
             // Increment task counter and update status
@@ -193,13 +194,16 @@ function PythonProvider({ children }: PythonProviderProps) {
     const getNamespaceInfo = useCallback(
         async (namespaceId: number): Promise<PythonNamespaceInfo> => {
             if (!kernelRef.current) {
-                return;
+                await initKernel();
+                if (!kernelRef.current) {
+                    return;
+                }
             }
 
             const info = await kernelRef.current.getNamespaceInfo(namespaceId);
             return JSON.parse(info);
         },
-        []
+        [initKernel]
     );
 
     return (
