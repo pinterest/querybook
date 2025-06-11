@@ -170,10 +170,11 @@ export const QueryEditor: React.FC<
                     );
                 }
 
-                return value;
+                // Return null when no selection so that callers can fallback to their own query text
+                return null;
             }
-            return value;
-        }, [editorRef.current?.view, value]);
+            return null;
+        }, [editorRef.current?.view]);
 
         useImperativeHandle(
             ref,
