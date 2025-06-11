@@ -70,27 +70,28 @@ export const AutoFixButton = ({
             />
         </div>
     ) : (
-        fixedQuery && (
-            <div className="right-align mb16">
-                <Button
-                    title="Reject"
-                    onClick={() => {
-                        setShowModal(false);
-                    }}
-                />
-                <Button
-                    title="Apply"
-                    color="confirm"
-                    onClick={() => {
+        <div className="right-align mb16">
+            <Button
+                title="Unhelpful"
+                onClick={() => {
+                    setShowModal(false);
+                }}
+            />
+            <Button
+                title={fixedQuery ? 'Apply' : 'Helpful'}
+                color="confirm"
+                onClick={() => {
+                    if (fixedQuery) {
                         onUpdateQuery?.(fixedQuery, false);
-                        trackClick({
-                            component: ComponentType.AI_ASSISTANT,
-                            element:
-                                ElementType.QUERY_ERROR_AUTO_FIX_APPLY_BUTTON,
-                        });
-                        setShowModal(false);
-                    }}
-                />
+                    }
+                    trackClick({
+                        component: ComponentType.AI_ASSISTANT,
+                        element: ElementType.QUERY_ERROR_AUTO_FIX_APPLY_BUTTON,
+                    });
+                    setShowModal(false);
+                }}
+            />
+            {fixedQuery && (
                 <Button
                     title="Apply and Run"
                     color="accent"
@@ -104,8 +105,8 @@ export const AutoFixButton = ({
                         setShowModal(false);
                     }}
                 />
-            </div>
-        )
+            )}
+        </div>
     );
     return (
         <>
