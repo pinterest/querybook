@@ -78,7 +78,7 @@ export const AutoFixButton = ({
                 }}
             />
             <Button
-                title={fixedQuery ? "Apply" : "Helpful"}
+                title={fixedQuery ? 'Apply' : 'Helpful'}
                 color="confirm"
                 onClick={() => {
                     if (fixedQuery) {
