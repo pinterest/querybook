@@ -5,6 +5,8 @@ from app.auth.permission import verify_data_table_permission
 from logic.comment_permission import (
     assert_can_edit_and_delete,
     assert_can_read_datadoc,
+    assert_can_read_comment,
+    assert_can_delete_reaction,
 )
 
 
@@ -13,6 +15,7 @@ from logic.comment_permission import (
     methods=["GET"],
 )
 def get_comments_by_cell_id(data_cell_id: int):
+    assert_can_read_datadoc(data_cell_id=data_cell_id)
     return logic.get_comments_by_data_cell_id(data_cell_id=data_cell_id)
 
 
@@ -53,6 +56,7 @@ def add_comment_to_table(data_table_id: int, text):
     methods=["GET"],
 )
 def get_thread_comments(parent_comment_id: int):
+    assert_can_read_comment(comment_id=parent_comment_id)
     return logic.get_thread_comments(parent_comment_id=parent_comment_id)
 
 
@@ -61,6 +65,7 @@ def get_thread_comments(parent_comment_id: int):
     methods=["POST"],
 )
 def add_thread_comment(parent_comment_id: int, text):
+    assert_can_read_comment(comment_id=parent_comment_id)
     return logic.add_thread_comment(
         parent_comment_id=parent_comment_id, uid=current_user.id, text=text
     )
@@ -88,6 +93,7 @@ def soft_delete_comment(comment_id: int):
     methods=["POST"],
 )
 def add_reaction(comment_id: int, reaction: str):
+    assert_can_read_comment(comment_id=comment_id)
     return logic.add_reaction(
         comment_id=comment_id,
         reaction=reaction,
@@ -100,4 +106,5 @@ def add_reaction(comment_id: int, reaction: str):
     methods=["DELETE"],
 )
 def remove_reaction(reaction_id: int):
+    assert_can_delete_reaction(reaction_id=reaction_id)
     return logic.remove_reaction(reaction_id=reaction_id)
