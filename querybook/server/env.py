@@ -165,3 +165,11 @@ class QuerybookSettings(object):
     GITHUB_REPO_NAME = get_env_config("GITHUB_REPO_NAME")
     GITHUB_BRANCH = get_env_config("GITHUB_BRANCH")
     GITHUB_CRYPTO_SECRET = get_env_config("GITHUB_CRYPTO_SECRET")
+
+    # Cache Control
+    CACHE_CONTROL_MAX_AGE = int(
+        get_env_config("CACHE_CONTROL_MAX_AGE") or "604800"
+    )  # 7 days
+    CACHE_CONTROL_STALE_WHILE_REVALIDATE = int(
+        get_env_config("CACHE_CONTROL_STALE_WHILE_REVALIDATE") or "86400"
+    )  # 1 day
