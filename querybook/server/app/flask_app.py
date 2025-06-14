@@ -172,8 +172,9 @@ def make_blue_print(app, limiter):
     @blueprint.after_request
     def add_static_cache(response):
         if response.status_code == 200:
-            # Use browser's default heuristic for cache control and stale-while-revalidate for 1 day
-            response.headers["Cache-Control"] = "public, stale-while-revalidate=86400"
+            max_age = QuerybookSettings.CACHE_CONTROL_MAX_AGE
+            stale_while_revalidate = QuerybookSettings.CACHE_CONTROL_STALE_WHILE_REVALIDATE
+            response.headers["Cache-Control"] = f"public, max-age={max_age}, stale-while-revalidate={stale_while_revalidate}"
         return response
 
     app.register_blueprint(blueprint)
