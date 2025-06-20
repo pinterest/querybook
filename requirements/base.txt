@@ -28,7 +28,7 @@ kombu==5.3.1 # not a direct dependency (from celery), pinned by due to bug: http
 # Ops
 pyyaml==6.0
 sqlalchemy==1.4.39
-pymysql==1.0.2
+pymysql==1.1.1
 requests==2.28.1
 elasticsearch==7.13.4
 
