@@ -9,6 +9,7 @@ from app.auth.permission import (
 from app.datasource import register, api_assert, with_impression
 from app.flask_app import socketio, celery
 from app.db import DBSession, with_session
+from datetime import datetime
 from const.impression import ImpressionItemType
 from const.query_execution import QueryExecutionType
 from env import QuerybookSettings
@@ -331,6 +332,9 @@ def update_datadoc_schedule(id, cron=None, enabled=None, kwargs=None):
             updated_fields["cron"] = cron
         if enabled is not None:
             updated_fields["enabled"] = enabled
+            # reset last_run_at to default to avoid immediately triggering a new run when enabling a disabled scheduled datadoc
+            if enabled and not schedule.enabled:
+                updated_fields["last_run_at"] = datetime.now()
         if kwargs is not None:
             updated_fields["kwargs"] = {
                 **kwargs,
