@@ -92,6 +92,7 @@ class DataDoc(Base, CRUDMixin):
             "updated_at": self.updated_at,
             "meta": self.meta,
             "title": self.title,
+            "tags": self.tags,
         }
 
         if with_cells:
