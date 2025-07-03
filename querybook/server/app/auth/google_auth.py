@@ -41,3 +41,6 @@ def init_app(app):
 
 def login(request):
     return login_manager.login(request)
+
+def oauth_authorization_url():
+    return login_manager._get_authn_url()
