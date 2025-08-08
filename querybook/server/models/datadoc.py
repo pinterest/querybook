@@ -176,6 +176,7 @@ class DataDocEditor(Base):
 
     read = sql.Column(sql.Boolean, default=False, nullable=False)
     write = sql.Column(sql.Boolean, default=False, nullable=False)
+    execute = sql.Column(sql.Boolean, default=False, nullable=False)
 
     user = relationship("User", uselist=False)
 
@@ -192,6 +193,7 @@ class DataDocEditor(Base):
             "uid": self.uid,
             "read": self.read,
             "write": self.write,
+            "execute": self.execute,
         }
 
 

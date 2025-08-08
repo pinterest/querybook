@@ -13,12 +13,14 @@ interface IProps {
     changeDataDocMeta: (docId: number, meta: IDataDocMeta) => Promise<void>;
     dataDoc: IDataDoc;
     isEditable?: boolean;
+    isExecutable?: boolean;
 }
 
 export const DataDocTemplateButton: React.FunctionComponent<IProps> = ({
     changeDataDocMeta,
     dataDoc,
     isEditable,
+    isExecutable,
 }) => {
     const [showTemplateForm, setShowTemplateForm] = React.useState(false);
 
@@ -32,6 +34,7 @@ export const DataDocTemplateButton: React.FunctionComponent<IProps> = ({
         >
             <DataDocTemplateVarForm
                 isEditable={isEditable}
+                isExecutable={isExecutable}
                 variables={dataDoc.meta.variables}
                 onSave={(variables) => {
                     setShowTemplateForm(false);

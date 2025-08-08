@@ -532,6 +532,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
     @decorate(memoizeOne)
     public _getDataDocContextState(
         isEditable: boolean,
+        isExecutable: boolean,
         defaultCollapse: boolean,
         fullScreenCellIndex: number,
         highlightCellIndex: number,
@@ -555,6 +556,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
 
             cellFocus: this._getCellFocusProps(),
             isEditable,
+            isExecutable,
         };
     }
 
@@ -562,6 +564,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
     public getDataDocContextState() {
         return this._getDataDocContextState(
             this.props.isEditable,
+            this.props.isExecutable,
             this.state.defaultCollapseAllCells,
             this.state.fullScreenCellIndex,
             this.state.highlightCellIndex,
@@ -715,6 +718,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
     public renderDataDoc() {
         const {
             isEditable,
+            isExecutable,
 
             dataDoc,
             dataDocSavePromise,
@@ -764,6 +768,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                         <DataDocTemplateCell
                             dataDoc={dataDoc}
                             isEditable={isEditable}
+                            isExecutable={isExecutable}
                             changeDataDocMeta={changeDataDocMeta}
                         />
                         {this.renderDataDocCells(
@@ -790,6 +795,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                 onClone={this.onCloneButtonClick}
                 isSaving={isSavingDataDoc}
                 isEditable={isEditable}
+                isExecutable={isExecutable}
                 isConnected={connected}
                 defaultCollapse={defaultCollapseAllCells}
                 onCollapse={this.handleToggleCollapse}
@@ -920,6 +926,10 @@ function mapStateToProps(state: IStoreState, ownProps: IOwnProps) {
         state,
         ownProps.docId
     );
+    const isExecutable = dataDocSelectors.canCurrentUserExecuteSelector(
+        state,
+        ownProps.docId
+    );
     const userIds = dataDocSelectors.dataDocViewerIdsSelector(
         state,
         ownProps.docId
@@ -932,6 +942,7 @@ function mapStateToProps(state: IStoreState, ownProps: IOwnProps) {
         dataDoc,
         dataDocSavePromise,
         isEditable,
+        isExecutable,
         userIds,
         environment: currentEnvironmentSelector(state),
     };
