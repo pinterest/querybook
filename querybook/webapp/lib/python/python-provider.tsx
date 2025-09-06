@@ -33,6 +33,7 @@ export interface PythonContextType {
         stderrCallback?: (text: string) => void
     ) => Promise<void>;
     getNamespaceInfo: (namespaceId: number) => Promise<PythonNamespaceInfo>;
+    injectVariables: (namespaceId: number, variables: Record<string, any>) => Promise<void>;
 }
 
 const PythonContext = createContext<PythonContextType>(null);
@@ -206,12 +207,27 @@ function PythonProvider({ children }: PythonProviderProps) {
         [initKernel]
     );
 
+    const injectVariables = useCallback(
+        async (namespaceId: number, variables: Record<string, any>): Promise<void> => {
+            if (!kernelRef.current) {
+                await initKernel();
+                if (!kernelRef.current) {
+                    return;
+                }
+            }
+
+            await kernelRef.current.injectVariables(namespaceId, variables);
+        },
+        [initKernel]
+    );
+
     return (
         <PythonContext.Provider
             value={{
                 kernelStatus: status,
                 runPython,
                 getNamespaceInfo,
+                injectVariables,
             }}
         >
             {children}
