@@ -55,6 +55,11 @@ function PythonProvider({ children }: PythonProviderProps) {
     // Add a ref to track the number of running tasks
     const taskCounterRef = useRef(0);
 
+    // Queue for pending variable injections (to be processed when kernel initializes)
+    const pendingInjectionsRef = useRef<Map<number, Record<string, any>>>(
+        new Map()
+    );
+
     /**
      * Helper to update kernel status based on task counter
      */
@@ -93,7 +98,37 @@ function PythonProvider({ children }: PythonProviderProps) {
         // Reset state
         setStatus(PythonKernelStatus.UNINITIALIZED);
         taskCounterRef.current = 0;
+
+        // Clear pending injections
+        pendingInjectionsRef.current.clear();
     }, [setStatus]);
+
+    /**
+     * Process pending variable injections after kernel initialization
+     */
+    const processPendingInjections = useCallback(async () => {
+        if (!kernelRef.current || pendingInjectionsRef.current.size === 0) {
+            return;
+        }
+
+        try {
+            // Process all pending injections
+            for (const [
+                namespaceId,
+                variables,
+            ] of pendingInjectionsRef.current.entries()) {
+                await kernelRef.current.injectVariables(namespaceId, variables);
+            }
+
+            // Clear pending injections after successful processing
+            pendingInjectionsRef.current.clear();
+        } catch (error) {
+            console.warn(
+                'Failed to process pending variable injections:',
+                error
+            );
+        }
+    }, []);
 
     const initKernel = useCallback(async () => {
         // Don't initialize if already initializing or initialized
@@ -120,12 +155,15 @@ function PythonProvider({ children }: PythonProviderProps) {
 
             kernelRef.current = kernel;
             setStatus(PythonKernelStatus.IDLE);
+
+            // Process any pending variable injections
+            await processPendingInjections();
         } catch (error) {
             console.error('Error initializing Python kernel:', error);
             setStatus(PythonKernelStatus.FAILED);
             terminateKernel();
         }
-    }, [status, setStatus, terminateKernel]);
+    }, [status, setStatus, terminateKernel, processPendingInjections]);
 
     useEffect(() => {
         // cleanup on unmount
@@ -216,15 +254,20 @@ function PythonProvider({ children }: PythonProviderProps) {
             variables: Record<string, any>
         ): Promise<void> => {
             if (!kernelRef.current) {
-                await initKernel();
-                if (!kernelRef.current) {
-                    return;
-                }
+                // Queue variables for injection when kernel initializes
+                const existingVariables =
+                    pendingInjectionsRef.current.get(namespaceId) || {};
+                pendingInjectionsRef.current.set(namespaceId, {
+                    ...existingVariables,
+                    ...variables,
+                });
+                return;
             }
 
+            // Kernel is ready, inject immediately
             await kernelRef.current.injectVariables(namespaceId, variables);
         },
-        [initKernel]
+        []
     );
 
     return (
