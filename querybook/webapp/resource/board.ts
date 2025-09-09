@@ -21,6 +21,13 @@ export const BoardResource = {
             environment_id: environmentId,
         }),
 
+    getAllPublic: (environmentId: number, limit: number, offset: number) =>
+        ds.fetch<IBoardRaw>(`/board/public/all/`, {
+            environment_id: environmentId,
+            limit,
+            offset,
+        }),
+
     create: (
         name: string,
         environmentId: number,
