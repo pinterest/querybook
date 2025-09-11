@@ -4,21 +4,29 @@ import { pushNotification } from 'lib/browser-notification';
 import { isWindowFocused } from 'lib/window-focus';
 import { STATUS_TO_TEXT_MAPPING } from 'const/queryStatus';
 
+const getMessageFromStatus = (status: QueryExecutionStatus) => {
+    if (status === QueryExecutionStatus.DONE) {
+        return 'Click to view results';
+    }
+    if (status === QueryExecutionStatus.ERROR) {
+        return 'Click to view errors';
+    }
+    return 'Click to view details';
+};
+
 /**
  * Send a browser notification when a query execution is finished while the window is not focused.
  */
 export default function useQueryCompleteNotification(
     queryExecution: IQueryExecution
 ) {
-    const [wasRunningState, setWasRunningState] = useState(false);
+    const [wasRunningState, setWasRunningState] = useState<boolean | null>();
 
     useEffect(() => {
         if (queryExecution?.status <= QueryExecutionStatus.RUNNING) {
             setWasRunningState(true);
         }
-    }, [queryExecution?.status]);
 
-    useEffect(() => {
         if (
             wasRunningState &&
             queryExecution.status >= QueryExecutionStatus.DONE
@@ -30,11 +38,10 @@ export default function useQueryCompleteNotification(
                     String(queryExecution.status);
                 pushNotification(
                     `Query Execution - ${statusText}`,
-                    'Query execution has completed'
+                    getMessageFromStatus(queryExecution.status)
                 );
             }
             setWasRunningState(false);
-            console.log('queryExecution?.status', queryExecution?.status);
         }
     }, [queryExecution.status, wasRunningState]);
 }
