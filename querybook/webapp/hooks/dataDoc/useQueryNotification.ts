@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { IQueryExecution, QueryExecutionStatus } from 'const/queryExecution';
 import { pushNotification } from 'lib/browser-notification';
 import { isWindowFocused } from 'lib/window-focus';
@@ -20,32 +20,33 @@ const getMessageFromStatus = (status: QueryExecutionStatus) => {
 export default function useQueryCompleteNotification(
     queryExecution: IQueryExecution
 ) {
-    const [wasRunningState, setWasRunningState] = useState<boolean | null>(
-        null
-    );
+    const [hasBeenRunning, setHasBeenRunning] = useState(false);
+    const hasNotified = useRef(false);
+
+    const isCompleted = queryExecution.status > QueryExecutionStatus.RUNNING;
 
     useEffect(() => {
-        if (queryExecution?.status <= QueryExecutionStatus.RUNNING) {
-            setWasRunningState(true);
+        if (queryExecution.status <= QueryExecutionStatus.RUNNING) {
+            setHasBeenRunning(true);
         }
     }, [queryExecution.status]);
 
     useEffect(() => {
-        if (
-            wasRunningState &&
-            queryExecution.status >= QueryExecutionStatus.DONE
-        ) {
-            // Show notification if the window is focused
-            if (!isWindowFocused()) {
-                const statusText =
-                    STATUS_TO_TEXT_MAPPING[queryExecution.status] ??
-                    String(queryExecution.status);
-                pushNotification(
-                    `Query Execution - ${statusText}`,
-                    getMessageFromStatus(queryExecution.status)
-                );
-            }
-            setWasRunningState(false);
+        const shouldSendNotification =
+            !isWindowFocused() &&
+            hasBeenRunning &&
+            !hasNotified.current &&
+            isCompleted;
+
+        if (shouldSendNotification) {
+            const statusText =
+                STATUS_TO_TEXT_MAPPING[queryExecution.status] ??
+                String(queryExecution.status);
+            pushNotification(
+                `Query Execution - ${statusText}`,
+                getMessageFromStatus(queryExecution.status)
+            );
+            hasNotified.current = true;
         }
-    }, [queryExecution.status, wasRunningState]);
+    }, [hasBeenRunning, isCompleted, queryExecution.status]);
 }
