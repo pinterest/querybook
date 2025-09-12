@@ -9,6 +9,7 @@ import { QueryExecutionStatus } from 'const/queryExecution';
 import { useMakeSelector } from 'hooks/redux/useMakeSelector';
 import { useToggleState } from 'hooks/useToggleState';
 import { canCurrentUserEditSelector } from 'redux/dataDoc/selector';
+import useQueryCompleteNotification from 'hooks/dataDoc/useQueryNotification';
 import * as queryExecutionsActions from 'redux/queryExecutions/action';
 import {
     makeStatementExecutionsSelector,
@@ -122,6 +123,8 @@ export const QueryExecution: React.FC<IProps> = ({
         pollQueryExecution,
         cancelQueryExecution,
     } = useQueryExecutionDispatch(id);
+
+    useQueryCompleteNotification(queryExecution);
 
     const selectStatementId = useCallback(
         (statementId: number) => {
