@@ -20,13 +20,17 @@ const getMessageFromStatus = (status: QueryExecutionStatus) => {
 export default function useQueryCompleteNotification(
     queryExecution: IQueryExecution
 ) {
-    const [wasRunningState, setWasRunningState] = useState<boolean | null>();
+    const [wasRunningState, setWasRunningState] = useState<boolean | null>(
+        null
+    );
 
     useEffect(() => {
         if (queryExecution?.status <= QueryExecutionStatus.RUNNING) {
             setWasRunningState(true);
         }
+    }, [queryExecution.status]);
 
+    useEffect(() => {
         if (
             wasRunningState &&
             queryExecution.status >= QueryExecutionStatus.DONE
