@@ -26,6 +26,7 @@ interface UsePythonReturn {
     executionStatus: PythonExecutionStatus;
     executionCount: number;
     getNamespaceInfo: (namespaceId: number) => Promise<PythonNamespaceInfo>;
+    injectVariables: (variables: Record<string, any>) => void;
 }
 
 export default function usePython({
@@ -40,7 +41,7 @@ export default function usePython({
         useState<PythonExecutionStatus>();
     const [executionCount, setExecutionCount] = useState<number>();
 
-    const { kernelStatus, runPython, getNamespaceInfo } =
+    const { kernelStatus, runPython, getNamespaceInfo, injectVariables } =
         useContext(PythonContext);
 
     useEffect(() => {
@@ -145,6 +146,15 @@ export default function usePython({
         [setStdout, setStdout, runPython, docId, stdoutCallback, stderrCallback]
     );
 
+    const injectVariablesForDoc = useCallback(
+        async (variables: Record<string, any>) => {
+            if (docId !== undefined) {
+                await injectVariables(docId, variables);
+            }
+        },
+        [docId, injectVariables]
+    );
+
     return {
         kernelStatus,
         runPython: runPythonCode,
@@ -153,5 +163,6 @@ export default function usePython({
         executionStatus,
         executionCount,
         getNamespaceInfo,
+        injectVariables: injectVariablesForDoc,
     };
 }
