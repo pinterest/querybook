@@ -119,4 +119,11 @@ export interface PythonKernel {
      * @param env - The environment name to set for the kernel.
      */
     setEnvironment(env: string): void;
+
+    /**
+     * Injects variables into the specified namespace.
+     * @param namespaceId - The ID of the namespace to inject variables into.
+     * @param variables - A record of variable names and values to inject.
+     */
+    injectVariables(namespaceId: number, variables: Record<string, any>): void;
 }

@@ -1,2 +1,2 @@
 sqlalchemy-redshift==0.8.9
-redshift_connector==2.0.907
+redshift_connector==2.1.3
