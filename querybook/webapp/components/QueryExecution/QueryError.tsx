@@ -37,7 +37,7 @@ interface IProps {
     queryExecution: IQueryExecution;
     statementExecutions: IStatementExecution[];
     readonly?: boolean;
-    changeCellContext?: (query: string, run?: boolean) => void;
+    onUpdateQuery?: (query: string, run?: boolean) => void;
 }
 
 const queryErrorTypeToString: Record<number, string> = {
@@ -130,7 +130,7 @@ export const QueryError: React.FunctionComponent<IProps> = ({
     statementExecutions,
     queryEngine,
     readonly,
-    changeCellContext,
+    onUpdateQuery,
 }) => {
     const {
         error_message: errorMessage,
@@ -188,7 +188,7 @@ export const QueryError: React.FunctionComponent<IProps> = ({
                 <AutoFixButton
                     query={queryExecution.query}
                     queryExecutionId={queryExecution.id}
-                    onUpdateQuery={changeCellContext}
+                    onUpdateQuery={onUpdateQuery}
                 />
             )}
         </div>
@@ -216,8 +216,8 @@ export const QueryErrorWrapper: React.FunctionComponent<{
     queryExecution: IQueryExecution;
     statementExecutions: IStatementExecution[];
     readonly?: boolean;
-    changeCellContext?: (query: string, run?: boolean) => void;
-}> = ({ queryExecution, statementExecutions, changeCellContext, readonly }) => {
+    onUpdateQuery?: (query: string, run?: boolean) => void;
+}> = ({ queryExecution, statementExecutions, onUpdateQuery, readonly }) => {
     const queryError = useSelector(
         (state: IStoreState) =>
             state.queryExecutions.queryErrorById[queryExecution.id]
@@ -245,7 +245,7 @@ export const QueryErrorWrapper: React.FunctionComponent<{
                 statementExecutions={statementExecutions}
                 queryEngine={queryEngine}
                 readonly={readonly}
-                changeCellContext={changeCellContext}
+                onUpdateQuery={onUpdateQuery}
             />
         </Loader>
     );

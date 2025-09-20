@@ -167,6 +167,20 @@ def make_blue_print(app, limiter):
         static_folder=WEBAPP_DIR_PATH,
         static_url_path=BUILD_PATH,
     )
+
+    # Add cache control to the blueprint
+    @blueprint.after_request
+    def add_static_cache(response):
+        if response.status_code == 200:
+            max_age = QuerybookSettings.CACHE_CONTROL_MAX_AGE
+            stale_while_revalidate = (
+                QuerybookSettings.CACHE_CONTROL_STALE_WHILE_REVALIDATE
+            )
+            response.headers["Cache-Control"] = (
+                f"public, max-age={max_age}, stale-while-revalidate={stale_while_revalidate}"
+            )
+        return response
+
     app.register_blueprint(blueprint)
     limiter.exempt(blueprint)
     return blueprint

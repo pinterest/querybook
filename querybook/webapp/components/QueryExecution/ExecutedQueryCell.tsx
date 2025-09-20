@@ -14,14 +14,14 @@ import './ExecutedQueryCell.scss';
 interface IProps {
     queryExecution: IQueryExecution;
     highlightRange?: IHighlightRange;
-    changeCellContext?: (context: string, run?: boolean) => void;
+    onUpdateQuery?: (query: string, run?: boolean) => void;
 
     maxEditorHeight?: string;
 }
 
 export const ExecutedQueryCell: React.FunctionComponent<IProps> = ({
     queryExecution,
-    changeCellContext,
+    onUpdateQuery,
     highlightRange,
     maxEditorHeight: editorHeight,
 }) => {
@@ -37,10 +37,10 @@ export const ExecutedQueryCell: React.FunctionComponent<IProps> = ({
     }
 
     const { query } = queryExecution;
-    const changeCellContextButton = changeCellContext && (
+    const pasteQueryButton = onUpdateQuery && (
         <TextButton
             onClick={() => {
-                changeCellContext(query);
+                onUpdateQuery(query);
             }}
             aria-label={'Copy and Paste this into the query editor above'}
             data-balloon-pos={'left'}
@@ -55,7 +55,7 @@ export const ExecutedQueryCell: React.FunctionComponent<IProps> = ({
     const headerDOM = (
         <div className="execution-header horizontal-space-between mb4">
             <Tag mini>{queryEngine.name}</Tag>
-            {changeCellContextButton}
+            {pasteQueryButton}
         </div>
     );
 

@@ -40,6 +40,7 @@ import {
     scrollToCell,
 } from 'lib/data-doc/data-doc-utils';
 import { replaceDataDoc, searchDataDocCells } from 'lib/data-doc/search';
+import { PythonContext } from 'lib/python/python-provider';
 import { sendConfirm, setBrowserTitle } from 'lib/querybookUI';
 import history from 'lib/router-history';
 import { copy, sanitizeUrlTitle } from 'lib/utils';
@@ -664,7 +665,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
         } else {
             return (
                 <DataDocCell
-                    key={cell.id}
+                    key={`${cell.id}-${index}`}
                     docId={dataDoc.id}
                     numberOfCells={dataDoc.dataDocCells.length}
                     templatedVariables={dataDoc.meta.variables}
@@ -998,7 +999,68 @@ function mapDispatchToProps(dispatch: Dispatch) {
     };
 }
 
+// Function component that adds variable injection functionality
+const DataDocWithVariableInjection: React.FC<IProps> = (props) => {
+    const { injectVariables } = React.useContext(PythonContext);
+
+    // Helper function to convert variables to Python format
+    const convertVariablesToPythonFormat = React.useCallback(
+        (variables: IDataDocMeta['variables']): Record<string, any> => {
+            const pythonVariables: Record<string, any> = {};
+
+            if (variables) {
+                for (const variable of variables) {
+                    if (variable.name && variable.value !== undefined) {
+                        pythonVariables[variable.name] = variable.value;
+                    }
+                }
+            }
+
+            return pythonVariables;
+        },
+        []
+    );
+
+    // Function to inject DataDoc variables into Python runtime
+    const injectDataDocVariables = React.useCallback(async () => {
+        if (
+            props.dataDoc &&
+            props.dataDoc.meta &&
+            props.dataDoc.meta.variables
+        ) {
+            const pythonVariables = convertVariablesToPythonFormat(
+                props.dataDoc.meta.variables
+            );
+
+            if (Object.keys(pythonVariables).length > 0) {
+                try {
+                    await injectVariables(props.docId, pythonVariables);
+                } catch (error) {
+                    console.warn(
+                        'Failed to inject datadoc variables into Python runtime:',
+                        error
+                    );
+                }
+            }
+        }
+    }, [
+        props.dataDoc?.meta?.variables,
+        props.docId,
+        injectVariables,
+        convertVariablesToPythonFormat,
+    ]);
+
+    // Effect to inject variables when dataDoc or its variables change
+    React.useEffect(() => {
+        injectDataDocVariables();
+    }, [injectDataDocVariables]);
+
+    return <DataDocComponent {...props} />;
+};
+
+// Export the connected component - using minimal type assertion for React-Redux compatibility
 export const DataDoc = connect(
     mapStateToProps,
     mapDispatchToProps
-)(DataDocComponent);
+    // @ts-ignore: React-Redux connect has complex generic inference that doesn't work well with wrapped function components
+)(DataDocWithVariableInjection);

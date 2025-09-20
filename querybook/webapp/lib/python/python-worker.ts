@@ -110,6 +110,23 @@ class PyodideKernel implements PythonKernel {
     }
 
     /**
+     * Inject variables into a Python namespace
+     */
+    public injectVariables(
+        namespaceId: number,
+        variables: Record<string, any>
+    ) {
+        this._ensurePyodide();
+
+        const namespace = this._getNamespace(namespaceId);
+
+        // Inject each variable into the namespace
+        for (const [name, value] of Object.entries(variables)) {
+            namespace.set(name, value);
+        }
+    }
+
+    /**
      * Run Python code in the specified namespace
      */
     private async _runPython(

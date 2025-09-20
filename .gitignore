@@ -8,6 +8,7 @@
 
 
 package-lock.json
+pnpm-lock.yaml
 .env
 # virtualenv for development
 .virtualenv

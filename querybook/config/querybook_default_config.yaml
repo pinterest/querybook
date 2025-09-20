@@ -113,3 +113,10 @@ GITHUB_CLIENT_SECRET: ~
 GITHUB_REPO_NAME: ~
 GITHUB_BRANCH: 'main'
 GITHUB_CRYPTO_SECRET: ''
+
+# --------------- Cache Control ---------------
+# Cache control settings for HTTP responses on static assets
+# Maximum age in seconds for static assets (CSS, JS, images, fonts)
+CACHE_CONTROL_MAX_AGE: 604800  # 7 days
+# Stale-while-revalidate duration in seconds for static assets
+CACHE_CONTROL_STALE_WHILE_REVALIDATE: 86400  # 1 day
