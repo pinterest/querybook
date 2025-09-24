@@ -10,6 +10,7 @@ class AICommandType(Enum):
     TABLE_SUMMARY = "table_summary"
     TABLE_SELECT = "table_select"
     SQL_COMPLETE = "sql_complete"
+    DATA_DOC_TITLE = "data_doc_title"
 
 
 AI_ASSISTANT_NAMESPACE = "/ai_assistant"

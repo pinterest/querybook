@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import React from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
@@ -13,6 +13,11 @@ import { IconButton } from 'ui/Button/IconButton';
 import { Icon } from 'ui/Icon/Icon';
 import { ResizableTextArea } from 'ui/ResizableTextArea/ResizableTextArea';
 import { AccentText } from 'ui/StyledText/StyledText';
+import { isAIFeatureEnabled } from 'lib/public-config';
+import { useAISocket } from 'hooks/useAISocket';
+import { AICommandType } from 'const/aiAssistant';
+import { trackClick } from 'lib/analytics';
+import { ComponentType, ElementType } from 'const/analytics';
 
 interface IProps {
     dataDoc: IDataDoc;
@@ -35,6 +40,8 @@ export const DataDocHeader = React.forwardRef<HTMLDivElement, IProps>(
         },
         ref
     ) => {
+        const [aiGeneratedTitle, setAiGeneratedTitle] = useState<string>('');
+
         const dispatch: Dispatch = useDispatch();
         const isFavorite = useSelector((state: IStoreState) =>
             state.dataDoc.favoriteDataDocIds.includes(dataDoc.id)
@@ -55,6 +62,46 @@ export const DataDocHeader = React.forwardRef<HTMLDivElement, IProps>(
         ) : (
             `Updated ${generateFormattedDate(lastUpdated, 'X')}`
         );
+
+        const onTitleChange = useMemo(
+            () => changeDataDocTitle.bind(this, dataDoc.id),
+            [changeDataDocTitle, dataDoc.id]
+        );
+
+        const docTitleGenerationEnabled =
+            isAIFeatureEnabled('data_doc_title_generation') &&
+            isEditable &&
+            dataDoc.dataDocCells.length > 0;
+
+        useEffect(() => {
+            if (aiGeneratedTitle) {
+                onTitleChange(aiGeneratedTitle);
+            }
+        }, [onTitleChange, aiGeneratedTitle]);
+
+        const socket = useAISocket(AICommandType.DATA_DOC_TITLE, ({ data }) => {
+            if (data.title) {
+                setAiGeneratedTitle(data.title);
+            }
+        });
+
+        const handleTitleGenerationClick = useCallback(async () => {
+            const cellContents = dataDoc.dataDocCells.map((cell) => ({
+                type: cell.cell_type,
+                content:
+                    cell.cell_type === 'text'
+                        ? cell.context.getPlainText()
+                        : cell.context,
+            }));
+            socket.emit({ cell_contents: cellContents });
+            trackClick({
+                component: ComponentType.AI_ASSISTANT,
+                element: ElementType.DATA_DOC_TITLE_GENERATION_BUTTON,
+                aux: {
+                    dataDocId: dataDoc.id,
+                },
+            });
+        }, [dataDoc.dataDocCells, dataDoc.id, socket]);
 
         return (
             <div className="data-doc-header" ref={ref} key="data-doc-header">
@@ -94,16 +141,31 @@ export const DataDocHeader = React.forwardRef<HTMLDivElement, IProps>(
                         <DataDocViewersBadge docId={dataDoc.id} />
                     </div>
                 </div>
-                <AccentText color="light" size="xlarge" weight="extra">
-                    <ResizableTextArea
-                        value={dataDoc.title}
-                        onChange={changeDataDocTitle.bind(this, dataDoc.id)}
-                        className="data-doc-title"
-                        placeholder={emptyDataDocTitleMessage}
-                        disabled={!isEditable}
-                        transparent
-                    />
-                </AccentText>
+                <div className="data-doc-header-title">
+                    {docTitleGenerationEnabled && (
+                        <IconButton
+                            icon={socket.loading ? 'Loading' : 'Hash'}
+                            size={30}
+                            tooltip="AI: generate title for data doc"
+                            onClick={handleTitleGenerationClick}
+                        />
+                    )}
+                    <div
+                        className={`data-doc-title ${
+                            docTitleGenerationEnabled ? 'with-icon' : ''
+                        }`}
+                    >
+                        <AccentText color="light" size="xlarge" weight="extra">
+                            <ResizableTextArea
+                                value={dataDoc.title}
+                                onChange={onTitleChange}
+                                placeholder={emptyDataDocTitleMessage}
+                                disabled={!isEditable}
+                                transparent
+                            />
+                        </AccentText>
+                    </div>
+                </div>
             </div>
         );
     }
