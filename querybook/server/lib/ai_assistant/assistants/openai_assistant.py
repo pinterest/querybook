@@ -55,11 +55,11 @@ class OpenAIAssistant(BaseAIAssistant):
         # gpt 4.1 uses the same tokenizer as gpt-4o
         # https://github.com/openai/tiktoken/issues/395#issuecomment-2847076168
         if model_name.startswith("gpt-4.1"):
-            encoding = tiktoken.encoding_for_model('gpt-4o')
+            encoding = tiktoken.encoding_for_model("gpt-4o")
         # Currently tiktoken only supports gpt 5 as prefix
         # https://github.com/openai/tiktoken/blob/main/tiktoken/model.py#L12
         elif model_name.startswith("gpt-5"):
-            encoding = tiktoken.encoding_for_model('gpt-5-')
+            encoding = tiktoken.encoding_for_model("gpt-5-")
         else:
             encoding = tiktoken.encoding_for_model(model_name)
 

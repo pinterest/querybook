@@ -563,7 +563,9 @@ class BaseAIAssistant(ABC):
 
     @catch_error
     @with_ai_socket(command_type=AICommandType.DATA_DOC_TITLE)
-    def generate_data_doc_title_from_query(self, cell_contents: list[dict], socket=None):
+    def generate_data_doc_title_from_query(
+        self, cell_contents: list[dict], socket=None
+    ):
         """Generate data doc title from SQL queries.
 
         Args:
@@ -572,7 +574,9 @@ class BaseAIAssistant(ABC):
         prompt = self._get_data_doc_title_prompt(cell_contents=cell_contents)
         llm = self._get_llm(
             ai_command=AICommandType.DATA_DOC_TITLE.value,
-            prompt_length=self._get_token_count(AICommandType.DATA_DOC_TITLE.value, prompt),
+            prompt_length=self._get_token_count(
+                AICommandType.DATA_DOC_TITLE.value, prompt
+            ),
         )
         self._run_prompt_and_send(
             socket=socket,
