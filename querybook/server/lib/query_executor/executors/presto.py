@@ -1,3 +1,4 @@
+import time
 from pyhive.exc import Error
 
 from const.query_execution import QueryExecutionErrorType
@@ -31,6 +32,11 @@ class PrestoQueryExecutor(QueryExecutorBaseClass):
     @classmethod
     def EXECUTOR_TEMPLATE(cls):
         return presto_executor_template
+
+    def sleep(self):
+        """Override sleep method to use configurable interval for Presto engine"""
+        sleep_interval = self._client_setting.get('sleep_interval', 1)
+        time.sleep(sleep_interval)
 
     def _parse_exception(self, e):
         error_type = QueryExecutionErrorType.INTERNAL.value
