@@ -62,7 +62,6 @@ presto_executor_template = StructFormField(
         "initial_sleep_interval",
         FormField(
             field_type=FormFieldType.Number,
-            default=1,
             helper="Initial sleep interval in seconds between query execution polls (default: 1)",
         ),
     ),
@@ -70,7 +69,6 @@ presto_executor_template = StructFormField(
         "extended_sleep_interval",
         FormField(
             field_type=FormFieldType.Number,
-            default=10,
             helper="Extended sleep interval in seconds between query execution polls (default: 10)",
         ),
     ),
