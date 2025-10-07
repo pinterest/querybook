@@ -35,10 +35,16 @@ class PrestoQueryExecutor(QueryExecutorBaseClass):
 
     def sleep(self):
         """Override sleep method to use configurable interval for Presto engine"""
-        initial_sleep_interval = abs(self._client_setting.get('initial_sleep_interval', 1))
-        extended_sleep_interval = abs(self._client_setting.get('extended_sleep_interval', 10))
+        initial_sleep_interval = abs(
+            self._client_setting.get("initial_sleep_interval", 1)
+        )
+        extended_sleep_interval = abs(
+            self._client_setting.get("extended_sleep_interval", 10)
+        )
         time_passed = time.time() - self._start_time  # unit in seconds
-        sleep_time = initial_sleep_interval if time_passed < 900 else extended_sleep_interval
+        sleep_time = (
+            initial_sleep_interval if time_passed < 900 else extended_sleep_interval
+        )
         time.sleep(sleep_time)
 
     def _parse_exception(self, e):
