@@ -1,6 +1,6 @@
 import functools
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Optional, TypedDict, Any
 
 from langchain_core.language_models.base import BaseLanguageModel
 from langchain_core.output_parsers import JsonOutputParser, StrOutputParser
@@ -43,6 +43,11 @@ LOG = get_logger(__file__)
 
 
 class BaseAIAssistant(ABC):
+    class DataDocTitleGenerationCellContent(TypedDict):
+        type: str
+        title: Optional[str]
+        content: Any
+
     @property
     def name(self) -> str:
         raise NotImplementedError()
@@ -564,12 +569,12 @@ class BaseAIAssistant(ABC):
     @catch_error
     @with_ai_socket(command_type=AICommandType.DATA_DOC_TITLE)
     def generate_data_doc_title_from_query(
-        self, cell_contents: list[dict], socket=None
+        self, cell_contents: list["BaseAIAssistant.DataDocTitleGenerationCellContent"], socket=None
     ):
         """Generate data doc title from SQL queries.
 
         Args:
-            queries (list[str]): SQL queries in the data doc
+            cell_contents (list[DataDocTitleGenerationCellContent]): List of data doc cell contents
         """
         prompt = self._get_data_doc_title_prompt(cell_contents=cell_contents)
         llm = self._get_llm(

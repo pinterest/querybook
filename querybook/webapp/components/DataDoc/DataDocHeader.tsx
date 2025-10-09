@@ -1,11 +1,15 @@
 import clsx from 'clsx';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
 import { DataDocViewersBadge } from 'components/DataDocViewersBadge/DataDocViewersBadge';
 import { ImpressionWidget } from 'components/ImpressionWidget/ImpressionWidget';
-import { emptyDataDocTitleMessage, IDataDoc } from 'const/datadoc';
+import {
+    DataDocTitleGenerationCellContent,
+    emptyDataDocTitleMessage,
+    IDataDoc,
+} from 'const/datadoc';
 import { generateFormattedDate } from 'lib/utils/datetime';
 import { favoriteDataDoc, unfavoriteDataDoc } from 'redux/dataDoc/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
@@ -63,8 +67,8 @@ export const DataDocHeader = React.forwardRef<HTMLDivElement, IProps>(
             `Updated ${generateFormattedDate(lastUpdated, 'X')}`
         );
 
-        const onTitleChange = useMemo(
-            () => changeDataDocTitle.bind(this, dataDoc.id),
+        const onTitleChange = useCallback(
+            (value: string) => changeDataDocTitle(dataDoc.id, value),
             [changeDataDocTitle, dataDoc.id]
         );
 
@@ -76,6 +80,7 @@ export const DataDocHeader = React.forwardRef<HTMLDivElement, IProps>(
         useEffect(() => {
             if (aiGeneratedTitle) {
                 onTitleChange(aiGeneratedTitle);
+                setAiGeneratedTitle('');
             }
         }, [onTitleChange, aiGeneratedTitle]);
 
@@ -85,15 +90,18 @@ export const DataDocHeader = React.forwardRef<HTMLDivElement, IProps>(
             }
         });
 
-        const handleTitleGenerationClick = useCallback(async () => {
-            const cellContents = dataDoc.dataDocCells.map((cell) => ({
-                type: cell.cell_type,
-                content:
-                    cell.cell_type === 'text'
-                        ? cell.context.getPlainText()
-                        : cell.context,
-            }));
+        const handleTitleGenerationClick = useCallback(() => {
+            const cellContents: DataDocTitleGenerationCellContent[] =
+                dataDoc.dataDocCells.map((cell) => ({
+                    type: cell.cell_type,
+                    title: cell.meta['title'],
+                    content:
+                        cell.cell_type === 'text'
+                            ? cell.context.getPlainText()
+                            : cell.context,
+                }));
             socket.emit({ cell_contents: cellContents });
+            console.log('cellContents', cellContents);
             trackClick({
                 component: ComponentType.AI_ASSISTANT,
                 element: ElementType.DATA_DOC_TITLE_GENERATION_BUTTON,

@@ -2,11 +2,12 @@ from langchain.prompts import PromptTemplate
 
 
 prompt_template = """
-You are a helpful data scientist that can summarize the data doc.
+You are a helpful data scientist that can summarize the data analysis documents.
 
-I have querybook data doc with the following data cells. Generate a brief 10-word-maximum title that best summarize them for my document.
+I have a SQL analysis doc which we call "DataDoc". Generate a brief 10-word-maximum title that best summarize them for my document based on the contents.
+If the contents are empty, just generate a title that is "Empty DataDoc".
 
-===Data Doc Cell Contents
+===Contents
 {cell_contents}
 
 ===Response Format
