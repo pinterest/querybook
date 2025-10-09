@@ -58,6 +58,20 @@ presto_executor_template = StructFormField(
             helper="Max number of seconds before timing out the request",
         ),
     ),
+    (
+        "initial_sleep_interval",
+        FormField(
+            field_type=FormFieldType.Number,
+            helper="Initial sleep interval in seconds between query execution polls (default: 1)",
+        ),
+    ),
+    (
+        "extended_sleep_interval",
+        FormField(
+            field_type=FormFieldType.Number,
+            helper="Extended sleep interval in seconds between query execution polls (default: 10)",
+        ),
+    ),
 )
 
 trino_executor_template = StructFormField(
