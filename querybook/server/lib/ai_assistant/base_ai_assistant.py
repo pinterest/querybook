@@ -569,7 +569,9 @@ class BaseAIAssistant(ABC):
     @catch_error
     @with_ai_socket(command_type=AICommandType.DATA_DOC_TITLE)
     def generate_data_doc_title_from_query(
-        self, cell_contents: list["BaseAIAssistant.DataDocTitleGenerationCellContent"], socket=None
+        self,
+        cell_contents: list["BaseAIAssistant.DataDocTitleGenerationCellContent"],
+        socket=None,
     ):
         """Generate data doc title from SQL queries.
 
