@@ -155,7 +155,11 @@ export const DataDocHeader = React.forwardRef<HTMLDivElement, IProps>(
                     >
                         <AccentText color="light" size="xlarge" weight="extra">
                             <ResizableTextArea
-                                value={socket.loading ? 'Generating...' : dataDoc.title}
+                                value={
+                                    socket.loading
+                                        ? 'Generating...'
+                                        : dataDoc.title
+                                }
                                 onChange={onTitleChange}
                                 placeholder={emptyDataDocTitleMessage}
                                 disabled={!isEditable}
