@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { BoardItemAddButton } from 'components/BoardItemAddButton/BoardItemAddButton';
@@ -44,8 +44,6 @@ export const DataDocHeader = React.forwardRef<HTMLDivElement, IProps>(
         },
         ref
     ) => {
-        const [aiGeneratedTitle, setAiGeneratedTitle] = useState<string>('');
-
         const dispatch: Dispatch = useDispatch();
         const isFavorite = useSelector((state: IStoreState) =>
             state.dataDoc.favoriteDataDocIds.includes(dataDoc.id)
@@ -77,16 +75,9 @@ export const DataDocHeader = React.forwardRef<HTMLDivElement, IProps>(
             isEditable &&
             dataDoc.dataDocCells.length > 0;
 
-        useEffect(() => {
-            if (aiGeneratedTitle) {
-                onTitleChange(aiGeneratedTitle);
-                setAiGeneratedTitle('');
-            }
-        }, [onTitleChange, aiGeneratedTitle]);
-
         const socket = useAISocket(AICommandType.DATA_DOC_TITLE, ({ data }) => {
             if (data.title) {
-                setAiGeneratedTitle(data.title);
+                onTitleChange(data.title);
             }
         });
 
@@ -101,7 +92,6 @@ export const DataDocHeader = React.forwardRef<HTMLDivElement, IProps>(
                             : cell.context,
                 }));
             socket.emit({ cell_contents: cellContents });
-            console.log('cellContents', cellContents);
             trackClick({
                 component: ComponentType.AI_ASSISTANT,
                 element: ElementType.DATA_DOC_TITLE_GENERATION_BUTTON,
@@ -165,7 +155,7 @@ export const DataDocHeader = React.forwardRef<HTMLDivElement, IProps>(
                     >
                         <AccentText color="light" size="xlarge" weight="extra">
                             <ResizableTextArea
-                                value={dataDoc.title}
+                                value={socket.loading ? 'Generating...' : dataDoc.title}
                                 onChange={onTitleChange}
                                 placeholder={emptyDataDocTitleMessage}
                                 disabled={!isEditable}

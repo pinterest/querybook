@@ -1,6 +1,6 @@
 import functools
 from abc import ABC, abstractmethod
-from typing import Optional, TypedDict, Any
+from typing import Optional
 
 from langchain_core.language_models.base import BaseLanguageModel
 from langchain_core.output_parsers import JsonOutputParser, StrOutputParser
@@ -22,6 +22,7 @@ from logic.metastore import get_table_by_name
 from models.admin import QueryEngine
 from models.metastore import DataTableColumn
 from models.query_execution import QueryExecution
+from querybook.server.lib.data_doc.doc_types import DataDocTitleGenerationCellContent
 
 from .ai_socket import AIWebSocket, with_ai_socket
 from .prompts.sql_edit_prompt import SQL_EDIT_PROMPT
@@ -43,11 +44,6 @@ LOG = get_logger(__file__)
 
 
 class BaseAIAssistant(ABC):
-    class DataDocTitleGenerationCellContent(TypedDict):
-        type: str
-        title: Optional[str]
-        content: Any
-
     @property
     def name(self) -> str:
         raise NotImplementedError()
@@ -570,7 +566,7 @@ class BaseAIAssistant(ABC):
     @with_ai_socket(command_type=AICommandType.DATA_DOC_TITLE)
     def generate_data_doc_title_from_query(
         self,
-        cell_contents: list["BaseAIAssistant.DataDocTitleGenerationCellContent"],
+        cell_contents: list["DataDocTitleGenerationCellContent"],
         socket=None,
     ):
         """Generate data doc title from SQL queries.
