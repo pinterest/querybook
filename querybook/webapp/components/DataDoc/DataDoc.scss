@@ -74,6 +74,36 @@
                     }
                 }
             }
+            .data-doc-header-title {
+                position: relative;
+                display: flex;
+                align-items: center;
+
+                .IconButton {
+                    position: absolute;
+                    left: 0px;
+                    margin-left: 4px;
+                    padding-left: 0px;
+                    color: var(--icon);
+                    display: flex;
+                    align-items: center;
+                }
+
+                .data-doc-title {
+                    font-weight: var(--bold-font);
+                    flex: 1;
+                }
+
+                .with-icon {
+                    padding-left: 40px;
+                }
+
+                &:hover {
+                    .IconButton {
+                        color: var(--color-accent);
+                    }
+                }
+            }
         }
 
         .data-doc-container {

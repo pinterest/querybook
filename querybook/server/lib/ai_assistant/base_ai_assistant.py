@@ -22,6 +22,7 @@ from logic.metastore import get_table_by_name
 from models.admin import QueryEngine
 from models.metastore import DataTableColumn
 from models.query_execution import QueryExecution
+from querybook.server.lib.data_doc.doc_types import DataDocTitleGenerationCellContent
 
 from .ai_socket import AIWebSocket, with_ai_socket
 from .prompts.sql_edit_prompt import SQL_EDIT_PROMPT
@@ -32,6 +33,7 @@ from .prompts.table_select_prompt import TABLE_SELECT_PROMPT
 from .prompts.table_summary_prompt import TABLE_SUMMARY_PROMPT
 from .prompts.text_to_sql_prompt import TEXT_TO_SQL_PROMPT
 from .prompts.sql_complete_prompt import SQL_AUTOCOMPLETE_PROMPT
+from .prompts.data_doc_title_prompt import DATA_DOC_TITLE_PROMPT
 from .tools.table_schema import (
     get_slimmed_table_schemas,
     get_table_schema_by_name,
@@ -170,6 +172,9 @@ class BaseAIAssistant(ABC):
             prefix=prefix,
             suffix=suffix,
         )
+
+    def _get_data_doc_title_prompt(self, cell_contents):
+        return DATA_DOC_TITLE_PROMPT.format(cell_contents=cell_contents)
 
     def _get_error_msg(self, error) -> str:
         """Override this method to return specific error messages for your own assistant."""
@@ -556,3 +561,29 @@ class BaseAIAssistant(ABC):
         response = chain.invoke(prompt)
         socket.send_data(response)
         socket.close()
+
+    @catch_error
+    @with_ai_socket(command_type=AICommandType.DATA_DOC_TITLE)
+    def generate_data_doc_title_from_query(
+        self,
+        cell_contents: list["DataDocTitleGenerationCellContent"],
+        socket=None,
+    ):
+        """Generate data doc title from SQL queries.
+
+        Args:
+            cell_contents (list[DataDocTitleGenerationCellContent]): List of data doc cell contents
+        """
+        prompt = self._get_data_doc_title_prompt(cell_contents=cell_contents)
+        llm = self._get_llm(
+            ai_command=AICommandType.DATA_DOC_TITLE.value,
+            prompt_length=self._get_token_count(
+                AICommandType.DATA_DOC_TITLE.value, prompt
+            ),
+        )
+        self._run_prompt_and_send(
+            socket=socket,
+            command=AICommandType.DATA_DOC_TITLE,
+            llm=llm,
+            prompt_text=prompt,
+        )
