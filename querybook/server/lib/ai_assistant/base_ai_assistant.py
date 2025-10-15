@@ -15,6 +15,7 @@ from const.ai_assistant import (
 from lib.logger import get_logger
 from lib.query_analysis.lineage import process_query
 from lib.vector_store import get_vector_store
+from lib.data_doc.doc_types import DataDocTitleGenerationCellContent
 from logic import admin as admin_logic
 from logic import query_execution as qe_logic
 from logic.elasticsearch import get_sample_query_cells_by_table_name
@@ -22,7 +23,6 @@ from logic.metastore import get_table_by_name
 from models.admin import QueryEngine
 from models.metastore import DataTableColumn
 from models.query_execution import QueryExecution
-from querybook.server.lib.data_doc.doc_types import DataDocTitleGenerationCellContent
 
 from .ai_socket import AIWebSocket, with_ai_socket
 from .prompts.sql_edit_prompt import SQL_EDIT_PROMPT
