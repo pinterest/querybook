@@ -6,10 +6,12 @@ import { IDataDoc, IDataDocEditor } from 'const/datadoc';
 export enum Permission {
     CAN_READ = 'read only',
     CAN_WRITE = 'edit',
+    CAN_EXECUTE = 'execute',
     OWNER = 'owner',
     NULL = 'no access',
     INHERITED_READ = '[INHERITED] read only',
     INHERITED_WRITE = '[INHERITED] edit',
+    INHERITED_EXECUTE = '[INHERITED] execute',
 }
 
 export interface IViewerInfo {
@@ -34,6 +36,11 @@ export function editorToPermission(
             ? Permission.INHERITED_WRITE
             : Permission.CAN_WRITE;
     }
+    if (editor['execute']) {
+        return editor.id == null
+            ? Permission.INHERITED_EXECUTE
+            : Permission.CAN_EXECUTE;
+    }
     if (editor.read) {
         return editor.id == null
             ? Permission.INHERITED_READ
@@ -44,6 +51,7 @@ export function editorToPermission(
 
 export function permissionToReadWrite(permission: Permission): {
     read: boolean;
+    execute: boolean;
     write: boolean;
 } {
     if (
@@ -52,6 +60,16 @@ export function permissionToReadWrite(permission: Permission): {
     ) {
         return {
             read: true,
+            execute: false,
+            write: false,
+        };
+    } else if (
+        permission === Permission.CAN_EXECUTE ||
+        permission === Permission.INHERITED_EXECUTE
+    ) {
+        return {
+            read: true,
+            execute: true,
             write: false,
         };
     } else if (
@@ -61,12 +79,14 @@ export function permissionToReadWrite(permission: Permission): {
     ) {
         return {
             read: true,
+            execute: true,
             write: true,
         };
     }
 
     return {
         read: false,
+        execute: false,
         write: false,
     };
 }

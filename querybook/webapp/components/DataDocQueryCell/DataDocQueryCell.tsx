@@ -78,6 +78,7 @@ interface IOwnProps {
     query: string;
     meta: IDataQueryCellMeta;
     isEditable: boolean;
+    isExecutable: boolean;
 
     docId: number;
     cellId: number;
@@ -836,6 +837,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             queryEngineById,
 
             isEditable,
+            isExecutable,
         } = this.props;
         const { meta, query, hasSelection } = this.state;
 
@@ -867,7 +869,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                             ref={this.runButtonRef}
                             queryEngineById={queryEngineById}
                             queryEngines={queryEngines}
-                            disabled={!isEditable}
+                            disabled={!isExecutable}
                             hasSelection={hasSelection}
                             engineId={this.engineId}
                             onRunClick={this.onRunButtonClick}
@@ -891,6 +893,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                             onTableSamplingInfoClick={
                                 this.toggleShowTableSamplingInfoModal
                             }
+                            isEditable={isEditable}
                         />
                         {this.getAdditionalDropDownButtonDOM()}
                     </div>

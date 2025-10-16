@@ -873,12 +873,13 @@ def get_data_doc_editors_by_doc_id(data_doc_id, session=None):
 
     return [
         DataDocEditor(
-            # [0] is id, [1] is uid, [2] is read, [3] is write
+            # [0] is id, [1] is uid, [2] is read, [3] is write, [4] is execute
             data_doc_id=data_doc_id,
             id=editor[0],
             uid=editor[1],
             read=editor[2],
             write=editor[3],
+            execute=editor[4],
         )
         for editor in editors
     ]
@@ -891,7 +892,7 @@ def get_data_doc_writers_by_doc_id(doc_id, session=None):
 
 @with_session
 def create_data_doc_editor(
-    data_doc_id, uid, read=False, write=False, commit=True, session=None
+    data_doc_id, uid, read=False, write=False, execute=False, commit=True, session=None
 ):
     existing_editor = (
         session.query(DataDocEditor).filter_by(data_doc_id=data_doc_id, uid=uid).first()
@@ -899,7 +900,9 @@ def create_data_doc_editor(
     if existing_editor is not None:
         return update_data_doc_editor(existing_editor.id, read, write, session=session)
 
-    editor = DataDocEditor(data_doc_id=data_doc_id, uid=uid, read=read, write=write)
+    editor = DataDocEditor(
+        data_doc_id=data_doc_id, uid=uid, read=read, write=write, execute=execute
+    )
 
     session.add(editor)
     if commit:
@@ -917,6 +920,7 @@ def update_data_doc_editor(
     id,
     read=None,
     write=None,
+    execute=None,
     commit=True,
     session=None,
     **fields,
@@ -924,7 +928,7 @@ def update_data_doc_editor(
     editor = get_data_doc_editor_by_id(id, session=session)
     if editor:
         updated = update_model_fields(
-            editor, skip_if_value_none=True, read=read, write=write
+            editor, skip_if_value_none=True, read=read, write=write, execute=execute
         )
 
         if updated:
