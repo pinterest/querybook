@@ -1,5 +1,4 @@
 import datetime
-import json
 from app.auth.permission import (
     verify_environment_permission,
     verify_data_doc_permission,
