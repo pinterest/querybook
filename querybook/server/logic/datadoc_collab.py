@@ -1,3 +1,5 @@
+import datetime
+import json
 from app.auth.permission import (
     verify_environment_permission,
     verify_data_doc_permission,
@@ -236,6 +238,13 @@ def update_data_cell(cell_id, fields, sid="", session=None):
         **fields,
     )
     data_cell_dict = data_cell.to_dict()
+
+    # Stringify datetime fields in data_cell_dict to fix socketio error
+    # "Object of type datetime is not JSON serializable"
+    for key, value in data_cell_dict.items():
+        if isinstance(value, datetime.datetime):
+            data_cell_dict[key] = value.isoformat()
+
     socketio.emit(
         "data_cell_updated",
         (sid, data_cell_dict),
