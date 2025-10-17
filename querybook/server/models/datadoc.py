@@ -18,7 +18,6 @@ from lib.data_doc.meta import (
     validate_datadoc_meta,
 )
 from lib.data_doc.doc_types import DataDocMeta
-from lib.utils.serialize import with_formatted_date
 
 Base = db.Base
 
@@ -124,7 +123,6 @@ class DataCell(Base):
         order_by="QueryExecution.id.desc()",
     )
 
-    @with_formatted_date
     def to_dict(self, with_query_executions=False):
         item = {
             "id": self.id,
