@@ -25,7 +25,12 @@ interface IDataDocViewersListProps {
 
     addDataDocEditor: (uid: number, permission: Permission) => any;
     changeDataDocPublic: (docId: number, docPublic: boolean) => any;
-    updateDataDocEditors: (uid: number, read: boolean, write: boolean) => any;
+    updateDataDocEditors: (
+        uid: number,
+        read: boolean,
+        write: boolean,
+        execute: boolean
+    ) => any;
     deleteDataDocEditor: (uid: number) => any;
     updateDataDocOwner: (nextOwnerId: number) => any;
     rejectDataDocAccessRequest: (uid: number) => any;
@@ -90,9 +95,10 @@ export const DataDocViewersList: React.FunctionComponent<
             if (permission === Permission.OWNER) {
                 updateDataDocOwner(uid);
             } else {
-                const { read, write } = permissionToReadWrite(permission);
+                const { read, write, execute } =
+                    permissionToReadWrite(permission);
                 if (uid in editorsByUid) {
-                    updateDataDocEditors(uid, read, write);
+                    updateDataDocEditors(uid, read, write, execute);
                 } else {
                     addDataDocEditor(uid, permission);
                 }

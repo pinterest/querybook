@@ -216,6 +216,23 @@ export const canCurrentUserEditSelector = createSelector(
     }
 );
 
+export const canCurrentUserExecuteSelector = createSelector(
+    dataDocSelector,
+    dataDocEditorByUidSelector,
+    (state: IStoreState) => state.user.myUserInfo.uid,
+    (dataDoc, editorsByUserId, uid) => {
+        if (!dataDoc) {
+            return false;
+        }
+        const editor = uid in editorsByUserId ? editorsByUserId[uid] : null;
+        const permission = editorToPermission(
+            dataDoc.owner_uid === uid,
+            editor
+        );
+        return permissionToReadWrite(permission).execute;
+    }
+);
+
 export const queryCellSelector = createSelector(dataDocCellsSelector, (cells) =>
     cells
         .filter((cell) => cell.cell_type === 'query')
