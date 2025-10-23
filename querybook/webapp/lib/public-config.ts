@@ -8,6 +8,7 @@ export const isAIFeatureEnabled = (
         | 'table_vector_search'
         | 'query_vector_search'
         | 'sql_complete'
+        | 'data_doc_title_generation'
 ): boolean => {
     const aiAssistantConfig = PublicConfig.ai_assistant;
     if (!featureKey) {
