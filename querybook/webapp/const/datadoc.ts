@@ -120,6 +120,7 @@ export interface IDataDocEditor {
 
     read: boolean;
     write: boolean;
+    execute: boolean;
 }
 
 export const emptyDataDocTitleMessage = '(Untitled)';

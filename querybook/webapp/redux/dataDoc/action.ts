@@ -552,12 +552,13 @@ export function addDataDocEditors(
         const request = (getState().dataDoc.accessRequestsByDocIdUserId[
             docId
         ] || {})[uid];
-        const { read, write } = permissionToReadWrite(permission);
+        const { read, write, execute } = permissionToReadWrite(permission);
         const { data } = await DataDocEditorResource.create(
             docId,
             uid,
             read,
-            write
+            write,
+            execute
         );
         if (request) {
             dispatch({
@@ -584,7 +585,8 @@ export function updateDataDocEditors(
     docId: number,
     uid: number,
     read: boolean,
-    write: boolean
+    write: boolean,
+    execute: boolean
 ): ThunkResult<Promise<IDataDocEditor>> {
     return async (dispatch, getState) => {
         const editor = (getState().dataDoc.editorsByDocIdUserId[docId] || {})[
@@ -595,7 +597,12 @@ export function updateDataDocEditors(
                 data,
             }: {
                 data: IDataDocEditor;
-            } = await DataDocEditorResource.update(editor.id, read, write);
+            } = await DataDocEditorResource.update(
+                editor.id,
+                read,
+                write,
+                execute
+            );
 
             dispatch({
                 type: '@@dataDoc/RECEIVE_DATA_DOC_EDITOR',
