@@ -62,6 +62,7 @@ import { IListMenuItem, ListMenu } from 'ui/Menu/ListMenu';
 import { Modal } from 'ui/Modal/Modal';
 import { IResizableTextareaHandles } from 'ui/ResizableTextArea/ResizableTextArea';
 import { AccentText } from 'ui/StyledText/StyledText';
+import AIAgentButton from 'components/AIAssistant/AIAgentButton';
 
 import { ErrorQueryCell } from './ErrorQueryCell';
 
@@ -852,6 +853,8 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             <span className="p8">{this.dataCellTitle}</span>
         );
 
+        const aiAgentButtonRenderer = window?.CUSTOM_AI_AGENT_BUTTON?.renderer;
+
         return (
             <>
                 <div className="query-metadata">
@@ -895,17 +898,35 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                         {this.getAdditionalDropDownButtonDOM()}
                     </div>
                 </div>
-                {isAIFeatureEnabled() && isEditable && (
-                    <AICommandBar
-                        query={query}
-                        queryEngine={queryEngineById[this.engineId]}
-                        tablesInQuery={this.state.tableNamesInQuery}
-                        onUpdateQuery={this.handleChange}
-                        onFormatQuery={this.formatQuery.bind(this, {
-                            case: 'upper',
-                        })}
-                        ref={this.commandInputRef}
-                    />
+
+                {isAIFeatureEnabled() && (
+                    <div className="ai-bar">
+                        {aiAgentButtonRenderer && (
+                            <div
+                                className="ai-agent-button"
+                                onClick={() => {
+                                    this.onFocus();
+                                }}
+                            >
+                                <AIAgentButton
+                                    cellId={cellId}
+                                    renderer={aiAgentButtonRenderer}
+                                />
+                            </div>
+                        )}
+                        {isEditable && (
+                            <AICommandBar
+                                query={query}
+                                queryEngine={queryEngineById[this.engineId]}
+                                tablesInQuery={this.state.tableNamesInQuery}
+                                onUpdateQuery={this.handleChange}
+                                onFormatQuery={this.formatQuery.bind(this, {
+                                    case: 'upper',
+                                })}
+                                ref={this.commandInputRef}
+                            />
+                        )}
+                    </div>
                 )}
             </>
         );

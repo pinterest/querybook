@@ -209,6 +209,21 @@
                         .stars-icon {
                             color: var(--color-accent);
                         }
+
+                        .mention-input {
+                            ::placeholder {
+                                background: linear-gradient(
+                                    45deg,
+                                    rgba(255, 0, 0, 0.5) 10%,
+                                    rgba(128, 0, 128, 0.5) 20%,
+                                    rgba(0, 0, 255, 0.5) 30%
+                                );
+                                -webkit-background-clip: text;
+                                background-clip: text;
+                                -webkit-text-fill-color: transparent;
+                                text-fill-color: transparent;
+                            }
+                        }
                     }
 
                     .QueryCellTitle {

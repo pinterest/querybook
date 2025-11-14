@@ -23,6 +23,7 @@ import { Button } from 'ui/Button/Button';
 import { Message } from 'ui/Message/Message';
 import { IResizableTextareaHandles } from 'ui/ResizableTextArea/ResizableTextArea';
 import { StyledText } from 'ui/StyledText/StyledText';
+import { KeyMap } from 'lib/utils/keyboard';
 
 import './AICommandBar.scss';
 
@@ -172,7 +173,7 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
 
         const discardConfirmDOM = (
             <div className="discard-confirm-view">
-                <div className="discard-confirm-background"></div>
+                <div className="discard-confirm-background" />
                 <div className="discard-confirm-dialog">
                     <StyledText size="med" weight="bold">
                         Are you sure you want to discard the changes?
@@ -196,7 +197,11 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
         );
 
         return (
-            <div className="AICommandBar">
+            <div
+                className="AICommandBar"
+                aria-label={`Type @ to select a table. Type / to see more commands. Type ${KeyMap.aiCommandBar.openCommands.key} to reset the command.`}
+                data-balloon-pos="up-left"
+            >
                 {showPopupView && (
                     <>
                         {/* This is a workaround to hide the query cell controls when hovering */}

@@ -250,10 +250,11 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
                     placeholder={
                         command
                             ? command.hint
-                            : `Ask AI to generate/edit the query. Type @ to select a table. Type / to see more commands. Type ${KeyMap.aiCommandBar.openCommands.key} to reset the command.`
+                            : `Ask AI to generate/edit the query`
                     }
                     onBlur={() => setShowCommands(false)}
                     inputRef={textareaRef}
+                    className="mention-input"
                 >
                     <Mention
                         markup={`{{@__id__}}`}
