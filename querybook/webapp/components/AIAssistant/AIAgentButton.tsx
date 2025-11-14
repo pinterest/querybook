@@ -5,12 +5,12 @@ interface AIAgentButtonProps {
     renderer: (cellId: number) => React.ReactNode;
 }
 
-const AIAgentButton = ({ cellId, renderer }: AIAgentButtonProps) => {
+const AIAgentButton: React.FC<AIAgentButtonProps> = ({ cellId, renderer }) => {
     if (!renderer) {
         return null;
     }
 
-    return renderer(cellId);
+    return <>{renderer(cellId)}</>;
 };
 
 export default AIAgentButton;
