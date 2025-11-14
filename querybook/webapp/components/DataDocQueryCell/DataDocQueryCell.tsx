@@ -899,33 +899,35 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                     </div>
                 </div>
 
-                <div className="ai-bar">
-                    {aiAgentButtonRenderer && (
-                        <div
-                            className="ai-agent-button"
-                            onClick={() => {
-                                this.onFocus();
-                            }}
-                        >
-                            <AIAgentButton
-                                cellId={cellId}
-                                renderer={aiAgentButtonRenderer}
+                {isAIFeatureEnabled() && (
+                    <div className="ai-bar">
+                        {aiAgentButtonRenderer && (
+                            <div
+                                className="ai-agent-button"
+                                onClick={() => {
+                                    this.onFocus();
+                                }}
+                            >
+                                <AIAgentButton
+                                    cellId={cellId}
+                                    renderer={aiAgentButtonRenderer}
+                                />
+                            </div>
+                        )}
+                        {isEditable && (
+                            <AICommandBar
+                                query={query}
+                                queryEngine={queryEngineById[this.engineId]}
+                                tablesInQuery={this.state.tableNamesInQuery}
+                                onUpdateQuery={this.handleChange}
+                                onFormatQuery={this.formatQuery.bind(this, {
+                                    case: 'upper',
+                                })}
+                                ref={this.commandInputRef}
                             />
-                        </div>
-                    )}
-                    {isAIFeatureEnabled() && isEditable && (
-                        <AICommandBar
-                            query={query}
-                            queryEngine={queryEngineById[this.engineId]}
-                            tablesInQuery={this.state.tableNamesInQuery}
-                            onUpdateQuery={this.handleChange}
-                            onFormatQuery={this.formatQuery.bind(this, {
-                                case: 'upper',
-                            })}
-                            ref={this.commandInputRef}
-                        />
-                    )}
-                </div>
+                        )}
+                    </div>
+                )}
             </>
         );
     }
