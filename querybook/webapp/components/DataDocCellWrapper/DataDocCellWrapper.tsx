@@ -44,7 +44,7 @@ export const DataDocCellWrapper: React.FunctionComponent<IProps> = ({
     // Seems like there is an issue with react-lazyload's typescript
     // definition so we have to wrap children with <>
     return (
-        <div ref={selfRef}>
+        <div ref={selfRef} id={`data-doc-cell-${cellKey}`}>
             {anchorTag}
             {lazyDOM}
         </div>
