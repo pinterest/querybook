@@ -92,7 +92,7 @@ interface IState {
 }
 
 class DataDocComponent extends React.PureComponent<IProps, IState> {
-    public readonly state = {
+    public readonly state: IState = {
         errorObj: null,
         focusedCellIndex: null,
         lastFocusedCellIndex: null,
@@ -286,7 +286,11 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
     @bind
     public getLastFocusedCell(): IDataCell | null {
         const index = this.state.lastFocusedCellIndex;
-        if (index == null || !this.props.dataDoc?.dataDocCells) {
+        if (
+            index == null ||
+            !this.props.dataDoc?.dataDocCells ||
+            index >= this.props.dataDoc.dataDocCells.length
+        ) {
             return null;
         }
         return this.props.dataDoc.dataDocCells[index];
