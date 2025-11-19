@@ -78,6 +78,8 @@ type IProps = IOwnProps & DataDocStateProps & DataDocDispatchProps;
 
 interface IState {
     focusedCellIndex?: number;
+    // The last focused cell is either the currently focused cell or the previous focused cell that lost focus
+    lastFocusedCellIndex?: number;
     errorObj?: React.ReactChild;
     // indicates whether or not datadoc is connected to websocket
     connected: boolean;
@@ -93,6 +95,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
     public readonly state = {
         errorObj: null,
         focusedCellIndex: null,
+        lastFocusedCellIndex: null,
         highlightCellIndex: null,
         fullScreenCellIndex: null,
 
@@ -163,9 +166,12 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
     @bind
     public focusCellAt(index: number) {
         this.setState(
-            {
+            (prevState) => ({
                 focusedCellIndex: index,
-            },
+                // Do not clear the last focused cell on blur
+                lastFocusedCellIndex:
+                    index == null ? prevState.lastFocusedCellIndex : index,
+            }),
             () => {
                 this.updateDocCursor(index);
                 this.updateDocUrl();
@@ -275,6 +281,15 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
         if (index !== this.state.focusedCellIndex) {
             this.focusCellAt(index);
         }
+    }
+
+    @bind
+    public getLastFocusedCell(): IDataCell | null {
+        const index = this.state.lastFocusedCellIndex;
+        if (index == null || !this.props.dataDoc?.dataDocCells) {
+            return null;
+        }
+        return this.props.dataDoc.dataDocCells[index];
     }
 
     @bind
@@ -525,6 +540,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
             onDownKeyPressed: (index: number) => this.focusCellAt(index + 1),
             onFocus: this.onCellFocus,
             onBlur: this.onCellBlur,
+            getLastFocusedCell: this.getLastFocusedCell,
         };
     }
 
@@ -839,6 +855,7 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                 this.setState({
                     defaultCollapseAllCells: null,
                     focusedCellIndex: null,
+                    lastFocusedCellIndex: null,
 
                     // Sharing State
                     cellIdToExecutionId: {},
