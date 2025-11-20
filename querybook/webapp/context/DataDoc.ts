@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { DataCellUpdateFields, IDataCellMeta } from 'const/datadoc';
+import { DataCellUpdateFields, IDataCell, IDataCellMeta } from 'const/datadoc';
 
 export interface IDataDocContextType {
     cellIdToExecutionId: Record<number, number>;
@@ -27,6 +27,7 @@ export interface IDataDocContextType {
         onDownKeyPressed: (index: number) => any;
         onFocus: (index: number) => any;
         onBlur: (index: number) => any;
+        getLastFocusedCell: () => IDataCell | null;
     };
 
     isEditable: boolean;
