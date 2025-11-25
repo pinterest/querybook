@@ -19,7 +19,10 @@ export interface IListMenuItem {
     name: React.ReactChild;
     className?: string;
     // Extra HTML attributes (including data-*) applied to the underlying <a>/<MenuItem>
-    otherAnchorAttrs?: Omit<React.HTMLAttributes<HTMLAnchorElement>, 'onClick' | 'href'>;
+    otherAnchorAttrs?: Omit<
+        React.HTMLAttributes<HTMLAnchorElement>,
+        'onClick' | 'href'
+    >;
 
     items?: IListMenuItem[];
 }
