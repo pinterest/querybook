@@ -17,6 +17,12 @@ export interface IListMenuItem {
     tooltip?: string;
     tooltipPos?: TooltipDirection;
     name: React.ReactChild;
+    className?: string;
+    // Extra HTML attributes (including data-*) applied to the underlying <a>/<MenuItem>
+    otherAnchorAttrs?: Omit<
+        React.HTMLAttributes<HTMLAnchorElement>,
+        'onClick' | 'href'
+    >;
 
     items?: IListMenuItem[];
 }
@@ -57,7 +63,9 @@ export const ListMenu: React.FunctionComponent<IProps> = ({
             ? action.icon
             : null;
 
-        const actionProps: React.HTMLProps<HTMLAnchorElement> = {};
+        const actionProps: React.HTMLProps<HTMLAnchorElement> = {
+            ...(action.otherAnchorAttrs ?? {}),
+        };
         if (action.onClick) {
             actionProps.onClick = action.onClick;
         }
@@ -88,7 +96,10 @@ export const ListMenu: React.FunctionComponent<IProps> = ({
                     })}
                     key={index}
                     customButtonRenderer={() => (
-                        <a {...actionProps} className="flex-row">
+                        <a
+                            {...actionProps}
+                            className={clsx('flex-row', action.className)}
+                        >
                             {buttonContent}
                         </a>
                     )}
@@ -99,7 +110,11 @@ export const ListMenu: React.FunctionComponent<IProps> = ({
             );
         } else {
             itemDOM = (
-                <MenuItem {...actionProps} key={index}>
+                <MenuItem
+                    {...actionProps}
+                    key={index}
+                    className={action.className}
+                >
                     <AccentText>{buttonContent}</AccentText>
                 </MenuItem>
             );
