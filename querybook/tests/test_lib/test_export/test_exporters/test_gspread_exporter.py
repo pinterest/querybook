@@ -67,12 +67,12 @@ class GetMaxRowsTestCase(TestCase):
         self.statement_columns_len_mock.return_value = 1000000
         exporter = GoogleSheetsExporter({})
 
-        # 4 = 5000000 (max sheet cells) // 1000001
-        self.assertEqual(exporter._get_max_rows(1, start_cell="A2"), 4)
+        # 9 = 10000000 (max sheet cells) // 1000001
+        self.assertEqual(exporter._get_max_rows(1, start_cell="A2"), 9)
 
     def test_row_offset(self):
         self.statement_columns_len_mock.return_value = 500000
         exporter = GoogleSheetsExporter({})
 
-        # 8 = (5000000 [max sheet cells] // 500001) - 1
-        self.assertEqual(exporter._get_max_rows(1, start_cell="B2"), 8)
+        # 18 = (10000000 [max sheet cells] // 500001) - 1
+        self.assertEqual(exporter._get_max_rows(1, start_cell="B2"), 18)
