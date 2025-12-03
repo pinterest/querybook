@@ -88,6 +88,9 @@ class QuerybookSettings(object):
     API_ACCESS_TOKEN_ALLOWED_ENVIRONMENTS = (
         get_env_config("API_ACCESS_TOKEN_ALLOWED_ENVIRONMENTS", optional=True) or []
     )
+    API_ACCESS_TOKEN_ALLOWED_QUERY_ENGINES = (
+        get_env_config("API_ACCESS_TOKEN_ALLOWED_QUERY_ENGINES", optional=True) or []
+    )
 
     OAUTH_CLIENT_ID = get_env_config("OAUTH_CLIENT_ID")
     OAUTH_CLIENT_SECRET = get_env_config("OAUTH_CLIENT_SECRET")
