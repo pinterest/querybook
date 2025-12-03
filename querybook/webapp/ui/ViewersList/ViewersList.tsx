@@ -129,6 +129,7 @@ export const ViewersList: React.FunctionComponent<IProps> = ({
                                 <ViewerPermissionPicker
                                     readonly={readonly}
                                     publicDataDoc={isPublic}
+                                    entityName={entityName}
                                     isOwner={isOwner}
                                     viewerInfo={info}
                                     onPermissionChange={(permission) =>

@@ -8,15 +8,41 @@
                     display: none;
                 }
             }
-            .FormField + .FormField {
+
+            .FormField+.FormField {
                 margin-left: 12px;
             }
+
             .FormField:nth-child(1) {
                 flex: 3;
+
+                // Make disabled variable name input look the same as enabled
+                input[disabled] {
+                    // Apply standard-textbox styles that disabled inputs normally don't get
+                    background-color: var(--bg-light) !important;
+                    border: none !important;
+                    border-radius: var(--border-radius-sm) !important;
+                    box-shadow: none !important;
+                    width: 100% !important;
+                    padding: 8px !important;
+                    font-size: inherit !important;
+
+                    // Override default disabled styling
+                    opacity: 1 !important;
+                    color: inherit !important;
+                    cursor: not-allowed !important;
+
+                    // Add hover effect even when disabled for consistency
+                    &:hover {
+                        background-color: var(--bg-hover) !important;
+                    }
+                }
             }
+
             .FormField:nth-child(2) {
                 flex: 2;
             }
+
             .FormField:nth-child(3) {
                 flex: 7;
             }
