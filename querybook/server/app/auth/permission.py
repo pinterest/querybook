@@ -1,3 +1,4 @@
+from flask import request
 from flask_login import current_user
 from typing import List, Optional
 
@@ -8,6 +9,7 @@ from const.datasources import (
     RESOURCE_NOT_FOUND_STATUS_CODE,
 )
 
+from env import QuerybookSettings
 from models.admin import QueryEngine, QueryMetastore, QueryEngineEnvironment
 from models.query_execution import QueryExecution, StatementExecution
 from models.metastore import DataSchema, DataTable, DataTableColumn
@@ -28,6 +30,7 @@ def verify_environment_permission(environment_ids: List[int]):
     # If we are verifying environment ids and none is returned
     # it is most likely that the object we are verifying does
     # not associate with any environment
+    verify_api_access_token_permission(environment_ids)
     if len(environment_ids) == 0:
         abort_404("Requested resource is not available within accessible environment")
 
@@ -50,6 +53,24 @@ def verify_query_engine_environment_permission(
         message="Engine is not in Environment",
         status_code=ACCESS_RESTRICTED_STATUS_CODE,
     )
+
+
+def verify_api_access_token_permission(environment_ids):
+    used_api_token = request.headers.get("api-access-token") is not None
+    if not used_api_token:
+        return
+    api_access_token_allowed_environments = (
+        QuerybookSettings.API_ACCESS_TOKEN_ALLOWED_ENVIRONMENTS
+    )
+    if api_access_token_allowed_environments:
+        api_assert(
+            all(
+                environment_id in api_access_token_allowed_environments
+                for environment_id in environment_ids
+            ),
+            message=f"Environment ids '{str(environment_ids)}' are not allowed for API access token requests. Allowed environments: {str(api_access_token_allowed_environments)}",
+            status_code=ACCESS_RESTRICTED_STATUS_CODE,
+        )
 
 
 @with_session

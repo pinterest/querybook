@@ -84,6 +84,11 @@ class QuerybookSettings(object):
     AUTH_BACKEND = get_env_config("AUTH_BACKEND")
     LOGS_OUT_AFTER = int(get_env_config("LOGS_OUT_AFTER"))
 
+    # API Access Token restrictions
+    API_ACCESS_TOKEN_ALLOWED_ENVIRONMENTS = (
+        get_env_config("API_ACCESS_TOKEN_ALLOWED_ENVIRONMENTS", optional=True) or []
+    )
+
     OAUTH_CLIENT_ID = get_env_config("OAUTH_CLIENT_ID")
     OAUTH_CLIENT_SECRET = get_env_config("OAUTH_CLIENT_SECRET")
     OAUTH_AUTHORIZATION_URL = get_env_config("OAUTH_AUTHORIZATION_URL")
