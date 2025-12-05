@@ -68,7 +68,7 @@ def verify_api_access_token_environment_permission(environment_ids: List[int]):
     )
     if api_access_token_allowed_environments:
         api_assert(
-            all(
+            any(
                 environment_id in api_access_token_allowed_environments
                 for environment_id in environment_ids
             ),
