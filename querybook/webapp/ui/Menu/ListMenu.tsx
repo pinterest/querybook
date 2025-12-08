@@ -120,7 +120,7 @@ export const ListMenu: React.FunctionComponent<IProps> = ({
                 <MenuItem
                     {...actionProps}
                     key={index}
-                    className={itemClassName}
+                    className={itemClassName || undefined}
                 >
                     <AccentText>{buttonContent}</AccentText>
                 </MenuItem>
