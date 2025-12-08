@@ -26,6 +26,12 @@
             cursor: pointer;
         }
 
+        &.is-disabled {
+            color: var(--text-lightest-0);
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
         &:hover {
             background-color: var(--bg-hover);
             color: var(--hover-text-color);
