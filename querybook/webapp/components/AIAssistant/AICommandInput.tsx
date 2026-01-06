@@ -248,9 +248,7 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
                     onKeyDown={onKeyDown}
                     style={mentionInputStyle}
                     placeholder={
-                        command
-                            ? command.hint
-                            : `Ask AI to generate/edit the query`
+                        command ? command.hint : 'Ask AI to edit the query'
                     }
                     onBlur={() => setShowCommands(false)}
                     inputRef={textareaRef}
