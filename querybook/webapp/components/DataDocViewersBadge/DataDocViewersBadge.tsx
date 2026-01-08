@@ -30,9 +30,15 @@ const useDataDocEditorReduxActions = (docId: number) => {
     );
 
     const updateDataDocEditors = useCallback(
-        (uid: number, read: boolean, write: boolean) =>
+        (uid: number, read: boolean, write: boolean, execute: boolean) =>
             dispatch(
-                dataDocActions.updateDataDocEditors(docId, uid, read, write)
+                dataDocActions.updateDataDocEditors(
+                    docId,
+                    uid,
+                    read,
+                    write,
+                    execute
+                )
             ),
         [docId]
     );

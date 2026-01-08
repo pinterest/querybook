@@ -49,6 +49,21 @@ def user_can_read(doc_id, uid, session=None):
 
 
 @with_session
+def user_can_execute(doc_id, uid, session=None):
+    datadoc = session.query(DataDoc).filter_by(id=doc_id).first()
+
+    if datadoc is None:
+        raise DocDoesNotExist()
+
+    if datadoc.owner_uid == uid:
+        return True
+
+    return user_has_permission(
+        doc_id, BoardDataDocPermission.EXECUTE, DataDocEditor, uid, session=session
+    )
+
+
+@with_session
 def assert_can_read(doc_id, session=None):
     try:
         api_assert(
@@ -66,6 +81,18 @@ def assert_can_write(doc_id, session=None):
         api_assert(
             user_can_write(doc_id, uid=current_user.id, session=session),
             "CANNOT_WRITE_DATADOC",
+            UNAUTHORIZED_STATUS_CODE,
+        )
+    except DocDoesNotExist:
+        api_assert(False, "DOC_DNE", RESOURCE_NOT_FOUND_STATUS_CODE)
+
+
+@with_session
+def assert_can_execute(doc_id, session=None):
+    try:
+        api_assert(
+            user_can_execute(doc_id, uid=current_user.id, session=session),
+            "CANNOT_EXECUTE_DATADOC",
             UNAUTHORIZED_STATUS_CODE,
         )
     except DocDoesNotExist:

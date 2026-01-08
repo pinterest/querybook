@@ -28,6 +28,7 @@ from logic import (
 from logic.datadoc_permission import (
     assert_can_read,
     assert_can_write,
+    assert_can_execute,
     assert_is_owner,
     assert_is_not_group,
 )
@@ -385,8 +386,8 @@ def run_data_doc(id):
 
 
 @register("/datadoc/<int:id>/run/", methods=["POST"])
-def adhoc_run_data_doc(id, send_notification=False):
-    assert_can_write(id)
+def adhoc_run_data_doc(id, start_index=0, send_notification=False):
+    assert_can_execute(id)
     verify_data_doc_permission(id)
 
     notifier_name = get_user_preferred_notifier(current_user.id)
@@ -443,12 +444,18 @@ def add_datadoc_editor(
     uid,
     read=None,
     write=None,
+    execute=None,
     originator=None,  # Used for websocket to identify sender, optional
 ):
     with DBSession() as session:
         assert_can_write(doc_id, session=session)
         editor = logic.create_data_doc_editor(
-            data_doc_id=doc_id, uid=uid, read=read, write=write, commit=False
+            data_doc_id=doc_id,
+            uid=uid,
+            read=read,
+            write=write,
+            execute=execute,
+            commit=False,
         )
         editor_dict = editor.to_dict()
 
@@ -577,6 +584,7 @@ def update_datadoc_editor(
     id,
     write=None,
     read=None,
+    execute=None,
     originator=None,  # Used for websocket to identify sender, optional
 ):
     with DBSession() as session:
@@ -584,7 +592,7 @@ def update_datadoc_editor(
         if editor:
             assert_can_write(editor.data_doc_id, session=session)
 
-        editor = logic.update_data_doc_editor(id, read, write, session=session)
+        editor = logic.update_data_doc_editor(id, read, write, execute, session=session)
         if editor:
             editor_dict = editor.to_dict()
             socketio.emit(

@@ -36,6 +36,9 @@ export const AccessRequestPermissionPicker: React.FunctionComponent<
                 <MenuItem onClick={() => setPermission(Permission.CAN_READ)}>
                     read only
                 </MenuItem>
+                <MenuItem onClick={() => setPermission(Permission.CAN_EXECUTE)}>
+                    execute
+                </MenuItem>
                 <MenuItem onClick={() => setPermission(Permission.CAN_WRITE)}>
                     edit
                 </MenuItem>

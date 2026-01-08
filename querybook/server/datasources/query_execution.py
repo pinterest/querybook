@@ -40,7 +40,7 @@ from logic import (
     user as user_logic,
     admin as admin_logic,
 )
-from logic.datadoc_permission import user_can_read
+from logic.datadoc_permission import user_can_read, assert_can_execute
 from logic.query_execution_permission import (
     get_default_user_environment_by_execution_id,
 )
@@ -153,6 +153,7 @@ def create_query_execution(
             data_cell_id=data_cell_id,
             session=session,
         )
+        assert_can_execute(data_doc.id, session=session)
 
         try:
             initiate_query_execution(

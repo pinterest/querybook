@@ -130,17 +130,30 @@ export const DataDocResource = {
 export const DataDocEditorResource = {
     get: (docId: number) =>
         ds.fetch<IDataDocEditor[]>(`/datadoc/${docId}/editor/`),
-    create: (docId: number, uid: number, read: boolean, write: boolean) =>
+    create: (
+        docId: number,
+        uid: number,
+        read: boolean,
+        write: boolean,
+        execute: boolean
+    ) =>
         ds.save<IDataDocEditor>(`/datadoc/${docId}/editor/${uid}/`, {
             read,
             write,
+            execute,
             originator: dataDocSocket.socketId,
         }),
 
-    update: (editorId: number, read: boolean, write: boolean) =>
+    update: (
+        editorId: number,
+        read: boolean,
+        write: boolean,
+        execute: boolean
+    ) =>
         ds.update<IDataDocEditor>(`/datadoc_editor/${editorId}/`, {
             read,
             write,
+            execute,
             originator: dataDocSocket.socketId,
         }),
 
