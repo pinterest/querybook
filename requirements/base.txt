@@ -46,3 +46,4 @@ numpy>=1.22.2,<2.0.0 # not directly required, pinned by Snyk to avoid a vulnerab
 
 # Query engine - PostgreSQL
 psycopg2==2.9.5
+urllib3>=2.6.3 # not directly required, pinned by Snyk to avoid a vulnerability
