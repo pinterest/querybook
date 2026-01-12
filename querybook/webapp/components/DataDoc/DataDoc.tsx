@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { decorate } from 'core-decorators';
 import { ContentState } from 'draft-js';
-import { findIndex } from 'lodash';
+import { findIndex, capitalize } from 'lodash';
 import { bind, debounce } from 'lodash-decorators';
 import memoizeOne from 'memoize-one';
 import React from 'react';
@@ -62,6 +62,7 @@ import { Message } from 'ui/Message/Message';
 
 import { DataDocCellControl } from './DataDocCellControl';
 import { DataDocContentContainer } from './DataDocContentContainer';
+import { DataDocDeletePreview } from './DataDocDeletePreview';
 import { DataDocError } from './DataDocError';
 import { DataDocHeader } from './DataDocHeader';
 import { DataDocLoading } from './DataDocLoading';
@@ -459,9 +460,17 @@ class DataDocComponent extends React.PureComponent<IProps, IState> {
                     }
                 };
                 if (shouldConfirm) {
+                    let cellName = '';
+                    if ('title' in cell.meta) {
+                        cellName = cell.meta.title
+                            ? ` "${cell.meta.title}"`
+                            : cellName;
+                    }
                     sendConfirm({
-                        header: 'Delete Cell?',
-                        message: 'Deleted cells cannot be recovered',
+                        header: `Delete ${capitalize(
+                            cell.cell_type
+                        )} Cell${cellName}?`,
+                        message: <DataDocDeletePreview cell={cell} />,
                         onConfirm: deleteCell,
                         onHide: resolve,
                         confirmColor: 'cancel',
