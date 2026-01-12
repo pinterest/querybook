@@ -44,7 +44,7 @@ def construct_datadoc_query(
         keywords,
         search_fields=_match_data_doc_fields(fields),
     )
-    search_filter = match_filters(filters)
+    search_filter = match_filters(filters, and_filter_names=["tags"])
     search_filter.setdefault("filter", {}).setdefault("bool", {}).setdefault(
         "must", []
     ).append({"bool": {"should": _data_doc_access_terms(uid)}})
@@ -53,7 +53,7 @@ def construct_datadoc_query(
         "query": {
             "bool": combine_keyword_and_filter_query(keywords_query, search_filter)
         },
-        "_source": ["id", "title", "owner_uid", "created_at"],
+        "_source": ["id", "title", "owner_uid", "created_at", "tags"],
         "size": limit,
         "from": offset,
     }

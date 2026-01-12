@@ -5,6 +5,7 @@ from app.db import DBSession
 from app.auth.permission import (
     verify_data_table_permission,
     verify_data_column_permission,
+    verify_data_doc_permission,
 )
 from logic import tag as logic
 from models.tag import Tag
@@ -17,6 +18,15 @@ from models.tag import Tag
 def get_tags_by_table_id(table_id: int):
     verify_data_table_permission(table_id)
     return logic.get_tags_by_table_id(table_id=table_id)
+
+
+@register(
+    "/datadoc/<int:datadoc_id>/tag/",
+    methods=["GET"],
+)
+def get_tags_by_datadoc_id(datadoc_id: int):
+    verify_data_doc_permission(datadoc_id)
+    return logic.get_tags_by_datadoc_id(datadoc_id=datadoc_id)
 
 
 @register(
@@ -64,6 +74,20 @@ def add_tag_to_table(table_id, tag):
 
 
 @register(
+    "/datadoc/<int:datadoc_id>/tag/",
+    methods=["POST"],
+)
+def add_tag_to_datadoc(datadoc_id, tag):
+    verify_data_doc_permission(datadoc_id)
+    return logic.add_tag_to_datadoc(
+        datadoc_id=datadoc_id,
+        tag_name=tag,
+        uid=current_user.id,
+        user_is_admin=current_user.is_admin,
+    )
+
+
+@register(
     "/table/<int:table_id>/tag/",
     methods=["DELETE"],
 )
@@ -72,6 +96,21 @@ def delete_tag_from_table(table_id: int, tag_name: str):
         verify_data_table_permission(table_id, session=session)
         return logic.delete_tag_from_table(
             table_id=table_id,
+            tag_name=tag_name,
+            user_is_admin=current_user.is_admin,
+            session=session,
+        )
+
+
+@register(
+    "/datadoc/<int:datadoc_id>/tag/",
+    methods=["DELETE"],
+)
+def delete_tag_from_datadoc(datadoc_id: int, tag_name: str):
+    with DBSession() as session:
+        verify_data_doc_permission(datadoc_id, session=session)
+        return logic.delete_tag_from_datadoc(
+            datadoc_id=datadoc_id,
             tag_name=tag_name,
             user_is_admin=current_user.is_admin,
             session=session,
