@@ -991,22 +991,19 @@ const QueryComposer: React.FC = () => {
 
     const aiDOM = isAIFeatureEnabled() && (
         <div className="mv8 ai-bar">
-                {aiAgentButtonRenderer && (
-                    <div className="ai-agent-button">
-                        <AIAgentButton
-                            isAdhoc
-                            renderer={aiAgentButtonRenderer}
-                        />
-                    </div>
-                )}
-                <AICommandBar
-                    query={query}
-                    queryEngine={queryEngineById[engine.id]}
-                    tablesInQuery={tableNamesInQuery}
-                    onUpdateQuery={setQuery}
-                    onFormatQuery={handleFormatQuery}
-                    ref={aiCommandInputRef}
-                />
+            {aiAgentButtonRenderer && (
+                <div className="ai-agent-button">
+                    <AIAgentButton isAdhoc renderer={aiAgentButtonRenderer} />
+                </div>
+            )}
+            <AICommandBar
+                query={query}
+                queryEngine={queryEngineById[engine.id]}
+                tablesInQuery={tableNamesInQuery}
+                onUpdateQuery={setQuery}
+                onFormatQuery={handleFormatQuery}
+                ref={aiCommandInputRef}
+            />
         </div>
     );
 

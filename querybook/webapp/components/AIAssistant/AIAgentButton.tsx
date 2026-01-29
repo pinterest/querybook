@@ -6,7 +6,11 @@ interface AIAgentButtonProps {
     renderer: (cellId?: number, isAdhoc?: boolean) => React.ReactNode;
 }
 
-const AIAgentButton: React.FC<AIAgentButtonProps> = ({ cellId, isAdhoc, renderer }) => {
+const AIAgentButton: React.FC<AIAgentButtonProps> = ({
+    cellId,
+    isAdhoc,
+    renderer
+}) => {
     if (!renderer) {
         return null;
     }
