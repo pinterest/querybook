@@ -9,7 +9,7 @@ interface AIAgentButtonProps {
 const AIAgentButton: React.FC<AIAgentButtonProps> = ({
     cellId,
     isAdhoc,
-    renderer
+    renderer,
 }) => {
     if (!renderer) {
         return null;
