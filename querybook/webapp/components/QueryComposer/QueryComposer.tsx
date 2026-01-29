@@ -5,7 +5,7 @@ import React, {
     useEffect,
     useMemo,
     useRef,
-    useState,
+    useState
 } from 'react';
 import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,12 +20,12 @@ import { IQueryEditorHandles } from 'components/QueryEditor/QueryEditor';
 import { QueryPeerReviewModal } from 'components/QueryPeerReviewModal/QueryPeerReviewModal';
 import {
     IQueryRunButtonHandles,
-    QueryRunButton,
+    QueryRunButton
 } from 'components/QueryRunButton/QueryRunButton';
 import {
     ISearchAndReplaceHandles,
     ISearchAndReplaceProps,
-    SearchAndReplace,
+    SearchAndReplace
 } from 'components/SearchAndReplace/SearchAndReplace';
 import { TemplatedQueryView } from 'components/TemplateQueryView/TemplatedQueryView';
 import { TranspileQueryModal } from 'components/TranspileQueryModal/TranspileQueryModal';
@@ -53,7 +53,7 @@ import * as adhocQueryActions from 'redux/adhocQuery/action';
 import * as dataDocActions from 'redux/dataDoc/action';
 import {
     queryEngineByIdEnvSelector,
-    queryEngineSelector,
+    queryEngineSelector
 } from 'redux/queryEngine/selector';
 import * as queryExecutionsAction from 'redux/queryExecutions/action';
 import { Dispatch, IStoreState } from 'redux/store/types';
@@ -70,10 +70,11 @@ import { QueryComposerExecution } from './QueryComposerExecution';
 import { runQuery, transformQuery } from './RunQuery';
 
 import './QueryComposer.scss';
+import AIAgentButton from 'components/AIAssistant/AIAgentButton';
 
 const QUERY_EXECUTION_HEIGHT = 300;
 
-const useExecution = (dispatch: Dispatch, environmentId: number) => {
+export const useExecution = (dispatch: Dispatch, environmentId: number) => {
     const executionId = useSelector(
         (state: IStoreState) => state.adhocQuery[environmentId]?.executionId
     );
@@ -124,11 +125,11 @@ const useEngine = (dispatch: Dispatch, environmentId: number) => {
         engine,
         setEngineId,
         queryEngines,
-        queryEngineById,
+        queryEngineById
     };
 };
 
-const useQuery = (dispatch: Dispatch, environmentId: number) => {
+export const useQuery = (dispatch: Dispatch, environmentId: number) => {
     const reduxQuery = useSelector(
         (state: IStoreState) => state.adhocQuery[environmentId]?.query ?? ''
     );
@@ -217,7 +218,7 @@ const useTemplatedVariables = (dispatch: Dispatch, environmentId: number) => {
                 newConfig.push({
                     name: key,
                     value,
-                    type: detectVariableType(value),
+                    type: detectVariableType(value)
                 });
             });
             return newConfig;
@@ -275,12 +276,12 @@ const useQueryComposerSearchAndReplace = (
     const searchAndReplaceProps: ISearchAndReplaceProps = {
         getSearchResults,
         replace,
-        jumpToResult,
+        jumpToResult
     };
 
     return {
         searchAndReplaceProps,
-        searchAndReplaceRef,
+        searchAndReplaceRef
     };
 };
 
@@ -289,7 +290,7 @@ function useQueryEditorHelpers() {
     const handleFormatQuery = useCallback(() => {
         trackClick({
             component: ComponentType.ADHOC_QUERY,
-            element: ElementType.FORMAT_BUTTON,
+            element: ElementType.FORMAT_BUTTON
         });
         if (queryEditorRef.current) {
             queryEditorRef.current.formatQuery();
@@ -306,7 +307,7 @@ function useQueryEditorHelpers() {
 
     return {
         queryEditorRef,
-        handleFormatQuery,
+        handleFormatQuery
     };
 }
 
@@ -317,7 +318,7 @@ function useKeyMap(
 ) {
     return useMemo(() => {
         const keyMap = {
-            [KeyMap.codeEditor.runQuery.key]: clickOnRunButton,
+            [KeyMap.codeEditor.runQuery.key]: clickOnRunButton
         };
 
         for (const [index, engine] of queryEngines.entries()) {
@@ -386,7 +387,7 @@ function useTranspileQuery(
         startQueryTranspile,
         clearQueryTranspile,
         handleTranspileQuery,
-        transpilerOptions,
+        transpilerOptions
     };
 }
 
@@ -479,13 +480,13 @@ const QueryComposer: React.FC = () => {
         startQueryTranspile,
         clearQueryTranspile,
         handleTranspileQuery,
-        transpilerOptions,
+        transpilerOptions
     } = useTranspileQuery(engine, queryEngines, setEngineId, setQuery);
 
     const handleCreateDataDoc = useCallback(async () => {
         trackClick({
             component: ComponentType.ADHOC_QUERY,
-            element: ElementType.CREATE_DATADOC_BUTTON,
+            element: ElementType.CREATE_DATADOC_BUTTON
         });
         let dataDoc = null;
         const meta = { variables: templatedVariables };
@@ -502,7 +503,7 @@ const QueryComposer: React.FC = () => {
             const cell = {
                 type: 'query',
                 context: query,
-                meta: { engine: engine.id },
+                meta: { engine: engine.id }
             };
             dataDoc = await dispatch(
                 dataDocActions.createDataDoc([cell], meta)
@@ -538,7 +539,7 @@ const QueryComposer: React.FC = () => {
             const {
                 element = ElementType.RUN_QUERY_BUTTON,
                 peerReviewParams,
-                onSuccess,
+                onSuccess
             } = options ?? {};
 
             const sampleRate = getSampleRate();
@@ -550,8 +551,8 @@ const QueryComposer: React.FC = () => {
                 element,
                 aux: {
                     lintError: hasLintErrors,
-                    sampleRate,
-                },
+                    sampleRate
+                }
             });
 
             // Throttle to prevent double run
@@ -585,7 +586,7 @@ const QueryComposer: React.FC = () => {
             );
 
             triggerSurvey(SurveySurfaceType.QUERY_AUTHORING, {
-                query_execution_id: queryId,
+                query_execution_id: queryId
             });
 
             if (queryId != null) {
@@ -606,7 +607,7 @@ const QueryComposer: React.FC = () => {
             rowLimit,
             triggerSurvey,
             dispatch,
-            setExecutionId,
+            setExecutionId
         ]
     );
 
@@ -615,7 +616,7 @@ const QueryComposer: React.FC = () => {
             setShowPeerReviewModal(false);
             return handleRunQuery({
                 element: ElementType.PEER_REVIEW_QUERY_BUTTON,
-                peerReviewParams,
+                peerReviewParams
             });
         },
         [handleRunQuery, setShowPeerReviewModal]
@@ -649,7 +650,7 @@ const QueryComposer: React.FC = () => {
                 const table = tablesByName[tableName];
                 if (table?.custom_properties?.sampling) {
                     samplingTables[tableName] = {
-                        sampled_table: table.custom_properties?.sampled_table,
+                        sampled_table: table.custom_properties?.sampled_table
                     };
                 }
             });
@@ -666,8 +667,8 @@ const QueryComposer: React.FC = () => {
             aux: {
                 action: 'focus',
                 environmentId,
-                query,
-            },
+                query
+            }
         });
     }, [environmentId, query]);
 
@@ -678,8 +679,8 @@ const QueryComposer: React.FC = () => {
             aux: {
                 action: 'blur',
                 environmentId,
-                query,
-            },
+                query
+            }
         });
     }, [environmentId, query]);
 
@@ -725,7 +726,7 @@ const QueryComposer: React.FC = () => {
             <Resizable
                 defaultSize={{
                     width: '100%',
-                    height: `${QUERY_EXECUTION_HEIGHT}px`,
+                    height: `${QUERY_EXECUTION_HEIGHT}px`
                 }}
                 enable={enableResizable({ top: true, bottom: true })}
                 onResize={scrollToCollapseExecution}
@@ -782,7 +783,7 @@ const QueryComposer: React.FC = () => {
 
     const queryEditorWrapperClassname = clsx({
         'query-editor-wrapper': true,
-        mb16: executionId != null,
+        mb16: executionId != null
     });
 
     const contentDOM = (
@@ -876,34 +877,34 @@ const QueryComposer: React.FC = () => {
                 onClick: () => {
                     trackClick({
                         component: ComponentType.ADHOC_QUERY,
-                        element: ElementType.TEMPLATE_CONFIG_BUTTON,
+                        element: ElementType.TEMPLATE_CONFIG_BUTTON
                     });
                     setShowTemplateForm(true);
                 },
                 icon: 'Code',
                 tooltip: 'Set Variables',
-                tooltipPos: 'right',
+                tooltipPos: 'right'
             },
             {
                 name: 'Render Template',
                 onClick: () => {
                     trackClick({
                         component: ComponentType.ADHOC_QUERY,
-                        element: ElementType.RENDER_QUERY_BUTTON,
+                        element: ElementType.RENDER_QUERY_BUTTON
                     });
                     setShowRenderedTemplateModal(true);
                 },
                 icon: 'Eye',
                 tooltip: 'Show the rendered templated query',
-                tooltipPos: 'right',
+                tooltipPos: 'right'
             },
             {
                 name: 'Create DataDoc',
                 onClick: handleCreateDataDoc,
                 icon: 'Plus',
                 tooltip: 'Create datadoc from the adhoc query',
-                tooltipPos: 'right',
-            },
+                tooltipPos: 'right'
+            }
         ];
 
         if (transpilerOptions.length > 0) {
@@ -914,8 +915,8 @@ const QueryComposer: React.FC = () => {
                 items: transpilerOptions.map((t) => ({
                     name: `To ${t.toEngine.name} (${t.toEngine.language})`,
                     onClick: () =>
-                        startQueryTranspile(t.transpilerName, t.toEngine),
-                })),
+                        startQueryTranspile(t.transpilerName, t.toEngine)
+                }))
             });
         }
 
@@ -925,7 +926,7 @@ const QueryComposer: React.FC = () => {
                 onClick: () => setShowUDFForm(true),
                 icon: 'Plus',
                 tooltip: 'Add New User Defined Function',
-                tooltipPos: 'right',
+                tooltipPos: 'right'
             });
         }
 
@@ -935,7 +936,7 @@ const QueryComposer: React.FC = () => {
                 onClick: () => setShowPeerReviewModal(true),
                 icon: 'Send',
                 tooltip: 'Request a peer review for your query',
-                tooltipPos: 'right',
+                tooltipPos: 'right'
             });
         }
 
@@ -971,7 +972,7 @@ const QueryComposer: React.FC = () => {
                             onClick={() => {
                                 trackClick({
                                     component: ComponentType.ADHOC_QUERY,
-                                    element: ElementType.CLEAR_BUTTON,
+                                    element: ElementType.CLEAR_BUTTON
                                 });
                                 setQuery('');
                                 setExecutionId(null);
@@ -986,16 +987,26 @@ const QueryComposer: React.FC = () => {
         </div>
     );
 
+    const aiAgentButtonRenderer = window?.CUSTOM_AI_AGENT_BUTTON?.renderer;
+
     const aiDOM = isAIFeatureEnabled() && (
-        <div className="mv8">
-            <AICommandBar
-                query={query}
-                queryEngine={queryEngineById[engine.id]}
-                tablesInQuery={tableNamesInQuery}
-                onUpdateQuery={setQuery}
-                onFormatQuery={handleFormatQuery}
-                ref={aiCommandInputRef}
-            />
+        <div className="mv8 ai-bar">
+                {aiAgentButtonRenderer && (
+                    <div className="ai-agent-button">
+                        <AIAgentButton
+                            isAdhoc
+                            renderer={aiAgentButtonRenderer}
+                        />
+                    </div>
+                )}
+                <AICommandBar
+                    query={query}
+                    queryEngine={queryEngineById[engine.id]}
+                    tablesInQuery={tableNamesInQuery}
+                    onUpdateQuery={setQuery}
+                    onFormatQuery={handleFormatQuery}
+                    ref={aiCommandInputRef}
+                />
         </div>
     );
 
