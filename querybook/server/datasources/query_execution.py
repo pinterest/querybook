@@ -88,7 +88,9 @@ def process_query_execution_metadata(
     return data_doc
 
 
-def initiate_query_execution(query_execution, uid, peer_review_params, session):
+def initiate_query_execution(
+    query_execution, uid, peer_review_params, session, session_props=None
+):
     """Initiate the query execution based on peer_review_params."""
     # Initiate peer review workflow
     if peer_review_params:
@@ -101,9 +103,10 @@ def initiate_query_execution(query_execution, uid, peer_review_params, session):
     # Start immediate execution
     else:
         run_query_task.apply_async(
-            args=[
-                query_execution.id,
-            ]
+            kwargs={
+                "query_execution_id": query_execution.id,
+                "session_props": session_props,
+            },
         )
 
 
@@ -115,6 +118,7 @@ def create_query_execution(
     data_cell_id: Optional[int] = None,
     originator: Optional[str] = None,
     peer_review_params: Optional[PeerReviewParamsDict] = None,
+    session_props: Optional[Dict] = None,
 ):
     """
     Creates a new QueryExecution.
@@ -126,6 +130,7 @@ def create_query_execution(
         data_cell_id (int, optional): ID of the DataDoc cell to associate with.
         originator (str, optional): Identifier for the originator of the request.
         peer_review_params (dict, optional): Parameters for peer review workflow.
+        session_props (dict, optional): Session properties for the execution.
 
     Returns:
         dict: A dictionary representation of the created QueryExecution.
@@ -160,6 +165,7 @@ def create_query_execution(
                 uid=uid,
                 peer_review_params=peer_review_params,
                 session=session,
+                session_props=session_props,
             )
 
             query_execution_dict = query_execution.to_dict(with_query_review=True)

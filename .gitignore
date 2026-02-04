@@ -12,6 +12,7 @@ pnpm-lock.yaml
 .env
 # virtualenv for development
 .virtualenv
+.venv
 
 # Frontend logs
 npm-debug.log*

@@ -52,6 +52,7 @@ class PrestoClient(ClientBaseClass):
         proxy_user: Optional[str] = None,
         impersonate: bool = False,
         connection_timeout: int = None,
+        session_props: Optional[Dict[str, Any]] = None,
         *args: Any,
         **kwargs: Any
     ) -> None:
@@ -70,6 +71,7 @@ class PrestoClient(ClientBaseClass):
             principal_username=proxy_user if impersonate and proxy_user else username,
             username=username,
             password=password,
+            session_props=session_props,
             catalog=presto_conf.catalog,
             schema=presto_conf.schema,
             source="querybook",
