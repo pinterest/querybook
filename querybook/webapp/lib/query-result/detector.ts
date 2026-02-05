@@ -11,7 +11,7 @@ const defaultColumnDetectors: IColumnDetector[] = [
     {
         type: 'string',
         priority: 0,
-        checker: (colName: string, values: any[]) => true
+        checker: (colName: string, values: any[]) => true,
     },
     {
         type: 'json',
@@ -27,25 +27,25 @@ const defaultColumnDetectors: IColumnDetector[] = [
                 } catch (e) {
                     return false;
                 }
-            })
+            }),
     },
     {
         type: 'url',
         priority: 0.2,
         checker: (colName: string, values: any[]) =>
-            detectTypeForValues(values, isValidUrl)
+            detectTypeForValues(values, isValidUrl),
     },
     {
         type: 'boolean',
         priority: 0.5,
         checker: (colName: string, values: any[]) =>
-            detectTypeForValues(values, isBoolean)
+            detectTypeForValues(values, isBoolean),
     },
     {
         type: 'number',
         priority: 1,
         checker: (colName: string, values: any[]) =>
-            detectTypeForValues(values, isNumeric)
+            detectTypeForValues(values, isNumeric),
     },
     {
         type: 'id',
@@ -59,8 +59,8 @@ const defaultColumnDetectors: IColumnDetector[] = [
                 return true;
             }
             return false;
-        }
-    }
+        },
+    },
 ];
 
 const getCustomColumnDetectors = (): IColumnDetector[] =>

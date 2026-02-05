@@ -1,19 +1,4 @@
 {
     "tabWidth": 4,
-    "singleQuote": true,
-    "importOrder": [
-        "<THIRD_PARTY_MODULES>",
-        "^[a-zA-Z]+/(.*)$",
-        "^(..?/)+[a-zA-Z/]+$",
-        "^./(.*).scss$"
-    ],
-    "importOrderSeparation": true,
-    "importOrderSortSpecifiers": true,
-    "importOrderCaseInsensitive": true,
-    "importOrderParserPlugins": [
-        "typescript",
-        "jsx",
-        "classProperties",
-        "decorators-legacy"
-    ]
+    "singleQuote": true
 }

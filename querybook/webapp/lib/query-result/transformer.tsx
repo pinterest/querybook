@@ -7,7 +7,7 @@ import {
     formatNumber,
     getHumanReadableNumber,
     isNumeric,
-    roundNumberToDecimal
+    roundNumberToDecimal,
 } from 'lib/utils/number';
 import { Link } from 'ui/Link/Link';
 
@@ -31,7 +31,7 @@ const ReactJsonTheme: ThemeObject = {
     base0C: 'var(--color-accent-dark)', // array indices
     base0D: 'var(--color-accent-dark)', // collapse
     base0E: 'var(--color-accent-dark)', // expand
-    base0F: 'var(--text)' // int value
+    base0F: 'var(--text)', // int value
 };
 
 const defaultQueryResultTransformers: IColumnTransformer[] = [
@@ -41,7 +41,7 @@ const defaultQueryResultTransformers: IColumnTransformer[] = [
         appliesToType: ['number'],
         priority: 1,
         auto: false,
-        transform: (v: any): React.ReactNode => formatNumber(v)
+        transform: (v: any): React.ReactNode => formatNumber(v),
     },
     {
         key: 'dollar-format',
@@ -59,10 +59,10 @@ const defaultQueryResultTransformers: IColumnTransformer[] = [
             return (
                 <span className="right-align">{`$ ${formatNumber(rounded, '', {
                     maximumFractionDigits: 2,
-                    minimumFractionDigits: 2
+                    minimumFractionDigits: 2,
                 })}`}</span>
             );
-        }
+        },
     },
     {
         key: 'human-readable',
@@ -70,7 +70,7 @@ const defaultQueryResultTransformers: IColumnTransformer[] = [
         appliesToType: ['number'],
         priority: 0,
         auto: false,
-        transform: (v: any): React.ReactNode => getHumanReadableNumber(v, 2)
+        transform: (v: any): React.ReactNode => getHumanReadableNumber(v, 2),
     },
     {
         key: 'capitalize',
@@ -78,7 +78,7 @@ const defaultQueryResultTransformers: IColumnTransformer[] = [
         appliesToType: ['string'],
         priority: 0,
         auto: false,
-        transform: (v: string): React.ReactNode => v.toLocaleUpperCase()
+        transform: (v: string): React.ReactNode => v.toLocaleUpperCase(),
     },
     {
         key: 'url',
@@ -90,7 +90,7 @@ const defaultQueryResultTransformers: IColumnTransformer[] = [
             <Link to={v} naturalLink>
                 {v}
             </Link>
-        )
+        ),
     },
     {
         key: 'parse-json',
@@ -125,8 +125,8 @@ const defaultQueryResultTransformers: IColumnTransformer[] = [
                 console.error(e);
                 return v;
             }
-        }
-    }
+        },
+    },
 ];
 
 const getCustomColumnTransformers = (): IColumnTransformer[] =>
