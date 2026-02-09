@@ -17,14 +17,12 @@ depends_on = None
 
 
 def upgrade():
-    # Attempt to create the index.
-    # If it fails due to existence, we can ignore or let it fail (safer to let it fail so we know).
     try:
         op.create_index(
             "idx_uid_created_at", "query_execution", ["uid", "created_at"], unique=False
         )
-    except Exception:
-        print("Index idx_uid_created_at might already exist, skipping creation.")
+    except Exception as e:
+        print(f"Failed to create index idx_uid_created_at. Error: {e}")
 
 
 def downgrade():
