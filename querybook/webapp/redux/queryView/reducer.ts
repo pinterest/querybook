@@ -23,7 +23,7 @@ const initialState: IQueryViewState = {
         engine: null,
         status: null,
     },
-    orderBy: 'created_at',
+    orderBy: 'id',
     ...initialSearchState,
 };
 

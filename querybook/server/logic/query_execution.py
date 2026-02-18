@@ -89,6 +89,9 @@ def search_query_execution(
 
     if orderBy == "created_at":
         query = query.order_by(QueryExecution.created_at.desc())
+    elif orderBy == "id":
+        query = query.order_by(QueryExecution.id.desc())
+
     query = query.offset(offset).limit(limit)
 
     return query.all()
