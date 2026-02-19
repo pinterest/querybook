@@ -94,24 +94,6 @@ def search_query_execution(
                     )
                 )
 
-    for filter_key, filter_val in filters.items():
-        if filter_val is not None:
-            if filter_key == "status":
-                query = query.filter(
-                    QueryExecution.status == QueryExecutionStatus(filter_val)
-                )
-            elif filter_key == "running":
-                query = query.filter(
-                    QueryExecution.status.in_(
-                        [
-                            QueryExecutionStatus.INITIALIZED,
-                            QueryExecutionStatus.RUNNING,
-                            QueryExecutionStatus.DELIVERED,
-                        ]
-                    )
-                )
-            elif filter_key == "engine":
-                query = query.filter(QueryExecution.engine_id == filter_val)
     if orderBy == "created_at":
         query = query.order_by(QueryExecution.created_at.desc())
     query = query.offset(offset).limit(limit)
