@@ -7,7 +7,7 @@ import { isNumeric } from 'lib/utils/number';
 import { isCellValNull } from './helper';
 import { IColumnDetector } from './types';
 
-const columnDetectors: IColumnDetector[] = [
+const defaultColumnDetectors: IColumnDetector[] = [
     {
         type: 'string',
         priority: 0,
@@ -61,11 +61,16 @@ const columnDetectors: IColumnDetector[] = [
             return false;
         },
     },
-]
-    .concat(window.CUSTOM_COLUMN_DETECTORS ?? [])
-    .sort((a, b) => b.priority - a.priority) as IColumnDetector[];
+];
+
+const getCustomColumnDetectors = (): IColumnDetector[] =>
+    window.CUSTOM_COLUMN_DETECTORS ?? [];
 
 export function getColumnTypesForTable(columns: string[], rows: any[][]) {
+    const sortedColumnDetectors = (defaultColumnDetectors as IColumnDetector[])
+        .concat(getCustomColumnDetectors())
+        .sort((a, b) => b.priority - a.priority);
+
     const sizeOfSample = Math.max(
         DETECTOR_MIN_SAMPLE_SIZE,
         Math.floor(rows.length / 100)
@@ -76,11 +81,15 @@ export function getColumnTypesForTable(columns: string[], rows: any[][]) {
             .filter((value) => !isCellValNull(value));
 
         const sampledRowValues = sampleSize(notNullRowValues, sizeOfSample);
-        return findColumnType(colName, sampledRowValues);
+        return findColumnType(colName, sampledRowValues, sortedColumnDetectors);
     });
 }
 
-export function findColumnType(columnName: string, values: any[]) {
+export function findColumnType(
+    columnName: string,
+    values: any[],
+    columnDetectors: IColumnDetector[]
+) {
     for (const detector of columnDetectors) {
         if (detector.checker(columnName, values)) {
             return detector.type;

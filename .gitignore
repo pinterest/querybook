@@ -37,6 +37,7 @@ celerybeat.pid
 **/node_modules
 node_modules
 .vscode/*
+.cursor/*
 *.pyc
 .vscode.env
 
