@@ -79,6 +79,10 @@ def search_query_execution(
         if filter_val is not None:
             if filter_key == "user":
                 query = query.filter(QueryExecution.uid == filter_val)
+            # We still need to filter by engine id even though we filter by engine in the engine_ids above
+            # since engine id is also used in filters parameters in the search query
+            elif filter_key == "engine":
+                query = query.filter(QueryExecution.engine_id == filter_val)
             elif filter_key == "status":
                 query = query.filter(
                     QueryExecution.status == QueryExecutionStatus(filter_val)
