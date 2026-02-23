@@ -11,12 +11,14 @@ interface IProps {
     changeDataDocMeta: (docId: number, meta: IDataDocMeta) => Promise<void>;
     dataDoc: IDataDoc;
     isEditable?: boolean;
+    isExecutable?: boolean;
 }
 
 export const DataDocTemplateCell: React.FunctionComponent<IProps> = ({
     changeDataDocMeta,
     dataDoc,
     isEditable,
+    isExecutable,
 }) => {
     const hasMeta = useMemo(
         () => dataDoc.meta.variables.length > 0,
@@ -61,6 +63,7 @@ export const DataDocTemplateCell: React.FunctionComponent<IProps> = ({
                 </div>
                 <DataDocTemplateVarForm
                     isEditable={isEditable}
+                    isExecutable={isExecutable}
                     variables={dataDoc.meta.variables}
                     onSave={(newVariables) => {
                         if (newVariables.length === 0) {

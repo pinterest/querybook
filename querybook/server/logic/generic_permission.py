@@ -1,7 +1,7 @@
 from typing import List, Optional, Tuple, Union
 from app.db import with_session
 from models import UserGroupMember, User, DataDocEditor, BoardEditor
-from sqlalchemy import func, select, Integer
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 from const.permissions import BoardDataDocPermission
 
@@ -12,7 +12,7 @@ def get_all_groups_and_group_members_with_access(
     editor_type: Union[DataDocEditor, BoardEditor],
     uid: Optional[int] = None,
     session: Optional[Session] = None,
-) -> List[Tuple[int, int, bool, bool]]:
+) -> List[Tuple[int, int, bool, bool, bool]]:
     """
     Get all groups and group members with access to a DataDoc or Board.
 
@@ -23,17 +23,22 @@ def get_all_groups_and_group_members_with_access(
         session: The database session to use.
 
     Returns:
-        A list of tuples containing the editor ID, the group or user ID, and the most permissive read and write
-        permissions. This means that if a user has write=true but inherits write=false, their write will remain true.
-        Likewise, if a user has write=false and inherits write=true, their write will become true. This tuple will
-        appear in the form "(editor_id, uid, read, write)". Editors with inherited permissions have their editor_ID set
-        to None.
+        A list of tuples containing the editor ID, the group or user ID, and the most permissive read, write, and execute permissions.
+        Editors with inherited permissions have their ID set to None.
     """
-
-    # Begin constructing the top query, starting by selecting editors of the required type (doc or board)
-    topq = session.query(
-        editor_type.id, editor_type.uid, editor_type.read, editor_type.write
-    ).select_from(editor_type)
+    if editor_type == DataDocEditor:
+        topq = session.query(
+            editor_type.id,
+            editor_type.uid,
+            editor_type.read,
+            editor_type.write,
+            editor_type.execute,
+        ).select_from(editor_type)
+    elif editor_type == BoardEditor:
+        # BoardEditor doesn't have execute permission, so we use False as default
+        topq = session.query(
+            editor_type.id, editor_type.uid, editor_type.read, editor_type.write
+        ).select_from(editor_type)
 
     # Filter by the doc or board ID to get the editors for the specific doc or board
     if editor_type == DataDocEditor:
@@ -43,32 +48,49 @@ def get_all_groups_and_group_members_with_access(
 
     topq = topq.cte("cte", recursive=True)
 
-    # This bottom query determines if the user is a group or a user, and then selects the group members
-    bottomq = (
-        select([None, UserGroupMember.uid, topq.c.read, topq.c.write])
-        .select_from(topq)
-        .join(User, topq.c.uid == User.id)
-        .join(UserGroupMember, UserGroupMember.gid == User.id)
-        .filter(User.is_group)
-    )
+    if editor_type == DataDocEditor:
+        bottomq = (
+            select(
+                [None, UserGroupMember.uid, topq.c.read, topq.c.write, topq.c.execute]
+            )
+            .select_from(topq)
+            .join(User, topq.c.uid == User.id)
+            .join(UserGroupMember, UserGroupMember.gid == User.id)
+            .filter(User.is_group)
+        )
+    elif editor_type == BoardEditor:
+        bottomq = (
+            select([None, UserGroupMember.uid, topq.c.read, topq.c.write])
+            .select_from(topq)
+            .join(User, topq.c.uid == User.id)
+            .join(UserGroupMember, UserGroupMember.gid == User.id)
+            .filter(User.is_group)
+        )
 
     # This is then applied recursively to the top query
     recursive_q = topq.union(bottomq)
 
     editors = recursive_q.alias()
 
-    q = select(
-        [
-            func.max(editors.c.id),
-            editors.c.uid,
-            func.max(
-                editors.c.read.cast(Integer)
-            ),  # Get the most permissive read permissions
-            func.max(
-                editors.c.write.cast(Integer)
-            ),  # Get the most permissive write permissions
-        ]
-    ).group_by(editors.c.uid)
+    if editor_type == DataDocEditor:
+        q = select(
+            [
+                func.max(editors.c.id),
+                editors.c.uid,
+                func.max(editors.c.read),
+                func.max(editors.c.write),
+                func.max(editors.c.execute),
+            ]
+        ).group_by(editors.c.uid)
+    elif editor_type == BoardEditor:
+        q = select(
+            [
+                func.max(editors.c.id),
+                editors.c.uid,
+                func.max(editors.c.read),
+                func.max(editors.c.write),
+            ]
+        ).group_by(editors.c.uid)
 
     # Optionally filter by uid to get only the permissions for a specific user
     if uid is not None:
@@ -113,7 +135,10 @@ def user_has_permission(
 
     # Check the user's direct permissions
     if permission_level == BoardDataDocPermission.READ:
-        if editor is not None and (editor.write or editor.read):
+        if editor is not None and (editor.write or editor.execute or editor.read):
+            return True
+    elif permission_level == BoardDataDocPermission.EXECUTE:
+        if editor is not None and (editor.write or editor.execute):
             return True
     elif permission_level == BoardDataDocPermission.WRITE:
         if editor is not None and editor.write:
@@ -132,6 +157,10 @@ def user_has_permission(
 
     if permission_level == BoardDataDocPermission.READ:
         return True
+    elif permission_level == BoardDataDocPermission.EXECUTE:
+        # Check if the editor's execute or write privileges are true
+        if inherited_editors[0][3] or inherited_editors[0][4]:  # write or execute
+            return True
     elif permission_level == BoardDataDocPermission.WRITE:
         # Check if the editor's write privileges are true
         if inherited_editors[0][3]:

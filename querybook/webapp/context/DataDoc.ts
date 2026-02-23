@@ -31,6 +31,7 @@ export interface IDataDocContextType {
     };
 
     isEditable: boolean;
+    isExecutable: boolean;
 }
 
 export const DataDocContext = React.createContext<IDataDocContextType>(null);

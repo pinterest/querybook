@@ -9,7 +9,11 @@ from const.data_doc import DATA_DOC_NAMESPACE
 from datasources.github import with_github_client
 from logic import datadoc as logic
 from logic import user as user_logic
-from logic.datadoc_permission import assert_can_read, assert_can_write
+from logic.datadoc_permission import (
+    assert_can_read,
+    assert_can_write,
+    assert_can_execute,
+)
 from flask_login import current_user
 from lib.utils.serialize import serialize_value
 
@@ -26,7 +30,15 @@ def get_datadoc(doc_id, session=None):
 @with_session
 def update_datadoc(doc_id, fields, sid="", session=None):
     # Check to see if author has permission
-    assert_can_write(doc_id, session=session)
+    # For variable editing (meta field only), allow execute permission
+    # For all other fields, require write permission
+    field_names = set(fields.keys())
+    if field_names == {"meta"}:
+        assert_can_execute(doc_id, session=session)
+    else:
+        # Updating other fields, require write permission
+        assert_can_write(doc_id, session=session)
+
     verify_data_doc_permission(doc_id, session=session)
     doc = logic.update_data_doc(
         id=doc_id,
