@@ -70,10 +70,11 @@ import { QueryComposerExecution } from './QueryComposerExecution';
 import { runQuery, transformQuery } from './RunQuery';
 
 import './QueryComposer.scss';
+import AIAgentButton from 'components/AIAssistant/AIAgentButton';
 
 const QUERY_EXECUTION_HEIGHT = 300;
 
-const useExecution = (dispatch: Dispatch, environmentId: number) => {
+export const useExecution = (dispatch: Dispatch, environmentId: number) => {
     const executionId = useSelector(
         (state: IStoreState) => state.adhocQuery[environmentId]?.executionId
     );
@@ -128,7 +129,7 @@ const useEngine = (dispatch: Dispatch, environmentId: number) => {
     };
 };
 
-const useQuery = (dispatch: Dispatch, environmentId: number) => {
+export const useQuery = (dispatch: Dispatch, environmentId: number) => {
     const reduxQuery = useSelector(
         (state: IStoreState) => state.adhocQuery[environmentId]?.query ?? ''
     );
@@ -986,8 +987,15 @@ const QueryComposer: React.FC = () => {
         </div>
     );
 
+    const aiAgentButtonRenderer = window?.CUSTOM_AI_AGENT_BUTTON?.renderer;
+
     const aiDOM = isAIFeatureEnabled() && (
-        <div className="mv8">
+        <div className="mv8 ai-bar">
+            {aiAgentButtonRenderer && (
+                <div className="ai-agent-button">
+                    <AIAgentButton isAdhoc renderer={aiAgentButtonRenderer} />
+                </div>
+            )}
             <AICommandBar
                 query={query}
                 queryEngine={queryEngineById[engine.id]}

@@ -12,6 +12,7 @@ pnpm-lock.yaml
 .env
 # virtualenv for development
 .virtualenv
+.venv
 
 # Frontend logs
 npm-debug.log*
@@ -36,6 +37,7 @@ celerybeat.pid
 **/node_modules
 node_modules
 .vscode/*
+.cursor/*
 *.pyc
 .vscode.env
 

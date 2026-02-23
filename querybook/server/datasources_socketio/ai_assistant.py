@@ -41,3 +41,9 @@ def sql_complete(payload={}):
     ai_assistant.get_sql_completion(
         query_engine_id=query_engine_id, tables=tables, prefix=prefix, suffix=suffix
     )
+
+
+@register_socket(AICommandType.DATA_DOC_TITLE.value, namespace=AI_ASSISTANT_NAMESPACE)
+def data_doc_data_doc_title(payload={}):
+    cell_contents = payload["cell_contents"]
+    ai_assistant.generate_data_doc_title_from_query(cell_contents=cell_contents)

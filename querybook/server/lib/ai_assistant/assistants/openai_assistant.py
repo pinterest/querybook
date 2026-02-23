@@ -20,6 +20,10 @@ OPENAI_MODEL_CONTEXT_WINDOW_SIZE = {
     "gpt-4.1": 1_047_576,
     "gpt-4.1-mini": 1_047_576,
     "gpt-4.1-nano": 1_047_576,
+    # GPT 5 Models
+    "gpt-5": 400_000,
+    "gpt-5-mini": 400_000,
+    "gpt-5-nano": 400_000,
 }
 DEFAULT_MODEL_NAME = "gpt-4.1-mini"
 
@@ -48,10 +52,14 @@ class OpenAIAssistant(BaseAIAssistant):
 
     def _get_token_count(self, ai_command: str, prompt: str) -> int:
         model_name = self._get_llm_config(ai_command)["model_name"]
-        # tiktoken hasn't been upgraded to support gpt-4.1 models
-        # https://github.com/openai/tiktoken/issues/395
+        # gpt 4.1 uses the same tokenizer as gpt-4o
+        # https://github.com/openai/tiktoken/issues/395#issuecomment-2847076168
         if model_name.startswith("gpt-4.1"):
-            encoding = tiktoken.get_encoding("o200k_base")
+            encoding = tiktoken.encoding_for_model("gpt-4o")
+        # Currently tiktoken only supports gpt 5 as prefix
+        # https://github.com/openai/tiktoken/blob/main/tiktoken/model.py#L12
+        elif model_name.startswith("gpt-5"):
+            encoding = tiktoken.encoding_for_model("gpt-5-")
         else:
             encoding = tiktoken.encoding_for_model(model_name)
 

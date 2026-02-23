@@ -390,6 +390,7 @@ def delete_user_role(
 
 
 @register("/admin/environment/", methods=["GET"])
+@admin_only
 def get_all_environments_admin():
     return environment_logic.get_all_environment(include_deleted=True)
 

@@ -11,6 +11,7 @@ from logic import datadoc as logic
 from logic import user as user_logic
 from logic.datadoc_permission import assert_can_read, assert_can_write
 from flask_login import current_user
+from lib.utils.serialize import serialize_value
 
 
 @with_session
@@ -95,7 +96,7 @@ def insert_data_cell(
     logic.insert_data_doc_cell(
         data_doc_id=doc_id, cell_id=data_cell.id, index=index, session=session
     )
-    data_cell_dict = data_cell.to_dict()
+    data_cell_dict = serialize_value(data_cell.to_dict())
     socketio.emit(
         "data_cell_inserted",
         (
@@ -235,7 +236,7 @@ def update_data_cell(cell_id, fields, sid="", session=None):
         session=session,
         **fields,
     )
-    data_cell_dict = data_cell.to_dict()
+    data_cell_dict = serialize_value(data_cell.to_dict())
     socketio.emit(
         "data_cell_updated",
         (sid, data_cell_dict),

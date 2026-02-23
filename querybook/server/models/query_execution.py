@@ -20,7 +20,10 @@ Base = db.Base
 
 class QueryExecution(Base):
     __tablename__ = "query_execution"
-    __table_args__ = {"mysql_engine": "InnoDB", "mysql_charset": "utf8mb4"}
+    __table_args__ = (
+        sql.Index("idx_uid_created_at", "uid", "created_at"),
+        {"mysql_engine": "InnoDB", "mysql_charset": "utf8mb4"},
+    )
 
     id = sql.Column(sql.Integer, primary_key=True)
     task_id = sql.Column(sql.String(length=name_length))

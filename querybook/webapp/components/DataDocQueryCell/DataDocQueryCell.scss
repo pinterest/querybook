@@ -52,6 +52,21 @@
         }
     }
 
+    .ai-bar {
+        display: flex;
+        align-items: center;
+
+        .ai-agent-button {
+            display: flex;
+            align-items: center;
+            margin-right: var(--margin-sm);
+        }
+
+        .AICommandBar {
+            flex: 1;
+        }
+    }
+
     .collapsed-query {
         color: var(--text-lightest);
         font-size: var(--med-text-size);

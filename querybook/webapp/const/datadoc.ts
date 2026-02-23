@@ -167,3 +167,9 @@ export interface IPythonCellResult {
     output: any[];
     error: string;
 }
+
+export interface DataDocTitleGenerationCellContent {
+    type: CELL_TYPE;
+    title?: string;
+    content: string;
+}

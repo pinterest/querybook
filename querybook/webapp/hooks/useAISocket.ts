@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import toast from 'react-hot-toast';
 
 import { AICommandType, AISocketEvent } from 'const/aiAssistant';
@@ -63,7 +63,7 @@ export function useAISocket(
             aiAssistantSocket.emit(commandType, params);
             setLoading(true);
         },
-        [aiAssistantSocket, commandType]
+        [aiAssistantSocket, commandType, eventHandler]
     );
 
     return {

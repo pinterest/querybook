@@ -18,12 +18,13 @@ LOG = get_logger(__file__)
 
 @with_session
 def create_executor_from_execution(
-    query_execution_id, celery_task, execution_type, session=None
+    query_execution_id, celery_task, execution_type, session_props, session=None
 ):
     executor_params, engine = _get_executor_params_and_engine(
         query_execution_id,
         celery_task=celery_task,
         execution_type=execution_type,
+        session_props=session_props,
         session=session,
     )
     executor = get_executor_class(engine.language, engine.executor)(**executor_params)
@@ -32,7 +33,7 @@ def create_executor_from_execution(
 
 @with_session
 def _get_executor_params_and_engine(
-    query_execution_id, celery_task, execution_type, session=None
+    query_execution_id, celery_task, execution_type, session_props, session=None
 ):
     query, statement_ranges, uid, engine_id = _get_query_execution_info(
         query_execution_id, session=session
@@ -43,6 +44,9 @@ def _get_executor_params_and_engine(
         raise ArchivedQueryEngine("This query engine is disabled.")
 
     client_setting = get_client_setting_from_engine(engine, uid, session=session)
+
+    if session_props:
+        client_setting["session_props"] = session_props
 
     return (
         {

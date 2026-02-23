@@ -74,6 +74,36 @@
                     }
                 }
             }
+            .data-doc-header-title {
+                position: relative;
+                display: flex;
+                align-items: center;
+
+                .IconButton {
+                    position: absolute;
+                    left: 0px;
+                    margin-left: 4px;
+                    padding-left: 0px;
+                    color: var(--icon);
+                    display: flex;
+                    align-items: center;
+                }
+
+                .data-doc-title {
+                    font-weight: var(--bold-font);
+                    flex: 1;
+                }
+
+                .with-icon {
+                    padding-left: 40px;
+                }
+
+                &:hover {
+                    .IconButton {
+                        color: var(--color-accent);
+                    }
+                }
+            }
         }
 
         .data-doc-container {
@@ -178,6 +208,21 @@
                     .AICommandInput {
                         .stars-icon {
                             color: var(--color-accent);
+                        }
+
+                        .mention-input {
+                            ::placeholder {
+                                background: linear-gradient(
+                                    45deg,
+                                    rgba(255, 0, 0, 0.5) 10%,
+                                    rgba(128, 0, 128, 0.5) 20%,
+                                    rgba(0, 0, 255, 0.5) 30%
+                                );
+                                -webkit-background-clip: text;
+                                background-clip: text;
+                                -webkit-text-fill-color: transparent;
+                                text-fill-color: transparent;
+                            }
                         }
                     }
 

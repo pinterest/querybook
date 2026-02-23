@@ -17,6 +17,13 @@ export interface IListMenuItem {
     tooltip?: string;
     tooltipPos?: TooltipDirection;
     name: React.ReactChild;
+    className?: string;
+    disabled?: boolean;
+    // Extra HTML attributes (including data-*) applied to the underlying <a>/<MenuItem>
+    otherAnchorAttrs?: Omit<
+        React.HTMLAttributes<HTMLAnchorElement>,
+        'onClick' | 'href'
+    >;
 
     items?: IListMenuItem[];
 }
@@ -57,8 +64,10 @@ export const ListMenu: React.FunctionComponent<IProps> = ({
             ? action.icon
             : null;
 
-        const actionProps: React.HTMLProps<HTMLAnchorElement> = {};
-        if (action.onClick) {
+        const actionProps: React.HTMLProps<HTMLAnchorElement> = {
+            ...(action.otherAnchorAttrs ?? {}),
+        };
+        if (action.onClick && !action.disabled) {
             actionProps.onClick = action.onClick;
         }
         if (action.link) {
@@ -67,6 +76,9 @@ export const ListMenu: React.FunctionComponent<IProps> = ({
         if (action.tooltip) {
             actionProps['aria-label'] = action.tooltip;
             actionProps['data-balloon-pos'] = action.tooltipPos || 'left';
+        }
+        if (action.disabled) {
+            actionProps['aria-disabled'] = true;
         }
 
         const buttonContent = (
@@ -78,7 +90,10 @@ export const ListMenu: React.FunctionComponent<IProps> = ({
             </span>
         );
         let itemDOM: React.ReactChild;
-        if (action.items) {
+        const itemClassName = clsx(action.className, {
+            'is-disabled': action.disabled,
+        });
+        if (action.items && !action.disabled) {
             itemDOM = (
                 <Dropdown
                     className={clsx({
@@ -88,7 +103,10 @@ export const ListMenu: React.FunctionComponent<IProps> = ({
                     })}
                     key={index}
                     customButtonRenderer={() => (
-                        <a {...actionProps} className="flex-row">
+                        <a
+                            {...actionProps}
+                            className={clsx('flex-row', itemClassName)}
+                        >
                             {buttonContent}
                         </a>
                     )}
@@ -99,7 +117,11 @@ export const ListMenu: React.FunctionComponent<IProps> = ({
             );
         } else {
             itemDOM = (
-                <MenuItem {...actionProps} key={index}>
+                <MenuItem
+                    {...actionProps}
+                    key={index}
+                    className={itemClassName || undefined}
+                >
                     <AccentText>{buttonContent}</AccentText>
                 </MenuItem>
             );

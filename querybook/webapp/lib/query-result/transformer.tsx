@@ -34,7 +34,7 @@ const ReactJsonTheme: ThemeObject = {
     base0F: 'var(--text)', // int value
 };
 
-const queryResultTransformers: IColumnTransformer[] = [
+const defaultQueryResultTransformers: IColumnTransformer[] = [
     {
         key: 'with-comma',
         name: 'With Comma',
@@ -127,31 +127,38 @@ const queryResultTransformers: IColumnTransformer[] = [
             }
         },
     },
-]
-    .concat(window.CUSTOM_COLUMN_TRANSFORMERS ?? [])
-    .sort((a, b) => b.priority - a.priority) as IColumnTransformer[];
+];
 
-const transformersForType: Record<
-    string,
-    [IColumnTransformer[], IColumnTransformer | null]
-> = queryResultTransformers.reduce(
-    (hash: typeof transformersForType, transformer) => {
-        for (const type of transformer.appliesToType) {
-            if (!(type in hash)) {
-                hash[type] = [[], null];
-            }
-
-            hash[type][0].push(transformer);
-            if (transformer.auto && hash[type][1] == null) {
-                hash[type][1] = transformer;
-            }
-        }
-
-        return hash;
-    },
-    {}
-);
+const getCustomColumnTransformers = (): IColumnTransformer[] =>
+    window.CUSTOM_COLUMN_TRANSFORMERS ?? [];
 
 export function getTransformersForType(colType: string) {
+    const queryResultTransformers = (
+        defaultQueryResultTransformers as IColumnTransformer[]
+    )
+        .concat(getCustomColumnTransformers())
+        .sort((a, b) => b.priority - a.priority);
+
+    const transformersForType: Record<
+        string,
+        [IColumnTransformer[], IColumnTransformer | null]
+    > = queryResultTransformers.reduce(
+        (hash: typeof transformersForType, transformer) => {
+            for (const type of transformer.appliesToType) {
+                if (!(type in hash)) {
+                    hash[type] = [[], null];
+                }
+
+                hash[type][0].push(transformer);
+                if (transformer.auto && hash[type][1] == null) {
+                    hash[type][1] = transformer;
+                }
+            }
+
+            return hash;
+        },
+        {}
+    );
+
     return transformersForType[colType] ?? [[], null];
 }

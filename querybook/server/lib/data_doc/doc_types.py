@@ -1,4 +1,4 @@
-from typing import TypedDict, Union, Literal
+from typing import Optional, TypedDict, Union, Literal
 
 
 class DataDocMetaVarConfig(TypedDict):
@@ -9,3 +9,9 @@ class DataDocMetaVarConfig(TypedDict):
 
 class DataDocMeta(TypedDict):
     variables: list[DataDocMetaVarConfig]
+
+
+class DataDocTitleGenerationCellContent(TypedDict):
+    type: str
+    title: Optional[str]
+    content: str

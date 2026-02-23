@@ -1,13 +1,16 @@
+import clsx from 'clsx';
 import styled from 'styled-components';
 
 import './Menu.scss';
 
-export const Menu = styled.div.attrs<{
-    height: number;
-    boxShadow: boolean;
-}>({
+interface IMenuProps {
+    height?: number;
+    boxShadow?: boolean;
+}
+
+export const Menu = styled.div.attrs<IMenuProps>({
     className: 'Menu',
-})`
+})<IMenuProps>`
     ${(props) =>
         props.height &&
         `max-height: ${props.height};
@@ -15,9 +18,9 @@ export const Menu = styled.div.attrs<{
         overflow-y: auto;`}
     ${(props) => props.boxShadow && 'box-shadow: var(--box-shadow);'}
 `;
-export const MenuItem = styled.span.attrs({
-    className: 'MenuItem',
-})``;
+export const MenuItem = styled.span.attrs((props: { className?: string }) => ({
+    className: clsx('MenuItem', props.className),
+}))``;
 export const MenuInfoItem = styled.div.attrs({
     className: 'MenuInfoItem',
 })``;

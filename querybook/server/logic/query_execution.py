@@ -19,6 +19,7 @@ from models.datadoc import DataCellQueryExecution, DataDocDataCell
 from models.admin import QueryEngine, QueryEngineEnvironment
 from models.environment import Environment
 from tasks.sync_elasticsearch import sync_elasticsearch
+from logic import admin as admin_logic
 
 CLEAN_UP_TIME_THRESHOLD = 20 * 60  # 20 mins
 LOG = get_logger(__file__)
@@ -59,17 +60,27 @@ def get_last_query_execution_from_cell(cell_id, session=None):
 def search_query_execution(
     environment_id, filters, orderBy, limit, offset, session=None
 ):
-    query = (
-        session.query(QueryExecution)
-        .join(QueryEngine)
-        .join(QueryEngineEnvironment)
-        .filter(QueryEngineEnvironment.environment_id == environment_id)
+    # Optimization: The Query could sometimes timeout caused by joining
+    # the large QueryExecution table with environment tables before filtering.
+    # Instead of joining, we fetch the valid engine IDs for the current environment first,
+    # then filter QueryExecution directly by uid and engine_id.
+    # TODO: Add proper indexing to the QueryExecution table.
+    engine_ids = [
+        e.id
+        for e in admin_logic.get_query_engines_by_environment(
+            environment_id, session=session
+        )
+    ]
+    query = session.query(QueryExecution).filter(
+        QueryExecution.engine_id.in_(engine_ids)
     )
 
     for filter_key, filter_val in filters.items():
         if filter_val is not None:
             if filter_key == "user":
                 query = query.filter(QueryExecution.uid == filter_val)
+            # We still need to filter by engine id even though we filter by engine in the engine_ids above
+            # since engine id is also used in filters parameters in the search query
             elif filter_key == "engine":
                 query = query.filter(QueryExecution.engine_id == filter_val)
             elif filter_key == "status":

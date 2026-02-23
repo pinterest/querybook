@@ -42,3 +42,17 @@ ELASTICSEARCH_HOST: http://elasticsearch:9200
 #     embeddings_arg_name: 'embedding_function'
 #     opensearch_url: http://elasticsearch:9200
 #     index_name: 'vector_index_v1'
+
+# API Access Token restrictions
+# List of allowed environment ids for API access token requests.
+# Format: [<id>, ...] (e.g., [1, 2, 3])
+# If empty or not set, all environments are allowed for API token requests.
+# Example:
+# API_ACCESS_TOKEN_ALLOWED_ENVIRONMENTS:
+#   - 1
+# List of allowed query engine ids for API access token requests.
+# Format: [<id>, ...] (e.g., [1, 2, 3])
+# If empty or not set, all query engines are allowed for API token requests.
+# Example:
+# API_ACCESS_TOKEN_ALLOWED_QUERY_ENGINES:
+#   - 1
