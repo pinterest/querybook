@@ -1,1 +1,1 @@
-trino==0.305.0
+trino[sqlalchemy]==0.315.0
