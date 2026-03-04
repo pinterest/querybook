@@ -658,9 +658,10 @@ def add_query_execution_viewer(execution_id, uid):
     return viewer.to_dict()
 
 
-@register("/query_execution_viewer/<int:id>/", methods=["DELETE"])
-def delete_query_execution_viewer(id):
-    return QueryExecutionViewer.delete(id)
+@register("/query_execution_viewer/<int:execution_id>/", methods=["DELETE"])
+def delete_query_execution_viewer(execution_id):
+    verify_query_execution_owner(execution_id)
+    return QueryExecutionViewer.delete(execution_id)
 
 
 @register("/query_execution/<int:execution_id>/viewer/", methods=["GET"])
