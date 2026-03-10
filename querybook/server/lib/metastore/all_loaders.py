@@ -13,6 +13,7 @@ PROVIDED_METASTORE_LOADERS = import_modules(
             "SqlAlchemyMetastoreLoader",
         ),
         ("lib.metastore.loaders.glue_data_catalog_loader", "GlueDataCatalogLoader"),
+        ("lib.metastore.loaders.trino_metastore_loader", "TrinoMetastoreLoader"),
     ]
 )
 
