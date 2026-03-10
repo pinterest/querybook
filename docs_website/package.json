@@ -14,8 +14,8 @@
     },
     "devDependencies": {},
     "dependencies": {
-        "@docusaurus/core": "^3.0.1",
-        "@docusaurus/preset-classic": "^3.0.1",
+        "@docusaurus/core": "^3.9.0",
+        "@docusaurus/preset-classic": "^3.9.0",
         "body-scroll-lock": "^3.1.5",
         "clsx": "^1.1.1",
         "docusaurus-plugin-sass": "^0.2.5",
