@@ -15,6 +15,9 @@ context.addEventListener(
         const tokens = tokenize(code, { language });
         const statements = simpleParse(tokens);
 
+        //  The codeAnalysis contains a list of references to tables
+        //  and of table aliases. It is used for downstream linters which need
+        //  to know which  tables are being accessed in a query
         const codeAnalysis: ICodeAnalysis = {
             lineage: findTableReferenceAndAlias(statements),
         };
