@@ -198,13 +198,21 @@ def update_es_boards_by_id(board_id: int):
 
 
 @with_session
-def get_all_public_boards(environment_id, session=None):
-    return (
+def get_all_public_boards(environment_id, limit=None, offset=None, session=None):
+    query = (
         session.query(Board)
         .filter(Board.public.is_(True))
         .filter(Board.environment_id == environment_id)
-        .all()
+        .filter(Board.deleted_at.is_(None))
+        .order_by(Board.updated_at.desc())
     )
+
+    if offset is not None and offset > 0:
+        query = query.offset(offset)
+    if limit is not None:
+        return query.limit(limit).all()
+    else:
+        return query.all()
 
 
 @with_session
