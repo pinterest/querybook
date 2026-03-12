@@ -26,6 +26,7 @@ from models.board import Board
 def abort_404(message: Optional[str] = None):
     abort_request(status_code=RESOURCE_NOT_FOUND_STATUS_CODE, message=message)
 
+
 def verify_every_environment_permission(environment_ids: List[int]):
     """
     Verify that the current user has access to every one of the provided environment ids.
@@ -42,6 +43,7 @@ def verify_every_environment_permission(environment_ids: List[int]):
         message="Unauthorized Environment",
         status_code=ACCESS_RESTRICTED_STATUS_CODE,
     )
+
 
 def verify_environment_permission(environment_ids: List[int]):
     """

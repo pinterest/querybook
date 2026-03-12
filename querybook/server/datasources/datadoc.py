@@ -208,10 +208,7 @@ def batch_get_data_cell_executions(cell_ids):
         data_cell_executions.append(
             (
                 cell_id,
-                [
-                    execution.to_dict(with_statement=False)
-                    for execution in executions
-                ],
+                [execution.to_dict(with_statement=False) for execution in executions],
                 latest_execution,
             )
         )
