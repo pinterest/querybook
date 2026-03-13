@@ -22,10 +22,10 @@ class TrinoCursor(PrestoCursorMixin[trino.dbapi.Cursor, List[Any]], CursorBaseCl
 
     def poll(self):
         try:
-            self.rows.extend(self._cursor._query.fetch())
+            self.rows.extend(self._cursor.fetchall())
             self._cursor._iterator = iter(self.rows)
             poll_result = self._cursor.stats
-            completed = self._cursor._query._finished
+            completed = poll_result.get("state") == "FINISHED"
             if poll_result:
                 self._update_percent_complete(poll_result)
                 self._update_tracking_url(poll_result)
