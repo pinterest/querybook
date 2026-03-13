@@ -382,7 +382,7 @@ class PrestoTableNameSuggesterTestCase(BaseValidatorTestCase):
         self.addCleanup(patch_get_metastore_id.stop)
 
     def test_get_full_table_name_from_error(self):
-        self.assertEquals(
+        self.assertEqual(
             self._validator.get_full_table_name_from_error(
                 QueryValidationResult(
                     0,
@@ -393,7 +393,7 @@ class PrestoTableNameSuggesterTestCase(BaseValidatorTestCase):
             ),
             "world_happiness_15",
         )
-        self.assertEquals(
+        self.assertEqual(
             self._validator.get_full_table_name_from_error(
                 QueryValidationResult(
                     0,
@@ -419,7 +419,7 @@ class PrestoTableNameSuggesterTestCase(BaseValidatorTestCase):
             {"schema": "main", "name": "world_happiness_rank_2015"}
         ], 1
         self._validator._suggest_table_name_if_needed(validation_result, 0, self.query)
-        self.assertEquals(
+        self.assertEqual(
             validation_result.suggestion, "main.world_happiness_rank_2015"
         )
 
@@ -440,7 +440,7 @@ class PrestoTableNameSuggesterTestCase(BaseValidatorTestCase):
         self._validator._suggest_table_name_if_needed(
             validation_result, 0, "SELECT * FROM world_happiness_15"
         )
-        self.assertEquals(
+        self.assertEqual(
             validation_result.suggestion, "main.world_happiness_rank_2015"
         )
 
@@ -456,7 +456,7 @@ class PrestoTableNameSuggesterTestCase(BaseValidatorTestCase):
         )
         mock_table_suggestion.return_value = [], 0
         self._validator._suggest_table_name_if_needed(validation_result, 0, self.query)
-        self.assertEquals(validation_result.suggestion, None)
+        self.assertEqual(validation_result.suggestion, None)
 
 
 class PrestoOptimizingValidatorTestCase(BaseValidatorTestCase):
