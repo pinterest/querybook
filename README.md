@@ -18,6 +18,12 @@ Querybook is a Big Data IDE that allows you to discover, create, and share data 
 -   📝 Add additional **documentation** to your tables
 -   🧮 Get lineage, sample queries, frequent user, search ranking based on **past query runs**
 
+# Fork Modifications
+
+- 🚫 Revoke review permissions from **non-admin users**
+- ⏱ Disable running **schedules** for non-admin users
+- ⚠️ Restrict code execution so only **admins** can run code without review
+
 # Getting started
 
 ## Prerequisite
