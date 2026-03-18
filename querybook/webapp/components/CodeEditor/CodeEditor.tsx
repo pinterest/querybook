@@ -165,7 +165,9 @@ export const CodeEditor = forwardRef<ReactCodeMirrorRef, ICodeEditorProps>(
                 }}
             >
                 {vimMode && currentVimMode && (
-                    <div className={`vim-mode-indicator vim-mode-${currentVimMode}`}>
+                    <div
+                        className={`vim-mode-indicator vim-mode-${currentVimMode}`}
+                    >
                         -- {currentVimMode.toUpperCase()} --
                     </div>
                 )}

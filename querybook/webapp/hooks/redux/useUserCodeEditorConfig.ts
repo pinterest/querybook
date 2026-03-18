@@ -25,8 +25,7 @@ export function useUserCodeEditorConfig(): {
         tab: state.user.computedSettings['tab'],
         sqlCompleteEnabled:
             state.user.computedSettings['sql_complete'] === 'enabled',
-        vimModeEnabled:
-            state.user.computedSettings['vim_mode'] === 'enabled',
+        vimModeEnabled: state.user.computedSettings['vim_mode'] === 'enabled',
     }));
     const indentWithTabs = editorSettings.tab === 'tab';
     const tabSize =

@@ -26,7 +26,10 @@ export function useVimExtension(enabled: boolean): {
         const modeListenerPlugin = ViewPlugin.fromClass(
             class {
                 private cm: any;
-                private handler: (e: { mode: string; subMode?: string }) => void;
+                private handler: (e: {
+                    mode: string;
+                    subMode?: string;
+                }) => void;
 
                 constructor(view: any) {
                     // getCM returns the cm5-compat object set up by the vim() extension
