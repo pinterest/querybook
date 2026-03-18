@@ -1,5 +1,6 @@
 from app.flask_app import limiter
 from app.datasource import register
+from env import QuerybookSettings
 from lib.change_log import get_change_log_list, get_change_log_content_by_date
 
 
@@ -22,3 +23,8 @@ def test_ratelimit():
     Endpoint to ensure ratelimit works in prod
     """
     return "yes"
+
+
+@register("/utils/embedded/allowed_origins/", methods=["GET"])
+def get_embedded_allowed_origins():
+    return QuerybookSettings.IFRAME_ALLOWED_ORIGINS or []
