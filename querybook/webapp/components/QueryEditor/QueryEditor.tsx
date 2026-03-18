@@ -48,6 +48,7 @@ export interface IQueryEditorProps {
     className?: string;
     autoCompleteType?: AutoCompleteType;
     sqlCompleteEnabled?: boolean;
+    vimMode?: boolean;
 
     engineId: number;
     templatedVariables?: TDataDocMetaVariables;
@@ -101,6 +102,7 @@ export const QueryEditor: React.FC<
             className,
             autoCompleteType = 'all',
             sqlCompleteEnabled = false,
+            vimMode = false,
             engineId,
             cellId,
             templatedVariables = [],
@@ -386,6 +388,7 @@ export const QueryEditor: React.FC<
                     keyBindings={keyBindings}
                     extensions={extensions}
                     readonly={readOnly}
+                    vimMode={vimMode}
                     onChange={onChange}
                     onSelection={onSelection}
                 />
