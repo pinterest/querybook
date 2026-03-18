@@ -3,6 +3,7 @@ import React, { useCallback, useMemo } from 'react';
 import { PythonEditor } from 'components/PythonEditor/PythonEditor';
 import { ComponentType, ElementType } from 'const/analytics';
 import { DataCellUpdateFields, IDataPythonCellMeta } from 'const/datadoc';
+import { useUserCodeEditorConfig } from 'hooks/redux/useUserCodeEditorConfig';
 import { trackClick } from 'lib/analytics';
 import { PythonExecutionStatus, PythonKernelStatus } from 'lib/python/types';
 import usePython from 'lib/python/usePython';
@@ -39,6 +40,8 @@ export const DataDocPythonCell = ({
     onFocus,
     onBlur,
 }: IDataDocPythonCellProps) => {
+    const { vimModeEnabled } = useUserCodeEditorConfig();
+
     const {
         kernelStatus,
         runPython,
@@ -167,6 +170,7 @@ export const DataDocPythonCell = ({
                 identifiers={identifiers}
                 keyBindings={keyBindings}
                 readonly={!isEditable}
+                vimMode={vimModeEnabled}
                 onChange={(value) => {
                     onChange({
                         context: value,
