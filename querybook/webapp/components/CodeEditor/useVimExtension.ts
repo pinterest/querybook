@@ -31,7 +31,7 @@ export function useVimExtension(enabled: boolean): {
                     subMode?: string;
                 }) => void;
 
-                constructor(view: any) {
+                public constructor(view: any) {
                     // getCM returns the cm5-compat object set up by the vim() extension
                     this.cm = getCM(view);
                     if (this.cm) {
@@ -49,7 +49,7 @@ export function useVimExtension(enabled: boolean): {
                     }
                 }
 
-                destroy() {
+                public destroy() {
                     if (this.cm && this.handler) {
                         this.cm.off('vim-mode-change', this.handler);
                     }
