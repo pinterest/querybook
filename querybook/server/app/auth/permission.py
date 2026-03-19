@@ -27,7 +27,31 @@ def abort_404(message: Optional[str] = None):
     abort_request(status_code=RESOURCE_NOT_FOUND_STATUS_CODE, message=message)
 
 
+def verify_every_environment_permission(environment_ids: List[int]):
+    """
+    Verify that the current user has access to every one of the provided environment ids.
+
+    If the user does not have access to every one of the provided environment ids,
+    the function will abort the request with a 403 error.
+    """
+    verify_api_access_token_environment_permission(environment_ids)
+    if len(environment_ids) == 0:
+        abort_404("Requested resource is not available within accessible environment")
+
+    api_assert(
+        all(eid in current_user.environment_ids for eid in environment_ids),
+        message="Unauthorized Environment",
+        status_code=ACCESS_RESTRICTED_STATUS_CODE,
+    )
+
+
 def verify_environment_permission(environment_ids: List[int]):
+    """
+    Verify that the current user has access to at least one of the provided environment ids.
+
+    If the user does not have access to any of the provided environment ids,
+    the function will abort the request with a 403 error.
+    """
     # If we are verifying environment ids and none is returned
     # it is most likely that the object we are verifying does
     # not associate with any environment
@@ -246,7 +270,7 @@ def verify_data_cells_permission(cell_ids: List, session=None):
         .join(DataCell)
         .filter(DataCell.id.in_(cell_ids))
     ]
-    verify_environment_permission(environment_ids)
+    verify_every_environment_permission(environment_ids)
     engine_ids = get_query_engine_ids_by_data_cell_ids(cell_ids, session=session)
     verify_api_access_token_query_engine_permission(engine_ids)
 
