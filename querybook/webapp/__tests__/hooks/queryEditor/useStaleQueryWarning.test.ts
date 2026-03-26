@@ -18,9 +18,7 @@ describe('getSnapshotForExecution', () => {
     });
 
     test('returns snapshot when it exists', () => {
-        expect(getSnapshotForExecution(1, snapshots)).toBe(
-            'SELECT * FROM t1'
-        );
+        expect(getSnapshotForExecution(1, snapshots)).toBe('SELECT * FROM t1');
     });
 
     test('falls back to initialQuery when no snapshot exists', () => {
@@ -34,9 +32,9 @@ describe('getSnapshotForExecution', () => {
     });
 
     test('prefers snapshot over initialQuery', () => {
-        expect(
-            getSnapshotForExecution(1, snapshots, 'something else')
-        ).toBe('SELECT * FROM t1');
+        expect(getSnapshotForExecution(1, snapshots, 'something else')).toBe(
+            'SELECT * FROM t1'
+        );
     });
 });
 
@@ -129,8 +127,8 @@ describe('shouldComputeStaleWarning', () => {
     });
 
     test('works with empty snapshots and initialQuery provided', () => {
-        expect(
-            shouldComputeStaleWarning(1, {}, 'changed', 'original')
-        ).toBe(true);
+        expect(shouldComputeStaleWarning(1, {}, 'changed', 'original')).toBe(
+            true
+        );
     });
 });

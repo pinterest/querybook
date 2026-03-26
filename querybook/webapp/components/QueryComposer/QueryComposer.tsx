@@ -470,8 +470,10 @@ const QueryComposer: React.FC = () => {
     const [showPeerReviewModal, setShowPeerReviewModal] = useState(false);
     const hasPeerReviewFeature = engine?.feature_params?.peer_review;
 
-    const { snapshots: executionRunInputById, recordSnapshot: recordRunInputSnapshot } =
-        useExecutionSnapshots();
+    const {
+        snapshots: executionRunInputById,
+        recordSnapshot: recordRunInputSnapshot,
+    } = useExecutionSnapshots();
 
     const initialQueryRef = useRef(reduxQuery);
     if (!initialQueryRef.current && reduxQuery) {

@@ -39,7 +39,11 @@ export function useStaleQueryWarning(options: {
     initialQuery?: string;
     debounceMs?: number;
     onUpdateQuery?: (query: string, run?: boolean) => any;
-}): { showWarning: boolean; snapshotQuery: string | undefined; onRevert?: () => void } {
+}): {
+    showWarning: boolean;
+    snapshotQuery: string | undefined;
+    onRevert?: () => void;
+} {
     const {
         selectedExecutionId,
         snapshots,

@@ -451,7 +451,9 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
 
     @bind
     public getRunInputString(): string {
-        return this.queryEditorRef.current?.getSelection?.() ?? this.state.query;
+        return (
+            this.queryEditorRef.current?.getSelection?.() ?? this.state.query
+        );
     }
 
     @bind
@@ -523,7 +525,10 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                             executionMetadata,
                             peerReviewParams
                         );
-                    this.recordRunInputSnapshot(queryExecution.id, this.state.query);
+                    this.recordRunInputSnapshot(
+                        queryExecution.id,
+                        this.state.query
+                    );
                     return queryExecution.id;
                 }
             );
