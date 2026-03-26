@@ -56,16 +56,29 @@ make scheduler  # celery beat
 
 ## Making Commits
 
-When preparing a PR, run the relevant checks:
+When preparing a PR, run the relevant checks. CI runs all of the following automatically on every PR via GitHub Actions (`.github/workflows/`).
 
 **Backend changes** (anything under `querybook/server/`):
-- `make test` — run backend tests
-- Pre-commit hooks handle linting (configured in `.pre-commit-config.yaml`)
+- `make test` — builds the `querybook-test` Docker image and runs pytest inside it
+- CI-equivalent without Docker: `PYTHONPATH=querybook/server:plugins ./querybook/scripts/run_test --python`
 
 **Frontend changes** (anything under `querybook/webapp/`):
-- `pnpm test` or `yarn test` — run Jest tests
-- `pnpm run lint` or `yarn lint` — ESLint with auto-fix
-- `pnpm run tsc-check` or `yarn tsc-check` — TypeScript type checking
+- `./querybook/scripts/run_test --node` — CI-equivalent; runs all four checks below in parallel:
+  - `yarn tsc-check` — TypeScript type checking
+  - `yarn test` — Jest unit tests
+  - `yarn lint` — ESLint with auto-fix
+  - `webpack --mode=production` — production build verification
+
+**Formatting (all changes) — common CI failure:**
+
+`./querybook/scripts/run_test --node` does **not** run Prettier. CI runs Prettier separately via `pre-commit`, so formatting issues are a frequent cause of CI failures. Always run Prettier on changed files before pushing:
+
+- `yarn prettier --write <files>` — format specific files
+- `pre-commit run --all-files` — run the full pre-commit suite (Black, Prettier, flake8)
+
+To catch formatting automatically on every `git commit`, install the hooks once:
+
+- `pip install pre-commit && pre-commit install`
 
 ## Pinterest Internal Deployment
 
