@@ -38,6 +38,7 @@ import { IQueryEngine } from 'const/queryEngine';
 import { ISearchOptions, ISearchResult } from 'const/searchAndReplace';
 import { SurveySurfaceType } from 'const/survey';
 import { useDebounceState } from 'hooks/redux/useDebounceState';
+import { useExecutionSnapshots } from 'hooks/queryEditor/useExecutionSnapshots';
 import { useSurveyTrigger } from 'hooks/ui/useSurveyTrigger';
 import { useBrowserTitle } from 'hooks/useBrowserTitle';
 import { useTrackView } from 'hooks/useTrackView';
@@ -424,6 +425,9 @@ const QueryComposer: React.FC = () => {
     );
     const dispatch: Dispatch = useDispatch();
     const { query, setQuery } = useQuery(dispatch, environmentId);
+    const reduxQuery = useSelector(
+        (state: IStoreState) => state.adhocQuery[environmentId]?.query ?? ''
+    );
     const { engine, setEngineId, queryEngines, queryEngineById } = useEngine(
         dispatch,
         environmentId
@@ -465,6 +469,14 @@ const QueryComposer: React.FC = () => {
 
     const [showPeerReviewModal, setShowPeerReviewModal] = useState(false);
     const hasPeerReviewFeature = engine?.feature_params?.peer_review;
+
+    const { snapshots: executionRunInputById, recordSnapshot: recordRunInputSnapshot } =
+        useExecutionSnapshots();
+
+    const initialQueryRef = useRef(reduxQuery);
+    if (!initialQueryRef.current && reduxQuery) {
+        initialQueryRef.current = reduxQuery;
+    }
 
     const runButtonRef = useRef<IQueryRunButtonHandles>(null);
     const clickOnRunButton = useCallback(() => {
@@ -558,8 +570,9 @@ const QueryComposer: React.FC = () => {
             // Throttle to prevent double run
             await sleep(250);
 
+            const selectedQuery = getCurrentSelectedQuery();
             const transformedQuery = await transformQuery(
-                getCurrentSelectedQuery(),
+                selectedQuery,
                 engine.language,
                 templatedVariables,
                 engine,
@@ -571,16 +584,17 @@ const QueryComposer: React.FC = () => {
             const queryId = await runQuery(
                 transformedQuery,
                 engine.id,
-                async (query, engineId) => {
+                async (q, engineId) => {
                     const data = await dispatch(
                         queryExecutionsAction.createQueryExecution(
-                            query,
+                            q,
                             engineId,
                             null,
                             queryExecutionMetadata,
                             peerReviewParams
                         )
                     );
+                    recordRunInputSnapshot(data.id, query);
                     return data.id;
                 }
             );
@@ -602,12 +616,14 @@ const QueryComposer: React.FC = () => {
             getQueryExecutionMetadata,
             hasLintErrors,
             getCurrentSelectedQuery,
+            query,
             engine,
             templatedVariables,
             rowLimit,
             triggerSurvey,
             dispatch,
             setExecutionId,
+            recordRunInputSnapshot,
         ]
     );
 
@@ -750,6 +766,9 @@ const QueryComposer: React.FC = () => {
                         }
                         sampleRate={getSampleRate()}
                         onUpdateQuery={updateAndRunQuery}
+                        currentRunInput={query}
+                        executionRunInputSnapshots={executionRunInputById}
+                        initialQuery={initialQueryRef.current}
                     />
                 </div>
             </Resizable>

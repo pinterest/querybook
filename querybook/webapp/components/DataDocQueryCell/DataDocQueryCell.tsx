@@ -13,6 +13,7 @@ import { DataDocQueryExecutions } from 'components/DataDocQueryExecutions/DataDo
 import { DataDocTableSamplingInfo } from 'components/DataDocTableSamplingInfo/DataDocTableSamplingInfo';
 import { QueryCellTitle } from 'components/QueryCellTitle/QueryCellTitle';
 import { runQuery, transformQuery } from 'components/QueryComposer/RunQuery';
+import { addRunInputSnapshot } from 'hooks/queryEditor/useExecutionSnapshots';
 import { BoundQueryEditor } from 'components/QueryEditor/BoundQueryEditor';
 import { IQueryEditorHandles } from 'components/QueryEditor/QueryEditor';
 import { QueryPeerReviewModal } from 'components/QueryPeerReviewModal/QueryPeerReviewModal';
@@ -120,6 +121,8 @@ interface IState {
     showTableSamplingInfoModal: boolean;
     showPeerReviewModal: boolean;
 
+    executionRunInputById: Record<number, string>;
+
     transpilerConfig?: {
         toEngine: IQueryEngine;
         transpilerName: string;
@@ -130,9 +133,11 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     private queryEditorRef = React.createRef<IQueryEditorHandles>();
     private runButtonRef = React.createRef<IQueryRunButtonHandles>();
     private commandInputRef = React.createRef<IResizableTextareaHandles>();
+    private readonly initialQuery: string;
 
     public constructor(props) {
         super(props);
+        this.initialQuery = props.query;
 
         this.state = {
             query: props.query,
@@ -149,6 +154,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             samplingTables: {},
             showTableSamplingInfoModal: false,
             showPeerReviewModal: false,
+            executionRunInputById: {},
         };
     }
 
@@ -444,10 +450,14 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
     }
 
     @bind
+    public getRunInputString(): string {
+        return this.queryEditorRef.current?.getSelection?.() ?? this.state.query;
+    }
+
+    @bind
     public async getTransformedQuery() {
         const { templatedVariables = [] } = this.props;
-        const { query } = this.state;
-        const rawQuery = this.queryEditorRef.current?.getSelection?.() ?? query;
+        const rawQuery = this.getRunInputString();
 
         return transformQuery(
             rawQuery,
@@ -467,6 +477,17 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             metadata['sample_rate'] = this.sampleRate;
         }
         return Object.keys(metadata).length === 0 ? null : metadata;
+    }
+
+    @bind
+    public recordRunInputSnapshot(executionId: number, runInput: string) {
+        this.setState((prev) => ({
+            executionRunInputById: addRunInputSnapshot(
+                prev.executionRunInputById,
+                executionId,
+                runInput
+            ),
+        }));
     }
 
     @bind
@@ -502,6 +523,7 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                             executionMetadata,
                             peerReviewParams
                         );
+                    this.recordRunInputSnapshot(queryExecution.id, this.state.query);
                     return queryExecution.id;
                 }
             );
@@ -596,12 +618,14 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
             const executionMetadata =
                 this.sampleRate > 0 ? { sample_rate: this.sampleRate } : null;
 
-            return this.props.createQueryExecution(
+            const queryExecution = await this.props.createQueryExecution(
                 renderedQuery,
                 this.engineId,
                 this.props.cellId,
                 executionMetadata
             );
+            this.recordRunInputSnapshot(queryExecution.id, this.state.query);
+            return queryExecution;
         }
     }
 
@@ -1077,6 +1101,9 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 onSamplingInfoClick={this.toggleShowTableSamplingInfoModal}
                 hasSamplingTables={this.hasSamplingTables}
                 sampleRate={this.sampleRate}
+                currentRunInput={this.state.query}
+                executionRunInputSnapshots={this.state.executionRunInputById}
+                initialQuery={this.initialQuery}
             />
         );
     }
