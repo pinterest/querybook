@@ -1,4 +1,44 @@
-import { shouldComputeStaleWarning } from 'hooks/queryEditor/useStaleQueryWarning';
+import {
+    getSnapshotForExecution,
+    shouldComputeStaleWarning,
+} from 'hooks/queryEditor/useStaleQueryWarning';
+
+describe('getSnapshotForExecution', () => {
+    const snapshots: Record<number, string> = {
+        1: 'SELECT * FROM t1',
+        2: 'SELECT * FROM t2',
+    };
+
+    test('returns undefined when executionId is null', () => {
+        expect(getSnapshotForExecution(null, snapshots)).toBeUndefined();
+    });
+
+    test('returns undefined when executionId is undefined', () => {
+        expect(getSnapshotForExecution(undefined, snapshots)).toBeUndefined();
+    });
+
+    test('returns snapshot when it exists', () => {
+        expect(getSnapshotForExecution(1, snapshots)).toBe(
+            'SELECT * FROM t1'
+        );
+    });
+
+    test('falls back to initialQuery when no snapshot exists', () => {
+        expect(getSnapshotForExecution(99, snapshots, 'SELECT 1')).toBe(
+            'SELECT 1'
+        );
+    });
+
+    test('returns undefined when no snapshot and no initialQuery', () => {
+        expect(getSnapshotForExecution(99, snapshots)).toBeUndefined();
+    });
+
+    test('prefers snapshot over initialQuery', () => {
+        expect(
+            getSnapshotForExecution(1, snapshots, 'something else')
+        ).toBe('SELECT * FROM t1');
+    });
+});
 
 describe('shouldComputeStaleWarning', () => {
     const snapshots: Record<number, string> = {

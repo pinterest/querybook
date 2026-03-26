@@ -1,6 +1,19 @@
+import { useCallback } from 'react';
+
 import { useDebounce } from 'hooks/useDebounce';
 
 const DEFAULT_DEBOUNCE_MS = 300;
+
+export function getSnapshotForExecution(
+    executionId: number | null | undefined,
+    snapshots: Readonly<Record<number, string>>,
+    initialQuery?: string
+): string | undefined {
+    if (executionId == null) {
+        return undefined;
+    }
+    return snapshots[executionId] ?? initialQuery;
+}
 
 export function shouldComputeStaleWarning(
     selectedExecutionId: number | null | undefined,
@@ -8,15 +21,14 @@ export function shouldComputeStaleWarning(
     currentInput: string,
     initialQuery?: string
 ): boolean {
-    if (selectedExecutionId == null) {
-        return false;
-    }
-
-    const snapshot = snapshots[selectedExecutionId] ?? initialQuery;
+    const snapshot = getSnapshotForExecution(
+        selectedExecutionId,
+        snapshots,
+        initialQuery
+    );
     if (snapshot === undefined) {
         return false;
     }
-
     return currentInput !== snapshot;
 }
 
@@ -26,13 +38,15 @@ export function useStaleQueryWarning(options: {
     currentRunInput: string;
     initialQuery?: string;
     debounceMs?: number;
-}): { showWarning: boolean } {
+    onUpdateQuery?: (query: string, run?: boolean) => any;
+}): { showWarning: boolean; snapshotQuery: string | undefined; onRevert?: () => void } {
     const {
         selectedExecutionId,
         snapshots,
         currentRunInput,
         initialQuery,
-        debounceMs = DEFAULT_DEBOUNCE_MS
+        debounceMs = DEFAULT_DEBOUNCE_MS,
+        onUpdateQuery,
     } = options;
 
     const debouncedInput = useDebounce(currentRunInput, debounceMs);
@@ -53,7 +67,21 @@ export function useStaleQueryWarning(options: {
         initialQuery
     );
 
+    const snapshotQuery = getSnapshotForExecution(
+        selectedExecutionId,
+        snapshots,
+        initialQuery
+    );
+
+    const onRevert = useCallback(() => {
+        if (snapshotQuery !== undefined) {
+            onUpdateQuery?.(snapshotQuery);
+        }
+    }, [snapshotQuery, onUpdateQuery]);
+
     return {
         showWarning: isStaleDebounced && isStaleRealtime,
+        snapshotQuery,
+        onRevert: onUpdateQuery ? onRevert : undefined,
     };
 }

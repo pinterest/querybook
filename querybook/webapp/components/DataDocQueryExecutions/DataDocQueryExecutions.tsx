@@ -160,12 +160,14 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> =
 
             const selectedExecution = queryExecutions[selectedExecutionIndex];
 
-            const { showWarning: showStaleWarning } = useStaleQueryWarning({
-                selectedExecutionId: selectedExecution?.id ?? null,
-                snapshots: executionRunInputSnapshots ?? {},
-                currentRunInput: currentRunInput ?? '',
-                initialQuery,
-            });
+            const { showWarning: showStaleWarning, onRevert } =
+                useStaleQueryWarning({
+                    selectedExecutionId: selectedExecution?.id ?? null,
+                    snapshots: executionRunInputSnapshots ?? {},
+                    currentRunInput: currentRunInput ?? '',
+                    initialQuery,
+                    onUpdateQuery,
+                });
 
             const queryExecutionDOM = selectedExecution && (
                 <QueryExecution
@@ -193,7 +195,9 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> =
 
             return (
                 <div className="DataDocQueryExecutions">
-                    {showStaleWarning && <StaleQueryWarning />}
+                    {showStaleWarning && (
+                        <StaleQueryWarning onRevert={onRevert} />
+                    )}
                     <StyledText size="xsmall">
                         {generateExecutionsPickerDOM()}
                         {queryExecutionDOM}

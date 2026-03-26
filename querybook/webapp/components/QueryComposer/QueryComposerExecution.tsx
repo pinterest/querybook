@@ -40,12 +40,14 @@ export const QueryComposerExecution: React.FunctionComponent<IProps> = ({
         (state: IStoreState) => state.queryExecutions.queryExecutionById[id]
     );
 
-    const { showWarning: showStaleWarning } = useStaleQueryWarning({
-        selectedExecutionId: id,
-        snapshots: executionRunInputSnapshots ?? {},
-        currentRunInput: currentRunInput ?? '',
-        initialQuery,
-    });
+    const { showWarning: showStaleWarning, onRevert } =
+        useStaleQueryWarning({
+            selectedExecutionId: id,
+            snapshots: executionRunInputSnapshots ?? {},
+            currentRunInput: currentRunInput ?? '',
+            initialQuery,
+            onUpdateQuery,
+        });
 
     if (!execution) {
         return null;
@@ -62,7 +64,9 @@ export const QueryComposerExecution: React.FunctionComponent<IProps> = ({
 
     return (
         <div className="QueryComposerExecution">
-            {showStaleWarning && <StaleQueryWarning />}
+            {showStaleWarning && (
+                <StaleQueryWarning onRevert={onRevert} />
+            )}
             <Level>
                 <div className="flex-row">
                     <AccentText weight="bold" className="flex-row mr8">

@@ -1,13 +1,30 @@
 import React from 'react';
 
+import { TextButton } from 'ui/Button/Button';
 import { Message } from 'ui/Message/Message';
 
-export const StaleQueryWarning: React.FC = () => (
+interface IProps {
+    onRevert?: () => void;
+}
+
+export const StaleQueryWarning: React.FC<IProps> = ({ onRevert }) => (
     <Message
         type="warning"
         icon="AlertTriangle"
         iconSize={16}
         size="small"
-        message="Query has been modified."
+        message={
+            <span className="flex-row" style={{ gap: 8 }}>
+                Query has been edited.
+                {onRevert && (
+                    <TextButton
+                        icon="RotateCcw"
+                        title="Revert"
+                        size="small"
+                        onClick={onRevert}
+                    />
+                )}
+            </span>
+        }
     />
 );
