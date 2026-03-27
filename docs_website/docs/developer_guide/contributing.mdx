@@ -65,6 +65,41 @@ To increase the chances that your pull request will be accepted:
 -   Write tests for your changes
 -   Write a good commit message
 
+### Testing
+
+CI runs all of the checks below automatically on every pull request via GitHub Actions. You should reproduce them locally before pushing.
+
+**Backend** (changes under `querybook/server/`):
+
+```sh
+# Docker-based (recommended) — builds the test image and runs pytest
+make test
+
+# Without Docker (mirrors CI)
+PYTHONPATH=querybook/server:plugins ./querybook/scripts/run_test --python
+```
+
+**Frontend** (changes under `querybook/webapp/`):
+
+```sh
+# CI-equivalent — runs TypeScript check, Jest, ESLint, and a production webpack build in parallel
+./querybook/scripts/run_test --node
+
+# Or run individual checks manually
+yarn tsc-check   # TypeScript type checking
+yarn test         # Jest unit tests
+yarn lint         # ESLint with auto-fix
+```
+
+**Linting (all changes):**
+
+Pre-commit hooks (Black, Prettier, flake8) run automatically on `git commit` if installed, and in CI on every PR. To set them up locally:
+
+```sh
+pip install pre-commit
+pre-commit install
+```
+
 ### Pull Request Format
 
 When you create a new pull request, please make sure it's title follows the specifications in https://www.conventionalcommits.org/en/v1.0.0/. This is to ensure automatic versioning.

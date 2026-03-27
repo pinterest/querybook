@@ -106,4 +106,4 @@ Lineage & Analytics
 
 # Contributing Back
 
-See [CONTRIBUTING](CONTRIBUTING.md).
+See [CONTRIBUTING](CONTRIBUTING.md) for the full guide, including [how to run tests locally](docs_website/docs/developer_guide/contributing.mdx#testing).

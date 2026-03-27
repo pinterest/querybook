@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
+import { StaleQueryWarning } from 'components/DataDocQueryExecutions/StaleQueryWarning';
 import { QueryExecution } from 'components/QueryExecution/QueryExecution';
 import { QueryExecutionDuration } from 'components/QueryExecution/QueryExecutionDuration';
 import { QueryExecutionBar } from 'components/QueryExecutionBar/QueryExecutionBar';
@@ -8,6 +9,7 @@ import {
     queryStatusToStatusIcon,
     STATUS_TO_TEXT_MAPPING,
 } from 'const/queryStatus';
+import { useStaleQueryWarning } from 'hooks/queryEditor/useStaleQueryWarning';
 import { IStoreState } from 'redux/store/types';
 import { Level } from 'ui/Level/Level';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
@@ -19,6 +21,9 @@ interface IProps {
     hasSamplingTables?: boolean;
     sampleRate: number;
     onUpdateQuery?: (query: string, run?: boolean) => any;
+    currentRunInput?: string;
+    executionRunInputSnapshots?: Readonly<Record<number, string>>;
+    initialQuery?: string;
 }
 
 export const QueryComposerExecution: React.FunctionComponent<IProps> = ({
@@ -27,10 +32,21 @@ export const QueryComposerExecution: React.FunctionComponent<IProps> = ({
     hasSamplingTables,
     sampleRate,
     onUpdateQuery,
+    currentRunInput,
+    executionRunInputSnapshots,
+    initialQuery,
 }) => {
     const execution = useSelector(
         (state: IStoreState) => state.queryExecutions.queryExecutionById[id]
     );
+
+    const { showWarning: showStaleWarning, onRevert } = useStaleQueryWarning({
+        selectedExecutionId: id,
+        snapshots: executionRunInputSnapshots ?? {},
+        currentRunInput: currentRunInput ?? '',
+        initialQuery,
+        onUpdateQuery,
+    });
 
     if (!execution) {
         return null;
@@ -47,6 +63,7 @@ export const QueryComposerExecution: React.FunctionComponent<IProps> = ({
 
     return (
         <div className="QueryComposerExecution">
+            {showStaleWarning && <StaleQueryWarning onRevert={onRevert} />}
             <Level>
                 <div className="flex-row">
                     <AccentText weight="bold" className="flex-row mr8">
