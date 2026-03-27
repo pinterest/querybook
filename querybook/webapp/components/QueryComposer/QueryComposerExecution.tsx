@@ -40,12 +40,11 @@ export const QueryComposerExecution: React.FunctionComponent<IProps> = ({
         (state: IStoreState) => state.queryExecutions.queryExecutionById[id]
     );
 
-    const { showWarning: showStaleWarning, onRevert } = useStaleQueryWarning({
+    const { showWarning: showStaleWarning } = useStaleQueryWarning({
         selectedExecutionId: id,
         snapshots: executionRunInputSnapshots ?? {},
         currentRunInput: currentRunInput ?? '',
         initialQuery,
-        onUpdateQuery,
     });
 
     if (!execution) {
@@ -63,7 +62,7 @@ export const QueryComposerExecution: React.FunctionComponent<IProps> = ({
 
     return (
         <div className="QueryComposerExecution">
-            {showStaleWarning && <StaleQueryWarning onRevert={onRevert} />}
+            {showStaleWarning && <StaleQueryWarning />}
             <Level>
                 <div className="flex-row">
                     <AccentText weight="bold" className="flex-row mr8">
