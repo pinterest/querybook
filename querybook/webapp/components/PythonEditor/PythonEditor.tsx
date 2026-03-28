@@ -23,6 +23,7 @@ interface IDataDocPythonCellProps {
     identifiers?: PythonIdentifierInfo[];
     keyBindings?: KeyBinding[];
     readonly?: boolean;
+    vimMode?: boolean;
     onChange: (value: string) => void;
     onFocus?: () => void;
     onBlur?: () => void;
@@ -36,6 +37,7 @@ export const PythonEditor = ({
     identifiers = [],
     keyBindings = [],
     readonly = false,
+    vimMode = false,
     onChange,
     onFocus,
     onBlur,
@@ -86,6 +88,7 @@ export const PythonEditor = ({
                 onBlur={onBlur}
                 extensions={extensions}
                 readonly={readonly}
+                vimMode={vimMode}
             />
         </div>
     );
