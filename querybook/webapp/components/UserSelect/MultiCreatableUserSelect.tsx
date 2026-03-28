@@ -36,6 +36,46 @@ function getUserName(user: IUserSearchResultRow) {
     return (user.fullname || user.username || 'Unknown').trim();
 }
 
+///////////////////////////////////////////////////////
+
+// If you want the review section to show only admin users,
+// so that regular users can submit requests only to admins,
+// replace this function and list the admin usernames in the array below (adminUsernames).
+
+// const loadOptions = debounce(
+//     (name, callback) => {
+//         const adminUsernames = ['admin'];
+//         SearchUserResource.search({ name }).then(({ data }) => {
+//             console.log(data);
+//             const options: any[] = [];
+//             for (let i = 0; i < data.length; i++) {
+//                 const user = data[i];
+//                 if (adminUsernames.includes(user.username)) {
+//                     options.push({
+//                         value: user.id,
+//                         label: (
+//                             <UserBadge
+//                                 uid={user.id}
+//                                 name={getUserName(user)}
+//                                 mini
+//                             />
+//                         ),
+//                         isUser: true,
+//                     });
+//                 }
+//             }
+
+//             callback(options);
+//         });
+//     },
+//     1000,
+//     {
+//         leading: true,
+//     }
+// );
+
+///////////////////////////////////////////////////////
+
 const loadOptions = debounce(
     (name, callback) => {
         SearchUserResource.search({ name }).then(({ data }) => {
@@ -50,14 +90,14 @@ const loadOptions = debounce(
                         />
                     ),
                     isUser: true,
-                }))
+                })),
             );
         });
     },
     1000,
     {
         leading: true,
-    }
+    },
 );
 
 interface IUserSelectProps {
@@ -75,9 +115,9 @@ export const MultiCreatableUserSelect: React.FunctionComponent<
         () =>
             makeReactSelectStyle(
                 usePortalMenu,
-                multiCreatableReactSelectStyles
+                multiCreatableReactSelectStyles,
             ),
-        [usePortalMenu]
+        [usePortalMenu],
     );
     if (usePortalMenu) {
         selectProps.menuPortalTarget = overlayRoot;
@@ -95,7 +135,7 @@ export const MultiCreatableUserSelect: React.FunctionComponent<
                         v.value
                     )),
             })),
-        [value]
+        [value],
     );
 
     return (
