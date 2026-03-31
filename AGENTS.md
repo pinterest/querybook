@@ -47,8 +47,17 @@ Key settings live in `querybook/server/env.py` (`QuerybookSettings`).
 
 ## Running Locally
 
+Start the full stack (web server, worker, scheduler, and all dependencies) with Docker Compose:
+
 ```bash
-make            # docker-compose up (full stack) → http://localhost:10001
+make
+```
+
+This brings up everything and serves the app at http://localhost:10001. This is the primary command for local development.
+
+To restart individual services without bouncing the full stack:
+
+```bash
 make web        # web server only
 make worker     # celery worker
 make scheduler  # celery beat
@@ -56,29 +65,27 @@ make scheduler  # celery beat
 
 ## Making Commits
 
-When preparing a PR, run the relevant checks. CI runs all of the following automatically on every PR via GitHub Actions (`.github/workflows/`).
+When preparing a PR, run the relevant checks. CI runs all of the following via GitHub Actions (`.github/workflows/`), but must be manually triggered by a maintainer.
 
-**Backend changes** (anything under `querybook/server/`):
-- `make test` — builds the `querybook-test` Docker image and runs pytest inside it
-- CI-equivalent without Docker: `PYTHONPATH=querybook/server:plugins ./querybook/scripts/run_test --python`
+Always run tests via `make test`, which builds a `querybook-test` Docker image and runs checks inside it. This ensures an isolated, reproducible environment. Do not run test commands (pytest, yarn, webpack) directly on the host.
 
-**Frontend changes** (anything under `querybook/webapp/`):
-- `./querybook/scripts/run_test --node` — CI-equivalent; runs all four checks below in parallel:
-  - `yarn tsc-check` — TypeScript type checking
-  - `yarn test` — Jest unit tests
-  - `yarn lint` — ESLint with auto-fix
-  - `webpack --mode=production` — production build verification
+`make test` runs both backend and frontend checks:
+- **Backend** (anything under `querybook/server/`): pytest
+- **Frontend** (anything under `querybook/webapp/`): TypeScript type checking, Jest unit tests, ESLint, and production build verification
 
 **Formatting (all changes) — common CI failure:**
 
-`./querybook/scripts/run_test --node` does **not** run Prettier. CI runs Prettier separately via `pre-commit`, so formatting issues are a frequent cause of CI failures. Always run Prettier on changed files before pushing:
+`make test` does **not** run Prettier. CI runs Prettier separately via `pre-commit`, so formatting issues are a frequent cause of CI failures. After running `make test`, also run Prettier on changed files before pushing:
 
-- `yarn prettier --write <files>` — format specific files
-- `pre-commit run --all-files` — run the full pre-commit suite (Black, Prettier, flake8)
+```bash
+npx prettier --write <files>
+```
 
-To catch formatting automatically on every `git commit`, install the hooks once:
+For a full formatting pass (Black for Python, Prettier for JS/TS, flake8):
 
-- `pip install pre-commit && pre-commit install`
+```bash
+pre-commit run --all-files
+```
 
 ## Pinterest Internal Deployment
 

@@ -1,13 +1,15 @@
 import React from 'react';
+import { Icon } from 'ui/Icon/Icon';
 
-import { Message } from 'ui/Message/Message';
+import './StaleQueryWarning.scss';
 
 export const StaleQueryWarning: React.FC = () => (
-    <Message
-        type="warning"
-        icon="AlertTriangle"
-        iconSize={16}
-        size="small"
-        message="Query has been edited."
-    />
+    <span
+        className="mr8 flex-row stale-query-indicator"
+        aria-label="Query has been edited"
+        data-balloon-pos="up"
+    >
+        <Icon name="AlertTriangle" size={12} color="warning" />
+        <span className="ml4">Edited</span>
+    </span>
 );

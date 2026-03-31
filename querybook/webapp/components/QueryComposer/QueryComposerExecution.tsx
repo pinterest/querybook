@@ -1,7 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { StaleQueryWarning } from 'components/DataDocQueryExecutions/StaleQueryWarning';
 import { QueryExecution } from 'components/QueryExecution/QueryExecution';
 import { QueryExecutionDuration } from 'components/QueryExecution/QueryExecutionDuration';
 import { QueryExecutionBar } from 'components/QueryExecutionBar/QueryExecutionBar';
@@ -14,6 +13,7 @@ import { IStoreState } from 'redux/store/types';
 import { Level } from 'ui/Level/Level';
 import { StatusIcon } from 'ui/StatusIcon/StatusIcon';
 import { AccentText } from 'ui/StyledText/StyledText';
+import { StaleQueryWarning } from 'components/DataDocQueryExecutions/StaleQueryWarning';
 
 interface IProps {
     id: number;
@@ -62,7 +62,6 @@ export const QueryComposerExecution: React.FunctionComponent<IProps> = ({
 
     return (
         <div className="QueryComposerExecution">
-            {showStaleWarning && <StaleQueryWarning />}
             <Level>
                 <div className="flex-row">
                     <AccentText weight="bold" className="flex-row mr8">
@@ -71,6 +70,7 @@ export const QueryComposerExecution: React.FunctionComponent<IProps> = ({
                             Execution {execution.id}
                         </span>
                     </AccentText>
+                    {showStaleWarning && <StaleQueryWarning />}
                     <QueryExecutionDuration queryExecution={execution} />
                 </div>
                 <div className="flex-row">

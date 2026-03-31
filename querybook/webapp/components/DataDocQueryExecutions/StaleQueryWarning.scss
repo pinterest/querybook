@@ -1,0 +1,14 @@
+.stale-query-indicator[data-balloon-pos] {
+    cursor: default;
+}
+
+.stale-query-indicator {
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: var(--border-radius-sm);
+    background-color: var(--color-warning-lightest-0);
+    color: var(--color-warning-dark);
+    font-size: var(--xsmall-text-size);
+    font-weight: var(--bold-font);
+    white-space: nowrap;
+}

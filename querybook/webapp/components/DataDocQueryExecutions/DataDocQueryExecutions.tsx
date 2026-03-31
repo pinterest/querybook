@@ -18,7 +18,6 @@ import { getQueryString } from 'lib/utils/query-string';
 import * as queryExecutionsActions from 'redux/queryExecutions/action';
 import * as queryExecutionsSelectors from 'redux/queryExecutions/selector';
 import { StyledText } from 'ui/StyledText/StyledText';
-
 import { StaleQueryWarning } from './StaleQueryWarning';
 
 interface IProps {
@@ -128,6 +127,15 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> =
                 [queryExecutions]
             );
 
+            const selectedExecution = queryExecutions[selectedExecutionIndex];
+
+            const { showWarning: showStaleWarning } = useStaleQueryWarning({
+                selectedExecutionId: selectedExecution?.id ?? null,
+                snapshots: executionRunInputSnapshots ?? {},
+                currentRunInput: currentRunInput ?? '',
+                initialQuery,
+            });
+
             const generateExecutionsPickerDOM = () => {
                 const currentExecution =
                     queryExecutions?.[selectedExecutionIndex];
@@ -138,6 +146,7 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> =
                 return (
                     <div className="execution-selector-section horizontal-space-between">
                         <div className="flex-row">
+                            {showStaleWarning && <StaleQueryWarning />}
                             <QueryExecutionPicker
                                 queryExecutionId={currentExecution?.id}
                                 onSelection={handleQueryExecutionSelected}
@@ -157,15 +166,6 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> =
                     </div>
                 );
             };
-
-            const selectedExecution = queryExecutions[selectedExecutionIndex];
-
-            const { showWarning: showStaleWarning } = useStaleQueryWarning({
-                selectedExecutionId: selectedExecution?.id ?? null,
-                snapshots: executionRunInputSnapshots ?? {},
-                currentRunInput: currentRunInput ?? '',
-                initialQuery,
-            });
 
             const queryExecutionDOM = selectedExecution && (
                 <QueryExecution
@@ -193,7 +193,6 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> =
 
             return (
                 <div className="DataDocQueryExecutions">
-                    {showStaleWarning && <StaleQueryWarning />}
                     <StyledText size="xsmall">
                         {generateExecutionsPickerDOM()}
                         {queryExecutionDOM}
