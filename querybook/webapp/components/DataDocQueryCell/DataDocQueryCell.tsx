@@ -1106,7 +1106,8 @@ class DataDocQueryCellComponent extends React.PureComponent<IProps, IState> {
                 onSamplingInfoClick={this.toggleShowTableSamplingInfoModal}
                 hasSamplingTables={this.hasSamplingTables}
                 sampleRate={this.sampleRate}
-                currentRunInput={this.state.query}
+                savedRunInput={this.props.query}
+                liveRunInput={this.state.query}
                 executionRunInputSnapshots={this.state.executionRunInputById}
                 initialQuery={this.initialQuery}
             />

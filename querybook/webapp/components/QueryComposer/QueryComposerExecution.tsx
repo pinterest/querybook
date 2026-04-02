@@ -40,10 +40,11 @@ export const QueryComposerExecution: React.FunctionComponent<IProps> = ({
         (state: IStoreState) => state.queryExecutions.queryExecutionById[id]
     );
 
-    const { showWarning: showStaleWarning } = useStaleQueryWarning({
+    const { warningState } = useStaleQueryWarning({
         selectedExecutionId: id,
         snapshots: executionRunInputSnapshots ?? {},
-        currentRunInput: currentRunInput ?? '',
+        savedRunInput: currentRunInput ?? '',
+        liveRunInput: currentRunInput ?? '',
         initialQuery,
     });
 
@@ -70,7 +71,9 @@ export const QueryComposerExecution: React.FunctionComponent<IProps> = ({
                             Execution {execution.id}
                         </span>
                     </AccentText>
-                    {showStaleWarning && <StaleQueryWarning />}
+                    {warningState && (
+                        <StaleQueryWarning variant={warningState} />
+                    )}
                     <QueryExecutionDuration queryExecution={execution} />
                 </div>
                 <div className="flex-row">

@@ -2,6 +2,8 @@ import { useDebounce } from 'hooks/useDebounce';
 
 const DEFAULT_DEBOUNCE_MS = 300;
 
+export type StaleWarningState = 'edited' | 'unsaved' | null;
+
 export function shouldComputeStaleWarning(
     selectedExecutionId: number | null | undefined,
     snapshots: Readonly<Record<number, string>>,
@@ -18,40 +20,94 @@ export function shouldComputeStaleWarning(
     return currentInput !== snapshot;
 }
 
-export function useStaleQueryWarning(options: {
+export function computeStaleWarningState(options: {
     selectedExecutionId: number | null | undefined;
     snapshots: Readonly<Record<number, string>>;
-    currentRunInput: string;
+    savedInput: string;
+    liveInput: string;
     initialQuery?: string;
-    debounceMs?: number;
-}): { showWarning: boolean } {
+    isSaving?: boolean;
+}): StaleWarningState {
     const {
         selectedExecutionId,
         snapshots,
-        currentRunInput,
+        savedInput,
+        liveInput,
         initialQuery,
-        debounceMs = DEFAULT_DEBOUNCE_MS,
+        isSaving = false,
     } = options;
 
-    const debouncedInput = useDebounce(currentRunInput, debounceMs);
+    const isLiveStale = shouldComputeStaleWarning(
+        selectedExecutionId,
+        snapshots,
+        liveInput,
+        initialQuery
+    );
+
+    if (!isLiveStale) {
+        return null;
+    }
+
+    const isSavedStale = shouldComputeStaleWarning(
+        selectedExecutionId,
+        snapshots,
+        savedInput,
+        initialQuery
+    );
+
+    if (isSavedStale && !isSaving) {
+        return 'edited';
+    }
+
+    return 'unsaved';
+}
+
+export function useStaleQueryWarning(options: {
+    selectedExecutionId: number | null | undefined;
+    snapshots: Readonly<Record<number, string>>;
+    savedRunInput: string;
+    liveRunInput: string;
+    initialQuery?: string;
+    debounceMs?: number;
+    isSaving?: boolean;
+}): { warningState: StaleWarningState } {
+    const {
+        selectedExecutionId,
+        snapshots,
+        savedRunInput,
+        liveRunInput,
+        initialQuery,
+        debounceMs = DEFAULT_DEBOUNCE_MS,
+        isSaving = false,
+    } = options;
+
+    const debouncedLiveInput = useDebounce(liveRunInput, debounceMs);
 
     // Debounced check stays stable during typing to prevent flickering.
     // Real-time check instantly suppresses false positives on initial page load
-    // (when currentRunInput briefly differs from the snapshot before the editor populates).
-    const isStaleDebounced = shouldComputeStaleWarning(
+    // (when liveRunInput briefly differs from the snapshot before the editor populates).
+    const debouncedState = computeStaleWarningState({
         selectedExecutionId,
         snapshots,
-        debouncedInput,
-        initialQuery
-    );
-    const isStaleRealtime = shouldComputeStaleWarning(
+        savedInput: savedRunInput,
+        liveInput: debouncedLiveInput,
+        initialQuery,
+        isSaving,
+    });
+    const realtimeState = computeStaleWarningState({
         selectedExecutionId,
         snapshots,
-        currentRunInput,
-        initialQuery
-    );
+        savedInput: savedRunInput,
+        liveInput: liveRunInput,
+        initialQuery,
+        isSaving,
+    });
 
-    return {
-        showWarning: isStaleDebounced && isStaleRealtime,
-    };
+    // Both must agree on a non-null state; if either is null, suppress.
+    const warningState =
+        debouncedState !== null && realtimeState !== null
+            ? debouncedState
+            : null;
+
+    return { warningState };
 }

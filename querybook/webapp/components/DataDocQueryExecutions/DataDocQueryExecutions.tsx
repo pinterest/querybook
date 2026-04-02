@@ -5,7 +5,7 @@ import React, {
     useMemo,
     useState,
 } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { QueryExecutionPicker } from 'components/ExecutionPicker/QueryExecutionPicker';
 import { QueryExecution } from 'components/QueryExecution/QueryExecution';
@@ -17,6 +17,7 @@ import { useStaleQueryWarning } from 'hooks/queryEditor/useStaleQueryWarning';
 import { getQueryString } from 'lib/utils/query-string';
 import * as queryExecutionsActions from 'redux/queryExecutions/action';
 import * as queryExecutionsSelectors from 'redux/queryExecutions/selector';
+import { IStoreState } from 'redux/store/types';
 import { StyledText } from 'ui/StyledText/StyledText';
 import { StaleQueryWarning } from './StaleQueryWarning';
 
@@ -31,7 +32,8 @@ interface IProps {
     hasSamplingTables?: boolean;
     sampleRate: number;
 
-    currentRunInput?: string;
+    savedRunInput?: string;
+    liveRunInput?: string;
     executionRunInputSnapshots?: Readonly<Record<number, string>>;
     initialQuery?: string;
 }
@@ -46,7 +48,8 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> =
             onSamplingInfoClick,
             hasSamplingTables,
             sampleRate,
-            currentRunInput,
+            savedRunInput,
+            liveRunInput,
             executionRunInputSnapshots,
             initialQuery,
         }) => {
@@ -129,11 +132,21 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> =
 
             const selectedExecution = queryExecutions[selectedExecutionIndex];
 
-            const { showWarning: showStaleWarning } = useStaleQueryWarning({
+            const isCellSaving = useSelector((state: IStoreState) => {
+                const savePromise = state.dataDoc.dataDocSavePromiseById[docId];
+                if (!savePromise) {
+                    return false;
+                }
+                return `cell-${cellId}` in savePromise.itemToSave;
+            });
+
+            const { warningState } = useStaleQueryWarning({
                 selectedExecutionId: selectedExecution?.id ?? null,
                 snapshots: executionRunInputSnapshots ?? {},
-                currentRunInput: currentRunInput ?? '',
+                savedRunInput: savedRunInput ?? '',
+                liveRunInput: liveRunInput ?? '',
                 initialQuery,
+                isSaving: isCellSaving,
             });
 
             const generateExecutionsPickerDOM = () => {
@@ -146,7 +159,9 @@ export const DataDocQueryExecutions: React.FunctionComponent<IProps> =
                 return (
                     <div className="execution-selector-section horizontal-space-between">
                         <div className="flex-row">
-                            {showStaleWarning && <StaleQueryWarning />}
+                            {warningState && (
+                                <StaleQueryWarning variant={warningState} />
+                            )}
                             <QueryExecutionPicker
                                 queryExecutionId={currentExecution?.id}
                                 onSelection={handleQueryExecutionSelected}

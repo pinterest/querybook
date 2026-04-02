@@ -1,4 +1,7 @@
-import { shouldComputeStaleWarning } from 'hooks/queryEditor/useStaleQueryWarning';
+import {
+    shouldComputeStaleWarning,
+    computeStaleWarningState,
+} from 'hooks/queryEditor/useStaleQueryWarning';
 
 describe('shouldComputeStaleWarning', () => {
     const snapshots: Record<number, string> = {
@@ -92,5 +95,116 @@ describe('shouldComputeStaleWarning', () => {
         expect(shouldComputeStaleWarning(1, {}, 'changed', 'original')).toBe(
             true
         );
+    });
+});
+
+describe('computeStaleWarningState', () => {
+    const snapshots: Record<number, string> = {
+        1: 'SELECT * FROM t1',
+        2: 'SELECT * FROM t2',
+    };
+
+    const base = {
+        selectedExecutionId: 1 as number | null,
+        snapshots,
+        initialQuery: undefined as string | undefined,
+    };
+
+    test('returns null when live input matches snapshot', () => {
+        expect(
+            computeStaleWarningState({
+                ...base,
+                savedInput: 'SELECT * FROM t1',
+                liveInput: 'SELECT * FROM t1',
+            })
+        ).toBeNull();
+    });
+
+    test('returns null when no execution is selected', () => {
+        expect(
+            computeStaleWarningState({
+                ...base,
+                selectedExecutionId: null,
+                savedInput: 'SELECT * FROM t1',
+                liveInput: 'SELECT * FROM edited',
+            })
+        ).toBeNull();
+    });
+
+    test('returns "edited" when both live and saved differ from snapshot and not saving', () => {
+        expect(
+            computeStaleWarningState({
+                ...base,
+                savedInput: 'SELECT * FROM edited',
+                liveInput: 'SELECT * FROM edited',
+            })
+        ).toBe('edited');
+    });
+
+    test('returns "unsaved" when live differs but saved still matches snapshot', () => {
+        expect(
+            computeStaleWarningState({
+                ...base,
+                savedInput: 'SELECT * FROM t1',
+                liveInput: 'SELECT * FROM edited',
+            })
+        ).toBe('unsaved');
+    });
+
+    test('returns "unsaved" when both differ from snapshot but save is in-flight', () => {
+        expect(
+            computeStaleWarningState({
+                ...base,
+                savedInput: 'SELECT * FROM edited',
+                liveInput: 'SELECT * FROM edited',
+                isSaving: true,
+            })
+        ).toBe('unsaved');
+    });
+
+    test('returns "unsaved" when live differs and saved matches snapshot while saving', () => {
+        expect(
+            computeStaleWarningState({
+                ...base,
+                savedInput: 'SELECT * FROM t1',
+                liveInput: 'SELECT * FROM edited',
+                isSaving: true,
+            })
+        ).toBe('unsaved');
+    });
+
+    test('returns null when live matches snapshot even if saving', () => {
+        expect(
+            computeStaleWarningState({
+                ...base,
+                savedInput: 'SELECT * FROM t1',
+                liveInput: 'SELECT * FROM t1',
+                isSaving: true,
+            })
+        ).toBeNull();
+    });
+
+    test('uses initialQuery fallback when no snapshot exists', () => {
+        expect(
+            computeStaleWarningState({
+                ...base,
+                selectedExecutionId: 99,
+                savedInput: 'SELECT 1',
+                liveInput: 'SELECT 2',
+                initialQuery: 'SELECT 1',
+            })
+        ).toBe('unsaved');
+    });
+
+    test('returns "edited" with initialQuery when both differ', () => {
+        expect(
+            computeStaleWarningState({
+                ...base,
+                selectedExecutionId: 99,
+                savedInput: 'SELECT 2',
+                liveInput: 'SELECT 2',
+                initialQuery: 'SELECT 1',
+            })
+        ).toBe('edited');
     });
 });
