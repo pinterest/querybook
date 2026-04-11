@@ -65,15 +65,15 @@ export const QueryComposerExecution: React.FunctionComponent<IProps> = ({
         <div className="QueryComposerExecution">
             <Level>
                 <div className="flex-row">
+                    {warningState && (
+                        <StaleQueryWarning variant={warningState} />
+                    )}
                     <AccentText weight="bold" className="flex-row mr8">
                         {statusIcon}
                         <span className="execution-text ml4">
                             Execution {execution.id}
                         </span>
                     </AccentText>
-                    {warningState && (
-                        <StaleQueryWarning variant={warningState} />
-                    )}
                     <QueryExecutionDuration queryExecution={execution} />
                 </div>
                 <div className="flex-row">

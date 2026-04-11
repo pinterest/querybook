@@ -87,10 +87,6 @@ For a full formatting pass (Black for Python, Prettier for JS/TS, flake8):
 pre-commit run --all-files
 ```
 
-## Pinterest Internal Deployment
-
-Pinterest deploys Querybook internally via a separate repo (`datahub-pinterest`) that uses this repo's Docker image as a base and layers Pinterest-specific plugins on top. Changes to core Querybook go here; Pinterest-specific features belong in that plugin repo. Do not add Pinterest-internal details to this file.
-
 ## Maintaining This File
 
 **Include:**
