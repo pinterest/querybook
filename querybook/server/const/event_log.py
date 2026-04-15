@@ -11,6 +11,8 @@ class EventType(Enum):
     VIEW = "VIEW"
     # a UI element gets clicked
     CLICK = "CLICK"
+    # MCP (Model Context Protocol) operation
+    MCP = "MCP"
 
 
 class FrontendEvent(TypedDict):
