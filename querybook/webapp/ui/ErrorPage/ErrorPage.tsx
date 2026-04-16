@@ -43,7 +43,7 @@ export const ErrorPage: React.FunctionComponent<IErrorPageProps> = ({
         errorMessage
     ) : (
         <>
-            {httpCodeToDescription[errorCode] || 'Unknown error occured at'}
+            {httpCodeToDescription[errorCode] || 'Unknown error occurred at'}
             <code className="ErrorPage-path ml4">{location.pathname}</code>.
             <span className="ml4">
                 Click <a onClick={history.goBack}>here</a> to go back.
