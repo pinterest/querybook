@@ -30,7 +30,7 @@ case "$SERVICE_NAME" in
     COMMAND="uwsgi --ini uwsgi.ini"
     ;;
 "prod_worker")
-    COMMAND="celery -A tasks.all_tasks worker -E --without-heartbeat --without-gossip --without-mingle"
+    COMMAND="celery -A tasks.all_tasks worker -E --without-heartbeat --without-gossip --without-mingle --max-tasks-per-child=100"
     ;;
 "prod_scheduler")
     COMMAND="celery -A tasks.all_tasks beat -S scheduler.DatabaseScheduler"
