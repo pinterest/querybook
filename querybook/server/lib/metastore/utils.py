@@ -1,6 +1,8 @@
 from typing import Dict, List
-from logic import metastore as logic
+
 from app.db import with_session
+from app.flask_app import cache
+from logic import metastore as logic
 
 
 class MetastoreTableACLChecker(object):
@@ -98,3 +100,11 @@ class DataTableFinder:
             return logic.get_column_by_name(
                 name=column_name, table_id=table.id, session=session
             )
+
+
+@cache.memoize(14400)
+@with_session
+def get_schema_cached(schema_id, session=None):
+    """Internal cached function - fetches data only, no authz."""
+    schema = logic.get_schema_by_id(schema_id, session=session)
+    return schema
