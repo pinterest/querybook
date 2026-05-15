@@ -16,6 +16,10 @@ on:
             - 'querybook/**/*.s?css'
             - 'querybook/**/*.html'
             - 'package.json'
+
+permissions:
+  contents: read
+
 jobs:
     nodetests:
         runs-on: ubuntu-latest
