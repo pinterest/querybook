@@ -1,3 +1,5 @@
 langchain==0.3.24
 langchain-openai==0.3.14
+langchain-ollama==0.3.3
+langchain-aws==0.2.22
 opensearch-py==2.8.0
