@@ -23,6 +23,15 @@ If you dont have an idea of above concepts of **query engine**, **environment** 
 
 Here we'll guide you through the process of adding a query engine for **PostgreSQL** as an example.
 
+:::warning Security Risk: Query Engine Connection String
+
+Be careful when choosing which database to connect as a query engine.
+If you use the same connection string as Querybook's internal metadata database (e.g. the MySQL instance defined in `DATABASE_CONN`),
+all users with access to the environment will be able to browse and query the admin database directly — including sensitive system tables.
+Only connect a query engine to a database that is safe to expose to your users.
+
+:::
+
 1. Create a `local.txt` file under the `requirements/` folder in the project's root directory.
 
 ```bash

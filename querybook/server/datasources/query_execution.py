@@ -45,6 +45,7 @@ from logic.query_execution_permission import (
     get_default_user_environment_by_execution_id,
 )
 from lib.config import get_config_value
+from lib.query_executor.executor_factory import get_client_setting_override_from_hook
 from lib.query_analysis.validation.all_validators import get_validator_by_name
 from lib.query_analysis.transpilation.all_transpilers import (
     ALL_TRANSPILERS,
@@ -106,6 +107,7 @@ def initiate_query_execution(
             kwargs={
                 "query_execution_id": query_execution.id,
                 "session_props": session_props,
+                "client_setting_override": get_client_setting_override_from_hook(),
             },
         )
 

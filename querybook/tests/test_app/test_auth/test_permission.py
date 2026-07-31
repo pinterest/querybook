@@ -15,23 +15,23 @@ class TestVerifyEveryEnvironmentPermission:
         return user
 
     @pytest.fixture
-    def fake_verify_api_access_token_environment_permission(self):
-        verify_api_access_token_environment_permission = MagicMock()
-        verify_api_access_token_environment_permission.side_effect = None
-        return verify_api_access_token_environment_permission
+    def fake_verify_safe_environment_access(self):
+        verify_safe_environment_access = MagicMock()
+        verify_safe_environment_access.side_effect = None
+        return verify_safe_environment_access
 
     @pytest.fixture(autouse=True)
     def setup_mocks(
         self,
         monkeypatch,
         fake_user,
-        fake_verify_api_access_token_environment_permission,
+        fake_verify_safe_environment_access,
     ):
         monkeypatch.setattr(permission, "current_user", fake_user)
         monkeypatch.setattr(
             permission,
-            "verify_api_access_token_environment_permission",
-            fake_verify_api_access_token_environment_permission,
+            "verify_safe_environment_access",
+            fake_verify_safe_environment_access,
         )
 
     def test_rejects_when_user_does_not_have_access_to_every_environment(self):

@@ -1,4 +1,3 @@
-from flask import request
 from flask_login import current_user
 from typing import List, Optional
 
@@ -11,6 +10,7 @@ from const.datasources import (
 )
 
 from env import QuerybookSettings
+from lib.access_control import check_restricted_query_access
 from models.admin import QueryEngine, QueryMetastore, QueryEngineEnvironment
 from models.query_execution import QueryExecution, StatementExecution
 from models.metastore import DataSchema, DataTable, DataTableColumn
@@ -34,7 +34,7 @@ def verify_every_environment_permission(environment_ids: List[int]):
     If the user does not have access to every one of the provided environment ids,
     the function will abort the request with a 403 error.
     """
-    verify_api_access_token_environment_permission(environment_ids)
+    verify_safe_environment_access(environment_ids)
     if len(environment_ids) == 0:
         abort_404("Requested resource is not available within accessible environment")
 
@@ -55,7 +55,7 @@ def verify_environment_permission(environment_ids: List[int]):
     # If we are verifying environment ids and none is returned
     # it is most likely that the object we are verifying does
     # not associate with any environment
-    verify_api_access_token_environment_permission(environment_ids)
+    verify_safe_environment_access(environment_ids)
     if len(environment_ids) == 0:
         abort_404("Requested resource is not available within accessible environment")
 
@@ -80,42 +80,36 @@ def verify_query_engine_environment_permission(
     )
 
 
-def check_api_access_token_used():
-    return request.headers.get("api-access-token") is not None
-
-
-def verify_api_access_token_environment_permission(environment_ids: List[int]):
-    if not check_api_access_token_used():
+def verify_safe_environment_access(environment_ids: List[int]):
+    # If safe_environments is empty or the environment ids are safe, we can return early
+    safe_environments = QuerybookSettings.SAFE_ENVIRONMENTS
+    if not safe_environments or any(
+        environment_id in safe_environments for environment_id in environment_ids
+    ):
         return
-    api_access_token_allowed_environments = (
-        QuerybookSettings.API_ACCESS_TOKEN_ALLOWED_ENVIRONMENTS
+
+    # Check that the environment access is not restricted
+    api_assert(
+        check_restricted_query_access(),
+        message=f"Environment ids '{str(environment_ids)}' are not allowed for this request.",
+        status_code=ACCESS_RESTRICTED_STATUS_CODE,
     )
-    if api_access_token_allowed_environments:
-        api_assert(
-            any(
-                environment_id in api_access_token_allowed_environments
-                for environment_id in environment_ids
-            ),
-            message=f"Environment ids '{str(environment_ids)}' are not allowed for API access token requests. Allowed environments: {str(api_access_token_allowed_environments)}",
-            status_code=ACCESS_RESTRICTED_STATUS_CODE,
-        )
 
 
-def verify_api_access_token_query_engine_permission(query_engine_ids: List[int]):
-    if not check_api_access_token_used():
+def verify_safe_query_engine_access(query_engine_ids: List[int]):
+    # If safe_query_engines is empty or the query engine ids are safe, we can return early
+    safe_query_engines = QuerybookSettings.SAFE_QUERY_ENGINES
+    if not safe_query_engines or all(
+        query_engine_id in safe_query_engines for query_engine_id in query_engine_ids
+    ):
         return
-    api_access_token_allowed_query_engines = (
-        QuerybookSettings.API_ACCESS_TOKEN_ALLOWED_QUERY_ENGINES
+
+    # Check that the query engine access is not restricted
+    api_assert(
+        check_restricted_query_access(),
+        message=f"Query engine ids '{str(query_engine_ids)}' are not allowed for this request.",
+        status_code=ACCESS_RESTRICTED_STATUS_CODE,
     )
-    if api_access_token_allowed_query_engines:
-        api_assert(
-            all(
-                query_engine_id in api_access_token_allowed_query_engines
-                for query_engine_id in query_engine_ids
-            ),
-            message=f"Query engine ids '{str(query_engine_ids)}' are not allowed for API access token requests. Allowed query engines: {str(api_access_token_allowed_query_engines)}",
-            status_code=ACCESS_RESTRICTED_STATUS_CODE,
-        )
 
 
 @with_session
@@ -126,7 +120,7 @@ def verify_query_engine_permission(query_engine_id, session=None):
         .join(QueryEngine)
         .filter(QueryEngine.id == query_engine_id)
     ]
-    verify_api_access_token_query_engine_permission([query_engine_id])
+    verify_safe_query_engine_access([query_engine_id])
     verify_environment_permission(environment_ids)
 
 
@@ -144,7 +138,7 @@ def verify_query_execution_permission(query_execution_id, session=None):
         .join(QueryExecution)
         .filter(QueryExecution.id == query_execution_id)
     ]
-    verify_api_access_token_query_engine_permission(query_engine_ids)
+    verify_safe_query_engine_access(query_engine_ids)
 
 
 @with_session
@@ -165,7 +159,7 @@ def verify_statement_execution_permission(statement_execution_id, session=None):
         .join(StatementExecution)
         .filter(StatementExecution.id == statement_execution_id)
     ]
-    verify_api_access_token_query_engine_permission(query_engine_ids)
+    verify_safe_query_engine_access(query_engine_ids)
 
 
 @with_session
@@ -233,7 +227,7 @@ def verify_data_doc_permission(data_doc_id, session=None):
     environment_ids = get_data_doc_environment_ids(data_doc_id, session=session)
     verify_environment_permission(environment_ids)
     query_engine_ids = get_query_engine_ids_by_data_doc_id(data_doc_id, session=session)
-    verify_api_access_token_query_engine_permission(query_engine_ids)
+    verify_safe_query_engine_access(query_engine_ids)
 
 
 @with_session
@@ -258,7 +252,7 @@ def verify_data_cell_permission(cell_id, session=None):
     verify_environment_permission(environment_ids)
 
     engine_ids = get_query_engine_ids_by_data_cell_ids([cell_id], session=session)
-    verify_api_access_token_query_engine_permission(engine_ids)
+    verify_safe_query_engine_access(engine_ids)
 
 
 @with_session
@@ -272,7 +266,7 @@ def verify_data_cells_permission(cell_ids: List, session=None):
     ]
     verify_every_environment_permission(environment_ids)
     engine_ids = get_query_engine_ids_by_data_cell_ids(cell_ids, session=session)
-    verify_api_access_token_query_engine_permission(engine_ids)
+    verify_safe_query_engine_access(engine_ids)
 
 
 def get_engine_ids_by_data_cells(data_cells: List[DataCell]):

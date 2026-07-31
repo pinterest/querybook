@@ -5,6 +5,7 @@ from const.query_execution import QueryExecutionStatus
 from lib.logger import get_logger
 from lib.query_analysis.statements import get_statement_ranges
 from lib.query_analysis.lineage import process_query
+from lib.utils.import_helper import import_module_with_default
 from logic import (
     admin as admin_logic,
     query_execution as qe_logic,
@@ -15,16 +16,42 @@ from .all_executors import get_executor_class
 
 LOG = get_logger(__file__)
 
+EXTRA_CLIENT_SETTINGS_HOOK = import_module_with_default(
+    "executor_plugin", "EXTRA_CLIENT_SETTINGS_HOOK", default=None
+)
+
+
+def get_client_setting_override_from_hook() -> Dict:
+    """Compute request-scoped client settings from the optional plugin hook.
+
+    Call this while a Flask request is active (for example, right before
+    queuing a Celery task). Hook implementations may still return ``{}``
+    when no request-scoped settings apply.
+    """
+    if EXTRA_CLIENT_SETTINGS_HOOK is None:
+        return {}
+    try:
+        return EXTRA_CLIENT_SETTINGS_HOOK() or {}
+    except Exception:
+        LOG.exception("EXTRA_CLIENT_SETTINGS_HOOK raised; skipping plugin settings")
+        return {}
+
 
 @with_session
 def create_executor_from_execution(
-    query_execution_id, celery_task, execution_type, session_props, session=None
+    query_execution_id,
+    celery_task,
+    execution_type,
+    session_props,
+    client_setting_override=None,
+    session=None,
 ):
     executor_params, engine = _get_executor_params_and_engine(
         query_execution_id,
         celery_task=celery_task,
         execution_type=execution_type,
         session_props=session_props,
+        client_setting_override=client_setting_override,
         session=session,
     )
     executor = get_executor_class(engine.language, engine.executor)(**executor_params)
@@ -33,7 +60,12 @@ def create_executor_from_execution(
 
 @with_session
 def _get_executor_params_and_engine(
-    query_execution_id, celery_task, execution_type, session_props, session=None
+    query_execution_id,
+    celery_task,
+    execution_type,
+    session_props,
+    client_setting_override=None,
+    session=None,
 ):
     query, statement_ranges, uid, engine_id = _get_query_execution_info(
         query_execution_id, session=session
@@ -43,7 +75,12 @@ def _get_executor_params_and_engine(
     if engine.deleted_at is not None:
         raise ArchivedQueryEngine("This query engine is disabled.")
 
-    client_setting = get_client_setting_from_engine(engine, uid, session=session)
+    client_setting = get_client_setting_from_engine(
+        engine,
+        uid,
+        client_setting_override=client_setting_override,
+        session=session,
+    )
 
     if session_props:
         client_setting["session_props"] = session_props
@@ -62,13 +99,21 @@ def _get_executor_params_and_engine(
 
 
 @with_session
-def get_client_setting_from_engine(engine, uid=None, session=None) -> Dict:
+def get_client_setting_from_engine(
+    engine, uid=None, client_setting_override=None, session=None
+) -> Dict:
     """Compute the settings passed to the query engine.
        Both engine and user must be attached to a sqlalchemy session.
 
     Args:
         engine (QueryEngine): Corresponds to the DB QueryEngine
         uid (int, optional): Optional User id executed the query. Defaults to None.
+        client_setting_override (Dict, optional): Extra kwargs merged into the
+            client_setting dict. Async callers should pass an explicit
+            override computed before queuing the Celery task. Direct/sync
+            callers leave this as ``None`` and the hook (if configured) fires
+            inline, using Flask request context when one is available. Plugin
+            keys override engine defaults.
 
     Returns:
         Dict: Dictionary of Kwargs send to the query engine client
@@ -80,6 +125,11 @@ def get_client_setting_from_engine(engine, uid=None, session=None) -> Dict:
         if executor_params.get("proxy_user_id", "") != "":
             proxy_user = user.to_dict()[executor_params["proxy_user_id"]]
         executor_params["proxy_user"] = proxy_user
+
+    if client_setting_override is None:
+        client_setting_override = get_client_setting_override_from_hook()
+    if client_setting_override:
+        executor_params.update(client_setting_override)
 
     return executor_params
 

@@ -33,8 +33,10 @@ def run_query_task(
     query_execution_id,
     execution_type=QueryExecutionType.ADHOC.value,
     session_props=None,
+    client_setting_override=None,
 ):
     stats_logger.incr(QUERY_EXECUTIONS, tags={"execution_type": execution_type})
+    client_setting_override = client_setting_override or {}
 
     executor = None
     error_message = None
@@ -46,6 +48,7 @@ def run_query_task(
             celery_task=self,
             session_props=session_props,
             execution_type=execution_type,
+            client_setting_override=client_setting_override,
         )
         run_executor_until_finish(self, executor)
     except SoftTimeLimitExceeded:
