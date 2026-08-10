@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typing import Generator, List, Union
+from typing import Generator, List, Union, TypedDict
 from app.db import with_session
 from env import QuerybookSettings
 from lib.logger import get_logger
@@ -12,7 +12,14 @@ from logic.query_execution_permission import (
 
 LOG = get_logger(__file__)
 
-ExporterResult = Union[str, dict[str, str]]
+
+class ExporterUrlResult(TypedDict):
+    url: str
+    message: str
+    message_type: str
+
+
+ExporterResult = Union[str, ExporterUrlResult]
 
 
 class BaseExporter(metaclass=ABCMeta):
