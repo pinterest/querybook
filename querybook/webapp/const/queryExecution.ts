@@ -73,9 +73,15 @@ export interface IQueryExecution {
     total?: number;
 }
 
+export interface IUrlExportResult {
+    url: string;
+    message?: string;
+    message_type?: 'warning';
+}
+
 export interface IQueryExecutionExportResult {
     type: 'url' | 'text';
-    info: string;
+    info: string | IUrlExportResult;
 }
 
 export interface IQueryExecutionExportStatusInfo {

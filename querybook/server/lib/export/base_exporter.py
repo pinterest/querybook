@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typing import Generator, List
+from typing import Generator, List, Union, TypedDict
 from app.db import with_session
 from env import QuerybookSettings
 from lib.logger import get_logger
@@ -11,6 +11,15 @@ from logic.query_execution_permission import (
 
 
 LOG = get_logger(__file__)
+
+
+class ExporterUrlResult(TypedDict):
+    url: str
+    message: str
+    message_type: str
+
+
+ExporterResult = Union[str, ExporterUrlResult]
 
 
 class BaseExporter(metaclass=ABCMeta):
@@ -59,7 +68,9 @@ class BaseExporter(metaclass=ABCMeta):
         return None
 
     @abstractmethod
-    def export(self, statement_execution_id: int, uid: int, **options) -> str:
+    def export(
+        self, statement_execution_id: int, uid: int, **options
+    ) -> ExporterResult:
         """This function exports the query results of statement_execution_id
            to given output
         Arguments:
@@ -68,8 +79,9 @@ class BaseExporter(metaclass=ABCMeta):
             options {[Dict]} -- optional additional options, note they must be optional
                                 since
         Returns:
-            str -- String for frontend to display
-                   Behavior noted by EXPORTER_TYPE
+            str -- String for frontend to display. URL exporters may instead
+            return {"url": str, "message": str, "message_type": "warning"}
+            to show a message before redirecting.
         """
         raise NotImplementedError()
 
