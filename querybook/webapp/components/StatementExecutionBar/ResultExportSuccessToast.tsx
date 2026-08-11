@@ -32,7 +32,7 @@ export const UrlExportRedirect: React.FunctionComponent<{
 };
 
 export const ResultExportSuccessToast = (
-    data: IQueryExecutionExportStatusInfo,
+    data: IQueryExecutionExportStatusInfo
 ) => {
     const { result: exportedInfo, task_id: taskId } = data;
     const title = 'Export Complete';
