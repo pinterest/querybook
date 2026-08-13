@@ -1,6 +1,9 @@
 import React, { useCallback, useMemo, useRef } from 'react';
 import toast from 'react-hot-toast';
 
+import { useSelector } from 'react-redux';
+import { IStoreState } from 'redux/store';
+
 import { ComponentType, ElementType } from 'const/analytics';
 import { useQueryCells } from 'hooks/dataDoc/useQueryCells';
 import { useMakeSelector } from 'hooks/redux/useMakeSelector';
@@ -22,13 +25,16 @@ export const DataDocRunAllButton: React.FunctionComponent<IProps> = ({
     const queryCells = useQueryCells(docId);
     const latestQueryExecutions = useMakeSelector(
         makeLatestQueryExecutionsSelector,
-        queryCells.map((c) => c.id) ?? []
+        queryCells.map((c) => c.id) ?? [],
     );
     const hasQueryRunning = useMemo(
         () => latestQueryExecutions.some((q) => q.status < 3),
-        [latestQueryExecutions]
+        [latestQueryExecutions],
     );
     const notification = useRef(true);
+
+    const user = useSelector((state: IStoreState) => state.user);
+    const isAdmin = user?.myUserInfo.isAdmin === true;
 
     const onRunAll = useCallback(() => {
         sendConfirm({
@@ -54,12 +60,14 @@ export const DataDocRunAllButton: React.FunctionComponent<IProps> = ({
                         loading: null,
                         success: 'DataDoc execution started!',
                         error: 'Failed to start the execution',
-                    }
+                    },
                 );
             },
             confirmText: 'Run',
         });
     }, [docId, hasQueryRunning, notification, queryCells]);
+
+    if (!isAdmin) return null;
 
     return (
         <IconButton
