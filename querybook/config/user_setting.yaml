@@ -101,3 +101,11 @@ sql_complete:
         - enabled
         - disabled
     helper: (Experimental) Enable it to receive inline AI-generated SQL completions as you type within the editor.
+
+vim_mode:
+    default: disabled
+    tab: editor
+    options:
+        - enabled
+        - disabled
+    helper: Enable vim keybindings for the code editor (normal/insert/visual modes).
