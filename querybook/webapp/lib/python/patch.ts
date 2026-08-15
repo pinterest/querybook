@@ -11,9 +11,9 @@ export async function patchPyodide(pyodide: PyodideInterface) {
 }
 
 /**
- * Patches the built-in Python `print` function to handle special cases for DataFrames, lists, and dictionaries.
+ * Patches the built-in Python `print` function to handle special cases for DataFrames, lists, dictionaries, and NumPy arrays.
  * - DataFrames are serialized as JSON with their columns and records.
- * - Lists and dictionaries are serialized as JSON.
+ * - Lists, dictionaries, and NumPy arrays are serialized as JSON.
  * - Other types are printed using the original `print` function.
  *
  * This ensures that outputs from Python code executed in Pyodide are structured and can be easily consumed
@@ -25,25 +25,59 @@ async function patchPrint(pyodide: PyodideInterface) {
     await pyodide.runPythonAsync(`
   import json
   import pandas as pd
+  import numpy as np
   import builtins
 
   # Store the original print function
   _original_print = builtins.print
 
-  # Define a new print function that catches DataFrames, lists, and dicts and prints them as JSON
+  # Helper function to normalize DataFrame columns
+  def _normalize_dataframe_columns(df):
+      if hasattr(df.columns, 'nlevels') and df.columns.nlevels > 1:
+          # Flatten MultiIndex columns by joining with pipe, avoiding empty parts
+          return [' | '.join(str(part) for part in col if str(part).strip()).strip() for col in df.columns.values]
+      else:
+          return df.columns
+
+  # Helper function to convert objects to JSON-serializable format
+  def _make_serializable(obj):
+      if isinstance(obj, pd.DataFrame):
+          df = obj.reset_index()
+          df.columns = _normalize_dataframe_columns(df)
+          return {
+                "type": "dataframe",
+                "data": {
+                    "columns": df.columns.tolist(),
+                    "records": df.to_dict(orient='records')
+                }
+          }
+      elif isinstance(obj, np.ndarray):
+          return obj.tolist()
+      elif isinstance(obj, (list, tuple)):
+          return [_make_serializable(item) for item in obj]
+      elif isinstance(obj, dict):
+          return {key: _make_serializable(value) for key, value in obj.items()}
+      else:
+          # For other types, try to keep them as-is if they're JSON serializable
+          try:
+              json.dumps(obj)
+              return obj
+          except TypeError:
+              # If not serializable, convert to string representation
+              return str(obj)
+
+  # Define a new print function that handles special data types as JSON
   def _custom_print(*args, **kwargs):
       for arg in args:
-          if isinstance(arg, pd.DataFrame):
-              df = arg.reset_index()
-              columns = df.columns.tolist()
-              records = df.to_dict(orient='records')
-              _original_print(json.dumps({"type":"dataframe", "data": {"columns":columns, "records":records}}))
-
-          elif isinstance(arg, (list, dict)):
+          if isinstance(arg, (pd.DataFrame, np.ndarray, list, dict, tuple)):
               try:
-                  # Try to serialize and print the data as JSON
-                  _original_print(json.dumps({"type":"json", "data": arg}))
-              except TypeError:
+                  serialized = _make_serializable(arg)
+                  # DataFrames already have the correct format, others need wrapping
+                  if isinstance(arg, pd.DataFrame):
+                      _original_print(json.dumps(serialized))
+                  else:
+                      _original_print(json.dumps({"type":"json", "data": serialized}))
+              except Exception:
                   _original_print(arg, **kwargs)
           else:
               _original_print(arg, **kwargs)
@@ -134,6 +168,7 @@ async function patchDataFrameHelper(pyodide: PyodideInterface) {
 /**
  * Adds a helper function to the Pyodide environment for retrieving the identifiers
  * in a namespace along with their types.
+ *
  * @param pyodide - The Pyodide instance with a `runPythonAsync` method to execute Python code.
  */
 async function patchNamespaceHelper(pyodide: PyodideInterface) {
