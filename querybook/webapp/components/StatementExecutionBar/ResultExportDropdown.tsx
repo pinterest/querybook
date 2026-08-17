@@ -118,6 +118,17 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
         }
     }, [statementId]);
 
+    const onDownloadXlsxClick = React.useCallback(() => {
+        trackExportButtonClick('Download XLSX');
+
+        const url = getStatementExecutionResultDownloadUrl(statementId, "xlsx");
+        if (url) {
+            Utils.download(url, `${statementId}.xlsx`);
+        } else {
+            toast.error('No valid url!');
+        }
+    }, [statementId]);
+
     const onExportTSVClick = React.useCallback(async () => {
         trackExportButtonClick('Copy to Clipboard');
 
@@ -198,6 +209,11 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
             {
                 name: 'Download Full Result (as CSV)',
                 onClick: onDownloadClick,
+                icon: 'Download',
+            },
+            {
+                name: 'Download Full Result (as xlsx)',
+                onClick: onDownloadXlsxClick,
                 icon: 'Download',
             },
             {
