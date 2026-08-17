@@ -67,6 +67,21 @@ def get_board_by_id(board_id, environment_id):
 
 
 @register(
+    "/board/public/all/",
+    methods=["GET"],
+)
+def get_all_public_boards(environment_id, limit=20, offset=0):
+    with DBSession() as session:
+        verify_environment_permission([environment_id])
+        public_boards = logic.get_all_public_boards(
+            environment_id=environment_id, limit=limit, offset=offset, session=session
+        )
+        return {
+            "boards": [public_board.id for public_board in public_boards],
+        }
+
+
+@register(
     "/board/",
     methods=["POST"],
 )
