@@ -2,7 +2,21 @@ SHELL := /bin/bash
 .PHONY: bundled_off prod_web prod_worker prod_scheduler docs remove_running_dev_image clean
 
 bundled: dev_image
-	docker-compose up
+	@echo "Starting Querybook services in the background..."
+	docker compose up -d
+	@echo "Waiting for services to start..."
+	@sleep 10 # Wait for services to initialize
+	@echo "Opening Querybook in your browser at http://localhost:10001"
+	@{ \
+	    case `uname -s` in \
+	        Darwin) open http://localhost:10001;; \
+	        Linux)  xdg-open http://localhost:10001;; \
+	        *)      start "" http://localhost:10001;; \
+	    esac; \
+	}
+	@echo "Attaching to web server logs... (Press Ctrl+C to stop)"
+	docker compose logs -f web
+
 
 bundled_off:
 	docker-compose down
