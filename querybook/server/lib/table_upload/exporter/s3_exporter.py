@@ -117,20 +117,34 @@ class S3BaseExporter(BaseTableUploadExporter):
             elif if_exists == "fail":
                 raise Exception(f"Table {fq_table_name} already exists.")
 
+    def _is_querybook_auto_generated(self) -> bool:
+        table_properties = self._exporter_config.get("table_properties", [])
+        return any(
+            "querybook_auto_generated" in prop and "true" in prop
+            for prop in table_properties
+        )
+
     @with_session
     def _get_table_create_query(self, session=None) -> str:
         query_engine = get_query_engine_by_id(self._engine_id, session=session)
         schema_name, table_name = self._fq_table_name
-        is_external = "s3_path" in self._exporter_config or self._exporter_config.get(
-            "use_schema_location"
-        )
+
+        if self._is_querybook_auto_generated():
+            file_location = None
+        else:
+            # table location is only needed for external (non managed) table creation
+            is_external = (
+                "s3_path" in self._exporter_config
+                or self._exporter_config.get("use_schema_location")
+            )
+            file_location = self.destination_s3_folder() if is_external else None
+
         return get_create_table_statement(
             language=query_engine.language,
             table_name=table_name,
             schema_name=schema_name,
             column_name_types=self._table_config["column_name_types"],
-            # table location is only needed for external (non managed) table creation
-            file_location=self.destination_s3_folder() if is_external else None,
+            file_location=file_location,
             file_format=self.UPLOAD_FILE_TYPE(),
             table_properties=self._exporter_config.get("table_properties", []),
         )
@@ -152,11 +166,42 @@ class S3BaseExporter(BaseTableUploadExporter):
 
         create_table_query = self._get_table_create_query(session=session)
 
-        # Run the create table query first, since table creation
-        # does not require the data being there
+        # Run the create table query first
         self._run_query(create_table_query, session=session)
         self._upload_to_s3()
+
+        # For Querybook auto-generated Iceberg tables, insert data via temp view
+        if self._is_querybook_auto_generated():
+            self._insert_data_into_iceberg_table(session=session)
+
         return self._fq_table_name
+
+    @with_session
+    def _insert_data_into_iceberg_table(self, session=None):
+        file_s3_path = self.destination_s3_path()
+        schema_name, table_name = self._fq_table_name
+        fq_table_name = f"{schema_name}.{table_name}"
+        file_format = self.UPLOAD_FILE_TYPE().lower()
+        temp_view_name = f"temp_src_{table_name}"
+
+        try:
+            # Create temporary view from the file on S3
+            create_view_query = f"""CREATE TEMPORARY VIEW {temp_view_name}
+USING {file_format}
+OPTIONS (path '{file_s3_path}', header 'true')"""
+            self._run_query(create_view_query, session=session)
+
+            # Insert data from temp view into Iceberg table
+            insert_query = f"INSERT INTO {fq_table_name} SELECT * FROM {temp_view_name}"
+            self._run_query(insert_query, session=session)
+
+        finally:
+            # Clean up temp view
+            try:
+                drop_view_query = f"DROP VIEW IF EXISTS {temp_view_name}"
+                self._run_query(drop_view_query, session=session)
+            except Exception as e:
+                LOG.warning(f"Failed to drop temp view {temp_view_name}: {e}")
 
 
 class S3CSVExporter(S3BaseExporter):
