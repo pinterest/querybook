@@ -119,7 +119,10 @@ class S3BaseExporter(BaseTableUploadExporter):
 
     def _is_querybook_auto_generated(self) -> bool:
         table_properties = self._exporter_config.get("table_properties", [])
-        return any("querybook_auto_generated" in prop and "true" in prop for prop in table_properties)
+        return any(
+            "querybook_auto_generated" in prop and "true" in prop
+            for prop in table_properties
+        )
 
     @with_session
     def _get_table_create_query(self, session=None) -> str:
@@ -130,8 +133,9 @@ class S3BaseExporter(BaseTableUploadExporter):
             file_location = None
         else:
             # table location is only needed for external (non managed) table creation
-            is_external = "s3_path" in self._exporter_config or self._exporter_config.get(
-                "use_schema_location"
+            is_external = (
+                "s3_path" in self._exporter_config
+                or self._exporter_config.get("use_schema_location")
             )
             file_location = self.destination_s3_folder() if is_external else None
 
