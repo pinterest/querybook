@@ -611,6 +611,19 @@ export function fetchQueryError(
     };
 }
 
+export function cancelQueryExecution(
+    queryExecutionId: number
+): ThunkResult<Promise<void>> {
+    return async (dispatch) => {
+        await QueryExecutionResource.cancel(queryExecutionId);
+        dispatch({
+            type: '@@queryExecutions/REMOVE_QUERY_EXECUTION',
+            payload: { queryExecutionId },
+        });
+        queryExecutionSocket.removeQueryExecution(queryExecutionId);
+    };
+}
+
 class QueryExecutionSocket {
     private static NAME_SPACE = '/query_execution';
 
