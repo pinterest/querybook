@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TagSelect } from '../GenericTags/TagSelect';
 
-import './TableTagSelect.scss';
+import './DataDocTagSelect.scss';
 
 interface IProps {
     onSelect: (val: string) => any;
@@ -9,7 +9,7 @@ interface IProps {
     creatable?: boolean;
 }
 
-export const TableTagSelect: React.FunctionComponent<IProps> = ({
+export const DataDocTagSelect: React.FunctionComponent<IProps> = ({
     onSelect,
     existingTags = [],
     creatable = false,
@@ -18,6 +18,6 @@ export const TableTagSelect: React.FunctionComponent<IProps> = ({
         onSelect={onSelect}
         existingTags={existingTags}
         creatable={creatable}
-        tagType={'Table'}
+        tagType={'DataDoc'}
     />
 );

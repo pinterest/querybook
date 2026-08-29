@@ -2,31 +2,31 @@ import * as React from 'react';
 import { ITag } from 'const/tag';
 import { GenericTag, GenericTags } from '../GenericTags/Tags';
 
-import './DataTableTags.scss';
+import './DataDocTags.scss';
 
 interface IProps {
-    tableId: number;
+    datadocId: number;
     readonly?: boolean;
     mini?: boolean;
     showType?: boolean;
 }
 
-export const DataTableTags: React.FunctionComponent<IProps> = ({
-    tableId,
+export const DataDocTags: React.FunctionComponent<IProps> = ({
+    datadocId,
     readonly = false,
     mini = false,
     showType = true,
 }) => (
     <GenericTags
-        id={tableId}
+        id={datadocId}
         readonly={readonly}
         mini={mini}
         showType={showType}
-        tagType={'Table'}
+        tagType={'DataDoc'}
     />
 );
 
-export const TableTag: React.FC<{
+export const DataDocTag: React.FC<{
     tag: ITag;
 
     isUserAdmin?: boolean;
