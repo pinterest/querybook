@@ -45,6 +45,7 @@ from logic.query_execution_permission import (
     get_default_user_environment_by_execution_id,
 )
 from lib.config import get_config_value
+from lib.query_executor.executor_factory import get_client_setting_override_from_hook
 from lib.query_analysis.validation.all_validators import get_validator_by_name
 from lib.query_analysis.transpilation.all_transpilers import (
     ALL_TRANSPILERS,
@@ -106,6 +107,7 @@ def initiate_query_execution(
             kwargs={
                 "query_execution_id": query_execution.id,
                 "session_props": session_props,
+                "client_setting_override": get_client_setting_override_from_hook(),
             },
         )
 
@@ -658,9 +660,10 @@ def add_query_execution_viewer(execution_id, uid):
     return viewer.to_dict()
 
 
-@register("/query_execution_viewer/<int:id>/", methods=["DELETE"])
-def delete_query_execution_viewer(id):
-    return QueryExecutionViewer.delete(id)
+@register("/query_execution_viewer/<int:execution_id>/", methods=["DELETE"])
+def delete_query_execution_viewer(execution_id):
+    verify_query_execution_owner(execution_id)
+    return QueryExecutionViewer.delete(execution_id)
 
 
 @register("/query_execution/<int:execution_id>/viewer/", methods=["GET"])

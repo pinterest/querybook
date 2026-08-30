@@ -9,7 +9,7 @@ from const.data_doc import DATA_DOC_NAMESPACE
 from datasources.github import with_github_client
 from logic import datadoc as logic
 from logic import user as user_logic
-from logic.datadoc_permission import assert_can_read, assert_can_write
+from logic.datadoc_permission import assert_can_read, assert_can_write, assert_is_owner
 from flask_login import current_user
 from lib.utils.serialize import serialize_value
 
@@ -28,6 +28,11 @@ def update_datadoc(doc_id, fields, sid="", session=None):
     # Check to see if author has permission
     assert_can_write(doc_id, session=session)
     verify_data_doc_permission(doc_id, session=session)
+
+    # Only allow datadoc owner to update owner_uid
+    if "owner_uid" in fields:
+        assert_is_owner(doc_id, session=session)
+
     doc = logic.update_data_doc(
         id=doc_id,
         session=session,

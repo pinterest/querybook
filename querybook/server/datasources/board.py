@@ -97,6 +97,11 @@ def create_board(
 def update_board(board_id, **fields):
     with DBSession() as session:
         assert_can_edit(board_id, session=session)
+
+        # Only allow board owner to update owner_uid
+        if "owner_uid" in fields:
+            assert_is_owner(board_id, session=session)
+
         board = Board.get(id=board_id, session=session)
 
         board = logic.update_board(id=board_id, **fields, session=session)

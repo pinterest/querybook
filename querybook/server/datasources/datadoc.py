@@ -198,24 +198,20 @@ def get_data_cell_executions(id):
 
 @register("/batch/data_cell/query_execution/", methods=["POST"])
 def batch_get_data_cell_executions(cell_ids):
-    with DBSession() as session:
-        verify_data_cells_permission(cell_ids, session=session)
-        cells_executions = logic.get_data_cells_executions(cell_ids, session=session)
-        data_cell_executions = []
-        for cell_id, executions in cells_executions:
-            latest_execution = None
-            if executions:
-                latest_execution = executions[0]
-            data_cell_executions.append(
-                (
-                    cell_id,
-                    [
-                        execution.to_dict(with_statement=False)
-                        for execution in executions
-                    ],
-                    latest_execution,
-                )
+    verify_data_cells_permission(cell_ids)
+    cells_executions = logic.get_data_cells_executions(cell_ids)
+    data_cell_executions = []
+    for cell_id, executions in cells_executions:
+        latest_execution = None
+        if executions:
+            latest_execution = executions[0]
+        data_cell_executions.append(
+            (
+                cell_id,
+                [execution.to_dict(with_statement=False) for execution in executions],
+                latest_execution,
             )
+        )
     return data_cell_executions
 
 

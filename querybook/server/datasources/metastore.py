@@ -10,7 +10,7 @@ from app.auth.permission import (
 )
 from app.datasource import admin_only, api_assert, register, with_impression
 from app.db import DBSession
-from app.flask_app import cache, limiter
+from app.flask_app import limiter
 from const.datasources import RESOURCE_NOT_FOUND_STATUS_CODE
 from const.impression import ImpressionItemType
 from const.metastore import DataTableWarningSeverity, MetadataType
@@ -18,7 +18,7 @@ from const.time import seconds_in_a_day
 from flask_login import current_user
 from lib.lineage.utils import lineage
 from lib.metastore import get_metastore_loader
-from lib.metastore.utils import DataTableFinder
+from lib.metastore.utils import DataTableFinder, get_schema_cached
 from lib.query_analysis.samples import make_samples_query
 from lib.utils import mysql_cache
 from logic import admin as admin_logic
@@ -46,15 +46,12 @@ def update_schema(schema_id, description):
 
 
 @register("/schema/<int:schema_id>/", methods=["GET"])
-@cache.memoize(14400)
 def get_schema(schema_id, include_metastore=False, include_table=False):
-    with DBSession() as session:
-        schema = logic.get_schema_by_id(schema_id, session=session)
-        api_assert(schema, "Invalid schema")
-        verify_metastore_permission(schema.metastore_id, session=session)
+    schema = get_schema_cached(schema_id)
+    api_assert(schema, "Invalid schema")
 
-        schema_dict = schema.to_dict(include_metastore, include_table)
-        return schema_dict
+    verify_metastore_permission(schema.metastore_id)
+    return schema.to_dict(include_metastore, include_table)
 
 
 @register("/schema/<int:schema_id>/table/", methods=["GET"])

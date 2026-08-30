@@ -12,6 +12,7 @@ from lib.query_review.utils import (
     notify_query_author_of_rejection,
     notify_reviewers_of_new_request,
 )
+from lib.query_executor.executor_factory import get_client_setting_override_from_hook
 from logic import query_review as logic, query_execution as qe_logic
 from const.query_execution import PeerReviewParamsDict, QueryExecutionStatus
 from models.query_execution import QueryExecution
@@ -187,7 +188,12 @@ class BaseQueryReviewHandler(metaclass=ABCMeta):
 
             session.commit()
 
-            run_query_task.apply_async(args=[query_execution.id])
+            run_query_task.apply_async(
+                kwargs={
+                    "query_execution_id": query_execution.id,
+                    "client_setting_override": get_client_setting_override_from_hook(),
+                },
+            )
             notify_query_author_of_approval(
                 query_review=query_review,
                 query_execution=query_execution,
