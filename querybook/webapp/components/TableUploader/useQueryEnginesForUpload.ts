@@ -10,7 +10,7 @@ export function useQueryEnginesForUpload(metastoreId?: number) {
         const filtered = queryEngines.filter(
             (engine) =>
                 engine.metastore_id === metastoreId &&
-                engine.feature_params.upload_exporter,
+                engine.feature_params.upload_exporter
         );
         // Sort to put PyIcebergExporter first (as default)
         return filtered.sort((a, b) => {
@@ -39,16 +39,16 @@ export function useMetastoresForUpload() {
                 queryEngines
                     .filter((engine) => engine.feature_params.upload_exporter)
                     .map((engine) => engine.metastore_id)
-                    .filter((metastoreId) => metastoreId != null),
+                    .filter((metastoreId) => metastoreId != null)
             ),
-        [queryEngines],
+        [queryEngines]
     );
     const metastoreById = useSelector(
-        (state: IStoreState) => state.dataSources.queryMetastoreById,
+        (state: IStoreState) => state.dataSources.queryMetastoreById
     );
     return useMemo(
         () =>
             [...availableForUploadMetaStoreIds].map((id) => metastoreById[id]),
-        [availableForUploadMetaStoreIds, metastoreById],
+        [availableForUploadMetaStoreIds, metastoreById]
     );
 }
