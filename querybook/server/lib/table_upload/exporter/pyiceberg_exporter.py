@@ -9,7 +9,6 @@ from pyiceberg.catalog import load_catalog
 
 LOG = get_logger(__file__)
 
-# hello
 
 class PyIcebergExporter(BaseTableUploadExporter):
     """Exporter that creates Iceberg tables via PyIceberg catalog API"""
@@ -31,7 +30,7 @@ class PyIcebergExporter(BaseTableUploadExporter):
             **{
                 "header.HOST": irc_dev_adhoc_host,
                 "header.X-Iceberg-Access-Delegation": "",
-            }
+            },
         )
         return catalog
 
@@ -98,6 +97,8 @@ class PyIcebergExporter(BaseTableUploadExporter):
 
         # Append data to table
         arrow_schema_with_ids = table.schema().as_arrow()
-        arrow_table = pa.Table.from_pandas(df, schema=arrow_schema_with_ids, preserve_index=False)
+        arrow_table = pa.Table.from_pandas(
+            df, schema=arrow_schema_with_ids, preserve_index=False
+        )
         table.append(arrow_table)
         return self._fq_table_name
