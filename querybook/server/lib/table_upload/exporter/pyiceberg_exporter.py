@@ -79,7 +79,7 @@ class PyIcebergExporter(BaseTableUploadExporter):
                 if "=" in kv
             }
 
-        # Create Iceberg table with PyArrow schema (PyIceberg handles conversion)
+        # Create Iceberg table
         table = catalog.create_table(
             identifier=fq_table_name,
             schema=arrow_schema,
