@@ -7,12 +7,21 @@ import { IStoreState } from 'redux/store/types';
 export function useQueryEnginesForUpload(metastoreId?: number) {
     const queryEngines = useSelector(queryEngineSelector);
     return useMemo(
-        () =>
-            queryEngines.filter(
+        () => {
+            const filtered = queryEngines.filter(
                 (engine) =>
                     engine.metastore_id === metastoreId &&
                     engine.feature_params.upload_exporter
-            ),
+            );
+            // Sort to put PyIcebergExporter first (as default)
+            return filtered.sort((a, b) => {
+                const aExporter = a.feature_params.upload_exporter;
+                const bExporter = b.feature_params.upload_exporter;
+                if (aExporter === 'PyIcebergExporter' && bExporter !== 'PyIcebergExporter') return -1;
+                if (aExporter !== 'PyIcebergExporter' && bExporter === 'PyIcebergExporter') return 1;
+                return 0;
+            });
+        },
         [queryEngines, metastoreId]
     );
 }

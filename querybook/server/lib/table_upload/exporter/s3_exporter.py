@@ -198,95 +198,10 @@ class S3ParquetExporter(S3BaseExporter):
     def UPLOAD_FILE_TYPE(cls):
         return "PARQUET"
 
-    def _get_catalog(self):
-        """
-        Returns PyIceberg catalog instance.
-        """
-        from pyiceberg.catalog import load_catalog
-        envoy_egress_address = "http://127.0.0.1:19193"
-        irc_domain = "iceberg"
-        # S3ParquetExporter only creates tables in dev locations from Querybook client
-        irc_dev_adhoc_host = "iceberg-rest-catalog-prod-002.mesh.local"
-        catalog = load_catalog(
-            name="default",
-            uri=f"{envoy_egress_address}/{irc_domain}",
-            **{
-                "header.HOST": irc_dev_adhoc_host,
-                "header.X-Iceberg-Access-Delegation": "",
-            }
-        )
-        return catalog
-
-    def _create_dummy_iceberg_table(self, df: pd.DataFrame) -> None:
-        """Create a dummy Iceberg table and insert the uploaded data
-
-        Args:
-            df: Pandas DataFrame containing the uploaded data
-        """
-        try:
-            LOG.info("[jennywang_debug_v2] Step 1: Importing dependencies")
-            import pyarrow as pa
-
-            # Load catalog
-            LOG.info("[jennywang_debug_v2] Step 2: Loading catalog")
-            catalog = self._get_catalog()
-            LOG.info("[jennywang_debug_v2] Step 3: Catalog loaded")
-
-            # Convert DataFrame to PyArrow - we'll pass the PyArrow schema directly to create_table()
-            LOG.info("[jennywang_debug_v2] Step 4: Converting DataFrame to PyArrow (shape: %s)", df.shape)
-            arrow_table_temp = pa.Table.from_pandas(df, preserve_index=False)
-            arrow_schema = arrow_table_temp.schema
-            LOG.info("[jennywang_debug_v2] Step 5: PyArrow schema with %d fields ready", len(arrow_schema))
-
-            # Drop table if it exists
-            try:
-                LOG.info("[jennywang_debug_v2] Dropping table if exists: jennywang.pyiceberg_querybook_dummy")
-                catalog.drop_table("jennywang.pyiceberg_querybook_dummy")
-                LOG.info("[jennywang_debug_v2] Table dropped successfully")
-            except Exception as drop_err:
-                LOG.info("[jennywang_debug_v2] Table doesn't exist or couldn't be dropped: %s", drop_err)
-
-            # Create table with PyArrow schema (PyIceberg handles conversion automatically)
-            LOG.info("[jennywang_debug_v2] Creating table jennywang.pyiceberg_querybook_dummy with PyArrow schema")
-            table = catalog.create_table(
-                identifier="jennywang.pyiceberg_querybook_dummy",
-                schema=arrow_schema,
-                properties={
-                    "access_group": "non_pii",
-                },
-            )
-            LOG.info("[jennywang_debug_v2] Table created successfully")
-
-            # Convert DataFrame to PyArrow using Iceberg schema (with field IDs embedded)
-            LOG.info("[jennywang_debug_v2] Converting DataFrame to PyArrow with Iceberg field IDs...")
-            arrow_schema_with_ids = table.schema().as_arrow()
-            LOG.info("[jennywang_debug_v2] Arrow schema with field IDs: %s", arrow_schema_with_ids)
-            arrow_table = pa.Table.from_pandas(df, schema=arrow_schema_with_ids, preserve_index=False)
-
-            # Insert data into Iceberg table
-            LOG.info("[jennywang_debug_v2] Inserting %d rows into Iceberg table...", len(df))
-            table.append(arrow_table)
-
-            LOG.info("[jennywang_debug_v2] ✅ Successfully inserted %d rows into jennywang.pyiceberg_querybook_dummy", len(df))
-
-        except ImportError as e:
-            LOG.error("[jennywang_debug_v2] NEW_Failed to import pyiceberg: %s", e)
-            raise
-        except Exception as e:
-            LOG.warning(
-                "[jennywang_debug_v2] NEW_Failed to create dummy Iceberg table: %s",
-                e,
-            )
-
     def _upload_to_s3(self) -> None:
-        LOG.info("[jennywang_debug_v2] S3ParquetExporter: Testing custom querybook image with pyiceberg support")
-
         df = update_pandas_df_column_name_type(
             self._importer.get_pandas_df(), self._table_config["column_name_types"]
         )
-
-        # Create dummy Iceberg table to validate pyiceberg dependency
-        self._create_dummy_iceberg_table(df)
 
         with tempfile.NamedTemporaryFile(suffix=".parquet") as f:
             df.to_parquet(f.name, index=False, compression="zstd")
