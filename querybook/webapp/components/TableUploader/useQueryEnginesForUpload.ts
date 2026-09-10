@@ -12,7 +12,7 @@ export function useQueryEnginesForUpload(metastoreId?: number) {
                 engine.metastore_id === metastoreId &&
                 engine.feature_params.upload_exporter
         );
-        // Sort to put PyIcebergExporter first (as default)
+        // PyIcebergExporter as default (First in drop down list)
         return filtered.sort((a, b) => {
             const aExporter = a.feature_params.upload_exporter;
             const bExporter = b.feature_params.upload_exporter;

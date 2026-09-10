@@ -4,34 +4,25 @@ from typing import Tuple
 from app.db import with_session
 from lib.table_upload.exporter.base_exporter import BaseTableUploadExporter
 from lib.table_upload.exporter.utils import update_pandas_df_column_name_type
-from lib.logger import get_logger
 from pyiceberg.catalog import load_catalog
-
-LOG = get_logger(__file__)
 
 
 class PyIcebergExporter(BaseTableUploadExporter):
-    """Exporter that creates Iceberg tables via PyIceberg catalog API"""
+    """Exporter that creates Iceberg tables via PyIceberg"""
 
     def _get_catalog(self):
-        """Load PyIceberg catalog
+        """Load PyIceberg catalog using configuration from exporter config
 
         Returns:
             PyIceberg catalog instance
         """
+        catalog_config = self._exporter_config.get("catalog_config")
+        if not catalog_config:
+            raise Exception(
+                "PyIcebergExporter requires 'catalog_config' in exporter configuration"
+            )
 
-        envoy_egress_address = "http://127.0.0.1:19193"
-        irc_domain = "iceberg"
-        irc_dev_adhoc_host = "iceberg-rest-catalog-prod-002.mesh.local"
-
-        catalog = load_catalog(
-            name="default",
-            uri=f"{envoy_egress_address}/{irc_domain}",
-            **{
-                "header.HOST": irc_dev_adhoc_host,
-                "header.X-Iceberg-Access-Delegation": "",
-            },
-        )
+        catalog = load_catalog(**catalog_config)
         return catalog
 
     @property
