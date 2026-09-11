@@ -60,8 +60,16 @@ class PyIcebergExporter(BaseTableUploadExporter):
         try:
             catalog.load_table(fq_table_name)
             table_exists = True
-        except Exception:
-            pass
+        except Exception as e:
+            # Only catch "table not found" errors
+            error_msg = str(e).lower()
+            if not (
+                "not found" in error_msg
+                or "does not exist" in error_msg
+                or "notfound" in error_msg
+            ):
+                raise
+
         if table_exists:
             if if_exists == "fail":
                 raise Exception(f"Table {fq_table_name} already exists.")
