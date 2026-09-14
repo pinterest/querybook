@@ -54,6 +54,20 @@ services:
         command: './querybook/scripts/runservice scheduler --pidfile="/opt/celerybeat.pid"'
         volumes: *querybook-volumes
         depends_on: *querybook-depends-on
+    mcp:
+        container_name: querybook_mcp
+        image: *querybook-image
+        tty: true
+        stdin_open: true
+        command: "./querybook/scripts/runservice mcp"
+        ports:
+            - "${MCP_PORT:-8771}:${MCP_PORT:-8771}"
+        expose:
+            - "${MCP_PORT:-8771}"
+        environment:
+            MCP_PORT: "${MCP_PORT:-8771}"
+        volumes: *querybook-volumes
+        depends_on: *querybook-depends-on
     redis:
         container_name: querybook_redis
         image: redis:5.0.9

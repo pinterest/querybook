@@ -170,6 +170,9 @@ class QuerybookSettings(object):
     GITHUB_BRANCH = get_env_config("GITHUB_BRANCH")
     GITHUB_CRYPTO_SECRET = get_env_config("GITHUB_CRYPTO_SECRET")
 
+    # MCP Server
+    MCP_PORT = int(get_env_config("MCP_PORT") or 8771)
+
     # Cache Control
     CACHE_CONTROL_MAX_AGE = int(
         get_env_config("CACHE_CONTROL_MAX_AGE") or "604800"
