@@ -90,7 +90,7 @@ def verify_safe_environment_access(environment_ids: List[int]):
 
     # Check that the environment access is not restricted
     api_assert(
-        check_restricted_query_access(),
+        check_restricted_query_access(environment_ids=environment_ids),
         message=f"Environment ids '{str(environment_ids)}' are not allowed for this request.",
         status_code=ACCESS_RESTRICTED_STATUS_CODE,
     )
@@ -106,7 +106,7 @@ def verify_safe_query_engine_access(query_engine_ids: List[int]):
 
     # Check that the query engine access is not restricted
     api_assert(
-        check_restricted_query_access(),
+        check_restricted_query_access(query_engine_ids=query_engine_ids),
         message=f"Query engine ids '{str(query_engine_ids)}' are not allowed for this request.",
         status_code=ACCESS_RESTRICTED_STATUS_CODE,
     )
