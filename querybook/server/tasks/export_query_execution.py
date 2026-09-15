@@ -1,5 +1,6 @@
 from typing import Dict
 from app.flask_app import celery
+from lib.export.base_exporter import ExporterResult
 from lib.export.all_exporters import get_exporter
 from lib.logger import get_logger
 
@@ -17,7 +18,7 @@ def export_query_execution_task(
 ):
     exporter = get_exporter(exporter_name)
     try:
-        info = exporter.export(
+        info: ExporterResult = exporter.export(
             statement_execution_id, current_user_id, **(exporter_params or {})
         )
         return {
