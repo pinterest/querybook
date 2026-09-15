@@ -33,7 +33,7 @@ import { Tag } from 'ui/Tag/Tag';
 import './QueryRunButton.scss';
 
 const EXECUTE_QUERY_SHORTCUT = getShortcutSymbols(
-    KeyMap.codeEditor.runQuery.key
+    KeyMap.codeEditor.runQuery.key,
 );
 
 interface IQueryRunButtonProps extends IQueryEngineSelectorProps {
@@ -77,8 +77,10 @@ export const QueryRunButton = React.forwardRef<
             onSampleRateChange,
             onTableSamplingInfoClick,
         },
-        ref
+        ref,
     ) => {
+        const user = useSelector((state: IStoreState) => state.user);
+        const isAdmin = user?.myUserInfo.isAdmin === true;
         const runButtonRef = React.useRef<IAsyncButtonHandles>();
 
         React.useImperativeHandle(
@@ -90,24 +92,26 @@ export const QueryRunButton = React.forwardRef<
                     }
                 },
             }),
-            []
+            [],
         );
 
-        const runButtonDOM = disabled ? null : (
-            <AsyncButton
-                onClick={onRunClick}
-                ref={runButtonRef}
-                className={clsx({
-                    'run-selection': !!hasSelection,
-                })}
-                title={hasSelection ? 'Run Selection' : null}
-                icon={hasSelection ? null : <Icon name="Play" fill />}
-                aria-label={`Run (${EXECUTE_QUERY_SHORTCUT})`}
-                data-balloon-length="fit"
-                data-balloon-pos={runButtonTooltipPos}
-                color={'accent'}
-            />
-        );
+        const runButtonDOM =
+            disabled || !isAdmin ? null : (
+                <AsyncButton
+                    onClick={onRunClick}
+                    ref={runButtonRef}
+                    disabled={disabled}
+                    className={clsx({
+                        'run-selection': !!hasSelection,
+                    })}
+                    title={hasSelection ? 'Run Selection' : null}
+                    icon={hasSelection ? null : <Icon name="Play" fill />}
+                    aria-label={`Run (${EXECUTE_QUERY_SHORTCUT})`}
+                    data-balloon-length="fit"
+                    data-balloon-pos={runButtonTooltipPos}
+                    color={'accent'}
+                />
+            );
 
         const tableSamplingDOM =
             !disabled && TABLE_SAMPLING_CONFIG.enabled && hasSamplingTables ? (
@@ -144,7 +148,7 @@ export const QueryRunButton = React.forwardRef<
                 {runButtonDOM}
             </div>
         );
-    }
+    },
 );
 
 interface IQueryEngineSelectorProps {
@@ -190,7 +194,7 @@ export const QueryEngineSelector: React.FC<IQueryEngineSelectorProps> = ({
 
     const engineItems = queryEngines
         .filter((engineInfo) =>
-            `${engineInfo.name.toLowerCase()}`.includes(keyword.toLowerCase())
+            `${engineInfo.name.toLowerCase()}`.includes(keyword.toLowerCase()),
         )
         .map((engineInfo) => ({
             name: <span className="query-engine-name">{engineInfo.name}</span>,
@@ -300,7 +304,7 @@ const TableSamplingSelector: React.FC<{
     const sampleRateOptions = React.useMemo(getTableSamplingRateOptions, []);
     const userDefaultTableSampleRate = useSelector((state: IStoreState) => {
         const sampleRateSetting = parseFloat(
-            state.user.computedSettings['table_sample_rate']
+            state.user.computedSettings['table_sample_rate'],
         );
         return isNaN(sampleRateSetting)
             ? TABLE_SAMPLING_CONFIG.default_sample_rate
