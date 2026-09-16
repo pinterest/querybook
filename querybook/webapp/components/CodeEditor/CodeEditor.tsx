@@ -24,6 +24,7 @@ import { useEventsExtension } from './useEventsExtension';
 import { useKeyMapExtension } from './useKeyMapExtension';
 import { useOptionsExtension } from './useOptionsExtension';
 import { useSearchExtension } from './useSearchExtension';
+import { useVimExtension } from './useVimExtension';
 
 import './CodeEditor.scss';
 
@@ -36,6 +37,7 @@ interface ICodeEditorProps {
     lineWrapping?: boolean;
     height?: 'auto' | 'full' | 'fixed';
     readonly?: boolean;
+    vimMode?: boolean;
     onChange: (value: string) => void;
     onFocus?: () => void;
     onBlur?: () => void;
@@ -53,6 +55,7 @@ export const CodeEditor = forwardRef<ReactCodeMirrorRef, ICodeEditorProps>(
             lineWrapping = false,
             height = 'auto',
             readonly = false,
+            vimMode = false,
             onChange,
             onFocus,
             onBlur,
@@ -65,6 +68,9 @@ export const CodeEditor = forwardRef<ReactCodeMirrorRef, ICodeEditorProps>(
 
         const { codeEditorTheme, options, fontSize } =
             useUserCodeEditorConfig();
+
+        const { vimExtension, vimMode: currentVimMode } =
+            useVimExtension(vimMode);
 
         const basicSetup = useMemo<BasicSetupOptions>(
             () => ({
@@ -127,6 +133,7 @@ export const CodeEditor = forwardRef<ReactCodeMirrorRef, ICodeEditorProps>(
         );
         const finalExtensions = useMemo(
             () => [
+                ...vimExtension,
                 keyMapExtention,
                 eventsExtension,
                 optionsExtension,
@@ -141,6 +148,7 @@ export const CodeEditor = forwardRef<ReactCodeMirrorRef, ICodeEditorProps>(
                 ...extensions,
             ],
             [
+                vimExtension,
                 keyMapExtention,
                 eventsExtension,
                 optionsExtension,
@@ -156,6 +164,13 @@ export const CodeEditor = forwardRef<ReactCodeMirrorRef, ICodeEditorProps>(
                     fontSize: fontSize ?? undefined,
                 }}
             >
+                {vimMode && currentVimMode && (
+                    <div
+                        className={`vim-mode-indicator vim-mode-${currentVimMode}`}
+                    >
+                        -- {currentVimMode.toUpperCase()} --
+                    </div>
+                )}
                 <CodeMirror
                     ref={editorRef}
                     theme={

@@ -13,6 +13,7 @@ export function useUserCodeEditorConfig(): {
     options: CodeMirror.EditorConfiguration;
     autoCompleteType: AutoCompleteType;
     sqlCompleteEnabled: boolean;
+    vimModeEnabled: boolean;
 } {
     const editorSettings = useShallowSelector((state: IStoreState) => ({
         theme: state.user.computedSettings['theme'],
@@ -24,6 +25,7 @@ export function useUserCodeEditorConfig(): {
         tab: state.user.computedSettings['tab'],
         sqlCompleteEnabled:
             state.user.computedSettings['sql_complete'] === 'enabled',
+        vimModeEnabled: state.user.computedSettings['vim_mode'] === 'enabled',
     }));
     const indentWithTabs = editorSettings.tab === 'tab';
     const tabSize =
@@ -43,6 +45,7 @@ export function useUserCodeEditorConfig(): {
         fontSize: editorSettings.fontSize,
         autoCompleteType: editorSettings.autoComplete as AutoCompleteType,
         sqlCompleteEnabled: editorSettings.sqlCompleteEnabled,
+        vimModeEnabled: editorSettings.vimModeEnabled,
         options,
     };
 }
