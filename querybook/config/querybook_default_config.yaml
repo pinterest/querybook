@@ -114,6 +114,9 @@ GITHUB_REPO_NAME: ~
 GITHUB_BRANCH: 'main'
 GITHUB_CRYPTO_SECRET: ''
 
+# --------------- MCP Server ---------------
+MCP_PORT: 8771
+
 # --------------- Cache Control ---------------
 # Cache control settings for HTTP responses on static assets
 # Maximum age in seconds for static assets (CSS, JS, images, fonts)
