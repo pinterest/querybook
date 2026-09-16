@@ -82,6 +82,20 @@ export function useChartSource(
         })
     );
 
+    const statementExecutions = React.useMemo(
+        () =>
+            (statementIdList || [])
+                .map((sid) => statementExecutionById[sid])
+                .filter(
+                    (statementExecution) =>
+                        statementExecution &&
+                        statementExecution.status ===
+                            StatementExecutionStatus.DONE &&
+                        statementExecution.result_row_count > 0
+                ),
+        [statementIdList, statementExecutionById]
+    );
+
     React.useEffect(() => {
         if (cellId == null && executionId) {
             setInitializingExecutionId(true);
@@ -130,10 +144,12 @@ export function useChartSource(
     }, [executionId]);
 
     React.useEffect(() => {
-        if (statementId == null && statementIdList) {
-            setStatementId(statementIdList[0]);
+        if (statementId == null && statementExecutions.length) {
+            setStatementId(
+                statementExecutions[statementExecutions.length - 1].id
+            );
         }
-    }, [statementId, statementIdList]);
+    }, [statementId, statementExecutions]);
 
     React.useEffect(() => {
         if (statementId != null) {
@@ -147,19 +163,6 @@ export function useChartSource(
                 .map((id) => queryExecutionById[id])
                 .filter((queryExecution) => queryExecution),
         [queryExecutionById, executionIdList]
-    );
-
-    const statementExecutions = React.useMemo(
-        () =>
-            (statementIdList || [])
-                .map((sid) => statementExecutionById[sid])
-                .filter(
-                    (statementExecution) =>
-                        statementExecution.status ===
-                            StatementExecutionStatus.DONE &&
-                        statementExecution.result_row_count > 0
-                ),
-        [statementIdList, statementExecutionById]
     );
 
     return {
