@@ -3,6 +3,7 @@
 # You can also include it in local.txt for local development
 
 # Engines
+-r engine/athena.txt
 -r engine/bigquery.txt
 -r engine/druid.txt
 -r engine/hive.txt
@@ -28,6 +29,7 @@
 
 # AI Assistant
 -r ai/langchain.txt
+-r ai/bedrock.txt
 
 # Github
 -r github_integration/github.txt
