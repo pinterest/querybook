@@ -1,34 +1,57 @@
 name: Publish to Registry
-on:
-    schedule:
-        - cron: '0 17 * * 1' # Monday at 10am PDT
-    release:
-        types: [published]
-    push:
-        branches:
-            - master
-jobs:
-    update:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v2
-            - name: Get version from package.json
-              run: |
-                  PATCH_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]')
-                  MINOR_VERSION=${PATCH_VERSION%.*}
-                  MAJOR_VERSION=${MINOR_VERSION%.*}
 
-                  echo PATCH_VERSION=$PATCH_VERSION >> $GITHUB_ENV
-                  echo MINOR_VERSION=$MINOR_VERSION >> $GITHUB_ENV
-                  echo MAJOR_VERSION=$MAJOR_VERSION >> $GITHUB_ENV
-            - name: Publish to Registry
-              uses: elgohr/Publish-Docker-Github-Action@v4
-              env:
-                  EXTRA_PIP_INSTALLS: extra.txt
-              with:
-                  name: querybook/querybook
-                  username: ${{ secrets.DOCKER_USERNAME }}
-                  password: ${{ secrets.DOCKER_PASSWORD }}
-                  tags: 'latest,${{ env.PATCH_VERSION }},${{ env.MINOR_VERSION }},${{ env.MAJOR_VERSION }}'
-                  cache: ${{ github.event_name != 'schedule' }}
-                  buildargs: EXTRA_PIP_INSTALLS
+on:
+  schedule:
+    - cron: '0 17 * * 1'
+  release:
+    types: [published]
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get version from package.json
+        run: |
+          PATCH_VERSION=$(node -p "require('./package.json').version")
+          MINOR_VERSION=${PATCH_VERSION%.*}
+          MAJOR_VERSION=${MINOR_VERSION%.*}
+
+          echo "PATCH_VERSION=$PATCH_VERSION" >> "$GITHUB_ENV"
+          echo "MINOR_VERSION=$MINOR_VERSION" >> "$GITHUB_ENV"
+          echo "MAJOR_VERSION=$MAJOR_VERSION" >> "$GITHUB_ENV"
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/querybook:latest
+            ghcr.io/${{ github.repository_owner }}/querybook:${{ env.PATCH_VERSION }}
+            ghcr.io/${{ github.repository_owner }}/querybook:${{ env.MINOR_VERSION }}
+            ghcr.io/${{ github.repository_owner }}/querybook:${{ env.MAJOR_VERSION }}
+          build-args: |
+            EXTRA_PIP_INSTALLS=extra.txt
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
