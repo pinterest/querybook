@@ -1,4 +1,4 @@
-pytest==7.1.2
+pytest==9.0.3
 coverage==5.4
 moto==2.2.4
 
