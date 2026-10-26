@@ -8,3 +8,4 @@ moto==2.2.4
 -r exporter/gspread.txt
 -r ai/langchain.txt
 -r github_integration/github.txt
+werkzeug>=3.1.5 # not directly required, pinned by Snyk to avoid a vulnerability
