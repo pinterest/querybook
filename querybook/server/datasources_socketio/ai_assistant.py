@@ -1,49 +1,79 @@
+from contextlib import contextmanager
+
+from app.flask_app import socketio
 from const.ai_assistant import AI_ASSISTANT_NAMESPACE, AICommandType
 from lib.ai_assistant import ai_assistant
+from lib.ai_assistant.ai_socket import AIWebSocket
+from lib.logger import get_logger
 
 from .helper import register_socket
+
+LOG = get_logger(__file__)
+
+
+@contextmanager
+def ai_socket(command_type: AICommandType, payload: dict):
+    socket = AIWebSocket(socketio, command_type, payload.get("request_id"))
+    try:
+        yield socket
+    except Exception as e:
+        LOG.error(f"AI command {command_type.value} failed: {e}")
+        socket.send_error(str(e))
 
 
 @register_socket(AICommandType.TEXT_TO_SQL.value, namespace=AI_ASSISTANT_NAMESPACE)
 def text_to_sql(payload={}):
-    original_query = payload["original_query"]
-    query_engine_id = payload["query_engine_id"]
-    tables = payload.get("tables", [])
-    question = payload["question"]
-    ai_assistant.generate_sql_query(
-        query_engine_id=query_engine_id,
-        tables=tables,
-        question=question,
-        original_query=original_query,
-    )
+    with ai_socket(AICommandType.TEXT_TO_SQL, payload) as socket:
+        original_query = payload["original_query"]
+        query_engine_id = payload["query_engine_id"]
+        tables = payload.get("tables", [])
+        question = payload["question"]
+        ai_assistant.generate_sql_query(
+            query_engine_id=query_engine_id,
+            tables=tables,
+            question=question,
+            original_query=original_query,
+            socket=socket,
+        )
 
 
 @register_socket(AICommandType.SQL_TITLE.value, namespace=AI_ASSISTANT_NAMESPACE)
 def sql_title(payload={}):
-    query = payload["query"]
-    ai_assistant.generate_title_from_query(query=query)
+    with ai_socket(AICommandType.SQL_TITLE, payload) as socket:
+        query = payload["query"]
+        ai_assistant.generate_title_from_query(query=query, socket=socket)
 
 
 @register_socket(AICommandType.SQL_FIX.value, namespace=AI_ASSISTANT_NAMESPACE)
 def sql_fix(payload={}):
-    query_execution_id = payload["query_execution_id"]
-    ai_assistant.query_auto_fix(
-        query_execution_id=query_execution_id,
-    )
+    with ai_socket(AICommandType.SQL_FIX, payload) as socket:
+        query_execution_id = payload["query_execution_id"]
+        ai_assistant.query_auto_fix(
+            query_execution_id=query_execution_id,
+            socket=socket,
+        )
 
 
 @register_socket(AICommandType.SQL_COMPLETE.value, namespace=AI_ASSISTANT_NAMESPACE)
 def sql_complete(payload={}):
-    prefix = payload["prefix"]
-    suffix = payload["suffix"]
-    query_engine_id = payload["query_engine_id"]
-    tables = payload.get("tables", [])
-    ai_assistant.get_sql_completion(
-        query_engine_id=query_engine_id, tables=tables, prefix=prefix, suffix=suffix
-    )
+    with ai_socket(AICommandType.SQL_COMPLETE, payload) as socket:
+        prefix = payload["prefix"]
+        suffix = payload["suffix"]
+        query_engine_id = payload["query_engine_id"]
+        tables = payload.get("tables", [])
+        ai_assistant.get_sql_completion(
+            query_engine_id=query_engine_id,
+            tables=tables,
+            prefix=prefix,
+            suffix=suffix,
+            socket=socket,
+        )
 
 
 @register_socket(AICommandType.DATA_DOC_TITLE.value, namespace=AI_ASSISTANT_NAMESPACE)
 def data_doc_data_doc_title(payload={}):
-    cell_contents = payload["cell_contents"]
-    ai_assistant.generate_data_doc_title_from_query(cell_contents=cell_contents)
+    with ai_socket(AICommandType.DATA_DOC_TITLE, payload) as socket:
+        cell_contents = payload["cell_contents"]
+        ai_assistant.generate_data_doc_title_from_query(
+            cell_contents=cell_contents, socket=socket
+        )

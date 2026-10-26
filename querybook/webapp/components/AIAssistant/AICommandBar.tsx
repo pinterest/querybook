@@ -1,11 +1,13 @@
-import { uniq } from 'lodash';
+import { truncate, uniq } from 'lodash';
 import React, {
     forwardRef,
     useCallback,
     useEffect,
     useMemo,
+    useRef,
     useState,
 } from 'react';
+import toast from 'react-hot-toast';
 
 import { AICommandInput } from 'components/AIAssistant/AICommandInput';
 import { AICommandResultView } from 'components/AIAssistant/AICommandResultView';
@@ -62,6 +64,11 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
             {}
         );
         const [showConfirm, setShowConfirm] = useState(false);
+        const [hasUnviewedResult, setHasUnviewedResult] = useState(false);
+        const commandBarRef = useRef<HTMLDivElement>(null);
+        const runningInBackgroundRef = useRef(false);
+        const readyToastIdRef = useRef<string>(null);
+        const submittedKwargsRef = useRef<Record<string, any>>({});
 
         /**
          * There are three types of tables:
@@ -86,10 +93,70 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
         const {
             runCommand,
             isRunning,
+            commandFailed,
             cancelCommand,
             commandResult,
             resetCommandResult,
         } = useCommand(command, commandRunner);
+
+        const dismissReadyToast = useCallback(() => {
+            if (readyToastIdRef.current) {
+                toast.dismiss(readyToastIdRef.current);
+                readyToastIdRef.current = null;
+            }
+        }, []);
+
+        useEffect(() => dismissReadyToast, [dismissReadyToast]);
+
+        const viewBackgroundResult = useCallback(() => {
+            dismissReadyToast();
+            setHasUnviewedResult(false);
+            setShowPopupView(true);
+            commandBarRef.current?.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center',
+            });
+        }, [dismissReadyToast]);
+
+        useEffect(() => {
+            if (isRunning || !runningInBackgroundRef.current) {
+                return;
+            }
+            runningInBackgroundRef.current = false;
+            if (!commandResult || commandFailed) {
+                return;
+            }
+
+            setHasUnviewedResult(true);
+            const question = truncate(submittedKwargsRef.current.question, {
+                length: 60,
+            });
+            readyToastIdRef.current = toast.success(
+                <div className="flex-row">
+                    <span>AI response ready for "{question}"</span>
+                    <Button
+                        className="ml8"
+                        title="View"
+                        size="small"
+                        onClick={viewBackgroundResult}
+                    />
+                    <Button
+                        className="ml4"
+                        title="Dismiss"
+                        size="small"
+                        theme="text"
+                        onClick={dismissReadyToast}
+                    />
+                </div>,
+                { duration: Infinity }
+            );
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [isRunning]);
+
+        const handleCancelCommand = useCallback(() => {
+            runningInBackgroundRef.current = false;
+            cancelCommand();
+        }, [cancelCommand]);
 
         useEffect(() => {
             if (!query && mentionedTables.length === 1) {
@@ -123,6 +190,10 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
         ]);
 
         const handleCommand = useCallback(() => {
+            runningInBackgroundRef.current = false;
+            dismissReadyToast();
+            setHasUnviewedResult(false);
+            submittedKwargsRef.current = commandKwargs;
             runCommand(commandKwargs);
             resetCommandResult();
             setShowPopupView(!command.inplace);
@@ -138,14 +209,20 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
                     },
                 });
             }
-        }, [command, runCommand, setShowPopupView, commandKwargs]);
+        }, [
+            command,
+            runCommand,
+            setShowPopupView,
+            commandKwargs,
+            dismissReadyToast,
+        ]);
 
         const getCommandResultView = () => {
             if (command.name === 'generate' || command.name === 'edit') {
                 return (
                     <AICommandResultView
                         command={command}
-                        commandKwargs={commandKwargs}
+                        commandKwargs={submittedKwargsRef.current}
                         metastoreId={queryEngine.metastore_id}
                         commandResult={commandResult}
                         tables={tables}
@@ -198,6 +275,7 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
 
         return (
             <div
+                ref={commandBarRef}
                 className="AICommandBar"
                 aria-label={`Type @ to select a table. Type / to see more commands. Type ${KeyMap.aiCommandBar.openCommands.key} to reset the command.`}
                 data-balloon-pos="up-left"
@@ -209,7 +287,10 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
                         <div
                             className="popup-backdrop"
                             onClick={() => {
-                                if (commandResult) {
+                                if (isRunning) {
+                                    runningInBackgroundRef.current = true;
+                                    setShowPopupView(false);
+                                } else if (commandResult) {
                                     setShowConfirm(true);
                                 } else {
                                     setShowPopupView(false);
@@ -244,7 +325,10 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
                         metastoreId={queryEngine.metastore_id}
                         onSubmit={handleCommand}
                         running={isRunning}
-                        cancelGeneration={cancelCommand}
+                        cancelGeneration={handleCancelCommand}
+                        onViewResult={
+                            hasUnviewedResult ? viewBackgroundResult : undefined
+                        }
                         ref={commandInputRef}
                     />
                     {showPopupView && getCommandResultView()}

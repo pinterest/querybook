@@ -19,14 +19,14 @@ export class AIAssistantSocket {
 
     public addListener = (
         command: string,
-        listener: (event: string, payload: object) => void
+        listener: (event: string, payload: object, requestId?: string) => void
     ) => {
         this.socket.on(command, listener);
     };
 
     public removeListener = (
         command: string,
-        listener: (event: string, payload: object) => void
+        listener: (event: string, payload: object, requestId?: string) => void
     ) => {
         this.socket.off(command, listener);
     };
