@@ -65,4 +65,9 @@ clean_pyc:
 	find . -name "*.pyc" -delete
 	find . -type d -name __pycache__ -delete
 clean_docker:
-	docker system prune --volumes
+	# Safely removing Querybook resources only
+	docker-compose -f containers/docker-compose.dev.yml down -v --remove-orphans || true
+	docker-compose -f containers/docker-compose.prod.yml down -v --remove-orphans || true
+	# Removing project-specific images created by this Makefile
+	docker rmi querybook-dev querybook-test querybook-docs || true
+	# Note: Global resources and unrelated volumes (e.g., Minikube) are preserved.
