@@ -29,6 +29,7 @@ interface AICommandInputProps {
     onMentionedTablesChange: (tables: string[]) => void;
     onSubmit: () => void;
     cancelGeneration: () => void;
+    onViewResult?: () => void;
     ref: React.Ref<IResizableTextareaHandles>;
 }
 
@@ -76,6 +77,7 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
             onMentionedTablesChange,
             onSubmit,
             cancelGeneration,
+            onViewResult,
         },
         ref
     ) => {
@@ -299,13 +301,22 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
                         </div>
                     </Popover>
                 )}
-                {running && (
+                {running ? (
                     <Button
                         title="Stop"
                         color="cancel"
                         onClick={cancelGeneration}
                         className="button"
                     />
+                ) : (
+                    onViewResult && (
+                        <Button
+                            title="View"
+                            color="confirm"
+                            onClick={onViewResult}
+                            className="button"
+                        />
+                    )
                 )}
             </div>
         );

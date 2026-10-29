@@ -15,6 +15,7 @@ export const useCommand = (
 ): {
     runCommand: (kwargs: Record<string, any>) => void;
     isRunning: boolean;
+    commandFailed: boolean;
     commandResult: any;
     cancelCommand: () => void;
     resetCommandResult: () => void;
@@ -58,6 +59,8 @@ export const useCommand = (
             command.type === QueryCellCommandType.AI
                 ? socket.loading
                 : isRunning,
+        commandFailed:
+            command.type === QueryCellCommandType.AI ? socket.failed : false,
         commandResult,
         cancelCommand:
             command.type === QueryCellCommandType.AI

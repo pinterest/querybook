@@ -1,4 +1,5 @@
 import functools
+from typing import Optional
 
 from flask import request
 
@@ -7,9 +8,12 @@ from const.ai_assistant import AI_ASSISTANT_NAMESPACE, AICommandType
 
 
 class AIWebSocket:
-    def __init__(self, socketio, command_type: AICommandType):
+    def __init__(
+        self, socketio, command_type: AICommandType, request_id: Optional[str] = None
+    ):
         self.socketio = socketio
         self.command_type = command_type
+        self.request_id = request_id
         self.room = request.sid
 
     def _send(self, event_type, payload: dict = None):
@@ -18,6 +22,7 @@ class AIWebSocket:
             (
                 event_type,
                 payload,
+                self.request_id,
             ),
             namespace=AI_ASSISTANT_NAMESPACE,
             room=self.room,
