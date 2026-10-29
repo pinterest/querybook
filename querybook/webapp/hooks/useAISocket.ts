@@ -1,5 +1,5 @@
 import { uniqueId } from 'lodash';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 
 import { AICommandType, AISocketEvent } from 'const/aiAssistant';
@@ -80,6 +80,14 @@ export function useAISocket(
             });
             setLoading(true);
             setFailed(false);
+        },
+        [commandType, eventHandler, onError]
+    );
+
+    useEffect(
+        () => () => {
+            aiAssistantSocket.removeListener(commandType, eventHandler);
+            aiAssistantSocket.removeListener('error', onError);
         },
         [commandType, eventHandler, onError]
     );

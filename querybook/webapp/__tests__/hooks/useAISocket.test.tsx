@@ -39,6 +39,7 @@ function renderHook(onData: jest.Mock) {
 
     return {
         result,
+        unmount: () => act(() => renderer.unmount()),
         rerender: (onData: jest.Mock) =>
             act(() => renderer.update(<Harness onData={onData} />)),
     };
@@ -102,6 +103,16 @@ it('removes its listeners on close after re-rendering with a new onData', () => 
     expect(latestOnData).toHaveBeenCalledTimes(1);
 
     serverSends(AISocketEvent.CLOSE, null, lastRequestId());
+    expect(mockSocket.listenerCount(command)).toBe(0);
+    expect(mockSocket.listenerCount('error')).toBe(0);
+});
+
+it('removes its listeners when unmounted mid-request', () => {
+    const { result, unmount } = renderHook(jest.fn());
+
+    act(() => result.current.emit({ question: 'first' }));
+    unmount();
+
     expect(mockSocket.listenerCount(command)).toBe(0);
     expect(mockSocket.listenerCount('error')).toBe(0);
 });
