@@ -936,9 +936,7 @@ const DataDocChartComposerComponent: React.FunctionComponent<
                         />
                     </>
                 ) : null}
-                {['pie', 'doughnut', 'table'].includes(
-                    values.chartType
-                ) ? null : (
+                {values.chartType === 'table' ? null : (
                     <>
                         <FormSectionHeader>Colors</FormSectionHeader>
                         {seriesColorDOM}
