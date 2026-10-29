@@ -4,6 +4,34 @@
     position: relative;
     height: 100%;
 
+    .vim-mode-indicator {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        z-index: 10;
+        padding: 1px 6px;
+        font-size: var(--xxsmall-text-size);
+        font-family: monospace;
+        font-weight: var(--bold-font);
+        border-top-right-radius: var(--border-radius-sm);
+        pointer-events: none;
+
+        &.vim-mode-normal {
+            background-color: var(--color-accent-dark);
+            color: var(--bg);
+        }
+
+        &.vim-mode-insert {
+            background-color: var(--color-true);
+            color: var(--bg);
+        }
+
+        &.vim-mode-visual {
+            background-color: var(--color-warn);
+            color: var(--bg);
+        }
+    }
+
     &.fullScreen {
         @include full-screen(39);
     }

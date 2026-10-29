@@ -39,6 +39,7 @@ export const BoundQueryEditor = React.forwardRef<
         fontSize,
         autoCompleteType,
         sqlCompleteEnabled,
+        vimModeEnabled,
     } = useUserCodeEditorConfig();
     const combinedOptions = useMemo(
         () => ({
@@ -79,6 +80,7 @@ export const BoundQueryEditor = React.forwardRef<
             cellId={cellId}
             engineId={engine?.id}
             sqlCompleteEnabled={sqlCompleteEnabled}
+            vimMode={vimModeEnabled}
         />
     );
 });
