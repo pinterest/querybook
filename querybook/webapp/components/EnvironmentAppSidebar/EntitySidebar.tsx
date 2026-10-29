@@ -2,6 +2,8 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Route } from 'react-router-dom';
 
+import { IStoreState } from 'redux/store';
+
 import { InfoMenuButton } from 'components/InfoMenuButton/InfoMenuButton';
 import { QueryEngineStatusButton } from 'components/QueryEngineStatusButton/QueryEngineStatusButton';
 import { QueryExecutionButton } from 'components/QueryExecutionButton/QueryExecutionButton';
@@ -30,8 +32,10 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> =
         const environment = useSelector(currentEnvironmentSelector);
         const queryMetastores = useSelector(queryMetastoresSelector);
         const hasEnabledPeerReviewEngine = useSelector(
-            hasEnabledPeerReviewEngineSelector
+            hasEnabledPeerReviewEngineSelector,
         );
+        const user = useSelector((state: IStoreState) => state.user);
+        const isAdmin = user?.myUserInfo?.isAdmin === true;
 
         return (
             <div className="EntitySidebar">
@@ -65,7 +69,7 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> =
                                         tooltip={'Adhoc Query'}
                                         tooltipPos="right"
                                         active={location.pathname.startsWith(
-                                            `/${environment.name}/adhoc/`
+                                            `/${environment.name}/adhoc/`,
                                         )}
                                         title="Adhoc"
                                         onClick={() =>
@@ -78,27 +82,29 @@ export const EntitySidebar: React.FunctionComponent<IEntitySidebarProps> =
                                         }
                                     />
                                 </Link>
-                                <Link
-                                    to={`/${environment.name}/doc_schedules/`}
-                                >
-                                    <IconButton
-                                        icon="Clock"
-                                        tooltip="Scheduled Docs"
-                                        tooltipPos="right"
-                                        active={location.pathname.startsWith(
-                                            `/${environment.name}/doc_schedules/`
-                                        )}
-                                        title="Scheds"
-                                        onClick={() =>
-                                            trackClick({
-                                                component:
-                                                    ComponentType.LEFT_SIDEBAR,
-                                                element:
-                                                    ElementType.SCHEDS_BUTTON,
-                                            })
-                                        }
-                                    />
-                                </Link>
+                                {isAdmin && (
+                                    <Link
+                                        to={`/${environment.name}/doc_schedules/`}
+                                    >
+                                        <IconButton
+                                            icon="Clock"
+                                            tooltip="Scheduled Docs"
+                                            tooltipPos="right"
+                                            active={location.pathname.startsWith(
+                                                `/${environment.name}/doc_schedules/`,
+                                            )}
+                                            title="Scheds"
+                                            onClick={() =>
+                                                trackClick({
+                                                    component:
+                                                        ComponentType.LEFT_SIDEBAR,
+                                                    element:
+                                                        ElementType.SCHEDS_BUTTON,
+                                                })
+                                            }
+                                        />
+                                    </Link>
+                                )}
                             </>
                         )}
                     />
