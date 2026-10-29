@@ -23,7 +23,7 @@ export function useAISocket(
     onDataRef.current = onData;
 
     const eventHandler = useCallback((event, payload, requestId) => {
-        if (requestId !== requestIdRef.current) {
+        if (requestId != null && requestId !== requestIdRef.current) {
             return;
         }
 

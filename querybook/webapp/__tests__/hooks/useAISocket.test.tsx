@@ -79,6 +79,16 @@ it('ignores events from a superseded request', () => {
     });
 });
 
+it('handles events without a request id from older servers', () => {
+    const onData = jest.fn();
+    const { result } = renderHook(onData);
+
+    act(() => result.current.emit({ question: 'first' }));
+    serverSends(AISocketEvent.DATA, { query: 'q' }, null);
+
+    expect(onData).toHaveBeenCalledWith({ type: 'data', data: { query: 'q' } });
+});
+
 it('handles each event once when emitting over an in-flight request', () => {
     const { result } = renderHook(jest.fn());
 
