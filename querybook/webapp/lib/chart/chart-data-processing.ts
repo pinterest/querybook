@@ -106,11 +106,11 @@ export function processChartJSData(
             // Assign colors -----------------------------------------------
             const colorIdx = coloredSeries[idx] ?? idx;
             if (chartMeta.type === 'pie' || chartMeta.type === 'doughnut') {
-                // TODO: add custom color support in future?
-                dataset.backgroundColor = dataRows.map(
-                    (_, rowColorIdx) =>
-                        ColorPalette[rowColorIdx % ColorPalette.length].color
-                );
+                dataset.backgroundColor = dataRows.map((_, rowColorIdx) => {
+                    const seriesColor = coloredSeries[rowColorIdx];
+                    const paletteIdx = seriesColor ?? rowColorIdx;
+                    return ColorPalette[paletteIdx % ColorPalette.length].color;
+                });
             } else {
                 dataset.borderColor =
                     ColorPalette[colorIdx % ColorPalette.length].color;
