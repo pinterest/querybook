@@ -3,12 +3,17 @@ FROM python:3.10-bookworm
 ARG PRODUCTION=true
 ARG EXTRA_PIP_INSTALLS=""
 ARG NODESOURCE_BASE=https://deb.nodesource.com
+ARG DEBIAN_MIRROR
 
 ## Install Querybook package requirements + NodeJS
 # Installing build-essential and python-dev for uwsgi
 RUN mkdir -p /etc/apt/keyrings && curl -fsSL "${NODESOURCE_BASE%/}/gpgkey/nodesource-repo.gpg.key" | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
     && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] ${NODESOURCE_BASE%/}/node_18.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list \
     && rm -rf /var/lib/apt/lists/* \
+    && if [ -n "$DEBIAN_MIRROR" ]; then \
+        sed -i "s#http://deb.debian.org#${DEBIAN_MIRROR%/}#g" \
+        /etc/apt/sources.list.d/debian.sources; \
+    fi \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y --allow-downgrades --allow-remove-essential --allow-change-held-packages \
     libsasl2-dev \
