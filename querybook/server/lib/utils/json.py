@@ -1,13 +1,12 @@
 from datetime import datetime, date
 import json
 
-from flask import json as flask_json
 from sqlalchemy.engine.row import Row
 
 from lib.utils.utils import DATE_TO_UTC, DATETIME_TO_UTC
 
 
-class JSONEncoder(flask_json.JSONEncoder):
+class JSONEncoder(json.JSONEncoder):
     def __init__(self, *args, **kwargs):
         self.date_formatter = kwargs.pop("date_formatter", DATE_TO_UTC)
         self.datetime_formatter = kwargs.pop("datetime_formatter", DATETIME_TO_UTC)

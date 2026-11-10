@@ -5,7 +5,8 @@ import flask_login
 from app.auth.oauth_auth import OAuthLoginManager, OAUTH_CALLBACK_PATH
 from app.db import with_session, DBSession
 from env import QuerybookSettings, get_env_config
-from flask import Markup, request, session as flask_session, redirect
+from markupsafe import Markup
+from flask import request, session as flask_session, redirect
 from lib.logger import get_logger
 from lib.utils.decorators import in_mem_memoized
 from logic.user import (
