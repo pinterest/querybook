@@ -9,8 +9,8 @@ from const.ai_assistant import (
     DEFAULT_SIMILARITY_SCORE_THRESHOLD,
     DEFAULT_SIMILARITY_SCORE_THRESHOLD_GREAT_MATCH,
 )
-from langchain.docstore.document import Document
-from langchain.vectorstores.base import VectorStore
+from langchain_core.documents import Document
+from langchain_core.vectorstores import VectorStore
 from models.metastore import DataTable
 from models.query_execution import QueryExecution
 

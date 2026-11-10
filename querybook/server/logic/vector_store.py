@@ -4,7 +4,7 @@ from const.ai_assistant import (
     DEFAULT_TABLE_SEARCH_LIMIT,
     MAX_SAMPLE_QUERY_COUNT_FOR_TABLE_SUMMARY,
 )
-from langchain.docstore.document import Document
+from langchain_core.documents import Document
 from lib.ai_assistant import ai_assistant
 from lib.elasticsearch.search_table import construct_tables_query_by_table_names
 from lib.elasticsearch.search_utils import ES_CONFIG, get_matching_objects

@@ -1,6 +1,6 @@
 from typing import Type
 
-from langchain.embeddings.base import Embeddings
+from langchain_core.embeddings import Embeddings
 from lib.utils.import_helper import import_module_with_default
 
 ALL_EMBEDDINGS = import_module_with_default(
