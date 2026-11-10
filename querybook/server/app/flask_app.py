@@ -65,10 +65,29 @@ def make_flask_app():
     return app
 
 
+# Flask-Caching 2 dropped the lowercase CACHE_TYPE aliases.
+LEGACY_CACHE_TYPES = {
+    "null": "NullCache",
+    "simple": "SimpleCache",
+    "filesystem": "FileSystemCache",
+    "redis": "RedisCache",
+    "redissentinel": "RedisSentinelCache",
+    "rediscluster": "RedisClusterCache",
+    "memcached": "MemcachedCache",
+    "saslmemcached": "SASLMemcachedCache",
+    "spreadsaslmemcached": "SpreadSASLMemcachedCache",
+}
+
+
 def make_cache(app):
+    config = dict(QuerybookSettings.FLASK_CACHE_CONFIG)
+    if "CACHE_TYPE" in config:
+        config["CACHE_TYPE"] = LEGACY_CACHE_TYPES.get(
+            config["CACHE_TYPE"], config["CACHE_TYPE"]
+        )
     return Cache(
         app,
-        config=QuerybookSettings.FLASK_CACHE_CONFIG,
+        config=config,
     )
 
 
