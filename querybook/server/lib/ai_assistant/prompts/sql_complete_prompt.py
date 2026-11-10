@@ -1,4 +1,4 @@
-from langchain.prompts import PromptTemplate
+from langchain_core.prompts import PromptTemplate
 
 prompt_template = """You are an expert in the {dialect} SQL dialect, skilled in providing precise SQL code completions.
 Your task is to complete the SQL query based on the given context.
