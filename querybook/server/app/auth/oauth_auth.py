@@ -2,7 +2,8 @@ import certifi
 import requests
 
 
-from flask import Markup, request, session as flask_session, redirect
+from markupsafe import Markup
+from flask import request, session as flask_session, redirect
 import flask_login
 from requests_oauthlib import OAuth2Session
 

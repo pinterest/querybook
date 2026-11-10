@@ -1,9 +1,11 @@
+import json
 import os
 import sys
 from datetime import timedelta
 
 from celery import Celery
 from flask import Flask, Blueprint, json as flask_json, has_request_context
+from flask.json.provider import DefaultJSONProvider
 from flask_socketio import SocketIO
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -13,6 +15,14 @@ from flask_caching import Cache
 from const.path import BUILD_PATH, STATIC_PATH, WEBAPP_DIR_PATH
 from env import QuerybookSettings
 from lib.utils.json import JSONEncoder
+
+
+class JSONProvider(DefaultJSONProvider):
+    def dumps(self, obj, **kwargs):
+        kwargs.setdefault("cls", JSONEncoder)
+        kwargs.setdefault("ensure_ascii", self.ensure_ascii)
+        kwargs.setdefault("sort_keys", self.sort_keys)
+        return json.dumps(obj, **kwargs)
 
 
 def validate_db():
@@ -34,7 +44,7 @@ def validate_db():
 
 def make_flask_app():
     app = Flask(__name__, static_folder=STATIC_PATH)
-    app.json_encoder = JSONEncoder
+    app.json = JSONProvider(app)
     app.secret_key = QuerybookSettings.FLASK_SECRET_KEY
 
     if QuerybookSettings.PRODUCTION:
