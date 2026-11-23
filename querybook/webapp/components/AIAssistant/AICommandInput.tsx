@@ -19,6 +19,8 @@ import { IResizableTextareaHandles } from 'ui/ResizableTextArea/ResizableTextAre
 
 import './AICommandInput.scss';
 
+const DEFAULT_AI_COMMAND_PLACEHOLDER = 'Ask AI to edit the query';
+
 interface AICommandInputProps {
     commands: Array<IQueryCellCommand>;
     placeholder?: string;
@@ -250,7 +252,9 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
                     onKeyDown={onKeyDown}
                     style={mentionInputStyle}
                     placeholder={
-                        command ? command.hint : 'Ask AI to edit the query'
+                        command?.hint ??
+                        window.CUSTOM_AI_COMMAND_PLACEHOLDER ??
+                        DEFAULT_AI_COMMAND_PLACEHOLDER
                     }
                     onBlur={() => setShowCommands(false)}
                     inputRef={textareaRef}

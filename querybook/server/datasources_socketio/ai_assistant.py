@@ -28,13 +28,31 @@ def text_to_sql(payload={}):
         query_engine_id = payload["query_engine_id"]
         tables = payload.get("tables", [])
         question = payload["question"]
-        ai_assistant.generate_sql_query(
-            query_engine_id=query_engine_id,
-            tables=tables,
-            question=question,
-            original_query=original_query,
-            socket=socket,
-        )
+
+        if "requested_changes" in payload:
+            proposed_query = payload.get("proposed_query")
+            requested_changes = payload["requested_changes"]
+            if not (proposed_query and requested_changes):
+                raise ValueError(
+                    "A revision needs both a proposed query and requested changes"
+                )
+            ai_assistant.revise_sql_query(
+                query_engine_id=query_engine_id,
+                tables=tables,
+                question=question,
+                original_query=original_query,
+                proposed_query=proposed_query,
+                requested_changes=requested_changes,
+                socket=socket,
+            )
+        else:
+            ai_assistant.generate_sql_query(
+                query_engine_id=query_engine_id,
+                tables=tables,
+                question=question,
+                original_query=original_query,
+                socket=socket,
+            )
 
 
 @register_socket(AICommandType.SQL_TITLE.value, namespace=AI_ASSISTANT_NAMESPACE)

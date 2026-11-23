@@ -13,23 +13,33 @@ Click the '#' icon will generate title of the query cell automatically.
 
 ## Text To SQL
 
-Hover over to the left side of the query cell and click the star-like icon will open the text-to-sql modal.
+Type a question in the AI box above a query cell and press Enter. Type `@` to pick tables, or `/` to choose a command.
 
 ### Query Generation
 
-To use it: select the table(s) you are going to query against and type your question prompt and hit Enter.
-
-If you're unsure which table to use, you can also type your question directly and AI will try to find the table(s) for you.
+If the query cell is empty, the AI writes a new query. Select the table(s) to query and type your question. If you're unsure which tables to use, type the question anyway and the AI will try to find tables for you.
 
 ![](/img/user_guide/text_to_sql.gif)
 
 ### Query Editing
 
-If you would like to modify the generated query, you can keep the query and type in the prompt to edit it.
-
-If the query cell already has a query, open the text-to-sql modal will automatically go to the edit mode.
+If the query cell already has a query, the AI edits that query to answer your question.
 
 ![](/img/user_guide/text_to_sql_edit.gif)
+
+### Reviewing the result
+
+The request runs in the background, so you can keep working. When it's done, a notification appears. Click **View** in the notification, or on the AI box, to open the result.
+
+The result shows the AI's explanation and the difference between your query and the AI's query. If the AI needs you to choose tables first, pick them and click **Continue**.
+
+-   **Accept** replaces your query with the AI's query.
+-   **Reject** throws the AI's query away.
+-   **Dismiss**, clicking outside the dialog, or pressing Escape closes the dialog and keeps the result. Click **View** to open it again.
+
+### Requesting changes
+
+To refine the AI's query, describe what to change in **Request changes** and press Enter or click **Submit**. Use Shift+Enter for a new line. The AI revises its query in the background, and you can view the new version when it's ready. If the revision fails, the previous version is kept.
 
 ## SQL Fix
 

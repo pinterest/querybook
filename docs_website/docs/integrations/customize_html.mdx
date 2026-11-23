@@ -192,6 +192,14 @@ window.DEFAULT_ROW_LIMIT = 4096;
 window.ALLOW_UNLIMITED_QUERY = false;
 ```
 
+### Custom AI assistant placeholder
+
+The AI assistant's question box shows "Ask AI to edit the query" when no `/command` is selected. To change that text, set:
+
+```js
+window.CUSTOM_AI_COMMAND_PLACEHOLDER = 'Ask AI to write or edit a query';
+```
+
 ### (Experimental) Custom error tooltip
 
 Whenever there is a query error, you can provide a custom suggestion message by providing this function:
