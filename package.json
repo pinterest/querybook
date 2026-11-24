@@ -112,7 +112,7 @@
         "reselect": "4.0.0",
         "sass": "^1.50.0",
         "smooth-scroll-into-view-if-needed": "^1.1.27",
-        "socket.io-client": "^4.5.2",
+        "socket.io-client": "^4.7.0",
         "sql-formatter": "^12.1.2",
         "styled-components": "5.3.9",
         "typescript": "^5.6.3",
