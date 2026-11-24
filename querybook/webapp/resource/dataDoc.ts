@@ -20,6 +20,7 @@ import {
     IScheduledDoc,
     ITransformedScheduledDocFilters,
 } from 'redux/scheduledDataDoc/types';
+import { ITag } from '../const/tag';
 
 export const DataDocResource = {
     getAll: (filterMode: string, environmentId: number) =>
@@ -204,4 +205,18 @@ export const DataDocScheduleResource = {
                 filters,
             }
         ),
+};
+
+export const DataDocTagResource = {
+    get: (datadocId: number) => ds.fetch<ITag[]>(`/datadoc/${datadocId}/tag/`),
+    search: (keyword: string) =>
+        ds.fetch<string[]>(`/tag/keyword/`, { keyword }),
+    create: (datadocId: number, tag: string) =>
+        ds.save<ITag>(`/datadoc/${datadocId}/tag/`, { tag }),
+    delete: (datadocId: number, tagName: string) =>
+        ds.delete(`/datadoc/${datadocId}/tag/`, { tag_name: tagName }),
+    update: (tag: ITag) =>
+        ds.update<ITag>(`/tag/${tag.id}/`, {
+            meta: tag.meta,
+        }),
 };
