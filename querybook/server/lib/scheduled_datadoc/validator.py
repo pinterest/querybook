@@ -10,7 +10,11 @@ class InvalidScheduleException(Exception):
     pass
 
 
-valid_schedule_config_keys = ["exports", "notifications"]
+valid_schedule_config_keys = [
+    "exports",
+    "notifications",
+    "disable_if_running_doc",
+]
 valid_export_config_keys = ["exporter_cell_id", "exporter_name", "exporter_params"]
 valid_notification_keys = ["with", "on", "config"]
 valid_notification_config_keys = ["to", "to_user"]
