@@ -33,6 +33,15 @@
         border-radius: 4px;
     }
 
+    .mention-input {
+        min-width: 0;
+    }
+
+    .mention-input textarea:disabled {
+        color: var(--text-light);
+        cursor: not-allowed;
+    }
+
     .text2sql-mode {
         color: var(--color-pink-dark);
     }

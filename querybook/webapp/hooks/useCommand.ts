@@ -9,6 +9,14 @@ type AsyncCommandRunner = (kwargs: Record<string, any>) => Promise<any>;
 
 export type CommandRunner = SyncCommandRunner | AsyncCommandRunner;
 
+/**
+ * Runs a query cell command (sync, async or AI) through one interface.
+ *
+ * The AI command bar no longer uses this hook: it uses useAICommandSession,
+ * which keeps the text-to-SQL socket fixed so switching commands can't drop a
+ * running AI request. It's kept because webpage plugins (custom_script.ts)
+ * can import webapp modules and may use it.
+ */
 export const useCommand = (
     command: IQueryCellCommand,
     commandRunner?: CommandRunner

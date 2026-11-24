@@ -33,6 +33,34 @@ Please follow below steps to enable AI assistant plugin:
 
 5. Enable it in `querybook/config/querybook_public_config.yaml`
 
+### Customizing text to SQL
+
+A custom AI assistant provider can override these methods of `BaseAIAssistant` to change how text to SQL works:
+
+-   `_generate_sql_query` handles generating a new query and editing an existing one.
+-   `_revise_sql_query` handles "Request changes" in the AI assistant dialog, where the user asks for changes to a query the AI suggested. It receives the original question, the cell's query (`original_query`), the AI's suggested query (`proposed_query`) and the user's `requested_changes` as separate arguments. By default, it runs the revision as an edit of the suggested query through `_generate_sql_query`, so providers that only override `_generate_sql_query` support revisions without changes.
+
+Override these private methods rather than the public `generate_sql_query`: revisions go through `revise_sql_query`, so an override of `generate_sql_query` won't see them.
+
+```python
+class MyAssistant(OpenAIAssistant):
+    def _revise_sql_query(
+        self,
+        *,
+        query_engine,
+        tables,
+        question,
+        original_query,
+        proposed_query,
+        requested_changes,
+        socket,
+        session=None,
+    ):
+        # Send the revision to your own service, streaming results to the
+        # socket with socket.send_data(...) and finishing with socket.close().
+        ...
+```
+
 ## Vector Store Plugin
 
 The vector store plugin supports embedding based table search using natural language. It requires an embeddings provider and a vector store. Please check Langchain docs for more details of available [embeddings](https://python.langchain.com/docs/integrations/text_embedding/) and [vector stores](https://python.langchain.com/docs/integrations/vectorstores/).

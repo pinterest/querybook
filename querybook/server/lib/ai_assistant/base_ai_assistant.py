@@ -242,6 +242,88 @@ class BaseAIAssistant(ABC):
             session=session,
         )
 
+    @catch_error
+    @with_session
+    @with_ai_socket(command_type=AICommandType.TEXT_TO_SQL)
+    def revise_sql_query(
+        self,
+        query_engine_id: int,
+        tables: list[str],
+        question: str,
+        original_query: Optional[str],
+        proposed_query: str,
+        requested_changes: str,
+        socket=None,
+        session=None,
+    ):
+        query_engine = admin_logic.get_query_engine_by_id(
+            query_engine_id, session=session
+        )
+
+        self._revise_sql_query(
+            query_engine=query_engine,
+            tables=tables,
+            question=question,
+            original_query=original_query,
+            proposed_query=proposed_query,
+            requested_changes=requested_changes,
+            socket=socket,
+            session=session,
+        )
+
+    def _revise_sql_query(
+        self,
+        *,
+        query_engine: QueryEngine,
+        tables: list[str],
+        question: str,
+        original_query: Optional[str],
+        proposed_query: str,
+        requested_changes: str,
+        socket,
+        session=None,
+    ):
+        """Override this method to handle revisions natively.
+
+        By default, a revision runs as an edit of the proposed query through
+        _generate_sql_query, with the requested changes as the question.
+        """
+        self._generate_sql_query(
+            query_engine=query_engine,
+            tables=tables,
+            question=self._revision_as_edit_question(
+                question=question,
+                original_query=original_query,
+                requested_changes=requested_changes,
+            ),
+            original_query=proposed_query,
+            socket=socket,
+            session=session,
+        )
+
+    def _revision_as_edit_question(
+        self,
+        *,
+        question: str,
+        original_query: Optional[str],
+        requested_changes: str,
+    ) -> str:
+        """Describe a revision as an edit request for _generate_sql_query.
+
+        Keep this short: the edit prompt puts the question in a leading SQL comment.
+        The cell's query is not called "original query" because the edit prompt
+        already uses that name for the query being edited.
+        """
+        text = (
+            f"{requested_changes}\n\nThe query was written for this request: {question}"
+        )
+        if original_query:
+            text += (
+                "\n\nThe user's query before any AI edits, for reference:\n"
+                f"{original_query}"
+            )
+        return text
+
     @with_session
     def _generate_sql_query(
         self,

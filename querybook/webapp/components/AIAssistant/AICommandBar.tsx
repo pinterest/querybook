@@ -1,31 +1,20 @@
-import { truncate, uniq } from 'lodash';
+import { uniq } from 'lodash';
 import React, {
     forwardRef,
     useCallback,
     useEffect,
     useMemo,
-    useRef,
     useState,
 } from 'react';
-import toast from 'react-hot-toast';
 
 import { AICommandInput } from 'components/AIAssistant/AICommandInput';
-import { AICommandResultView } from 'components/AIAssistant/AICommandResultView';
-import { ComponentType, ElementType } from 'const/analytics';
-import {
-    IQueryCellCommand,
-    QUERY_CELL_COMMANDS,
-    QueryCellCommandType,
-} from 'const/command';
+import { AICommandModal } from 'components/AIAssistant/AICommandModal';
+import { IQueryCellCommand, QUERY_CELL_COMMANDS } from 'const/command';
 import { IQueryEngine } from 'const/queryEngine';
-import { CommandRunner, useCommand } from 'hooks/useCommand';
+import { useAICommandSession } from 'hooks/useAICommandSession';
 import { useForwardedRef } from 'hooks/useForwardedRef';
-import { trackClick } from 'lib/analytics';
-import { Button } from 'ui/Button/Button';
-import { Message } from 'ui/Message/Message';
-import { IResizableTextareaHandles } from 'ui/ResizableTextArea/ResizableTextArea';
-import { StyledText } from 'ui/StyledText/StyledText';
 import { KeyMap } from 'lib/utils/keyboard';
+import { IResizableTextareaHandles } from 'ui/ResizableTextArea/ResizableTextArea';
 
 import './AICommandBar.scss';
 
@@ -55,20 +44,9 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
         const [tables, setTables] = useState<string[]>(tablesInQuery);
         const [mentionedTables, setMentionedTables] = useState<string[]>([]);
         const commandInputRef = useForwardedRef<IResizableTextareaHandles>(ref);
-        const [showPopupView, setShowPopupView] = useState(false);
         const [command, setCommand] =
             useState<IQueryCellCommand>(defaultCommand);
         const [commandInputValue, setCommandInputValue] = useState<string>('');
-        const [commandRunner, setCommandRunner] = useState<CommandRunner>();
-        const [commandKwargs, setCommandKwargs] = useState<Record<string, any>>(
-            {}
-        );
-        const [showConfirm, setShowConfirm] = useState(false);
-        const [hasUnviewedResult, setHasUnviewedResult] = useState(false);
-        const commandBarRef = useRef<HTMLDivElement>(null);
-        const runningInBackgroundRef = useRef(false);
-        const readyToastIdRef = useRef<string>(null);
-        const submittedKwargsRef = useRef<Record<string, any>>({});
 
         /**
          * There are three types of tables:
@@ -90,73 +68,13 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
             [mentionedTables, tables]
         );
 
-        const {
-            runCommand,
-            isRunning,
-            commandFailed,
-            cancelCommand,
-            commandResult,
-            resetCommandResult,
-        } = useCommand(command, commandRunner);
+        const session = useAICommandSession({
+            queryEngineId: queryEngine.id,
+            onTablesSuggested: setTables,
+            onAccept: (newQuery) => onUpdateQuery(newQuery, false),
+        });
 
-        const dismissReadyToast = useCallback(() => {
-            if (readyToastIdRef.current) {
-                toast.dismiss(readyToastIdRef.current);
-                readyToastIdRef.current = null;
-            }
-        }, []);
-
-        useEffect(() => dismissReadyToast, [dismissReadyToast]);
-
-        const viewBackgroundResult = useCallback(() => {
-            dismissReadyToast();
-            setHasUnviewedResult(false);
-            setShowPopupView(true);
-            commandBarRef.current?.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center',
-            });
-        }, [dismissReadyToast]);
-
-        useEffect(() => {
-            if (isRunning || !runningInBackgroundRef.current) {
-                return;
-            }
-            runningInBackgroundRef.current = false;
-            if (!commandResult || commandFailed) {
-                return;
-            }
-
-            setHasUnviewedResult(true);
-            const question = truncate(submittedKwargsRef.current.question, {
-                length: 60,
-            });
-            readyToastIdRef.current = toast.success(
-                <div className="flex-row">
-                    <span>AI response ready for "{question}"</span>
-                    <Button
-                        className="ml8"
-                        title="View"
-                        size="small"
-                        onClick={viewBackgroundResult}
-                    />
-                    <Button
-                        className="ml4"
-                        title="Dismiss"
-                        size="small"
-                        theme="text"
-                        onClick={dismissReadyToast}
-                    />
-                </div>,
-                { duration: Infinity }
-            );
-            // eslint-disable-next-line react-hooks/exhaustive-deps
-        }, [isRunning]);
-
-        const handleCancelCommand = useCallback(() => {
-            runningInBackgroundRef.current = false;
-            cancelCommand();
-        }, [cancelCommand]);
+        const { submit } = session;
 
         useEffect(() => {
             if (!query && mentionedTables.length === 1) {
@@ -168,172 +86,76 @@ export const AICommandBar: React.FC<IQueryCellCommandBarProps> = forwardRef(
             }
         }, [mentionedTables]);
 
-        useEffect(() => {
+        const handleSubmit = useCallback(() => {
             if (command.name === 'format') {
-                // Have to use a function here to prevent onFormatQuery from being called
-                setCommandRunner(() => onFormatQuery);
-            } else if (command.name === 'generate' || command.name === 'edit') {
-                setCommandKwargs({
-                    query_engine_id: queryEngine.id,
-                    tables: finalTablesToUse,
-                    question: commandInputValue,
-                    original_query: command.name === 'generate' ? '' : query,
-                });
+                onFormatQuery();
+                return;
             }
+            if (command.name !== 'generate' && command.name !== 'edit') {
+                return;
+            }
+            submit({
+                kind: command.name,
+                question: commandInputValue,
+                originalQuery: command.name === 'generate' ? '' : query,
+                tables: finalTablesToUse,
+            });
         }, [
             command.name,
             commandInputValue,
-            onFormatQuery,
             query,
-            queryEngine,
-            tables,
+            finalTablesToUse,
+            onFormatQuery,
+            submit,
         ]);
-
-        const handleCommand = useCallback(() => {
-            runningInBackgroundRef.current = false;
-            dismissReadyToast();
-            setHasUnviewedResult(false);
-            submittedKwargsRef.current = commandKwargs;
-            runCommand(commandKwargs);
-            resetCommandResult();
-            setShowPopupView(!command.inplace);
-
-            if (command.name === 'generate' || command.name === 'edit') {
-                trackClick({
-                    component: ComponentType.AI_ASSISTANT,
-                    element: ElementType.QUERY_GENERATION_BUTTON,
-                    aux: {
-                        mode: command.name,
-                        question: commandKwargs.question,
-                        tables: finalTablesToUse,
-                    },
-                });
-            }
-        }, [
-            command,
-            runCommand,
-            setShowPopupView,
-            commandKwargs,
-            dismissReadyToast,
-        ]);
-
-        const getCommandResultView = () => {
-            if (command.name === 'generate' || command.name === 'edit') {
-                return (
-                    <AICommandResultView
-                        command={command}
-                        commandKwargs={submittedKwargsRef.current}
-                        metastoreId={queryEngine.metastore_id}
-                        commandResult={commandResult}
-                        tables={tables}
-                        hasMentionedTables={mentionedTables.length > 0}
-                        originalQuery={query}
-                        isStreaming={isRunning}
-                        onContinue={handleCommand}
-                        onTablesChange={setTables}
-                        onAccept={(query) => {
-                            onUpdateQuery(query, false);
-                            setShowPopupView(false);
-                            resetCommandResult();
-                        }}
-                        onDiscard={() => {
-                            setShowPopupView(false);
-                            resetCommandResult();
-                        }}
-                    />
-                );
-            }
-
-            // TODO: Handle other command types, or have it covered by AICommandResultView
-            return null;
-        };
-
-        const discardConfirmDOM = (
-            <div className="discard-confirm-view">
-                <div className="discard-confirm-background" />
-                <div className="discard-confirm-dialog">
-                    <StyledText size="med" weight="bold">
-                        Are you sure you want to discard the changes?
-                    </StyledText>
-                    <div className="flex-right" style={{ marginTop: 12 }}>
-                        <Button
-                            title="Cancel"
-                            onClick={() => setShowConfirm(false)}
-                        />
-                        <Button
-                            title="Confirm"
-                            color="confirm"
-                            onClick={() => {
-                                setShowPopupView(false);
-                                setShowConfirm(false);
-                            }}
-                        />
-                    </div>
-                </div>
-            </div>
-        );
 
         return (
             <div
-                ref={commandBarRef}
                 className="AICommandBar"
                 aria-label={`Type @ to select a table. Type / to see more commands. Type ${KeyMap.aiCommandBar.openCommands.key} to reset the command.`}
                 data-balloon-pos="up-left"
             >
-                {showPopupView && (
-                    <>
-                        {/* This is a workaround to hide the query cell controls when hovering */}
-                        <div className="cover-controls-banner" />
-                        <div
-                            className="popup-backdrop"
-                            onClick={() => {
-                                if (isRunning) {
-                                    runningInBackgroundRef.current = true;
-                                    setShowPopupView(false);
-                                } else if (commandResult) {
-                                    setShowConfirm(true);
-                                } else {
-                                    setShowPopupView(false);
-                                }
-                            }}
-                        />
-                        {/* Placeholder to prevent layout shift */}
-                        <div className="popup-placeholder" />
-                    </>
-                )}
-                <div
-                    className={showPopupView ? 'command-popup-view' : undefined}
-                >
-                    {showPopupView &&
-                        command.type === QueryCellCommandType.AI && (
-                            <Message
-                                message="Note: This AI-powered query generation may be inaccurate. Please use your own judgement and verify the result."
-                                type="warning"
-                                className="warning-message"
-                            />
-                        )}
-                    <AICommandInput
-                        commands={QUERY_CELL_COMMANDS}
-                        onCommandChange={(command, inputValue) => {
-                            setCommand(
-                                (oldCommand) => command ?? defaultCommand
-                            );
-                            setCommandInputValue(inputValue);
-                        }}
-                        mentionedTables={mentionedTables}
-                        onMentionedTablesChange={setMentionedTables}
+                <AICommandInput
+                    commands={QUERY_CELL_COMMANDS}
+                    onCommandChange={(command, inputValue) => {
+                        setCommand(command ?? defaultCommand);
+                        setCommandInputValue(inputValue);
+                    }}
+                    mentionedTables={mentionedTables}
+                    onMentionedTablesChange={setMentionedTables}
+                    metastoreId={queryEngine.metastore_id}
+                    onSubmit={handleSubmit}
+                    running={session.isRunning}
+                    cancelGeneration={session.cancel}
+                    onViewResult={
+                        session.hasUnviewedResult ? session.view : undefined
+                    }
+                    ref={commandInputRef}
+                />
+                {session.modalOpen && session.request && (
+                    <AICommandModal
+                        request={session.request}
+                        result={session.result}
+                        isStreaming={session.isStreaming}
                         metastoreId={queryEngine.metastore_id}
-                        onSubmit={handleCommand}
-                        running={isRunning}
-                        cancelGeneration={handleCancelCommand}
-                        onViewResult={
-                            hasUnviewedResult ? viewBackgroundResult : undefined
+                        originalQuery={query}
+                        tables={tables}
+                        hasMentionedTables={mentionedTables.length > 0}
+                        onTablesChange={setTables}
+                        onContinue={() =>
+                            session.continueRequest(finalTablesToUse)
                         }
-                        ref={commandInputRef}
+                        onRequestChanges={(requestedChanges) =>
+                            session.requestChanges(
+                                requestedChanges,
+                                finalTablesToUse
+                            )
+                        }
+                        onAccept={session.accept}
+                        onReject={session.reject}
+                        onDismiss={session.dismiss}
                     />
-                    {showPopupView && getCommandResultView()}
-                    {showConfirm && discardConfirmDOM}
-                </div>
+                )}
             </div>
         );
     }

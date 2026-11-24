@@ -54,6 +54,9 @@ declare global {
             renderer: (cellId: number) => React.ReactElement;
         };
 
+        /** Placeholder for the AI command box when no /command is selected */
+        CUSTOM_AI_COMMAND_PLACEHOLDER?: string;
+
         /**
          * Possible values for automatic query limits.
          * Defaults from 10^1 to 10^5
