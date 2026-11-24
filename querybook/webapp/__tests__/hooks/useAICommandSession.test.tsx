@@ -180,6 +180,7 @@ describe('useAICommandSession', () => {
         expect(session.current.result).toMatchObject({ query: 'SELECT 1' });
         expect(session.current.hasUnviewedResult).toBe(true);
         expect(toast.success).toHaveBeenCalledTimes(1);
+        expect(session.current.request.kind).toBe('generate');
     });
 
     it('keeps the previous query when a revision fails', () => {
@@ -191,6 +192,7 @@ describe('useAICommandSession', () => {
 
         expect(session.current.result).toMatchObject({ query: 'SELECT 1' });
         expect(session.current.hasUnviewedResult).toBe(true);
+        expect(session.current.request.kind).toBe('generate');
     });
 
     it('leaves nothing to view when a first request fails', () => {
@@ -212,6 +214,7 @@ describe('useAICommandSession', () => {
 
         expect(toast.error).toHaveBeenCalledWith("Sorry, I can't do that");
         expect(session.current.result).toMatchObject({ query: 'SELECT 1' });
+        expect(session.current.request.kind).toBe('generate');
     });
 
     it('replaces the previous query when a revision asks for tables', () => {

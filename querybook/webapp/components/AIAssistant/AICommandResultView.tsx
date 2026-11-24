@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { TableSelector } from 'components/AIAssistant/TableSelector';
 import { QueryComparison } from 'components/TranspileQueryModal/QueryComparison';
@@ -32,6 +32,28 @@ export const AICommandResultView = ({
         setFoundTables(result?.kind === 'tables');
     }, [result]);
 
+    // The modal closes on any Escape keypress, so keep an Escape that closes
+    // the table dropdown from reaching it.
+    const tableMenuOpenRef = useRef(false);
+    const tableSelectProps = useMemo<
+        React.ComponentProps<typeof TableSelector>['selectProps']
+    >(
+        () => ({
+            onMenuOpen: () => {
+                tableMenuOpenRef.current = true;
+            },
+            onMenuClose: () => {
+                tableMenuOpenRef.current = false;
+            },
+            onKeyDown: (event) => {
+                if (event.key === 'Escape' && tableMenuOpenRef.current) {
+                    event.stopPropagation();
+                }
+            },
+        }),
+        []
+    );
+
     const newQuery = result?.kind === 'query' ? result.query : '';
     const explanation = result?.kind === 'query' ? result.explanation : '';
 
@@ -45,6 +67,7 @@ export const AICommandResultView = ({
                     onTablesChange(tables);
                     setFoundTables(true);
                 }}
+                selectProps={tableSelectProps}
             />
             {foundTables && tables.length > 0 && (
                 <div className="mt12">
@@ -68,6 +91,7 @@ export const AICommandResultView = ({
                 disableHighlight={isStreaming}
                 hideEmptyQuery={true}
                 autoHeight={true}
+                maxEditorHeight="none"
             />
         </div>
     );

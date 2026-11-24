@@ -15,6 +15,8 @@ export const QueryComparison: React.FC<{
     disableHighlight?: boolean;
     hideEmptyQuery?: boolean;
     autoHeight?: boolean;
+    /** Height limit for each side; it scrolls past this. Use 'none' for no limit. */
+    maxEditorHeight?: string;
 }> = ({
     fromQuery,
     toQuery,
@@ -23,6 +25,7 @@ export const QueryComparison: React.FC<{
     disableHighlight,
     hideEmptyQuery,
     autoHeight = false,
+    maxEditorHeight = '40vh',
 }) => {
     const hasHiddenQuery = hideEmptyQuery && (!fromQuery || !toQuery);
 
@@ -77,7 +80,7 @@ export const QueryComparison: React.FC<{
                     <ThemedCodeHighlightWithMark
                         highlightRanges={removedRanges}
                         query={fromQuery}
-                        maxEditorHeight={'40vh'}
+                        maxEditorHeight={maxEditorHeight}
                         autoHeight={autoHeight}
                     />
                 </div>
@@ -96,7 +99,7 @@ export const QueryComparison: React.FC<{
                     <ThemedCodeHighlightWithMark
                         highlightRanges={addedRanges}
                         query={toQuery}
-                        maxEditorHeight={'40vh'}
+                        maxEditorHeight={maxEditorHeight}
                         autoHeight={autoHeight}
                     />
                 </div>

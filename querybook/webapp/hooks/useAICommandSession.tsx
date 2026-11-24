@@ -196,6 +196,15 @@ export function useAICommandSession({
         [socketEmit, queryEngineId, track]
     );
 
+    // The request that produced `completed`. When a request ends without a
+    // new result, the kept result is shown with the request that produced it.
+    const completedRequestRef = useRef<IAIRequest>(null);
+    const keepPreviousResult = () => {
+        if (completed) {
+            setRequest(completedRequestRef.current);
+        }
+    };
+
     const wasLoadingRef = useRef(false);
     useEffect(() => {
         const wasLoading = wasLoadingRef.current;
@@ -205,6 +214,7 @@ export function useAICommandSession({
         }
         if (stoppedRef.current) {
             stoppedRef.current = false;
+            keepPreviousResult();
             return;
         }
         // useAISocket sets `failed` before it sets `loading` to false, and
@@ -212,6 +222,7 @@ export function useAICommandSession({
         // up to date here.
         if (socket.failed) {
             setModalOpen(false);
+            keepPreviousResult();
             return;
         }
 
@@ -222,9 +233,11 @@ export function useAICommandSession({
                     result?.explanation ||
                         'The AI could not revise the query. Please try again.'
                 );
+                keepPreviousResult();
                 return;
             }
         }
+        completedRequestRef.current = request;
         setCompleted(result);
         if (result && !modalOpenRef.current) {
             dismissToast();

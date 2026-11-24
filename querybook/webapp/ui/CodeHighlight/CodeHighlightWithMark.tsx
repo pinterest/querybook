@@ -102,8 +102,11 @@ export const CodeHighlightWithMark: React.FC<IProps> = ({
             lineNumbers: true,
             lineWrapping: true,
             cursorBlinkRate: -1, // nocursor
+            // Without a height limit the editor never scrolls itself, so render
+            // every line instead of only the ones near its own viewport.
+            ...(maxEditorHeight === 'none' && { viewportMargin: Infinity }),
         }),
-        [theme, language]
+        [theme, language, maxEditorHeight]
     );
 
     return (
