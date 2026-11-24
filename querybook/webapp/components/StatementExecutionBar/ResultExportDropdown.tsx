@@ -200,26 +200,6 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
                 onClick: onDownloadClick,
                 icon: 'Download',
             },
-            {
-                name: (
-                    <span>
-                        Copy{' '}
-                        {isPreviewFullResult(
-                            statementExecution,
-                            statementResult
-                        ) ? (
-                            'Full Result'
-                        ) : (
-                            <span style={{ color: 'var(--color-accent-dark)' }}>
-                                Preview
-                            </span>
-                        )}{' '}
-                        to Clipboard (as TSV)
-                    </span>
-                ),
-                onClick: onExportTSVClick,
-                icon: 'Copy',
-            },
             ...(hasMetastoresForUpload
                 ? [
                       {
@@ -282,6 +262,23 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
             </Dropdown>
         );
 
+    const copyTSVButton = (
+        <TextButton
+            size="small"
+            onClick={onExportTSVClick}
+            icon="Copy"
+            disabled={
+                !statementExecution || statementExecution.result_row_count === 0
+            }
+            title={
+                statementExecution &&
+                isPreviewFullResult(statementExecution, statementResult)
+                    ? 'Copy Full Result'
+                    : 'Copy Preview'
+            }
+        />
+    );
+
     const tableUploadForm = showTableUploadForm && (
         <TableUploaderForm
             onHide={() => setShowTableUploadForm(false)}
@@ -291,6 +288,7 @@ export const ResultExportDropdown: React.FunctionComponent<IProps> = ({
 
     return (
         <>
+            {copyTSVButton}
             {ellipsesDropDownButton}
             {formModal}
             {tableUploadForm}
