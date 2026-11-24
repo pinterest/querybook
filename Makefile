@@ -65,4 +65,7 @@ clean_pyc:
 	find . -name "*.pyc" -delete
 	find . -type d -name __pycache__ -delete
 clean_docker:
-	docker system prune --volumes
+	# Only remove Querybook Docker resources. Avoid global docker system prune
+	# because it can delete volumes and caches from unrelated projects.
+	docker-compose --file containers/docker-compose.dev.yml down --volumes --remove-orphans || true
+	docker-compose --file containers/docker-compose.test.yml down --volumes --remove-orphans || true
