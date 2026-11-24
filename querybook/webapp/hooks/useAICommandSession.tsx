@@ -242,8 +242,10 @@ export function useAICommandSession({
         if (result && !modalOpenRef.current) {
             dismissToast();
             toastIdRef.current = toast.success(
-                <div className="flex-row">
-                    <span>{readyToastText(request, result)}</span>
+                <div className="AICommandReadyToast flex-row">
+                    <span className="AICommandReadyToast-text">
+                        {readyToastText(request, result)}
+                    </span>
                     <Button
                         className="ml8"
                         title="View"

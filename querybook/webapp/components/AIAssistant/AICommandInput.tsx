@@ -259,6 +259,7 @@ export const AICommandInput: React.FC<AICommandInputProps> = forwardRef(
                     onBlur={() => setShowCommands(false)}
                     inputRef={textareaRef}
                     className="mention-input"
+                    disabled={running}
                 >
                     <Mention
                         markup={`{{@__id__}}`}

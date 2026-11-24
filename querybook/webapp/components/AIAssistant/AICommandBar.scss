@@ -31,3 +31,20 @@
         color: var(--text-light);
     }
 }
+
+.AICommandReadyToast {
+    min-width: 0;
+
+    .AICommandReadyToast-text {
+        min-width: 0;
+        overflow: hidden;
+        overflow-wrap: anywhere;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    .Button {
+        flex-shrink: 0;
+    }
+}
